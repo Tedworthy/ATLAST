@@ -1,0 +1,81 @@
+body {
+  margin: 0px;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+}
+
+#main_container {
+  margin: 0px auto;
+  width: 100%;
+  max-width: 980px;
+  min-width: 300px;
+}
+
+header {
+  width: 100%;
+  height: 60px;
+}
+
+nav {
+  width: 100%;
+  height: 100%;
+}
+
+nav ul {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+nav ul li {
+  width: 50%;
+  height: 100%;
+  float: left;
+  text-align: center;
+}
+
+nav ul li span {
+  font-size: 24px;
+  line-height: 60px;
+}
+
+section {
+  padding: 10px;
+  text-align: center;
+}
+
+textarea {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+  width: 100%;
+}
+
+button {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+}
+
+#buttons_container {
+  width: 50%;
+  height: 30px;
+  margin: 0px auto;
+}
+
+#buttons_container div {
+  width: 50%;
+  height: 100%;
+  line-height: 30px;
+  float: left;
+  text-align: center;
+}
+
+.box_sizing {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}

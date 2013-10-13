@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Logic to SQL</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="main.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- May want to use these at some point
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-startup-image" href="/splash-startup.png">
+    -->
+  </head>
+
+  <body>
+    <div id="main_container">
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <span><i class="icon-search"></i> Query</span>
+            </li>
+            <li>
+            <span><i class="icon-edit"></i> Define</span>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <section id="logic_section">
+        <textarea name="logic" class="box_sizing" form="convert_to_sql run_query" placeholder="Enter your predicate logic query here"></textarea>
+      </section>
+      <section id="buttons_section">
+        <div id="buttons_container">
+          <div>
+            <form name="convert_to_sql" action="#" method="post">
+              <input type="hidden" name="action" value="sql">
+              <button type="submit">Convert to SQL</button>
+            </form>
+          </div>
+          <div>
+            <form name="run_query" action="#" method="post">
+              <input type="hidden" name="action" value="run">
+              <button type="submit">Run Query</button>
+            </form>
+          </div>
+        </div>
+      </section>
+      <section id="results_section">
+        <textarea id="result"></textarea>
+      </section>
+    </div>
+  </body>
+
+</html>
