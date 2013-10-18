@@ -1,8 +1,14 @@
+$def with (name)
+
 <!DOCTYPE html>
 <html>
 
   <head>
-    <title>Logic to SQL</title>
+$:if name:
+  <title>$name - Logic to SQL</title>
+$else
+  <title>Logic to SQL</title>
+
     <link rel="stylesheet" type="text/css" href="static/main.css">
     <script src="static/main.js"></script>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">

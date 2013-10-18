@@ -8,7 +8,7 @@ urls = (
 
 class index:
   def GET(self):
-    return render.index()
+    return render.index('Sam')
 
 if __name__ == "__main__":
   app = web.application(urls, globals())
