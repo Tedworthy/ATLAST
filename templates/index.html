@@ -1,15 +1,13 @@
-$def with (name)
+$def with (form)
 
 <!DOCTYPE html>
 <html>
 
   <head>
-$if name:
-  <title>$name - Logic to SQL</title>
-$else:
-  <title>Logic to SQL</title>
-
+    <title>Logic to SQL</title>
     <link rel="stylesheet" type="text/css" href="static/main.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!--Import JQuery from Google-->
     <script src="static/main.js"></script>
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -37,25 +35,16 @@ $else:
           </ul>
         </nav>
       </header>
+
       <section id="logic_section">
-        <textarea name="logic" class="box_sizing" form="convert_to_sql run_query" placeholder="Enter your predicate logic query here"></textarea>
+        <form name="convert_to_sql" action="#" method="post">
+          <input type="hidden" name="action" value="sql">
+          $:form.logic.render()
+
+          <button type="submit" id="convert_button">Convert to SQL</button>
+        </form>
       </section>
-      <section id="buttons_section">
-        <div id="buttons_container">
-          <div>
-            <form name="convert_to_sql" action="#" method="post">
-              <input type="hidden" name="action" value="sql">
-              <button type="submit">Convert to SQL</button>
-            </form>
-          </div>
-          <div>
-            <form name="run_query" action="#" method="post">
-              <input type="hidden" name="action" value="run">
-              <button type="submit">Run Query</button>
-            </form>
-          </div>
-        </div>
-      </section>
+
       <section id="results_section">
         <textarea id="result"></textarea>
       </section>
