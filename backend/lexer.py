@@ -1,11 +1,10 @@
-import lex
-
+import ply.lex as lex 
 
 tokens = (
   "FORALL",
-  "THEREEXISTS,
+  "THEREEXISTS",
   "TRUE",
-  "FALSE
+  "FALSE",
   "VARIABLE",
   "OR",
   "AND",
@@ -26,6 +25,30 @@ tokens = (
   
 )
 
+
+
+t_FORALL = ""
+t_THEREEXISTS = ""
+t_TRUE = ""
+t_FALSE = ""
+t_VARIABLE = ""
+t_OR = ""
+t_AND = "" 
+t_IMPLIES = "" 
+t_IFF = ""
+t_GT = ""
+
+t_LT = ""
+
+t_GTE = ""
+t_LTE = ""
+t_EQ = ""
+t_CONNECTIVE = ""
+t_FUNCTION = ""
+t_OBRACKET = ""
+t_CBRACKET = ""
+t_COMMA = ""
+t_NOT = ""
 
 # Variables          -> used in queries 
 # Constant Symbols   -> used in declarations
