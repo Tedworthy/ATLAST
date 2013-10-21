@@ -1,0 +1,480 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: actors; Type: TABLE; Schema: public; Owner: link; Tablespace: 
+--
+
+CREATE TABLE actors (
+    aid integer NOT NULL,
+    name character varying(40) NOT NULL,
+    born date
+);
+
+
+ALTER TABLE public.actors OWNER TO link;
+
+--
+-- Name: actors_aid_seq; Type: SEQUENCE; Schema: public; Owner: link
+--
+
+CREATE SEQUENCE actors_aid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.actors_aid_seq OWNER TO link;
+
+--
+-- Name: actors_aid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: link
+--
+
+ALTER SEQUENCE actors_aid_seq OWNED BY actors.aid;
+
+
+--
+-- Name: casting; Type: TABLE; Schema: public; Owner: link; Tablespace: 
+--
+
+CREATE TABLE casting (
+    cid integer NOT NULL,
+    fid integer,
+    aid integer,
+    part character varying(40)
+);
+
+
+ALTER TABLE public.casting OWNER TO link;
+
+--
+-- Name: casting_cid_seq; Type: SEQUENCE; Schema: public; Owner: link
+--
+
+CREATE SEQUENCE casting_cid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.casting_cid_seq OWNER TO link;
+
+--
+-- Name: casting_cid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: link
+--
+
+ALTER SEQUENCE casting_cid_seq OWNED BY casting.cid;
+
+
+--
+-- Name: films; Type: TABLE; Schema: public; Owner: link; Tablespace: 
+--
+
+CREATE TABLE films (
+    fid integer NOT NULL,
+    title character varying(40),
+    director character varying(40) NOT NULL,
+    origin character(10),
+    made date,
+    length interval
+);
+
+
+ALTER TABLE public.films OWNER TO link;
+
+--
+-- Name: films_fid_seq; Type: SEQUENCE; Schema: public; Owner: link
+--
+
+CREATE SEQUENCE films_fid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.films_fid_seq OWNER TO link;
+
+--
+-- Name: films_fid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: link
+--
+
+ALTER SEQUENCE films_fid_seq OWNED BY films.fid;
+
+
+--
+-- Name: aid; Type: DEFAULT; Schema: public; Owner: link
+--
+
+ALTER TABLE ONLY actors ALTER COLUMN aid SET DEFAULT nextval('actors_aid_seq'::regclass);
+
+
+--
+-- Name: cid; Type: DEFAULT; Schema: public; Owner: link
+--
+
+ALTER TABLE ONLY casting ALTER COLUMN cid SET DEFAULT nextval('casting_cid_seq'::regclass);
+
+
+--
+-- Name: fid; Type: DEFAULT; Schema: public; Owner: link
+--
+
+ALTER TABLE ONLY films ALTER COLUMN fid SET DEFAULT nextval('films_fid_seq'::regclass);
+
+
+--
+-- Data for Name: actors; Type: TABLE DATA; Schema: public; Owner: link
+--
+
+COPY actors (aid, name, born) FROM stdin;
+1	Matt Damon	1970-10-08
+2	Franka Potente	1974-07-22
+3	Julia Stiles	1981-03-28
+4	Joan Allen	1956-08-20
+5	Joseph Melito	\N
+6	Chris Tucker	\N
+7	Joey Perillo	\N
+8	Michael Chance	\N
+9	Stuart Wilson	\N
+10	Bruce Willis	1955-03-19
+11	Ian Holm	1931-12-09
+12	Milla Jovovich	1975-12-17
+13	Luke Perry	1966-11-10
+14	Brad Pitt	1963-12-18
+15	Christopher Plummer	1929-12-13
+16	Denzel Washington	1954-12-28
+17	Gene Hackman	1930-01-30
+18	Matt Craven	1956-10-11
+19	George Dzundza	1945-07-19
+20	Demi Moore	1962-11-11
+21	Alec Baldwin	1958-03-04
+22	Joseph Gordon- Levitt	1981-02-17
+23	Will Smith	1968-09-25
+24	Jon Voight	1938-12-29
+25	Lisa Bonet	1967-11-16
+26	Regina King	1971-01-15
+27	Anthony Perkins	1932-04-04
+28	John Gavin	1928-08-04
+29	Martin Balsam	1929-04-11
+30	John Mc Intire	1907-06-27
+31	Simon Oakland	1915-08-28
+32	Anne Heche	1965-05-25
+33	Vince Vaughn	1970-03-28
+34	William H. Macy	1950-03-13
+35	Janet Leigh	1927-06-07
+36	Sigourney Weaver	1949-08-10
+37	Tom Skerrit	1933-08-25
+38	John Hurt	1940-01-22
+39	Veronica Cartwright	1950-04-20
+40	Yaphet Kotto	1937-11-15
+41	Harry Dean Stanton	1926-07-14
+42	Michael Biehn	1956-07-31
+43	Paul Reiser	1957-03-30
+44	Lance Henriksen	1943-05-05
+45	Bill Paxton	1955-05-17
+46	Ramon Novarro	1899-06-02
+47	Francis X. Bushman	1883-10-01
+48	Rod Taylor	1929-11-01
+49	Jessica Tandy	1909-07-06
+50	Gregory Peck	1916-05-04
+51	Robert Mitchum	1917-06-08
+52	Telly Savalas	1924-01-21
+53	Robert De Niro	1943-08-17
+54	Nick Nolte	1940-08-02
+55	Jessica Lange	1949-09-04
+56	Juliette Lewis	1973-06-21
+57	Joe Don Baker	1936-12-02
+58	Allen Arkin	1934-03-26
+59	Orson Welles	1915-05-16
+60	Nicole Kidman	1967-06-20
+61	Sam Neill	1947-09-14
+62	Linda Hamilton	1956-09-26
+63	Charles Dutton	1951-01-30
+64	Charles Dance	1946-10-10
+65	Paul Mc Gann	1959-11-14
+66	Brian Glover	1934-02-04
+67	Ralph Brown	\N
+68	Winona Ryder	1971-10-29
+69	Dominique Pinon	\N
+70	Gary Dourdan	\N
+71	Ron Perlman	1950-04-13
+72	Michael Wincott	1959-06-01
+73	George Beban	1873-05-11
+74	Blanche Schwed	\N
+75	Edward Gillespie	\N
+76	Jack Nelson	\N
+77	Viggo Mortensen	1958-10-20
+78	James Gandolfini	1961-09-18
+79	Gary Oldman	1958-03-21
+80	Carrie Henn	1976-07-05
+81	William Hope	\N
+82	Al Matthews	\N
+83	Jenette Goldstein	\N
+84	Vera Miles	1929-08-23
+85	Julianne Moore	1961-03-12
+86	Philip Baker Hall	1931-10-09
+87	Carmel Myers	1899-04-04
+88	Tippi Hedren	1928-01-19
+89	Brian Narelle	\N
+90	Aleksandr Antonov	1898-02-13
+91	Grigori Aleksandrov	1903-01-23
+92	Sarah Miles	1941-12-31
+93	Arnold Schwarzenegger	1947-07-30
+\.
+
+
+--
+-- Name: actors_aid_seq; Type: SEQUENCE SET; Schema: public; Owner: link
+--
+
+SELECT pg_catalog.setval('actors_aid_seq', 93, true);
+
+
+--
+-- Data for Name: casting; Type: TABLE DATA; Schema: public; Owner: link
+--
+
+COPY casting (cid, fid, aid, part) FROM stdin;
+1	1	1	Jason Bourne
+2	2	1	Jason Bourne
+3	3	1	Jason Bourne
+4	1	2	Marie Kreutz
+5	2	2	Marie Kreutz
+6	2	3	Nicky Parsons
+7	3	3	Nicky Parsons
+10	26	73	Pietro Massena
+11	26	74	Rosina Massena
+12	26	75	Inspector Lynch
+13	4	10	Major Korben Dallas
+14	4	79	Jean- Baptiste Emmanuel Zorg
+15	4	11	Priest Vito Cornelius
+16	4	12	Leelo
+17	26	76	Phil Griswold
+18	4	13	Billy
+19	4	6	Ruby Rhod
+20	21	77	Lt. Peter Ince
+21	22	5	Young Cole
+22	22	10	James Cole
+23	22	7	Detective Franki
+24	22	14	Jefferey Goines
+25	22	15	Dr. Goines
+26	20	32	Juliet
+27	22	8	Scarface
+28	21	16	Lt. Cmdr. Hunter
+29	21	78	Lt. Bobby Dougherty
+30	23	69	Vries
+31	21	17	Capt. Frank Ramsey
+32	21	18	Lt. Zimmer
+33	21	19	C. O. B.
+34	23	72	Elgyn
+35	13	90	Vakulinchuk
+36	20	20	Annie Laird
+37	20	21	Teacher
+38	20	22	Oliver Laird
+39	20	78	Eddie
+40	13	91	Chief Officer Giliarovsky
+41	20	18	Boone
+42	17	23	Robert Clayton Dean
+43	17	17	Brill
+44	5	44	Bishop
+45	17	25	Rachel Banks
+46	17	26	Carla Dean
+47	17	9	Congressman Albert
+48	19	27	Norman Bates
+49	19	84	Lila Crane
+50	19	28	Sam Loomis
+51	19	29	Milton Arbogast
+52	5	45	Hudson
+53	19	30	Sheriff Chambers
+54	19	31	Dr. Richmond
+55	18	33	Norman Bates
+56	18	32	Marion Crane
+57	18	85	Lila Crane
+58	18	77	Sam Loomis
+59	18	34	Milton Arbogast
+60	18	86	Sheriff Chambers
+61	17	86	Silverberg
+62	19	35	Marion Crane
+63	5	81	Gorman
+64	5	83	Vasquez
+65	5	82	Apone
+66	7	46	Ben- Hur
+67	7	47	Messala
+68	7	87	Iras
+69	9	48	Mitch Brenner
+70	9	88	Melanie Daniels
+71	9	49	Lydia Brenner
+72	9	39	Cathy Brenner
+73	10	50	Sam Bowden
+74	17	24	Thomas Brian Reynolds
+75	6	36	Ripley
+76	6	37	Dallas
+77	6	38	Kane
+78	6	39	Lambert
+79	6	40	Parker
+80	6	11	Ash
+81	6	41	Brett
+82	5	36	Ripley
+83	5	80	Newt
+84	5	42	Hicks
+85	5	43	Burke
+86	10	51	Max Cady
+87	10	52	Charles Sievers
+88	25	53	Max Cady
+89	25	54	Sam Bowden
+90	25	55	Leigh Bowden
+91	25	56	Danielle Bowden
+92	25	57	Claude Kersek
+93	25	51	Lieutenant Elgart
+94	25	50	Lee Heller
+95	11	58	Yossarian
+96	11	59	General Dreedle
+97	12	89	Doolittle
+98	24	61	John Ingram
+99	14	51	Philip Marlowe
+100	14	92	Charlotte Sternwood
+101	15	93	Terminator
+102	15	42	Kyle Reese
+103	15	62	Sarah Connor
+104	16	36	Ellen Ripley
+105	16	63	Dillon
+106	16	64	Clemens
+107	16	65	Golic
+108	16	66	Andrews
+109	16	67	Aaron
+110	23	36	Ellen Ripley
+111	23	68	Annalee Call
+112	23	71	Johner
+113	23	70	Crhistie
+8	2	4	Pamela Landy
+9	3	4	Pamela Landy
+\.
+
+
+--
+-- Name: casting_cid_seq; Type: SEQUENCE SET; Schema: public; Owner: link
+--
+
+SELECT pg_catalog.setval('casting_cid_seq', 113, true);
+
+
+--
+-- Data for Name: films; Type: TABLE DATA; Schema: public; Owner: link
+--
+
+COPY films (fid, title, director, origin, made, length) FROM stdin;
+1	The Bourne Identity	Doug Liman	US        	2002-01-01	00:01:59
+2	The Bourne Supremacy	Paul Greengrass	US        	2004-01-01	00:01:48
+3	The Bourne Ultimatum	Paul Greegrass	US        	2007-01-01	00:01:55
+4	The Fifth Element	Luc Besson	France    	1997-01-01	02:07:00
+5	Aliens	James Cameron	US        	1986-01-01	02:17:00
+6	Alien	Ridley Scott	UK        	1979-01-01	01:57:00
+7	Ben Hur	Fred Niblo	US        	1925-01-01	02:50:00
+8	Ben Hur	William Wyler	US        	1959-01-01	03:37:00
+9	The Birds	Alfred Hitchcock	US        	1963-01-01	01:59:00
+10	Cape Fear	J Lee-Thompson	US        	1962-01-01	01:46:00
+11	Catch 22	Mike Nichols	US        	1970-01-01	02:02:00
+12	Dark Star	John Carpenter	US        	1974-01-01	01:23:00
+13	Battleship Potemkin	Sergei Eisenstien	US S R    	1925-01-01	01:15:00
+14	The Big Sleep	Michael Minner	UK        	1977-01-01	01:39:00
+15	The Terminator	James Cameron	US        	1984-01-01	01:48:00
+16	Alien 3	David Fincher	US        	1992-01-01	01:55:00
+17	Enemy of the State	Tony Scott	US        	1998-01-01	02:11:00
+18	Psycho	Gus Van Sant	US        	1998-01-01	01:49:00
+19	Psycho	Alfred Hitchcock	US        	1960-01-01	01:48:00
+20	The Juror	Brian Gibson	US        	1996-01-01	01:58:00
+21	Crimson Tide	Tony Scott	US        	1997-01-01	01:52:00
+22	Twelve Monkeys	Terry Gilliam	US        	1995-01-01	02:10:00
+23	Alien Resurrection	Jean-Pierre Jeunet	US        	1997-01-01	01:49:00
+24	Dead Calm	Phillip Noyce	Australia 	1989-01-01	01:35:00
+25	Cape Fear	Martin Scorsese	US        	1991-01-01	02:08:00
+26	The Alien	Thomas H. Ince	US        	1915-01-01	\N
+\.
+
+
+--
+-- Name: films_fid_seq; Type: SEQUENCE SET; Schema: public; Owner: link
+--
+
+SELECT pg_catalog.setval('films_fid_seq', 26, true);
+
+
+--
+-- Name: actors_pkey; Type: CONSTRAINT; Schema: public; Owner: link; Tablespace: 
+--
+
+ALTER TABLE ONLY actors
+    ADD CONSTRAINT actors_pkey PRIMARY KEY (aid);
+
+
+--
+-- Name: casting_pkey; Type: CONSTRAINT; Schema: public; Owner: link; Tablespace: 
+--
+
+ALTER TABLE ONLY casting
+    ADD CONSTRAINT casting_pkey PRIMARY KEY (cid);
+
+
+--
+-- Name: films_pkey; Type: CONSTRAINT; Schema: public; Owner: link; Tablespace: 
+--
+
+ALTER TABLE ONLY films
+    ADD CONSTRAINT films_pkey PRIMARY KEY (fid);
+
+
+--
+-- Name: casting_fid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: link
+--
+
+ALTER TABLE ONLY casting
+    ADD CONSTRAINT casting_fid_fkey FOREIGN KEY (fid) REFERENCES films(fid);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
