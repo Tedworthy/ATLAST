@@ -14,40 +14,39 @@ tokens = (
   "GTE",
   "LTE",
   "EQ",
-  "OBRACKET",
-  "CBRACKET",
+  "LBRACKET",
+  "RBRACKET",
   "COMMA",
-  "NOT"
-  "VARIABLE",
-  "CONNECTIVE",
-  "FUNCTION",
+  "NOT",
+  "IDENTIFIER",
+  "STRINGLIT",
+  "CONSTANT",
+  "STRINGLIT"
 )
 
-t_FORALL = "∀"
-t_THEREEXISTS = "∃"
+t_FORALL = u"\u2200"
+t_THEREEXISTS = u"\u2203"
 t_TRUE = "True"
 t_FALSE = "False"
-t_OR = "|"
-t_AND = "&"
-t_IMPLIES = "→"
-t_IFF = "↔"
+t_OR = u"\u2228"
+t_AND = u"\u2227"
+t_IMPLIES = u"\u2192"
+t_IFF = u"\u2194"
 t_GT = ">"
 t_LT = "<"
-t_GTE = "≥"
-t_LTE = "≤"
+t_GTE = u"\u2265"
+t_LTE = u"\u2264"
 t_EQ = "="
-t_OBRACKET = "("
-t_CBRACKET = ")"
+t_LBRACKET = "\("
+t_RBRACKET = "\)"
 t_COMMA = ","
-t_NOT = "¬"
-# One or more lowercase characters
-t_VARIABLE = r'[a-z]+'
-t_CONNECTIVE = ""
-t_FUNCTION = ""
+t_NOT = u"\u00AC"
 
-# Variables          -> used in queries 
-# Constant Symbols   -> used in declarations
-# Functional Symbols -> think addition multiplication subtraction f(x) g(x)
-# Relational Symbols -> functions with arities e.g. hasFather(x,y) 
-# Logical Constants  -> and|OR| NOT| ForAll| ThereExists| Equal| 
-#
+digit = r'([0-9])'
+nondigit = r'([_A-Za-z])'
+t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')'
+
+t_CONSTANT = r'[A-Z]+'
+t_STRINGLIT = r'\'.\''
+
+literals = '+-*/'
