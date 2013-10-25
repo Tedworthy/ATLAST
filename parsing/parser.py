@@ -29,7 +29,7 @@ def p_formula_and(p):
   print "%s and %s" % p[1], p[3]
 
 def p_formula_not(p):
-  'formula : NOT formula'
+  'formula : NOT atomicFormula'
   print 'Negation of predicate ' + p[2]
 
 def p_formula_bracketed(p):
@@ -37,7 +37,7 @@ def p_formula_bracketed(p):
   print 'Bracketed' + p[2]
 
 def p_formula_quantifier(p):
-  'formula : quantifier formula'
+  'formula : quantifier atomicFormula'
   print 'Quantifier ' + p[1] + ' for formula' + p[2]
 
 # Atomic Formula grammar
@@ -95,8 +95,6 @@ else:
   sys.exit(1)
 
 f = open(input_file, 'r')
-
-print f.read()
 
 parser = yacc.yacc()
 result = parser(f.read())
