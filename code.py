@@ -1,4 +1,5 @@
 import web
+import os
 from dbbackend import query
 
 render = web.template.render('templates/')
@@ -25,8 +26,12 @@ class index:
    # translated = query.query(logic_to_translate) TODO secure the connection, 
    # currently it runs everything as root which is LOLZ 
     return logic_to_translate;
+def is_test():
+    if 'WEBPY_ENV' is os.environ:
+        return os.environ['WEBPY_ENV'] == 'test'
 
-if __name__ == "__main__":
-  app = web.application(urls, globals())
+app = web.application(urls, globals())
+
+if (not is_test()) and  __name__ == "__main__":
   app.run()
 

@@ -1,1 +1,2 @@
-echo "Testing build script" >> output.log
+#!/bin/bash
+WEBPY_ENV=test nosetests
