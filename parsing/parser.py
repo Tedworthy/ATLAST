@@ -2,7 +2,6 @@ import ply.yacc as yacc
 import sys
 from lexer import tokens
 
-
 precedence = (
   ('left', 'IFF'),
   ('left', 'IMPLIES'),
@@ -16,6 +15,11 @@ precedence = (
 def p_formula_atomic_formula(p):
   'formula : atomicFormula'
   p[0] = p[1]
+  print p[0]
+
+def p_formula_bracketed(p):
+  'formula : LBRACKET formula RBRACKET'
+  p[0] = 'Bracketed' + p[2]
   print p[0]
 
 def p_formula_iff(p):
@@ -36,11 +40,6 @@ def p_formula_and(p):
 def p_formula_not(p):
   'formula : NOT atomicFormula'
   p[0] = 'Negation of an atomicFormula ' + p[2]
-  print p[0]
-
-def p_formula_bracketed(p):
-  'formula : LBRACKET formula RBRACKET'
-  p[0] = 'Bracketed' + p[2]
   print p[0]
 
 def p_formula_quantifier(p):

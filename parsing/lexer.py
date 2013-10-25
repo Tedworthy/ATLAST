@@ -1,27 +1,50 @@
 import ply.lex as lex 
 
+class TokenEnum(object):
+  FORALL = "FORALL"
+  THEREEXISTS = "THEREEXISTS"
+  TRUE = "TRUE"
+  FALSE = "FALSE"
+  OR = "OR"
+  AND = "AND"
+  IMPLIES = "IMPLIES"
+  IFF = "IFF"
+  GT = "GT"
+  LT = "LT"
+  GTE = "GTE"
+  LTE = "LTE"
+  EQ = "EQ"
+  LBRACKET = "LBRACKET"
+  RBRACKET = "RBRACKET"
+  COMMA = "COMMA"
+  NOT = "NOT"
+  VARIABLE = "VARIABLE"
+  IDENTIFIER = "IDENTIFIER"
+  CONSTANT = "CONSTANT"
+  STRINGLIT = "STRINGLIT"
+
 tokens = (
-  "FORALL",
-  "THEREEXISTS",
-  "TRUE",
-  "FALSE",
-  "OR",
-  "AND",
-  "IMPLIES",
-  "IFF",
-  "GT",
-  "LT",
-  "GTE",
-  "LTE",
-  "EQ",
-  "LBRACKET",
-  "RBRACKET",
-  "COMMA",
-  "NOT",
-  "VARIABLE",
-  "IDENTIFIER",
-  "CONSTANT",
-  "STRINGLIT"
+  TokenEnum.FORALL,
+  TokenEnum.THEREEXISTS,
+  TokenEnum.TRUE,
+  TokenEnum.FALSE,
+  TokenEnum.OR,
+  TokenEnum.AND,
+  TokenEnum.IMPLIES,
+  TokenEnum.IFF,
+  TokenEnum.GT,
+  TokenEnum.LT,
+  TokenEnum.GTE,
+  TokenEnum.LTE,
+  TokenEnum.EQ,
+  TokenEnum.LBRACKET,
+  TokenEnum.RBRACKET,
+  TokenEnum.COMMA,
+  TokenEnum.NOT,
+  TokenEnum.VARIABLE,
+  TokenEnum.IDENTIFIER,
+  TokenEnum.CONSTANT,
+  TokenEnum.STRINGLIT
 )
 
 t_FORALL = u"\u2200"
