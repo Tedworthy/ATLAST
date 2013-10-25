@@ -1,1 +1,1 @@
-echo "test" >> buildlog
+echo "Testing build script" >> output.log
