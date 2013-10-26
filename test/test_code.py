@@ -9,3 +9,4 @@ class TestCode():
         r = testApp.get('/')
         assert_equal(r.status, 200)
         r.mustcontain('Convert to SQL')
+
