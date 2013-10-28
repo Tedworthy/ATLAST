@@ -19,7 +19,6 @@ tokens = (
   "COMMA",
   "NOT",
   "IDENTIFIER",
-  "STRINGLIT",
   "CONSTANT",
   "STRINGLIT"
 )
@@ -44,9 +43,21 @@ t_NOT = u"\u00AC"
 
 digit = r'([0-9])'
 nondigit = r'([_A-Za-z])'
-t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')'
+t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
 
 t_CONSTANT = r'[A-Z]+'
-t_STRINGLIT = r'\'.\''
+def t_STRINGLIT(t):
+  r'\'(.*)\''
+  t.value = t.value[1:-1]
+  return t
 
 literals = '+-*/'
+t_ignore = ' '
+
+def t_newline(t):
+  r'\n+'
+  t.lexer.lineno += len(t.value)
+
+def t_error(t):
+  print "Illegal character '%s'" % t.value[0]
+  t.lexer.skip(1)
