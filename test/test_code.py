@@ -17,7 +17,7 @@ class TestCode():
     r = testApp.get('/')
     form = r.form['logic']
     print(form.id)
-    print(form.action)
     print(form.method)
     form['text'] = 'test'
+    print(form.fields.values())
 
