@@ -10,12 +10,8 @@ Child structure:
 from node import Node
 
 class BinaryFormulaNode(Node):
-  _op = None
-
-  # Takes a token from lexer.TokenEnum (unary logical operator, i.e
-  # NOT) and a node representing the LHS and the RHS of the formula.
-  def __init__(self, op, formula):
-    _op = op
+  # Takes a node representing the RHS of the formula
+  def __init__(self, formula):
     _children[0] = formula
 
   def getChild():
