@@ -15,9 +15,9 @@ class TestCode():
     middleware=[]
     testApp = TestApp(app.wsgifunc(*middleware))
     r = testApp.get('/')
-    form = r.form['logic']
+    form = r.forms['logic-form']
     print(form.id)
-    print(form.method)
-    form['text'] = 'test'
-    print(form.fields.values())
-
+    form['logic'] = 'test'
+    r = form.submit()
+    assert_equal(r.status, 200)
+    r.mustcontain('test')
