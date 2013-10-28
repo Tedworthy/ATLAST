@@ -1,4 +1,4 @@
-import ply.lex as lex 
+import ply.lex as lex
 
 class TokenEnum(object):
   FORALL = "FORALL"
@@ -68,8 +68,8 @@ t_NOT = u"\u00AC"
 digit = r'([0-9])'
 nondigit = r'([_A-Za-z])'
 
-t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
 t_CONSTANT = r'[A-Z]+'
+t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
 def t_STRINGLIT(t):
   r'\'(.*)\''
   t.value = t.value[1:-1]
