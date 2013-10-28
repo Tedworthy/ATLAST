@@ -17,7 +17,7 @@ class TestCode():
     r = testApp.get('/')
     form = r.forms['logic-form']
     print(form.id)
-    form['logic'] = 'test'
+    form['logic'] = t_THEREEXISTS.encode('utf-8') + 'x(film_title(x))'
     r = form.submit()
     assert_equal(r.status, 200)
-    r.mustcontain('test')
+    r.mustcontain( t_THEREEXISTS.encode('utf-8') + 'x(film_title(x))')
