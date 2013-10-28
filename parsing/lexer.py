@@ -49,8 +49,8 @@ tokens = (
 
 t_FORALL = u"\u2200"
 t_THEREEXISTS = u"\u2203"
-t_TRUE = "True"
-t_FALSE = "False"
+t_TRUE = 'True'
+t_FALSE = 'False'
 t_OR = u"\u2228"
 t_AND = u"\u2227"
 t_IMPLIES = u"\u2192"
@@ -69,7 +69,18 @@ digit = r'([0-9])'
 nondigit = r'([_A-Za-z])'
 
 t_CONSTANT = r'[A-Z]+'
-t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
+
+reserved = {
+  t_TRUE : TokenEnum().TRUE,
+  t_FALSE : TokenEnum().FALSE
+}
+
+def t_IDENTIFIER(t):
+  r'(([0-9])|([_A-Za-z]))+'
+  if t.value in reserved:
+    t.type = reserved[t.value]
+  return t
+
 def t_STRINGLIT(t):
   r'\'(.*)\''
   t.value = t.value[1:-1]
