@@ -100,3 +100,9 @@ f = open(input_file, 'r')
 parser = yacc.yacc()
 result = parser.parse(f.read().decode('utf8'))
 print result
+
+def dat_parsing(input):
+  parser = yacc.yacc()
+  result = parser.parse(input.decode('utf8'))
+  print result
+
