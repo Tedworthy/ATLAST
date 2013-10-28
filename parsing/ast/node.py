@@ -4,8 +4,7 @@ This base class is the basic structure for all nodes in the abstract syntax
 tree for our first order logic grammar.
 '''
 
-# from .. import stuff
-# TODO import upper directory tokens enum
+from lexer import TokenEnum
 
 class Node:
   _children = []
