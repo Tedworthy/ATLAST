@@ -11,13 +11,8 @@ Child structure:
 from node import Node
 
 class BinaryFormulaNode(Node):
-  _op = None
-
-  # Takes a token from lexer.TokenEnum (binary logical operator, i.e
-  # AND, OR, IF, IFF and two nodes representing the LHS and the RHS of the
-  # formula.
-  def __init__(self, op, left, right):
-    _op = op
+  # Takes two nodes representing the LHS and the RHS of the formula.
+  def __init__(self, left, right):
     _children[0] = left
     _children[1] = right
 
