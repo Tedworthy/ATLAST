@@ -18,6 +18,7 @@ tokens = (
   "RBRACKET",
   "COMMA",
   "NOT",
+  "VARIABLE",
   "IDENTIFIER",
   "CONSTANT",
   "STRINGLIT"
@@ -43,8 +44,8 @@ t_NOT = u"\u00AC"
 
 digit = r'([0-9])'
 nondigit = r'([_A-Za-z])'
-t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
 
+t_IDENTIFIER = r'(' + digit + r'|' + nondigit + ')+'
 t_CONSTANT = r'[A-Z]+'
 def t_STRINGLIT(t):
   r'\'(.*)\''
@@ -61,3 +62,5 @@ def t_newline(t):
 def t_error(t):
   print "Illegal character '%s'" % t.value[0]
   t.lexer.skip(1)
+
+lex.lex()
