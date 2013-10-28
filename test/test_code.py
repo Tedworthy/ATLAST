@@ -15,7 +15,7 @@ class TestCode():
     middleware=[]
     testApp = TestApp(app.wsgifunc(*middleware))
     r = testApp.get('/')
-    form = res.form['convert_to_sql']
+    form = r.form['convert_to_sql']
     print(form.id)
     print(form.action)
     print(form.method)
