@@ -10,6 +10,9 @@ class Node:
   _children = []
   _numChildren = 0
 
+  def __init__(self):
+    pass
+
   def getChild(num):
     if num >= _numChildren:
       raise IndexError("Index", num, "out of bounds in Node.getChild")

@@ -10,4 +10,5 @@ class QuantifierNode(Node):
 
   # Takes an AST sub node
   def __init__(self, formula):
-    Node.__init__(self, formula)
+    Node.__init__(self)
+    setChild(0, formula)
