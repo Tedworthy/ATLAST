@@ -4,7 +4,7 @@ A node representing a 'there exists' quantifier followed by a first order logic
 formula or another quantifier node.
 '''
 
-from node import QuantifierNode
+from quantifier_node import QuantifierNode
 
 class ThereExistsNode(QuantifierNode):
   def __init__(self, formula):

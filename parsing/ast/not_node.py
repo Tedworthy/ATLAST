@@ -7,7 +7,7 @@ Child structure:
   0 = left formula
 '''
 
-from node import UnaryFormulaNode
+from unary_formula_node import UnaryFormulaNode
 
 class NotNode(UnaryFormulaNode):
   def __init__(self, node):

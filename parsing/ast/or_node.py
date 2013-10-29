@@ -8,7 +8,7 @@ Child structure:
   1 = right formula
 '''
 
-from node import BinaryFormulaNode
+from binary_formula_node import *
 
 class OrNode(BinaryFormulaNode):
   def __init__(self, left, right):
