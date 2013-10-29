@@ -1,7 +1,7 @@
 import ply.yacc as yacc 
 import sys
 from lexer import tokens
-from node import *
+from ast import *
 
 precedence = (
   ('left', 'IFF'),
@@ -69,7 +69,7 @@ def p_term_list_single(p):
 
 def p_term_function(p):
   'term : IDENTIFIER LBRACKET term_list RBRACKET'
-  p[0] = 'Function %s with list %s' % (p[1], p[3])
+  p[0] = FunctionNode(p[1], p[3])
 
 def p_term_constant(p):
   'term : CONSTANT'
