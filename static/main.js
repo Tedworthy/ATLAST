@@ -1,8 +1,8 @@
-/* When 'Convert to SQL' button is clicked fire off an AJAX request */
 $(document).ready(function() {
+
+  /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $('#convert_button').click(function () {
     var input_string = $("textarea#logic").val();
-
     $.ajax({
       type: "POST",
       data: {
@@ -10,8 +10,9 @@ $(document).ready(function() {
       }
     }).done(function(result) {
       /* Handle the result of the translation */
-      $('#result').text(result);
+      $('textarea#sql_result').text(result);
     });
     return false;
   });
+
 });

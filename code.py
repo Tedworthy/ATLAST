@@ -1,5 +1,6 @@
 import web
 import os
+import json
 from dbbackend import query
 
 render = web.template.render('templates/')
@@ -23,13 +24,14 @@ class index:
     form.validates()
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
-   # translated = query.query(logic_to_translate) TODO secure the connection, 
-   # currently it runs everything as root which is LOLZ 
-    web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+    # TODO: secure the connection, currently it runs everything as root!
+    #translated = query.query(logic_to_translate)
+    web.header('Content-Type','text/html; charset=utf-8', unique=True)
     return logic_to_translate;
+
 def is_test():
-    if 'WEBPY_ENV' is os.environ:
-        return os.environ['WEBPY_ENV'] == 'test'
+  if 'WEBPY_ENV' is os.environ:
+      return os.environ['WEBPY_ENV'] == 'test'
 
 app = web.application(urls, globals())
 
