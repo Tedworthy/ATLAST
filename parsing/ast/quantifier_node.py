@@ -7,8 +7,6 @@ another quantifier node.
 from node import Node
 
 class QuantifierNode(Node):
-
-  # Takes an AST sub node
   def __init__(self, formula):
     Node.__init__(self)
-    Node.setChild(self, 0, formula)
+    self.setChild(0, formula)
