@@ -68,6 +68,11 @@ t_NOT = u"\u00AC"
 digit = r'([0-9])'
 nondigit = r'([_A-Za-z])'
 
+# Literals are passed straight through as their own token
+literals = '+-*/'
+# Spaces are taken out completely
+t_ignore = ' '
+
 t_CONSTANT = r'[A-Z]+'
 
 reserved = {
@@ -85,9 +90,6 @@ def t_STRINGLIT(t):
   r'\'(.*)\''
   t.value = t.value[1:-1]
   return t
-
-literals = '+-*/'
-t_ignore = ' '
 
 def t_newline(t):
   r'\n+'
