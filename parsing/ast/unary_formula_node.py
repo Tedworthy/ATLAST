@@ -16,3 +16,10 @@ class BinaryFormulaNode(Node):
 
   def getChild():
     return _children[0]
+
+  def setLeft(left):
+    _children[0] = left
+
+  def setRight(right):
+    _children[1] = right
+

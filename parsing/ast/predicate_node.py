@@ -9,9 +9,9 @@ Child structure:
 
 from node import Node
 
-class AtomicFormulaNode(Node):
+class PredicateNode(Node):
   # Takes a list of terms.
-  def __init__(self, terms):
+  def __init__(self, identifier, terms):
     _children = terms
 
   def getTerm(i):

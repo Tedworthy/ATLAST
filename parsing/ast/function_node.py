@@ -1,6 +1,7 @@
 '''
 Function Node
-This class implements the AST node of a first order logic formula.
+This class implements the AST node of a first order logic predicate, in the 
+form predicate(term_list)
 
 Child structure:
   0..n-1 = List of n terms
@@ -9,15 +10,9 @@ Child structure:
 from node import Node
 
 class FunctionNode(Node):
-  _name = None
-
-  # Takes a string representing the function name, and a list of terms.
-  def __init__(self, name, terms):
-    _name = name
+  # Takes a list of terms.
+  def __init__(self, identifier, terms):
     _children = terms
 
   def getTerm(i):
     return _children[i]
-
-  def getName():
-    return _name

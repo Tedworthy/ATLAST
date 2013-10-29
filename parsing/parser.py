@@ -37,25 +37,29 @@ def p_formula_not(p):
   'formula : NOT atomicFormula'
   p[0] = NotNode(p[2])
 
-def p_formula_quantifier(p):
-  'formula : quantifier IDENTIFIER LBRACKET formula RBRACKET'
-  p[0] = p[1] + p[2] + ' for formula ' + p[4]
+def p_formula_forall(p):
+  'formula : FORALL IDENTIFIER LBRACKET formula RBRACKET'
+  p[0] = ForAllNode(p[2], p[4])
+
+def p_formula_forall(p):
+  'formula : THEREEXISTS IDENTIFIER LBRACKET formula RBRACKET'
+  p[0] = ThereExistsNode(p[2], p[4])
 
 # Atomic Formula grammar
 
 def p_atomic_formula_predicate(p):
   'atomicFormula : IDENTIFIER LBRACKET term_list RBRACKET'
-  p[0] = 'Predicate %s with terms %s' % (p[1], p[3])
+  p[0] = PredicateNode(p[1], p[3])
 
 def p_atomic_formula_eq(p):
   'atomicFormula : term EQ term'
-  p[0] = '%s equals %s' % (p[1], p[3])
+  p[0] = BinaryEqualityNode(p[1], p[3])
 
 # Term list grammar
 
 def p_term_list(p):
   'term_list : term COMMA term_list'
-  p[0] = '%s cons %s' % (p[1], p[3])
+  p[0] = ListNode(p[1], p[3].elems.append(p[1]))
 
 def p_term_list_single(p):
   'term_list : term'
@@ -74,15 +78,6 @@ def p_term_constant(p):
 def p_term_variable(p):
   'term : IDENTIFIER'
   p[0] = p[1]
-
-# Quantifier grammer
-def p_quanitifer_forall(p):
-  'quantifier : FORALL'
-  p[0] = 'FORALL %s' % (p[1])
-
-def p_quanitifer_thereexists(p):
-  'quantifier : THEREEXISTS'
-  p[0] = 'THEREEXISTS %s' % (p[1])
 
 # Parsing and error functions
 

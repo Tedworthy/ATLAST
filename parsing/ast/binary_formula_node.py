@@ -1,7 +1,6 @@
 '''
 BinaryFormula Node
-This class implements the AST node of a first order logic formula, in the form
-formula OP formula.
+This class implements an abstract AST node for a binary formula.
 
 Child structure:
   0 = left formula
