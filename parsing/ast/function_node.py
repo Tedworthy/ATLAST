@@ -16,4 +16,4 @@ class FunctionNode(Node):
     _children = terms #TODO refactor
 
   def getTerm(i):
-    return getChild(i)
+    return Node.getChild(i)

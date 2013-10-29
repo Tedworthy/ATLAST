@@ -15,5 +15,5 @@ class UnaryFormulaNode(Node):
     setFormula(formula)
 
   def setFormula(formula):
-    setChild(0, formula)
+    Node.setChild(0, formula)
 

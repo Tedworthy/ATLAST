@@ -13,11 +13,11 @@ class BinaryFormulaNode(Node):
   # Takes two nodes representing the LHS and the RHS of the formula.
   def __init__(self, left, right):
     Node.__init__(self)
-    setChild(0, left)
-    setChild(1, right)
+    Node.setChild(0, left)
+    Node.setChild(1, right)
 
   def getLeft():
-    return getChild(0)
+    return Node.getChild(0)
 
   def getRight():
-    return getChild(1)
+    return Node.getChild(1)
