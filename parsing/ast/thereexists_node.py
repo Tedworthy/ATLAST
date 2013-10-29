@@ -7,4 +7,5 @@ formula or another quantifier node.
 from node import QuantifierNode
 
 class ThereExistsNode(QuantifierNode):
-  pass
+  def __init__(self, formula):
+    QuantifierNode.__init__(self, formula)

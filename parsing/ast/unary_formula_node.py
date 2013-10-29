@@ -9,17 +9,11 @@ Child structure:
 
 from node import Node
 
-class BinaryFormulaNode(Node):
+class UnaryFormulaNode(Node):
   # Takes a node representing the RHS of the formula
   def __init__(self, formula):
-    _children[0] = formula
+    setFormula(formula)
 
-  def getChild():
-    return _children[0]
-
-  def setLeft(left):
-    _children[0] = left
-
-  def setRight(right):
-    _children[1] = right
+  def setFormula(formula):
+    setChild(0, formula)
 
