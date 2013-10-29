@@ -73,11 +73,11 @@ def p_term_function(p):
 
 def p_term_constant(p):
   'term : CONSTANT'
-  p[0] = p[1]
+  p[0] = ConstantNode(p[1])
 
 def p_term_variable(p):
   'term : IDENTIFIER'
-  p[0] = p[1]
+  p[0] = VariableNode(p[1])
 
 # Parsing and error functions
 

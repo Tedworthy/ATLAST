@@ -7,4 +7,5 @@ formula or another quantifier node.
 from node import QuantifierNode
 
 class ForAllNode(QuantifierNode):
-  pass
+  def __init__(self, node):
+    QuantifierNode.__init__(self, node)

@@ -11,4 +11,5 @@ Child structure:
 from node import BinaryFormulaNode
 
 class ImpliesNode(BinaryFormulaNode):
-  pass
+  def __init__(self, left, right):
+    BinaryFormulaNode.__init__(self, left, right)

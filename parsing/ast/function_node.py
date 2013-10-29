@@ -12,7 +12,8 @@ from node import Node
 class FunctionNode(Node):
   # Takes a list of terms.
   def __init__(self, identifier, terms):
-    _children = terms
+    Node.__init__(self)
+    _children = terms #TODO refactor
 
   def getTerm(i):
-    return _children[i]
+    return getChild(i)

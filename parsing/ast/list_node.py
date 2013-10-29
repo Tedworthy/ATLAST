@@ -13,6 +13,7 @@ class FunctionNode(Node):
 
   # Takes a string representing the function identifier, and a list of terms.
   def __init__(self, identifier, terms):
+    Node.__init__(self)
     _identifier = name
     _children = terms
 

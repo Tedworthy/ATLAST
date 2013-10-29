@@ -10,4 +10,5 @@ Child structure:
 from node import UnaryFormulaNode
 
 class NotNode(UnaryFormulaNode):
-  pass
+  def __init__(self, node):
+    UnaryFormulaNode.__init__(self, node)

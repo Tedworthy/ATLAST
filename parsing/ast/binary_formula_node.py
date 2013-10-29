@@ -12,11 +12,12 @@ from node import Node
 class BinaryFormulaNode(Node):
   # Takes two nodes representing the LHS and the RHS of the formula.
   def __init__(self, left, right):
-    _children[0] = left
-    _children[1] = right
+    Node.__init__(self)
+    setChild(0, left)
+    setChild(1, right)
 
   def getLeft():
-    return _children[0]
+    return getChild(0)
 
   def getRight():
-    return _children[1]
+    return getChild(1)
