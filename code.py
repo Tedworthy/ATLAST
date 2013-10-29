@@ -16,7 +16,7 @@ logic_form = web.form.Form(
 class index:
   def GET(self):
     form = logic_form()
-    return render.index(form);
+    return render.index(form)
 
   def POST(self):
     form = logic_form()
@@ -27,7 +27,7 @@ class index:
     # TODO: secure the connection, currently it runs everything as root!
     #translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
-    return logic_to_translate;
+    return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:

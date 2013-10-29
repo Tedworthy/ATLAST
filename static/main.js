@@ -10,7 +10,9 @@ $(document).ready(function() {
       }
     }).done(function(result) {
       /* Handle the result of the translation */
-      $('textarea#sql_result').text(result);
+      response = $.parseJSON(result);
+      $('textarea#sql_result').text(response.sql);
+      $('textarea#query_result').text(response.query);
     });
     return false;
   });
