@@ -12,7 +12,5 @@ from node import Node
 class PredicateNode(Node):
   # Takes a list of terms.
   def __init__(self, identifier, terms):
-    _children = terms
-
-  def getTerm(i):
-    return _children[i]
+    Node.__init__(self)
+    self.setChildren(terms)
