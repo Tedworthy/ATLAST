@@ -2,12 +2,18 @@ $(document).ready(function() {
 
   var keys = {
     "92": { "char": "\\", "formatters": ["and"] },
-    "62": { "char": ">", "formatters": ["implies"] }
-  }
+    "47": { "char": "/", "formatters": ["or"] },
+    "62": { "char": ">", "formatters": ["implies"] },
+    "69": { "char": "E", "formatters": ["there_exists"] },
+    "65": { "char": "A", "formatters": ["forall"] }
+  };
 
   var formatters = {
-    "and": { "regex": /\/\\/g, "result": "\u2227" },
-    "implies": { "regex": /->/g, "result": "\u2192" }
+    "and": { "regex": /\/\\/g, "result": "\u22C0" },
+    "or": { "regex": /\\\//g, "result": "\u22C1" },
+    "implies": { "regex": /->/g, "result": "\u2192" },
+    "there_exists": { "regex": /\\E/g, "result": "\u2203" },
+    "forall": { "regex": /\\A/g, "result": "\u2200" }
   };
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
@@ -41,10 +47,6 @@ $(document).ready(function() {
       });
       $(this).val(logic);
     }
-    //var logic = $(this).val();
-    //if (logic.slice(-1) == "^") {
-    //  $("textarea#sql_result").text("^ FOUND");
-    //}
   });
 
 });
