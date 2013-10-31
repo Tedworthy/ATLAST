@@ -11,6 +11,7 @@ class Node():
   def __init__(self):
     self._children = []
     self._numChildren = 0
+    self._symTable = None
 
   def getChild(self, num):
     if num >= _numChildren:
@@ -29,6 +30,14 @@ class Node():
 
   def check():
     raise NotImplementedError("Node.check not implemented!")
+
+  def setSymbolTable(symbolTable):
+    self._symTable = symbolTable
+
+  def generateSymbolTable(symbolTable):
+    self._symTable = symbolTable;
+    for child in self.getChildren():
+      child.generateSymbolTable(symbolTable)
 
   def __repr__(self):
     return "Class %s with children %s" % (self.__class__, self.getChildren())

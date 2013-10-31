@@ -6,12 +6,15 @@ This class implements the AST node of a first order logic variable.
 from node import Node
 
 class VariableNode(Node):
-  _name = None
+  _identifier = None
 
   # Takes a name for the variable.
-  def __init__(self, name):
+  def __init__(self, identifier):
     Node.__init__(self)
-    _name = name
+    _identifier = identifier
 
-  def getName():
-    return _name
+  def getIdentifier():
+    return _identifier
+
+  def generateSymbolTable(symTable):
+    symTable.addItem(getIdentifier(), self)
