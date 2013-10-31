@@ -17,4 +17,12 @@ class VariableNode(Node):
     return _identifier
 
   def generateSymbolTable(symTable):
-    symTable.addItem(getIdentifier(), self)
+    '''
+      if variable not exists in symtab:
+        add it to top level symtab. unbound.
+      else:
+        do nothing, it's bound somewhere above us anyway
+    '''
+    candidate_node = symTable.lookup(_identifier)
+    if candidate_node is None:
+        symTable.addGlobal(_identifier, self)

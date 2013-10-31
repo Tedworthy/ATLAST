@@ -10,3 +10,4 @@ from or_node import OrNode
 from predicate_node import PredicateNode
 from thereexists_node import ThereExistsNode
 from variable_node import VariableNode
+from n_arity_application_node import NArityApplicationNode
