@@ -8,7 +8,8 @@ Child structure:
   1 = right formula
 '''
 
-from node import BinaryFormulaNode
+from binary_formula_node import BinaryFormulaNode
 
 class AndNode(BinaryFormulaNode):
-  pass
+  def __init__(self, left, right):
+    BinaryFormulaNode.__init__(self, left, right)

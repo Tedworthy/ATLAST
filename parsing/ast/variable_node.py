@@ -10,6 +10,7 @@ class VariableNode(Node):
 
   # Takes a name for the variable.
   def __init__(self, name):
+    Node.__init__(self)
     _name = name
 
   def getName():

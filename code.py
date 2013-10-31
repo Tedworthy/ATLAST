@@ -23,10 +23,11 @@ class index:
     form.validates()
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
-   # translated = query.query(logic_to_translate) TODO secure the connection, 
-   # currently it runs everything as root which is LOLZ 
+    # translated = query.query(logic_to_translate) 
+    # TODO Secure... currently it runs everything as root which is LOLZ 
     web.header('Content-Type', 'text/html')
     return logic_to_translate;
+
 def is_test():
     if 'WEBPY_ENV' is os.environ:
         return os.environ['WEBPY_ENV'] == 'test'

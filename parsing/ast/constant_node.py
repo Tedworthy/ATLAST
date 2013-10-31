@@ -10,6 +10,7 @@ class ConstantNode(Node):
 
   # Takes a value for the constant.
   def __init__(self, value):
+    Node.__init__(self)
     _value = value
 
   def getValue():
