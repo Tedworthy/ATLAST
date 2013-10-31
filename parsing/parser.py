@@ -105,7 +105,7 @@ def p_error(p):
 #parser = yacc.yacc()
 #result = parser.parse(f.read().decode('utf8'))
 
-def dat_parsing(input):
+def parse_input(input):
   parser = yacc.yacc()
   result = parser.parse(input.decode('utf8'))
   return result
