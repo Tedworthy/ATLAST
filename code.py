@@ -2,7 +2,7 @@ import web
 import time
 import os
 import parsing.parser
-from celery import Celery
+import parsing.task
 from dbbackend import query
 
 render = web.template.render('templates/')
