@@ -1,11 +1,11 @@
 import web
+import time
 import os
 import parsing.parser
 from celery import Celery
 from dbbackend import query
 
 render = web.template.render('templates/')
-celery = Celery('code',backend='amqp',broker='amqp://guest@localhost//')
 
 urls = (
   '/', 'index'
@@ -29,8 +29,9 @@ class index:
    # translated = query.query(logic_to_translate) TODO secure the connection, 
    # currently it runs everything as root which is LOLZ i
     web.header('Content-Type','text/html; charset=utf-8', unique=True) 
-    result = parseQ(logic_to_translate)
-    print result.ready()
+    result = parsing.task.add_to_parse_q.delay(logic_to_translate)
+    while not result.ready():
+      time.sleep(0.1)
     return logic_to_translate;
 
 
@@ -42,10 +43,3 @@ app = web.application(urls, globals())
 
 if (not is_test()) and  __name__ == "__main__":
   app.run()
-
-
-
-
-@celery.task
-def parseQ(input):
-	return parsing.parser.dat_parsing(input);
