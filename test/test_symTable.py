@@ -1,6 +1,6 @@
 from paste.fixture import TestApp
 from nose.tools import *
-from codegen import symtable
+from codegen.symtable import SymTable
 
 class TestSymbolTable():
   def test_insertions(self):
