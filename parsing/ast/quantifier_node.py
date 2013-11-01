@@ -4,7 +4,7 @@ A node representing a quantifier followed by a first order logic formula or
 another quantifier node.
 '''
 
-from node import Node
+from node import *
 
 class QuantifierNode(Node):
   def __init__(self, identifier, formula):
@@ -17,7 +17,7 @@ class QuantifierNode(Node):
 
   def generateSymbolTable(self, symTable):
     symTable.addItem(self.getIdentifier(), self)
-    childSymbolTable = SymTable(self._symTable)
+    childSymbolTable = codegen.SymTable(self._symTable)
     for child in self.getChildren():
       child.generateSymbolTable(childSymbolTable)
 

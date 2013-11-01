@@ -89,5 +89,5 @@ def p_error(p):
 
 def parse_input(input):
   parser = yacc.yacc()
-  result = parser.parse(input.encode('ascii','ignore'))
+  result = parser.parse(input)
   return result

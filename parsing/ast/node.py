@@ -4,6 +4,8 @@ This base class is the basic structure for all nodes in the abstract syntax
 tree for our first order logic grammar.
 '''
 
+import codegen
+
 class Node():
 
   def __init__(self):
