@@ -29,7 +29,7 @@ class SymTable:
     if not self.hasParent():
       self.addItem(key, value)
     else:
-      getParent().addGlobal(key, value)
+      self.getParent().addGlobal(key, value)
 
 
   def lookup(self, key):
