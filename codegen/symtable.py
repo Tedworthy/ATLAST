@@ -34,11 +34,9 @@ class SymTable:
   def lookup(key):
     # Check for the key in this symbol table
     value = _data.get(key)
-    if value:
-      return value
-
-    # Check for the key in parent symbol table
-    if hasParent():
-      value = _parent.lookup(key)
+    if !value:
+      # Check for the key in parent symbol table
+      if hasParent():
+        value = _parent.lookup(key)
 
     return value
