@@ -43,3 +43,6 @@ class SymTable:
       value = self._parent.lookup(key)
 
     return value
+
+  def __repr__(self):
+    return ','.join(self._data) if self._data else "Empty" 
