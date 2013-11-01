@@ -13,6 +13,19 @@ class TestSymbolTable():
     table.addItem(1,"Joe")
     assert_equal(table.lookup(1), "Joe")
 
+  def test_retrievals_global(self):
+    assert false
+
+  def test_retrievals_not_exists_global(self):
+    assert false
+
+  def test_default_constructor(self):
+    table = SymTable()
+    assert_equal( table._parent, None)
+ 
+  def test_set_parent_in_constructor(self):
+    table = SymTable(SymTable())
+    assert table._parent is not None
 
   def test_setParent(self):
     table = SymTable()
