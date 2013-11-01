@@ -11,3 +11,13 @@ class TestCode():
     assert_equal(r.status, 200)
     r.mustcontain('Convert to SQL')
 
+  def test_query(self):
+    middleware=[]
+    testApp = TestApp(app.wsgifunc(*middleware))
+    r = testApp.get('/')
+    form = r.forms['logic-form']
+    print(form.id)
+    form['logic'] = 'test'
+    r = form.submit()
+    assert_equal(r.status, 200)
+    r.mustcontain('test')

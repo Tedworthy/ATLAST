@@ -25,6 +25,7 @@ class index:
     logic_to_translate = form.logic.get_value()
    # translated = query.query(logic_to_translate) TODO secure the connection, 
    # currently it runs everything as root which is LOLZ 
+    web.header('Content-Type', 'text/html')
     return logic_to_translate;
 def is_test():
     if 'WEBPY_ENV' is os.environ:
