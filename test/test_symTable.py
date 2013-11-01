@@ -44,14 +44,16 @@ class TestSymbolTable():
 
   def test_addGlobal_at_Global(self):
     table = SymTable()
-    table.addItem(1,"Joe")
+    table.addGlobal(1,"Joe")
     assert_equal(table._data[1], "Joe")
 
 
   def test_addGlobal_at_Local(self):
     table = SymTable()
-    table.addItem(1,"Joe")
+    childTable = symTable(table)
+    child.addGlobal(1,"Joe")
     assert_equal(table._data[1], "Joe")
+    assert 1 not in table._data
 
 
 
