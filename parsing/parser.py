@@ -95,17 +95,17 @@ def p_quanitifer_thereexists(p):
 def p_error(p):
   print "Syntax error %s" % (p)
 
-if len(sys.argv) > 0:
-  input_file = sys.argv[1]
-else:
-  print "Incorrect usage. try python parser.py [file_name]"
-  sys.exit(1)
+#if len(sys.argv) > 0:
+#  input_file = sys.argv[1]
+#else:
+#  print "Incorrect usage. try python parser.py [file_name]"
+#  sys.exit(1)
 
-f = open(input_file, 'r')
-parser = yacc.yacc()
-result = parser.parse(f.read().decode('utf8'))
+#f = open(input_file, 'r')
+#parser = yacc.yacc()
+#result = parser.parse(f.read().decode('utf8'))
 
-def dat_parsing(input):
+def parse_input(input):
   parser = yacc.yacc()
-  result = parser.parse(input.decode('utf8'))
-
+  result = parser.parse(input.encode('ascii','ignore'))
+  return result
