@@ -12,11 +12,11 @@ class QuantifierNode(Node):
     self.setChild(0, formula)
     self._identifier = identifier
 
-  def getIdentifier():
+  def getIdentifier(self):
     return self._identifier
 
-  def generateSymbolTable(symTable):
-    symTable.addItem(getIdentifier(), self)
+  def generateSymbolTable(self, symTable):
+    symTable.addItem(self.getIdentifier(), self)
     childSymbolTable = SymTable(self._symTable)
     for child in self.getChildren():
       child.generateSymbolTable(childSymbolTable)

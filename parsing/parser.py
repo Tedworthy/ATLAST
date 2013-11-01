@@ -87,18 +87,7 @@ def p_term_variable(p):
 def p_error(p):
   print "Syntax error"
 
-#if len(sys.argv) > 0:
-#  input_file = sys.argv[1]
-#else:
-#  print "Incorrect usage. try python parser.py [file_name]"
-#  sys.exit(1)
-
-#f = open(input_file, 'r')
-#parser = yacc.yacc()
-#result = parser.parse(f.read().decode('utf8'))
-
 def parse_input(input):
   parser = yacc.yacc()
   result = parser.parse(input.encode('ascii','ignore'))
   return result
-

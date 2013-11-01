@@ -13,25 +13,25 @@ class SymTable:
   def __init__(self, parent=None):
     _parent = parent
 
-  def getParent():
+  def getParent(self):
     return _parent
 
-  def setParent(parent):
+  def setParent(self, parent):
     _parent = parent
 
-  def addItem(key, value):
+  def addItem(self, key, value):
     _data[key] = value
 
-  def addGlobal(key, value):
+  def addGlobal(self, key, value):
     if not hasParent():
       self.addItem(key, value)
     else:
       getParent().addGlobal(key, value)
 
-  def hasParent():
+  def hasParent(self):
     return (_parent is not None)
 
-  def lookup(key):
+  def lookup(self, key):
     # Check for the key in this symbol table
     value = _data.get(key)
     if !value:

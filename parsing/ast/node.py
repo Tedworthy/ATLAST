@@ -4,8 +4,6 @@ This base class is the basic structure for all nodes in the abstract syntax
 tree for our first order logic grammar.
 '''
 
-from lexer import TokenEnum
-
 class Node():
 
   def __init__(self):
@@ -31,10 +29,10 @@ class Node():
   def check():
     raise NotImplementedError("Node.check not implemented!")
 
-  def setSymbolTable(symbolTable):
+  def setSymbolTable(self, symbolTable):
     self._symTable = symbolTable
 
-  def generateSymbolTable(symbolTable):
+  def generateSymbolTable(self, symbolTable):
     self._symTable = symbolTable;
     for child in self.getChildren():
       child.generateSymbolTable(symbolTable)
