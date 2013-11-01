@@ -14,7 +14,7 @@ class SymTable:
     self._parent = parent
 
   def getParent(self):
-    return _parent
+    return self._parent
 
   def setParent(self, parent):
     self._parent = parent
