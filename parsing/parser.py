@@ -108,3 +108,9 @@ result.generateSymbolTable(symbolTable)
 print symbolTable
 
 print result
+
+def dat_parsing(input):
+  parser = yacc.yacc()
+  result = parser.parse(input.decode('utf8'))
+  print result
+
