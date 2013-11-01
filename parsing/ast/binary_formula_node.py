@@ -1,7 +1,6 @@
 '''
 BinaryFormula Node
-This class implements the AST node of a first order logic formula, in the form
-formula OP formula.
+This class implements an abstract AST node for a binary formula.
 
 Child structure:
   0 = left formula
@@ -11,18 +10,14 @@ Child structure:
 from node import Node
 
 class BinaryFormulaNode(Node):
-  _op = None
-
-  # Takes a token from lexer.TokenEnum (binary logical operator, i.e
-  # AND, OR, IF, IFF and two nodes representing the LHS and the RHS of the
-  # formula.
-  def __init__(self, op, left, right):
-    _op = op
-    _children[0] = left
-    _children[1] = right
+  # Takes two nodes representing the LHS and the RHS of the formula.
+  def __init__(self, left, right):
+    Node.__init__(self)
+    self.setChild(0, left)
+    self.setChild(1, right)
 
   def getLeft():
-    return _children[0]
+    return Node.getChild(0)
 
   def getRight():
-    return _children[1]
+    return Node.getChild(1)

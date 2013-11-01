@@ -1,23 +1,19 @@
 '''
 Function Node
-This class implements the AST node of a first order logic formula.
+This class implements the AST node of a first order logic predicate, in the 
+form predicate(term_list)
 
 Child structure:
   0..n-1 = List of n terms
 '''
 
-from node import Node
+from node import NArityApplicationNode
 
-class FunctionNode(Node):
-  _name = None
-
-  # Takes a string representing the function name, and a list of terms.
-  def __init__(self, name, terms):
-    _name = name
-    _children = terms
+class FunctionNode(NArityApplicationNode):
+  # Takes a list of terms.
+  def __init__(self, identifier, terms):
+    NArityApplicationNode.__init__(self, identifier)
+    _children = terms #TODO refactor
 
   def getTerm(i):
-    return _children[i]
-
-  def getName():
-    return _name
+    return Node.getChild(i)

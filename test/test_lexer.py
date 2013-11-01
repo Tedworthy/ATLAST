@@ -42,6 +42,21 @@ class TestLexer():
     assert not tok
 
   @with_setup(setup_func, teardown_func)
+  def test_true_false(self):
+    lex.input(t_TRUE + ' ' + t_FALSE)
+
+    tok = lex.token()
+    assert_equal(tok.value, t_TRUE)
+    assert_equal(tok.type, TokenEnum().TRUE)
+
+    tok = lex.token()
+    assert_equal(tok.value, t_FALSE)
+    assert_equal(tok.type, TokenEnum().FALSE)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
   def test_predicate(self):
     lex.input('p(x)')
     tok = lex.token()
@@ -110,6 +125,120 @@ class TestLexer():
     assert_equal(tok.value, t_OR)
     assert_equal(tok.type, TokenEnum().OR)
 
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_implies(self):
+    lex.input(t_IMPLIES)
+    tok = lex.token()
+    assert_equal(tok.value, t_IMPLIES)
+    assert_equal(tok.type, TokenEnum().IMPLIES)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_implies(self):
+    lex.input(t_IFF)
+    tok = lex.token()
+    assert_equal(tok.value, t_IFF)
+    assert_equal(tok.type, TokenEnum().IFF)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_greater_and_equal_to(self):
+    lex.input(t_GT + t_GTE)
+    tok = lex.token()
+    assert_equal(tok.value, t_GT)
+    assert_equal(tok.type, TokenEnum().GT)
+
+    tok = lex.token()
+    assert_equal(tok.value, t_GTE)
+    assert_equal(tok.type, TokenEnum().GTE)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_less_and_equal_to(self):
+    lex.input(t_LT + t_LTE)
+    tok = lex.token()
+    assert_equal(tok.value, t_LT)
+    assert_equal(tok.type, TokenEnum().LT)
+
+    tok = lex.token()
+    assert_equal(tok.value, t_LTE)
+    assert_equal(tok.type, TokenEnum().LTE)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_eq(self):
+    lex.input(t_EQ)
+    tok = lex.token()
+    assert_equal(tok.value, t_EQ)
+    assert_equal(tok.type, TokenEnum().EQ)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_constant(self):
+    lex.input('X')
+    tok = lex.token()
+    assert_equal(tok.value, 'X')
+    assert_equal(tok.type, TokenEnum().CONSTANT)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_constant(self):
+    lex.input(t_NOT)
+    tok = lex.token()
+    assert_equal(tok.value, t_NOT)
+    assert_equal(tok.type, TokenEnum().NOT)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_identifier_characters(self):
+    lex.input('var')
+    tok = lex.token()
+    assert_equal(tok.value, 'var')
+    assert_equal(tok.type, TokenEnum().IDENTIFIER)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_identifier_mixed(self):
+    lex.input('var10noise')
+    tok = lex.token()
+    assert_equal(tok.value, 'var10noise')
+    assert_equal(tok.type, TokenEnum().IDENTIFIER)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_identifier_stringlit(self):
+    lex.input('\'stringliteral\'')
+    tok = lex.token()
+    assert_equal(tok.value, 'stringliteral')
+    assert_equal(tok.type, TokenEnum().STRINGLIT)
+
+    tok = lex.token()
+    assert not tok
+
+  @with_setup(setup_func, teardown_func)
+  def test_identifier_ignore(self):
+    lex.input('              ')
     tok = lex.token()
     assert not tok
 
