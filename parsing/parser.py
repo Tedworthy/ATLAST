@@ -101,4 +101,10 @@ f = open(input_file, 'r')
 
 parser = yacc.yacc()
 result = parser.parse(f.read().decode('utf8'))
+
+symbolTable = codegen.SymTable()
+result.generateSymbolTable(symbolTable)
+
+print symbolTable
+
 print result
