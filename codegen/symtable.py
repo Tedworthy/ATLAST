@@ -22,6 +22,12 @@ class SymTable:
   def addItem(key, value):
     _data[key] = value
 
+  def addGlobal(key, value):
+    if not hasParent():
+      self.addItem(key, value)
+    else:
+      getParent().addGlobal(key, value)
+
   def hasParent():
     return (_parent is not None)
 
