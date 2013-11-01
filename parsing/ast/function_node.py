@@ -7,7 +7,7 @@ Child structure:
   0..n-1 = List of n terms
 '''
 
-from node import NArityApplicationNode
+from n_arity_application_node import NArityApplicationNode
 
 class FunctionNode(NArityApplicationNode):
   # Takes a list of terms.
