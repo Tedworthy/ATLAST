@@ -1,1 +1,0 @@
-from symtable import SymTable

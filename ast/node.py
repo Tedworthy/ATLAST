@@ -4,7 +4,7 @@ This base class is the basic structure for all nodes in the abstract syntax
 tree for our first order logic grammar.
 '''
 
-import codegen
+from codegen.symtable import SymTable
 
 class Node():
 
@@ -35,9 +35,12 @@ class Node():
     self._symTable = symbolTable
 
   def generateSymbolTable(self, symbolTable):
-    self._symTable = symbolTable;
+    self._symTable = symbolTable
     for child in self.getChildren():
       child.generateSymbolTable(symbolTable)
+
+  def accept(self, visitor):
+    visitor.visit(self)
 
   def __repr__(self):
     return "Class %s with children %s" % (self.__class__, self.getChildren())

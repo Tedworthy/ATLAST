@@ -1,5 +1,6 @@
 import parsing
-import codegen
+from codegen.symtable import SymTable
+from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 import sys
 
 if len(sys.argv) > 0:
@@ -10,11 +11,12 @@ else:
 
 f = open(input_file, 'r')
 result = parsing.parse_input(f.read().decode('utf8'))
-symbolTable = codegen.SymTable()
+symbolTable = SymTable()
+astVisitor = GenericLogicASTVisitor()
 
 # Testing symbol table
-
 result.generateSymbolTable(symbolTable)
 print symbolTable
 
 # Testing visitor
+astVisitor.visit(result)

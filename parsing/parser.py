@@ -3,7 +3,6 @@ import sys
 import os
 from lexer import *
 import ast
-import codegen
 
 precedence = (
   ('left', 'IFF'),
