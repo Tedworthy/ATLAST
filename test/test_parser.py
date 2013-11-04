@@ -18,7 +18,7 @@ class TestParser():
     table = SymTable()
     syntax_tree = parsing.parse_input(input)
     syntax_tree.generateSymbolTable(table)
-    print table._data
+    print table._data['x']
     assert False
     
     

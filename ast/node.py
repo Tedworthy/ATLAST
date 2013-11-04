@@ -43,4 +43,4 @@ class Node():
     visitor.visit(self)
 
   def __repr__(self):
-    return "Class %s with children %s" % (self.__class__, self.getChildren())
+    return "Class %s -> %s" % (self.__class__, self.getChildren())
