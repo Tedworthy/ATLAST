@@ -7,8 +7,6 @@ If parent is None, then this is the top level symbol table.
 '''
 
 class SymTable:
-  _parent = None
-  _data = {}
 
   def __init__(self, parent=None):
     self._parent = parent
