@@ -10,7 +10,7 @@ import sys
 class TestParser():
   def test_io(self):
     f = open( 'test/input_file.txt', 'r')
-    assert_equals(f.read(), '∀x(p(x) ∧ q(x))')
+    assert_equals(f.read(), '∀x(p(x) ∧ q(x))\n')
 
 
 
