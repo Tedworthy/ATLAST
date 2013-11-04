@@ -27,7 +27,9 @@ class index:
     # TODO: secure the connection, currently it runs everything as root!
     #translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
-    return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
+    query_result = query.query("SELECT * FROM casting WHERE part = 'Jason Bourne'")
+    response = {'sql': logic_to_translate, 'query': query_result}
+    return json.dumps(response)
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:
