@@ -20,3 +20,5 @@ print symbolTable
 
 # Testing visitor
 astVisitor.visit(result)
+#result.accept(astVisitor)
+
