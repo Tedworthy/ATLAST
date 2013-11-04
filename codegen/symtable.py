@@ -7,11 +7,10 @@ If parent is None, then this is the top level symbol table.
 '''
 
 class SymTable:
-  _parent = None
-  _data = {}
 
   def __init__(self, parent=None):
     self._parent = parent
+    self._data = {}
 
   def getParent(self):
     return self._parent
@@ -24,23 +23,21 @@ class SymTable:
 
   def hasParent(self):
     return (self._parent is not None)
-
+#this method is broken, currently it seems to add to both the local and the global level
   def addGlobal(self, key, value):
     if not self.hasParent():
       self.addItem(key, value)
     else:
-      getParent().addGlobal(key, value)
+      self.getParent().addGlobal(key, value)
 
 
   def lookup(self, key):
     # Check for the key in this symbol table
     value = self._data.get(key)
-    if value:
-      return value
-
-    # Check for the key in parent symbol table
-    if self.hasParent():
-      value = self._parent.lookup(key)
+    if value is None:
+      # Check for the key in parent symbol table
+      if self.hasParent():
+        value = self._parent.lookup(key)
 
     return value
 

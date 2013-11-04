@@ -1,7 +1,6 @@
 from paste.fixture import TestApp
 from nose.tools import *
 from code import app
-from parsing.lexer import *
 
 class TestCode():
   def test_index(self):
