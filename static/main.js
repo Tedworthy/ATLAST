@@ -48,5 +48,12 @@ $(document).ready(function() {
       $(this).val(logic);
     }
   });
+  
+  $(function () {
+    $('#and_button').on('click', function () {
+        var logic_text = $('#logic');
+        logic_text.val(logic_text.val() + " \u22C0 ");    
+    });
+});
 
 });

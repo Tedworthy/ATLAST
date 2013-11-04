@@ -37,11 +37,12 @@ $def with (form)
       </header>
 
       <section id="logic_section">
-        <form name="convert_to_sql" action="#" method="post">
+        <form name="convert_to_sql" action="#" method="post">        
           <input type="hidden" name="action" value="sql">
           $:form.logic.render()
 
           <button type="submit" id="convert_button">Convert to SQL</button>
+          <input type="button" value="Insert AND symbol" id="and_button" />
         </form>
       </section>
 
