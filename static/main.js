@@ -64,6 +64,19 @@ $(document).ready(function() {
   $("#or_button").click(function() {
     $("#logic").insertAtCaret(unicode_chars.or);
   });
+  
+  $("#implies_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.implies);
+  });
+  
+  $("#there_exists_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.there_exists);
+  });
+  
+  $("#forall_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.forall);
+  });
+  
 
   $.fn.extend({
     insertAtCaret: function(text) {
