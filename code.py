@@ -29,6 +29,9 @@ class index:
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
     query_result = query.query("SELECT * FROM casting WHERE part = 'Jason Bourne'")
     response = {'sql': logic_to_translate, 'query': query_result}
+    
+    print json.dumps(response)  
+    
     return json.dumps(response)
 
 def is_test():

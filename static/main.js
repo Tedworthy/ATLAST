@@ -35,8 +35,33 @@ $(document).ready(function() {
     }).done(function(result) {
       /* Handle the result of the translation */
       var response = $.parseJSON(result);
+      
       $("textarea#sql_result").text(response.sql);
-      $("textarea#query_result").text(response.query);
+      //$("textarea#query_result").text(response.query);
+      $("textarea#query_result").text();
+      
+      
+      // http://stackoverflow.com/questions/733314/jquery-loop-over-json-result-from-ajax-success
+      var p = response.query[0];
+      
+      var q_result = JSON.stringify(p) + "\n";
+
+      $.each(response.query[0], function(k, v) {
+        q_result = q_result + " " + k;
+      });
+ 
+      q_result = q_result + "\n";
+      
+      $.each(response.query, function() {
+        $.each(this, function(k, v) {
+          q_result = q_result + " " + v;
+        });
+        
+        q_result = q_result + "\n";
+      });
+      
+      $("textarea#query_result").text(q_result);
+    
     });
     return false;
   });
