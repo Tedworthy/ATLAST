@@ -41,6 +41,8 @@ class Node():
 
   def accept(self, visitor):
     visitor.visit(self)
+    for child in self.getChildren():
+      child.accept(visitor)
 
   def __repr__(self):
     return "Class %s with children %s" % (self.__class__, self.getChildren())

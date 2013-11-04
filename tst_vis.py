@@ -19,5 +19,5 @@ result.generateSymbolTable(symbolTable)
 print symbolTable
 
 # Testing visitor
-astVisitor.visit(result)
-#result.accept(astVisitor)
+#astVisitor.visit(result)
+result.accept(astVisitor)
