@@ -1,5 +1,13 @@
 $(document).ready(function() {
 
+  var unicode_chars = {
+    "and": "\u22C0",
+    "or": "\u22C1",
+    "implies": "\u2192",
+    "there_exists": "\u2203",
+    "forall": "\u2200"
+  }
+
   var keys = {
     "92": { "char": "\\", "formatters": ["and"] },
     "47": { "char": "/", "formatters": ["or"] },
@@ -9,11 +17,11 @@ $(document).ready(function() {
   };
 
   var formatters = {
-    "and": { "regex": /\/\\/g, "result": "\u22C0" },
-    "or": { "regex": /\\\//g, "result": "\u22C1" },
-    "implies": { "regex": /->/g, "result": "\u2192" },
-    "there_exists": { "regex": /\\E/g, "result": "\u2203" },
-    "forall": { "regex": /\\A/g, "result": "\u2200" }
+    "and": { "regex": /\/\\/g, "result": unicode_chars.and },
+    "or": { "regex": /\\\//g, "result": unicode_chars.or },
+    "implies": { "regex": /->/g, "result": unicode_chars.implies },
+    "there_exists": { "regex": /\\E/g, "result": unicode_chars.there_exists },
+    "forall": { "regex": /\\A/g, "result": unicode_chars.forall }
   };
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
@@ -48,78 +56,41 @@ $(document).ready(function() {
       $(this).val(logic);
     }
   });
-  
-  $(function () {
-    $('#and_button').on('click', function () {
-        $('#logic').insertAtCaret(' \u22C0 ');
-    });
+
+  $("#and_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.and);
   });
 
-//http://stackoverflow.com/questions/1064089/inserting-a-text-where-cursor-is-using-javascript-jquery
+  $("#or_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.or);
+  });
 
- $.fn.extend({
-  insertAtCaret: function(myValue){
-  var obj;
-  if( typeof this[0].name !='undefined' ) obj = this[0];
-  else obj = this;
-console.log();
-  if ($.browser.msie) {
-    obj.focus();
-    sel = document.selection.createRange();
-    sel.text = myValue;
-    obj.focus();
+  $.fn.extend({
+    insertAtCaret: function(text) {
+      return this.each(function(i) {
+        if (document.selection) {
+          // For browsers like Internet Explorer
+          this.focus();
+          var sel = document.selection.createRange();
+          sel.text = text;
+          this.focus();
+        } else if (this.selectionStart || this.selectionStart == '0') {
+          // For browsers like Firefox and Webkit based
+          var startPos = this.selectionStart;
+          var endPos = this.selectionEnd;
+          var scrollTop = this.scrollTop;
+          this.value = this.value.substring(0, startPos) + text +
+            this.value.substring(endPos, this.value.length);
+          this.focus();
+          this.selectionStart = startPos + text.length;
+          this.selectionEnd = startPos + text.length;
+          this.scrollTop = scrollTop;
+        } else {
+          this.value += text;
+          this.focus();
+        }
+      });
     }
-  else if ($.browser.mozilla || $.browser.webkit) {
-    var startPos = obj.selectionStart;
-    var endPos = obj.selectionEnd;
-    var scrollTop = obj.scrollTop;
-    obj.value = obj.value.substring(0, startPos)+myValue+obj.value.substring(endPos,obj.value.length);
-    obj.focus();
-    obj.selectionStart = startPos + myValue.length;
-    obj.selectionEnd = startPos + myValue.length;
-    obj.scrollTop = scrollTop;
-  } else {
-    obj.value += myValue;
-    obj.focus();
-   }
- }
-})
-
-// http://stackoverflow.com/questions/14798403/typeerror-browser-is-undefined
-var matched, browser;
-
-jQuery.uaMatch = function( ua ) {
-    ua = ua.toLowerCase();
-
-    var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
-        /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
-        /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
-        /(msie) ([\w.]+)/.exec( ua ) ||
-        ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
-        [];
-
-    return {
-        browser: match[ 1 ] || "",
-        version: match[ 2 ] || "0"
-    };
-};
-
-matched = jQuery.uaMatch( navigator.userAgent );
-browser = {};
-
-if ( matched.browser ) {
-    browser[ matched.browser ] = true;
-    browser.version = matched.version;
-}
-
-// Chrome is Webkit, but Webkit is also Safari.
-if ( browser.chrome ) {
-    browser.webkit = true;
-} else if ( browser.webkit ) {
-    browser.safari = true;
-}
-
-jQuery.browser = browser;
-
+  });
 
 });
