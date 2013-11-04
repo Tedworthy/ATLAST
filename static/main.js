@@ -43,7 +43,11 @@ $(document).ready(function() {
 
   $("textarea#logic").keypress(function(event) {
     console.log("Key down:" + event.keyCode);
-    var key = keys[event.keyCode.toString()];
+    
+    // Firefox / Chrome compatibility
+    var k = (typeof event.which === "number") ? event.which : event.keyCode;
+    
+    var key = keys[k.toString()];
     if (key !== undefined) {
       event.preventDefault();
       var matching_formatters = key.formatters.map(function(name) {
