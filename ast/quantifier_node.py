@@ -16,8 +16,19 @@ class QuantifierNode(Node):
     return self._identifier
 
   def generateSymbolTable(self, symTable):
+    print "Adding " + self.getIdentifier() + " to Current Table"
     symTable.addItem(self.getIdentifier(), self)
     childSymbolTable = SymTable(self._symTable)
+    print "Child table has parent: " 
+    print childSymbolTable.hasParent()
+    #### DEBUG ###
+    print "Current table: " 
+    print symTable
+    print "Child table: " 
+    print childSymbolTable
+    #### DEBUG ###
+    
     for child in self.getChildren():
       child.generateSymbolTable(childSymbolTable)
+
 
