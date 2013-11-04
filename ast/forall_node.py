@@ -9,5 +9,4 @@ from quantifier_node import QuantifierNode
 class ForAllNode(QuantifierNode):
 
   def __init__(self, identifier, formula):
-    print 'Initialising'
     QuantifierNode.__init__(self, identifier, formula)

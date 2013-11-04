@@ -21,10 +21,6 @@ class VariableNode(Node):
       else:
         do nothing, it's bound somewhere above us anyway
     '''
-    print "Searching for : " + self.getIdentifier()
     candidate_node = symTable.lookup(self.getIdentifier())
     if candidate_node is None:
-        print "Adding " + self.getIdentifier() +  " to Global Table"
         symTable.addGlobal(self._identifier, self)
-        print "Table: "
-        print symTable

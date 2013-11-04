@@ -14,9 +14,7 @@ class NArityApplicationNode(Node):
     self._identifier = identifier
 
   def generateSymbolTable(self, symtable):
-    print "Generating entry for: " + self._identifier
     lookup_result = symtable.lookup(self._identifier)
-#    print "Result from lookup: " + lookup_result
     if lookup_result is None:
       symtable.addGlobal(self._identifier, self)
 
