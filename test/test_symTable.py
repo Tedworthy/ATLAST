@@ -53,7 +53,7 @@ class TestSymbolTable():
     childTable = SymTable(table)
     childTable.addGlobal(1,"Joe")
     assert_equal(table._data[1], "Joe")
-    assertNotEqual(childTable._data[1], "Joe")
+    assert("Joe" not in childTable._data.values())
 
 
 
