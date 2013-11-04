@@ -41,6 +41,7 @@ $(document).ready(function() {
     return false;
   });
 
+  // Convert characters to correct symbols
   $("textarea#logic").keypress(function(event) {
     console.log("Key down:" + event.keyCode);
     
@@ -61,6 +62,7 @@ $(document).ready(function() {
     }
   });
 
+  // Buttons insert correct symbols
   $("#and_button").click(function() {
     $("#logic").insertAtCaret(unicode_chars.and);
   });
@@ -81,7 +83,7 @@ $(document).ready(function() {
     $("#logic").insertAtCaret(unicode_chars.forall);
   });
   
-
+  // Insert symbols at cursor position
   $.fn.extend({
     insertAtCaret: function(text) {
       return this.each(function(i) {
