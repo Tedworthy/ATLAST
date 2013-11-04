@@ -51,9 +51,75 @@ $(document).ready(function() {
   
   $(function () {
     $('#and_button').on('click', function () {
-        var logic_text = $('#logic');
-        logic_text.val(logic_text.val() + " \u22C0 ");    
+        $('#logic').insertAtCaret(' \u22C0 ');
     });
-});
+  });
+
+//http://stackoverflow.com/questions/1064089/inserting-a-text-where-cursor-is-using-javascript-jquery
+
+ $.fn.extend({
+  insertAtCaret: function(myValue){
+  var obj;
+  if( typeof this[0].name !='undefined' ) obj = this[0];
+  else obj = this;
+console.log();
+  if ($.browser.msie) {
+    obj.focus();
+    sel = document.selection.createRange();
+    sel.text = myValue;
+    obj.focus();
+    }
+  else if ($.browser.mozilla || $.browser.webkit) {
+    var startPos = obj.selectionStart;
+    var endPos = obj.selectionEnd;
+    var scrollTop = obj.scrollTop;
+    obj.value = obj.value.substring(0, startPos)+myValue+obj.value.substring(endPos,obj.value.length);
+    obj.focus();
+    obj.selectionStart = startPos + myValue.length;
+    obj.selectionEnd = startPos + myValue.length;
+    obj.scrollTop = scrollTop;
+  } else {
+    obj.value += myValue;
+    obj.focus();
+   }
+ }
+})
+
+// http://stackoverflow.com/questions/14798403/typeerror-browser-is-undefined
+var matched, browser;
+
+jQuery.uaMatch = function( ua ) {
+    ua = ua.toLowerCase();
+
+    var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+        /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+        /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+        /(msie) ([\w.]+)/.exec( ua ) ||
+        ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+        [];
+
+    return {
+        browser: match[ 1 ] || "",
+        version: match[ 2 ] || "0"
+    };
+};
+
+matched = jQuery.uaMatch( navigator.userAgent );
+browser = {};
+
+if ( matched.browser ) {
+    browser[ matched.browser ] = true;
+    browser.version = matched.version;
+}
+
+// Chrome is Webkit, but Webkit is also Safari.
+if ( browser.chrome ) {
+    browser.webkit = true;
+} else if ( browser.webkit ) {
+    browser.safari = true;
+}
+
+jQuery.browser = browser;
+
 
 });
