@@ -26,6 +26,7 @@ class TestSymbolTable():
   def test_default_constructor(self):
     table = SymTable()
     assert_equal( table._parent, None)
+    assert_equal( table._data, {})
  
   def test_set_parent_in_constructor(self):
     table = SymTable(SymTable())
