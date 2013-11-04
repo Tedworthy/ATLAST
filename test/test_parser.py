@@ -1,3 +1,4 @@
+ # coding=utf-8
 import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
