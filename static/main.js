@@ -45,23 +45,28 @@ $(document).ready(function() {
       var p = response.query[0];
       
       var q_result = JSON.stringify(p) + "\n";
-
-      $.each(response.query[0], function(k, v) {
-        q_result = q_result + " " + k;
-      });
- 
-      q_result = q_result + "\n";
+      $("textarea#query_result").text(q_result);
+   
+      var table='<table border="1" align="center"> <tr>';
       
+      $.each(p, function(k, v) {
+        table += '<th>' + k + '</th>';
+      });
+      table += '</tr>';
+      
+      /* loop over each object in the array to create rows*/
       $.each(response.query, function() {
+      table += '<tr>'
         $.each(this, function(k, v) {
-          q_result = q_result + " " + v;
+          table += ('<td>' + v + '</td>');
         });
         
-        q_result = q_result + "\n";
+        table += '</tr>'
       });
       
-      $("textarea#query_result").text(q_result);
-    
+      /* insert the html string*/
+      $("#results_table").html(table);	
+      
     });
     return false;
   });
