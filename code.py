@@ -27,8 +27,9 @@ class index:
     # TODO: secure the connection, currently it runs everything as root!
     #translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
-    query_result = query.query("SELECT * FROM casting WHERE part = 'Jason Bourne'")
-    response = {'sql': logic_to_translate, 'query': query_result}
+    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'";
+    query_result = query.query(sql)
+    response = {'sql': sql, 'query': query_result}
     
     print json.dumps(response)  
     
