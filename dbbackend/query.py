@@ -12,15 +12,15 @@ def query(text):
                            user='link', password='triforce')
     cur = con.cursor()
     cur.execute(text)
-    query = cur.fetchall()
+    result = cur.fetchall()
 
 
   except psycopg2.DatabaseError, e:
-   query = 'ERROR %s' % e
+   result = 'ERROR %s' % e
     
   finally:
 
     if con:
       con.close()
-      return query
+      return result
 

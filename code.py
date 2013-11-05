@@ -1,5 +1,9 @@
 import web
+import time
 import os
+import parsing.parser
+import parsing.task
+import json
 from dbbackend import query
 
 render = web.template.render('templates/')
@@ -15,7 +19,7 @@ logic_form = web.form.Form(
 class index:
   def GET(self):
     form = logic_form()
-    return render.index(form);
+    return render.index(form)
 
   def POST(self):
     form = logic_form()
@@ -23,16 +27,20 @@ class index:
     form.validates()
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
-   # translated = query.query(logic_to_translate) TODO secure the connection, 
-   # currently it runs everything as root which is LOLZ 
-    web.header('Content-Type', 'text/html')
-    return logic_to_translate;
+    # translated = query.query(logic_to_translate) TODO secure the connection
+    # currently it runs everything as root which is LOLZ 
+    web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+    result = parsing.task.add_to_parse_q.delay(logic_to_translate)
+    while not result.ready():
+      time.sleep(0.1)
+    return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
+
+
 def is_test():
-    if 'WEBPY_ENV' is os.environ:
-        return os.environ['WEBPY_ENV'] == 'test'
+  if 'WEBPY_ENV' is os.environ:
+      return os.environ['WEBPY_ENV'] == 'test'
 
 app = web.application(urls, globals())
 
 if (not is_test()) and  __name__ == "__main__":
   app.run()
-

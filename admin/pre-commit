@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+#Pre-push hook that rejects master commits
+#Requires git > 1.8.2
+
+class PushRejecter
+  def run
+    if committing_to?(:master)
+      reject
+    else
+      allow
+    end
+  end
+
+  def committing_to?(branch)
+    `git branch | grep "*" | sed "s/* //"`.match(branch.to_s)
+  end
+
+  def reject
+    puts("                                 .--.")
+    puts("                                 ,' |")
+    puts("                                 '  |")
+    puts("                               ,'    \\")
+    puts("  __   __                     .'      |")
+    puts("  \\ \\ / /__ _  _              '       |")
+    puts("   \\ V / _ \\ || |            |        |              -.")
+    puts("    |_|\\___/\\_,_|         ___'        |             / |--")
+    puts("                     _,,-'            '--'''--._    | || |.-'\\")
+    puts("                    /        ..._______         `:. |       ,'")
+    puts("                   | _,.,---'|         `.`^`--..   '.      /")
+    puts(" ___ _         _ _ `'      | | <o>   <o> | |    ``''`     /")
+    puts("/ __| |_  __ _| | |      .' ,;      \\    |  \\      |     /")
+    puts("\\__ \\ ' \\/ _` | | |     /    \\    (__)   /   `.    |    |")
+    puts("|___/_||_\\__,_|_|_|  ,-'      | ________       \\   ;    |")
+    puts("                    |         )/ _.--.__ \\     /  /    /")
+    puts("                     `-._   ,./_/ `--'  \\_\\   /   |__ /")
+    puts("    _  _     _           '.'|              | '  ,'   `")
+    puts("   | \\| |___| |_            |              |    (      \\")
+    puts("   | .` / _ \\  _|            |             |    (       \\")
+    puts("   |_|\\_\\___/\\__|             \\            |    '`.._   /")
+    puts("                              |            |    /  / `./")
+    puts("                              \\           /    |   |")
+    puts("                              `|        |     |  /")
+    puts("                                |       /      /  |")
+    puts("                         _      \\   _.-`      |  /")
+    puts("                        (_)_     \\./          |  |")
+    puts("   ____ ___  ____  ____  _| |_                 /  /")
+    puts("  / ___) _ \\|    \\|    \\| |  _)                |   |")
+    puts(" ( (__| |_| | | | | | | | | |__                /  /")
+    puts("  \\____)___/|_|_|_|_|_|_|_|\\___|             /   |")
+    puts("                                            |  |")
+    puts("                                           /   /")
+    puts("                                           |  .'")
+    puts("                                           |  |")
+    puts("                                          |  .'")
+    puts("                                          '  |")
+    puts("                                          | |")
+    puts("                                         /  /")
+    puts("                                        |_,'")
+    exit(1)
+  end
+
+  def allow
+    exit(0)
+  end
+end
+
+PushRejecter.new.run
