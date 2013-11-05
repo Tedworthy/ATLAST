@@ -27,7 +27,7 @@ class index:
     # TODO: secure the connection, currently it runs everything as root!
     #translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
-    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'";
+    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; #example query
     query_result = query.query(sql)
     response = {'sql': sql, 'query': query_result}
     
