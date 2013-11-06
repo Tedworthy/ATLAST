@@ -40,9 +40,9 @@ class Node():
       child.generateSymbolTable(symbolTable)
 
   def accept(self, visitor):
-    visitor.visit(self)
     for child in self.getChildren():
       child.accept(visitor)
+    visitor.visit(self)
 
   def __repr__(self):
     return "Class %s -> %s" % (self.__class__, self.getChildren())

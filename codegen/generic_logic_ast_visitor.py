@@ -6,11 +6,14 @@ generic intermediate representation for code generation.
 
 import visit as v
 import ast
+from sqlir import SQLIR
 
 class GenericLogicASTVisitor():
 
   def __init__(self):
     # Instance variables go here, if necessary
+    self._IR = SQLIR()
+    self._stack = []
     pass
 
   @v.on('node')
@@ -44,6 +47,8 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.PredicateNode)
   def visit(self, node):
+    while len(self._stack) > 0:
+      print self._stack.pop()['node']
     print "Seen PredicateNode"
 
   @v.when(ast.BinaryEqualityNode)
@@ -56,9 +61,16 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.ConstantNode)
   def visit(self, node):
+    state = {'type' : 'variable', 'node' : node}
+    self._stack.append(state)
     print "Seen ConstantNode"
 
   @v.when(ast.VariableNode)
   def visit(self, node):
+    if node.isFree():
+      self._IR.addSelectNode(node)  
+      print 'Free variable ' , node , ' found'
+    state = {'type' : 'variable', 'node' : node}
+    self._stack.append(state)
     print "Seen VariableNode"
 

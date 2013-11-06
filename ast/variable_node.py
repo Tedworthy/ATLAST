@@ -25,3 +25,7 @@ class VariableNode(Node):
     candidate_node = symTable.lookup(self.getIdentifier())
     if candidate_node is None:
         symTable.addGlobal(self._identifier, self)
+
+  def isFree(self):
+    val = self._symTable.lookup(self.getIdentifier())
+    return val._symTable.hasParent()
