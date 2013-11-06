@@ -25,11 +25,16 @@ class index:
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
     # TODO: secure the connection, currently it runs everything as root!
-    #translated = query.query(logic_to_translate)
+    # translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
+    
+    # sql = parsed (logic)
+    
     sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; #example query
     query_result = query.query(sql)
-    response = {'sql': sql, 'query': query_result}
+    
+    error = 'ok' # ok = everything worked, otherwise write in the error here
+    response = {'error': error, 'sql': sql, 'query': query_result}
     
     print json.dumps(response)  
     

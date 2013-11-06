@@ -35,26 +35,25 @@ $(document).ready(function() {
     }).done(function(result) {
       /* Handle the result of the translation */
       var response = $.parseJSON(result);
+
+      // Print out SQL query produced and the returned JSON object
+      if(response.error === 'ok') {
+        $("textarea#sql_result").text(response.sql);
+      } else {
+        $("textarea#sql_result").text("Failed to convert query into SQL");
+      }
       
-      $("textarea#sql_result").text(response.sql);
-      //$("textarea#query_result").text(response.query);
-      $("textarea#query_result").text();
+      $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
       
-      
-      // http://stackoverflow.com/questions/733314/jquery-loop-over-json-result-from-ajax-success
-      var p = response.query[0];
-      
-      var q_result = JSON.stringify(p) + "\n";
-      $("textarea#query_result").text(q_result);
-   
+      // Print rows from result of running query on database
       var table='<table border="1" align="center"> <tr>';
-      
-      $.each(p, function(k, v) {
+      var first_row = response.query[0];
+      $.each(first_row, function(k, v) {
         table += '<th>' + k + '</th>';
       });
       table += '</tr>';
       
-      /* loop over each object in the array to create rows*/
+      // loop over each object in the array to create rows
       $.each(response.query, function() {
       table += '<tr>'
         $.each(this, function(k, v) {
@@ -64,7 +63,7 @@ $(document).ready(function() {
         table += '</tr>'
       });
       
-      /* insert the html string*/
+      // Add the resulting table to the page
       $("#results_table").html(table);	
       
     });
