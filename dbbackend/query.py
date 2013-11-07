@@ -9,8 +9,12 @@ def db():
 
 def query(query):
     cur = db().cursor()
-    cur.execute(query)
-    r = [dict((cur.description[i][0], value) \
+    try:
+      cur.execute(query)
+      r = [dict((cur.description[i][0], value) \
               for i, value in enumerate(row)) for row in cur.fetchall()]
-    cur.connection.close()
+    except Exception, e:
+      cur.connection.close()
+      raise e
+    
     return r

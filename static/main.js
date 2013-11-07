@@ -40,11 +40,12 @@ $(document).ready(function() {
       if(response.error === 'ok') {
         $("textarea#sql_result").text(response.sql);
       } else {
-        $("textarea#sql_result").text("Failed to convert query into SQL");
+        $("textarea#sql_result").text(response.error);
       }
       
       $("textarea#query_result").text(JSON.stringify(response) + "\n");
       
+      // If the query result has no rows
       if(response.query.length == 0) {
         $("#results_table").html("Query returned no results");
       }

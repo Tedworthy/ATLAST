@@ -28,14 +28,18 @@ class index:
     # translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
     
-    # sql = parsed (logic)
+     # ok = everything worked, otherwise write in the error here
+    sql = "SELECT * FROM casting WHERE pqrt = 'Jason Bourne'"; #example query
     
-    sql = "SELECT * FROM casting WHERE part = 'Bourne'"; #example query
-    query_result = query.query(sql)
-    
-    error = 'ok' # ok = everything worked, otherwise write in the error here
+    try:
+      query_result = query.query(sql)
+      error = 'ok'
+    except Exception, e:
+      error = str(e)
+      query_result = {}
+      
     response = {'error': error, 'sql': sql, 'query': query_result}
-    
+    print query_result
     print json.dumps(response)  
     
     return json.dumps(response)
