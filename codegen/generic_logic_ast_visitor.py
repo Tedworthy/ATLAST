@@ -64,7 +64,11 @@ class GenericLogicASTVisitor():
     while len(self._stack) > 0:
       i += 1
       child = self._stack.pop()
-      print "(" + child['node'].getIdentifier() + ", " + keys[-1 * i] + ")"
+      if child['type'] == 'variable':
+        print "(" + child['node'].getIdentifier() + ", " + keys[-i] + ")"
+        print child['node'].bindTo(keys[-i])
+      else:
+        print 'ConstantNode'
 
   @v.when(ast.BinaryEqualityNode)
   def visit(self, node):

@@ -10,6 +10,7 @@ class VariableNode(Node):
   def __init__(self, identifier):
     Node.__init__(self)
     self._identifier = identifier
+    self._boundValue = None
 
   def getIdentifier(self):
     return self._identifier
@@ -25,6 +26,12 @@ class VariableNode(Node):
     candidate_node = symTable.lookup(self.getIdentifier())
     if candidate_node is None:
         symTable.addGlobal(self._identifier, self)
+
+  def bindTo(self, variable):
+    if self._boundValue == None:
+      self._boundValue = variable
+      return True
+    return self._boundValue == variable
 
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
