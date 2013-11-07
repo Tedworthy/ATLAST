@@ -22,9 +22,11 @@ def p_formula_bracketed(p):
   'formula : LBRACKET formula RBRACKET'
   p[0] = p[2]
 
+#Automatically turn A <=> B into (A^B)V(~A^~B) #firstyearlogicbro
 def p_formula_iff(p):
   'formula : formula IFF atomicFormula'
-  p[0] = ast.IffNode(p[1], p[3])
+  p[0] = ast.OrNode(ast.AndNode(p[1],p[3]),
+                    ast.AndNode(ast.NotNode(p[1]),ast.NotNode(p[3])))
 
 #Automatically turn A=>B into ~A V B
 def p_formula_implies(p):
