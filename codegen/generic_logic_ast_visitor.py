@@ -7,6 +7,7 @@ generic intermediate representation for code generation.
 import visit as v
 import ast
 from sqlir import SQLIR
+from code import web
 
 class GenericLogicASTVisitor():
 
@@ -47,9 +48,23 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.PredicateNode)
   def visit(self, node):
+    # Split out the attributes of the predicate
+    attributes = node.getIdentifier().split('_')
+    # Get the table name
+    table = attributes[0]
+    # Retrieve the primary keys from the schema
+    keys = web.schema.getPrimaryKeys(table)
+    # Sort the keys alphabetically as our predicates enforce this
+    keys = sorted(keys)
+    # Create a pairwise list mapping the elements in the predicate to their
+    # binding values
+    keys.extend(attributes[1:])
+    # Iterate over the children from right to left, matching binding values
+    i = 0
     while len(self._stack) > 0:
-      print self._stack.pop()['node']
-    print "Seen PredicateNode"
+      i += 1
+      child = self._stack.pop()
+      print "(" + child['node'].getIdentifier() + ", " + keys[-1 * i] + ")"
 
   @v.when(ast.BinaryEqualityNode)
   def visit(self, node):

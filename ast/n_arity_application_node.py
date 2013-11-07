@@ -21,3 +21,6 @@ class NArityApplicationNode(Node):
 
     for child in self.getChildren():
       child.generateSymbolTable(symtable)
+
+  def getIdentifier(self):
+    return self._identifier

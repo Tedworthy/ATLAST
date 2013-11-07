@@ -5,6 +5,7 @@ import parsing.parser
 import parsing.task
 import json
 from dbbackend import query
+from dbbackend import schema
 
 render = web.template.render('templates/')
 
@@ -43,7 +44,7 @@ def is_test():
 # Get global vars, create shared global instance of SQLSchema class.
 # http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
 web.app = web.application(urls, globals())
-
+web.schema = schema.Schema()
 
 if (not is_test()) and  __name__ == "__main__":
-  app.run()
+  web.app.run()

@@ -14,7 +14,7 @@ class Schema():
     for table in self._root.iter('table'):
       # Table data dictionary. E.g. table[film][primary_keys]
       table_data = {}
-      table_name = table.attrib['name']
+      table_name = table.attrib.get('name')
       if table_name is None:
         print 'Error: table tag encountered with no associated name. Skipping.'
         break
@@ -31,12 +31,12 @@ class Schema():
     return values
 
   def getPrimaryKeys(self, table_name):
-    table_data = self._data[table_name]
+    table_data = self._data.get(table_name)
     if table_data is None:
       print 'Error: table', table_name, 'not in schema!'
       return None
 
-    return table_data['primary_keys']
+    return table_data.get('primary_keys')
 
 if __name__ == "__main__":
   schema = Schema()
