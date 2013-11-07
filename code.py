@@ -35,13 +35,10 @@ class index:
       query_result = query.query(sql)
       error = 'ok'
     except Exception, e:
-      error = str(e)
       query_result = {}
-      
-    response = {'error': error, 'sql': sql, 'query': query_result}
-    print query_result
-    print json.dumps(response)  
-    
+      error = str(e)
+
+    response = {'error': error, 'sql': sql, 'query': query_result}  
     return json.dumps(response)
 
 def is_test():
