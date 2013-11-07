@@ -29,7 +29,7 @@ def p_formula_iff(p):
 #Automatically turn A=>B into ~A V B
 def p_formula_implies(p):
   'formula : formula IMPLIES atomicFormula'
-   p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
+  p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
 #  p[0] = ast.ImpliesNode(p[1], p[3])
 
 def p_formula_or(p):
