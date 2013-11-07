@@ -27,13 +27,27 @@ class index:
     form.validates()
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
-    # translated = query.query(logic_to_translate) TODO secure the connection
-    # currently it runs everything as root which is LOLZ 
-    web.header('Content-Type','text/html; charset=utf-8', unique=True) 
-    result = parsing.task.add_to_parse_q.delay(logic_to_translate)
+
+
+    # TODO: secure the connection, currently it runs everything as root!
+    # translated = query.query(logic_to_translate)
+    web.header('Content-Type','text/html; charset=utf-8', unique=True)
+    
+    # sql = parsed (logic)
+    
+    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; #example query
+    
     while not result.ready():
       time.sleep(0.1)
-    return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
+    
+    query_result = query.query(sql)
+    
+    error = 'ok' # ok = everything worked, otherwise write in the error here
+    response = {'error': error, 'sql': sql, 'query': query_result}
+    
+    print json.dumps(response)  
+    
+    return json.dumps(response)
 
 
 def is_test():

@@ -5,11 +5,11 @@ $def with (form)
 
   <head>
     <title>Logic to SQL</title>
+    <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="static/main.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <!--Import JQuery from Google-->
-    <script src="static/main.js"></script>
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="static/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -40,8 +40,12 @@ $def with (form)
         <form id="logic-form" name="convert_to_sql" action="#" method="post">
           <input type="hidden" name="action" value="sql">
           $:form.logic.render()
-
           <button type="submit" id="convert_button">Convert to SQL</button>
+          <input type="button" value="&and;" id="and_button" />
+          <input type="button" value="&or;" id="or_button" />
+          <input type="button" value="&rarr;" id="implies_button" />
+          <input type="button" value="&exist;" id="there_exists_button" />
+          <input type="button" value="&forall;" id="forall_button" />
         </form>
       </section>
 
@@ -51,5 +55,7 @@ $def with (form)
       </section>
     </div>
   </body>
+  
+  <div id='results_table'> </div>
 
 </html>
