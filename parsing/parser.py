@@ -26,6 +26,10 @@ def p_formula_iff(p):
   'formula : formula IFF atomicFormula'
   p[0] = ast.IffNode(p[1], p[3])
 
+def p_formula_implies(p)
+  'formula : formula IMPLIES atomicFormula'
+  p[0] = ast.ImpliesNode(p[1], p[3])
+
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
   p[0] = ast.OrNode(p[1], p[3])
