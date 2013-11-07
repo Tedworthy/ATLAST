@@ -32,7 +32,7 @@ class index:
     web.header('Content-Type','text/html; charset=utf-8', unique=True) 
     result = parsing.task.add_to_parse_q.delay(logic_to_translate)
     while not result.ready():
-      time.sleep(0.1)
+      time.sleep(0.1) #TODO remove busy waiting, semaphore/callback this bitch
     return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
 
 
@@ -40,7 +40,10 @@ def is_test():
   if 'WEBPY_ENV' is os.environ:
       return os.environ['WEBPY_ENV'] == 'test'
 
-app = web.application(urls, globals())
+# Get global vars, create shared global instance of SQLSchema class.
+# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
+web.app = web.application(urls, globals())
+
 
 if (not is_test()) and  __name__ == "__main__":
   app.run()
