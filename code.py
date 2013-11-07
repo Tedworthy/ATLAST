@@ -32,7 +32,7 @@ class index:
     sql = "SELECT * FROM casting WHERE pqrt = 'Jason Bourne'"; #example query
     
     try:
-      query_result = query.query(sql)
+      query_result = query.run_query(sql)
       error = 'ok'
     except Exception, e:
       query_result = {}
