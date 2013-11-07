@@ -43,9 +43,13 @@ $(document).ready(function() {
         $("textarea#sql_result").text("Failed to convert query into SQL");
       }
       
-      $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
+      $("textarea#query_result").text(JSON.stringify(response) + "\n");
       
-      // Print rows from result of running query on database
+      if(response.query.length == 0) {
+        $("#results_table").html("Query returned no results");
+      }
+      
+      // Print column headings for result data
       var table='<table border="1" align="center"> <tr>';
       var first_row = response.query[0];
       $.each(first_row, function(k, v) {
@@ -53,7 +57,7 @@ $(document).ready(function() {
       });
       table += '</tr>';
       
-      // loop over each object in the array to create rows
+      // loop over each object in the array to create table rows
       $.each(response.query, function() {
       table += '<tr>'
         $.each(this, function(k, v) {
@@ -112,7 +116,7 @@ $(document).ready(function() {
     $("#logic").insertAtCaret(unicode_chars.forall);
   });
   
-  // Insert symbols at cursor position
+  // Insert symbols at cursor position (courtesy of StackOverflow)
   $.fn.extend({
     insertAtCaret: function(text) {
       return this.each(function(i) {

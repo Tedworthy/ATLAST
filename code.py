@@ -30,7 +30,7 @@ class index:
     
     # sql = parsed (logic)
     
-    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; #example query
+    sql = "SELECT * FROM casting WHERE part = 'Bourne'"; #example query
     query_result = query.query(sql)
     
     error = 'ok' # ok = everything worked, otherwise write in the error here
