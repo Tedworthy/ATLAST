@@ -27,8 +27,9 @@ class VariableNode(Node):
     if candidate_node is None:
         symTable.addGlobal(self._identifier, self)
 
+  # NEED TO ADD TO THE SYMBOL TABLE
   def bindTo(self, variable):
-    if self._boundValue == None:
+    if self._boundValue is None:
       self._boundValue = variable
       return True
     return self._boundValue == variable
