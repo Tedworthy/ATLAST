@@ -8,6 +8,7 @@ import visit as v
 import ast
 from sqlir import SQLIR
 from code import web
+from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
@@ -15,22 +16,7 @@ class GenericLogicASTVisitor():
     # Instance variables go here, if necessary
     self._IR = SQLIR()
     self._node_stack = []
-    self._constraint_stack = []
     pass
-
-  def constraint_stack_conjunction(constraint):
-    if len(self._constraint_stack) < 0:
-      self._constraint_stack.push(constraint)
-    else:
-      previous_constraint = self._constraint_stack.pop()
-      conjunction = AndConstraint(previous_constraint, constraint)
-
-  def constraint_stack_disjunction(constraint):
-    if len(self._constraint_stack) < 0:
-      self._constraint_stack.push(constraint)
-    else:
-      previous_constraint = self._constraint_stack.pop()
-      conjunction = OrConstraint(previous_constraint, constraint)
 
   @v.on('node')
   def visit(self, node):
@@ -71,27 +57,29 @@ class GenericLogicASTVisitor():
     keys = web.schema.getPrimaryKeys(table)
     # Sort the keys alphabetically as our predicates enforce this
     keys = sorted(keys)
-    # Create a pairwise list mapping the elements in the predicate to their
-    # binding values
-    keys.extend(attributes[1:])
     # Iterate over the children from right to left, matching binding values
-    i = 0
-    while len(self._node_stack) > 0:
-      i += 1
+    binding_values = attributes[1:]
+    print binding_values
+    while len(binding_values) > 0:
+      k = binding_values.pop()
+      print k
       child = self._node_stack.pop()
       if child['type'] == 'variable':
-        print "(" + child['node'].getIdentifier() + ", " + keys[-i] + ")"
-        table_attribute = table + '.' + keys[-i]
-        if not child['node'].bindTo(keys[-i]):
+        print "(" + child['node'].getIdentifier() + ", " + k + ")"
+        table_attribute = table + '.' + k
+        if not child['node'].bindTo(k):
           print 'Could not bind'
           previous_binding = child['node'].boundValue()
           assert previous_binding != None
-          constraint_stack_conjunction(Constraint(table_attribute,
+          self._IR.constraint_stack_conjunction(Constraint(table_attribute,
             previous_binding, '='))
         else:
           print 'Bound'
       else:
         print 'ConstantNode'
+    state = {'type' : 'predicate',
+             'table' : table,
+             'keys' : keys}
 
   @v.when(ast.BinaryEqualityNode)
   def visit(self, node):
