@@ -22,10 +22,17 @@ def p_formula_bracketed(p):
   p[0] = 'Bracketed' + p[2]
   print p[0]
 
+#Automatically turn A <=> B into (A^B)V(~A^~B) #firstyearlogicbro
 def p_formula_iff(p):
   'formula : formula IFF atomicFormula'
-  p[0] = "%s iff %s" % (p[1], p[3])
-  print p[0]
+  p[0] = ast.OrNode(ast.AndNode(p[1],p[3]),
+                    ast.AndNode(ast.NotNode(p[1]),ast.NotNode(p[3])))
+
+#Automatically turn A=>B into ~A V B
+def p_formula_implies(p):
+  'formula : formula IMPLIES atomicFormula'
+  p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
+#  p[0] = ast.ImpliesNode(p[1], p[3])
 
 def p_formula_or(p):
   'formula : formula OR atomicFormula'

@@ -18,19 +18,30 @@ class index:
     form = logic_form()
     return render.index(form)
 
+  # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
-    form = logic_form()
     # Validates the Form
+    form = logic_form()
     form.validates()
-    # TODO: We have the logic as a string, we need to process it
+
     logic_to_translate = form.logic.get_value()
-    # TODO: secure the connection, currently it runs everything as root!
-    # translated = query.query(logic_to_translate)
     web.header('Content-Type','text/html; charset=utf-8', unique=True)
-    
-     # ok = everything worked, otherwise write in the error here
-    sql = "SELECT * FROM casting WHERE pqrt = 'Jason Bourne'"; #example query
-    
+
+    # RabbitMQ stuff - should work, but commented for the moment until codegen
+    # works.
+    ## Create worker thread and start
+    #result = parsing.task.add_to_parse_q.delay(logic_to_translate)
+
+    ## Wait for worker thread to finish translation
+    #while not result.ready():
+    #  time.sleep(0.1)
+
+    ## Get the SQL out of the finished worker thread
+    #sql = result.get()
+
+    # Example query there for testing, remove when codegen works
+    sql = "SELECT * FROM casting WHERE pqrt = 'Jason Bourne'"; # Dodgy query
+
     try:
       query_result = query.run_query(sql)
       error = 'ok'
@@ -38,7 +49,8 @@ class index:
       query_result = {}
       error = str(e)
 
-    response = {'error': error, 'sql': sql, 'query': query_result}  
+    response = {'error': error, 'sql': sql, 'query': query_result}
+
     return json.dumps(response)
 
 def is_test():
