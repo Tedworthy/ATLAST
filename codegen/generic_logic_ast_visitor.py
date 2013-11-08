@@ -33,6 +33,18 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.AndNode)
   def visit(self, node):
+    right_node = self._node_stack.pop()
+    left_node = self._node_stack.pop()
+    assert left_node
+    assert right_node
+    assert len(self._node_stack) == 0
+    if right_node['type'] == left_node['type'] == 'predicate':
+      print 'Both predicate nodes'
+      if right_node['table'] == left_node['table']:
+        print 'Tables are equal'
+        if set(right_node['keys']) == set(left_node['keys']):
+          print 'Keys are equal'
+    print "And(",left_node,",",right_node,")"
     print "Seen AndNode"
 
   @v.when(ast.NotNode)
@@ -59,10 +71,8 @@ class GenericLogicASTVisitor():
     keys = sorted(keys)
     # Iterate over the children from right to left, matching binding values
     binding_values = attributes[1:]
-    print binding_values
     while len(binding_values) > 0:
       k = binding_values.pop()
-      print k
       child = self._node_stack.pop()
       if child['type'] == 'variable':
         print "(" + child['node'].getIdentifier() + ", " + k + ")"
@@ -77,9 +87,13 @@ class GenericLogicASTVisitor():
           print 'Bound'
       else:
         print 'ConstantNode'
+    for i in range(0, len(keys)):
+      print "Popping", self._node_stack.pop()
     state = {'type' : 'predicate',
              'table' : table,
              'keys' : keys}
+    self._node_stack.append(state)
+    print self._node_stack
 
   @v.when(ast.BinaryEqualityNode)
   def visit(self, node):
