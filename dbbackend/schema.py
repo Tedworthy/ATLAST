@@ -38,9 +38,7 @@ class Schema():
 
     return table_data.get('primary_keys')
 
-if __name__ == "__main__":
-  schema = Schema()
-  keys = schema.getPrimaryKeys('films')
-  for key in keys:
-    print key
+  def getAllData(self):
+    return self._data
+
 
