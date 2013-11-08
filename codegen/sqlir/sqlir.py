@@ -11,5 +11,3 @@ class SQLIR():
   def computeIR():
     # Invoke generic AST visitor here.
     pass
-
-
