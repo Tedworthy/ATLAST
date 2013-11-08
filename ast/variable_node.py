@@ -33,6 +33,9 @@ class VariableNode(Node):
       return True
     return self._boundValue == variable
 
+  def boundValue(self):
+    return self._boundValue
+
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
     return val._symTable.hasParent()

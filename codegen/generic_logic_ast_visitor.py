@@ -14,8 +14,23 @@ class GenericLogicASTVisitor():
   def __init__(self):
     # Instance variables go here, if necessary
     self._IR = SQLIR()
-    self._stack = []
+    self._node_stack = []
+    self._constraint_stack = []
     pass
+
+  def constraint_stack_conjunction(constraint):
+    if len(self._constraint_stack) < 0:
+      self._constraint_stack.push(constraint)
+    else:
+      previous_constraint = self._constraint_stack.pop()
+      conjunction = AndConstraint(previous_constraint, constraint)
+
+  def constraint_stack_disjunction(constraint):
+    if len(self._constraint_stack) < 0:
+      self._constraint_stack.push(constraint)
+    else:
+      previous_constraint = self._constraint_stack.pop()
+      conjunction = OrConstraint(previous_constraint, constraint)
 
   @v.on('node')
   def visit(self, node):
@@ -61,12 +76,20 @@ class GenericLogicASTVisitor():
     keys.extend(attributes[1:])
     # Iterate over the children from right to left, matching binding values
     i = 0
-    while len(self._stack) > 0:
+    while len(self._node_stack) > 0:
       i += 1
-      child = self._stack.pop()
+      child = self._node_stack.pop()
       if child['type'] == 'variable':
         print "(" + child['node'].getIdentifier() + ", " + keys[-i] + ")"
-        print child['node'].bindTo(keys[-i])
+        table_attribute = table + '.' + keys[-i]
+        if not child['node'].bindTo(keys[-i]):
+          print 'Could not bind'
+          previous_binding = child['node'].boundValue()
+          assert previous_binding != None
+          constraint_stack_conjunction(Constraint(table_attribute,
+            previous_binding, '='))
+        else:
+          print 'Bound'
       else:
         print 'ConstantNode'
 
@@ -81,7 +104,7 @@ class GenericLogicASTVisitor():
   @v.when(ast.ConstantNode)
   def visit(self, node):
     state = {'type' : 'variable', 'node' : node}
-    self._stack.append(state)
+    self._node_stack.append(state)
     print "Seen ConstantNode"
 
   @v.when(ast.VariableNode)
@@ -90,6 +113,6 @@ class GenericLogicASTVisitor():
       self._IR.addSelectNode(node)  
       print 'Free variable ' , node , ' found'
     state = {'type' : 'variable', 'node' : node}
-    self._stack.append(state)
+    self._node_stack.append(state)
     print "Seen VariableNode"
 
