@@ -11,7 +11,7 @@ render = web.template.render('templates/')
 
 urls = (
   '/', 'index'
-  '/schema', 'schema'
+  '/schema', 'schematic'
 )
 
 logic_form = web.form.Form(
@@ -37,7 +37,7 @@ class index:
       time.sleep(0.1) #TODO remove busy waiting, semaphore/callback this bitch
     return json.dumps({'sql': logic_to_translate, 'query': 'A result! Yay...'})
 
-class schema:
+class schematic:
   def GET(self):
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
