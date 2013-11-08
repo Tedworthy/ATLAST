@@ -1,5 +1,8 @@
 import sys
-from celery import Celery
+try:
+    from celery import Celery
+except ImportError, e:
+  print "Error : " + e ". You need to install Celery to run the web server!"
 
 from parser import parse_input
 celery = Celery('task', backend='amqp://guest@localhost:5672', broker='amqp://guest@localhost')
