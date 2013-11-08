@@ -37,15 +37,15 @@ $def with (form)
       </header>
 
       <section id="logic_section">
+        <button id="and_button">&and;</button>
+        <button id="or_button">&or;</button>
+        <button id="implies_button">&rarr;</button>
+        <button id="iff_button">&harr;</button>
+        <button id="there_exists_button">&exist;</button>
+        <button id="forall_button">&forall;</button>
         <form name="convert_to_sql" action="#" method="post">
-          <input type="hidden" name="action" value="sql">
           $:form.logic.render()
           <button type="submit" id="convert_button">Convert to SQL</button>
-          <input type="button" value="&and;" id="and_button" />
-          <input type="button" value="&or;" id="or_button" />
-          <input type="button" value="&rarr;" id="implies_button" />
-          <input type="button" value="&exist;" id="there_exists_button" />
-          <input type="button" value="&forall;" id="forall_button" />
         </form>
       </section>
 
