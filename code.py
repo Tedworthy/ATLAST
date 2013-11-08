@@ -40,7 +40,7 @@ class index:
       time.sleep(0.1)
    
     try:
-      query_result = query.query(sql)
+      query_result = query.run_query(sql)
       error = 'ok'
     except Exception, e:
       query_result = {}

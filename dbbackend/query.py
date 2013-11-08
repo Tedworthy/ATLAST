@@ -31,10 +31,10 @@ def db():
                           port='55432', dbname='filmdb',
                           user='link', password='triforce')
 
-def query(query):
+def run_query(sql):
     cur = db().cursor()
     try:
-      cur.execute(query)
+      cur.execute(sql)
       r = [dict((cur.description[i][0], value) \
               for i, value in enumerate(row)) for row in cur.fetchall()]
     except Exception, e:
