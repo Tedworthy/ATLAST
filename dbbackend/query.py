@@ -33,5 +33,5 @@ def query(text):
 
 
 
-result = query("SELECT * FROM film")
+result = query("SELECT * FROM films")
 print result
