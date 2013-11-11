@@ -29,13 +29,17 @@ class VariableNode(Node):
 
   # NEED TO ADD TO THE SYMBOL TABLE
   def bindTo(self, variable):
-    if self._boundValue is None:
-      self._boundValue = variable
+    resolved_variable_node = self._symTable.lookup(self.getIdentifier())
+    if resolved_variable_node.getBoundValue() is None:
+      resolved_variable_node.setBoundValue(variable)
       return True
-    return self._boundValue == variable
+    return resolved_variable_node.getBoundValue() == variable
 
-  def boundValue(self):
+  def getBoundValue(self):
     return self._boundValue
+
+  def setBoundValue(self, boundValue):
+    self._boundValue = boundValue
 
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
