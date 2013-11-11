@@ -9,6 +9,7 @@ import ast
 from sqlir import SQLIR
 from code import web
 from copy import copy, deepcopy
+from table_structure import Table
 
 class GenericLogicASTVisitor():
 
@@ -44,7 +45,7 @@ class GenericLogicASTVisitor():
     if right_node['type'] == left_node['type'] == 'predicate':
       print 'Both predicate nodes'
       # Determine if the tables are the same
-      if right_node['table'] == left_node['table']:
+      if right_node['table'].getIdentifier() == left_node['table'].getIdentifier():
         print 'Tables are equal'
         right_types = [x['type'] for x in right_keys]
         left_types = [x['type'] for x in left_keys]
@@ -56,21 +57,27 @@ class GenericLogicASTVisitor():
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
             # Should push the equal table on to the stack
+            self._node_stack.append(left_node['table'])
             print 'All ids are the same. TADAAAAAA'
             return
         # Tables are still equal, but elements are not all variables, iterate
         # pairwise through the list.
-        constraint_list = []
-        for i in range(0, len(right_keys) - 1):
+        print 'Working through constraints'
+        constraints_list = []
+        for i in range(0, len(right_keys)):
           left_key = left_keys[i]
           right_key = right_keys[i]
           if right_key['type'] == left_key['type'] == 'variable':
             if right_key['node'].getIdentifier() == left_key['node'].getIdentifier():
               # Need to add this to the constraint list
+              constraint = Constraint(Constraint.EQ,
+                  left_key['node'],
+                  right_key['node'])
+              constraints_list.push(constraint)
               print 'one key was equal!'
             # Bind both of them to the key field
             # i.e node.bindTo(table.attr)
-            print 'Binding nodes'
+            print 'Bind together variables'
           else:
             print """a mixture of variables and constants found, add some
             constraints"""
@@ -122,7 +129,7 @@ class GenericLogicASTVisitor():
     for i in range(0, len(keys)):
       key_values.append(self._node_stack.pop())
     state = {'type' : 'predicate',
-             'table' : table,
+             'table' : Table(table),
              'keys' : key_values}
     self._node_stack.append(state)
     print self._node_stack

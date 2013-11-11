@@ -11,6 +11,13 @@ class QuantifierNode(Node):
     Node.__init__(self)
     self.setChild(0, formula)
     self._identifier = identifier
+    self._boundValue = None
+
+  def getBoundValue(self):
+    return self._boundValue
+
+  def setBoundValue(self, boundValue):
+    self._boundValue = boundValue
 
   def getIdentifier(self):
     return self._identifier
