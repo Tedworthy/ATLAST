@@ -17,7 +17,7 @@ def query(text):
     password = config.get('DatabaseCon', 'password')
     print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
     print "Password: " + password + "\tDatabase Name: "+ database
-    con = psycopg2.connect(host,port,database,user,password)
+    con = psycopg2.connect('host='+host+' port='+port+' databse='+database+' user='+user +' password='+password)
     cur = con.cursor()
     cur.execute(text)
     result = cur.fetchall()
