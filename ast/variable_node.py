@@ -33,10 +33,11 @@ class VariableNode(Node):
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
       return True
-    return resolved_variable_node.getBoundValue() == variable
+    return resolved_variable_node._boundValue == variable
 
   def getBoundValue(self):
-    return self._boundValue
+    resolved_variable_node = self._symTable.lookup(self.getIdentifier())
+    return resolved_variable_node._boundValue
 
   def setBoundValue(self, boundValue):
     self._boundValue = boundValue
