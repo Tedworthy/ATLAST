@@ -9,7 +9,7 @@ def query(text):
   con = None
   try:
     config = ConfigParser.RawConfigParser()
-    config.read('db.cfg')
+    config.read('dbbackend/db.cfg')
     host = config.get('DatabaseCon', 'host')
     port = config.get('DatabaseCon', 'port')
     user  = config.get('DatabaseCon', 'user')
