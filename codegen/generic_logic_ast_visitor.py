@@ -41,19 +41,21 @@ class GenericLogicASTVisitor():
     assert len(self._node_stack) == 0
     right_keys = right_node['keys']
     left_keys = left_node['keys']
+    right_keyvals = right_node['key_values']
+    left_keyvals = left_node['key_values']
     # Check the left and right nodes are both predicates
     if right_node['type'] == left_node['type'] == 'predicate':
       print 'Both predicate nodes'
       # Determine if the tables are the same
       if right_node['table'].getIdentifier() == left_node['table'].getIdentifier():
         print 'Tables are equal'
-        right_types = [x['type'] for x in right_keys]
-        left_types = [x['type'] for x in left_keys]
+        right_types = [x['type'] for x in right_keyvals]
+        left_types = [x['type'] for x in left_keyvals]
         # Check if every element is a variable
         if set(right_types) == set(left_types) and right_types[0] == 'variable':
           print 'All variables'
-          right_ids = [x['node'].getIdentifier() for x in right_keys]
-          left_ids = [x['node'].getIdentifier() for x in left_keys]
+          right_ids = [x['node'].getIdentifier() for x in right_keyvals]
+          left_ids = [x['node'].getIdentifier() for x in left_keyvals]
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
             # Should push the equal table on to the stack
@@ -64,9 +66,9 @@ class GenericLogicASTVisitor():
         # pairwise through the list.
         print 'Working through constraints'
         constraints_list = []
-        for i in range(0, len(right_keys)):
-          left_key = left_keys[i]
-          right_key = right_keys[i]
+        for i in range(0, len(right_keyvals)):
+          left_key = left_keyvals[i]
+          right_key = right_keyvals[i]
           if right_key['type'] == left_key['type'] == 'variable':
             if right_key['node'].getIdentifier() == left_key['node'].getIdentifier():
               # Need to add this to the constraint list
@@ -78,12 +80,14 @@ class GenericLogicASTVisitor():
             # Bind both of them to the key field
             # i.e node.bindTo(table.attr)
             print 'Bind together variables'
+            table_id = left_node['table'].getIdentifier()
+            left_key['node'].bindTo(table_id + '.' + left_keys[i])
+            right_key['node'].bindTo(table_id + '.' + right_keys[i])
           else:
             print """a mixture of variables and constants found, add some
             constraints"""
 
     print "And(",left_node,",",right_node,")"
-    print "Seen AndNode"
 
   @v.when(ast.NotNode)
   def visit(self, node):
@@ -130,7 +134,8 @@ class GenericLogicASTVisitor():
       key_values.append(self._node_stack.pop())
     state = {'type' : 'predicate',
              'table' : Table(table),
-             'keys' : key_values}
+             'key_values' : key_values,
+             'keys' : keys}
     self._node_stack.append(state)
     print self._node_stack
 
