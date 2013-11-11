@@ -13,11 +13,11 @@ def query(text):
     host = config.get('DatabaseCon', 'host')
     port = config.get('DatabaseCon', 'port')
     user  = config.get('DatabaseCon', 'user')
-    dbname = config.get('DatabaseCon', 'dbname')
+    database = config.get('DatabaseCon', 'dbname')
     password = config.get('DatabaseCon', 'password')
     print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
-    print "Password: " + password + "\tDatabase Name: "+ dbname
-    con = psycopg2.connect(host,port,dbname,user,password)
+    print "Password: " + password + "\tDatabase Name: "+ database
+    con = psycopg2.connect(host,port,database,user,password)
     cur = con.cursor()
     cur.execute(text)
     result = cur.fetchall()
