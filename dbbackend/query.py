@@ -1,26 +1,37 @@
 import psycopg2
 import sys
+import csv
+import ConfigParser
 
-con = None
+
 
 def query(text):
-
+  con = None
   try:
-  #TODO parse these options from a file 
-    con = psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
-                           port='55432', dbname='filmdb', 
-                           user='link', password='triforce')
+    config = ConfigParser.RawConfigParser()
+    config.read('db.cfg')
+    host = config.get('DatabaseCon', 'host')
+    port = config.get('DatabaseCon', 'port')
+    user  = config.get('DatabaseCon', 'user')
+    dbname = config.get('DatabaseCon', 'dbname')
+    password = config.get('DatabaseCon', 'password')
+    print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
+    print "Password: " + password + "\tDatabase Name: "+ dbname
+    con = psycopg2.connect(host,port,dbname,user,password)
     cur = con.cursor()
     cur.execute(text)
     result = cur.fetchall()
 
 
   except psycopg2.DatabaseError, e:
-   result = 'ERROR %s' % e
+    result = 'ERROR %s' % e
     
   finally:
-
     if con:
       con.close()
       return result
 
+
+
+result = query("SELECT * FROM film")
+print result
