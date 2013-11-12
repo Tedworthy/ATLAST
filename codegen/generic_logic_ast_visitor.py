@@ -59,6 +59,9 @@ class GenericLogicASTVisitor():
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
             # Should push the equal table on to the stack
+            for i in range(0, len(right_ids)):
+              print 'Binding',right_keyvals[i]['node'],'to',right_keys[i]
+              right_keyvals[i]['node'].bindTo(right_keys[i])
             self._node_stack.append(left_node['table'])
             print 'All ids are the same. TADAAAAAA'
             return
