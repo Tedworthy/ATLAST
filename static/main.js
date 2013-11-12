@@ -26,12 +26,36 @@ $(document).ready(function() {
     "there_exists": { "regex": /\\E/g, "result": unicode_chars.there_exists },
     "forall": { "regex": /\\A/g, "result": unicode_chars.forall }
   };
+  $("#config_submit").click(function()  {
+    user = $("#user_input").val();
 
+    $.post(
+      "/login", "i like cheese"
+      
+        
+    /*    user : user,
+        password : $("#password_input").val(),
+        host : $("#host_input").val(),
+        port : $("#port_input").val(),
+        dbname : $("#dbname_input").val() */
+      
+    ).done(function(result) {
+      var response = $.parseJSON(result);
+      if (response.error === 'ok') {
+        $("#conmsg").fadeIn("slow");
+        $("#conmsg a.close-notify").click(function() {
+          $("#conmsg").fadeOut("slow");
+          return false;
+        });
+      }
+    });
+  });
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $("#convert_button").click(function() {
     var input_string = $("textarea#logic").val();
     $.ajax({
       type: "POST",
+
       data: {
         "logic" : input_string
       }

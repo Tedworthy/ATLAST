@@ -14,17 +14,30 @@ render = web.template.render('templates/')
 
 urls = (
   '/', 'index',
-  '/schema', 'schematic'
+  '/schema', 'schematic',
+  '/login', 'login'
+   
 )
 
 logic_form = web.form.Form(
     web.form.Textarea('logic', class_="box_sizing")
 )
 
+login_form = web.form.Form(
+    web.form.Textbox('host', class_='textfield',id='port_input'),
+    web.form.Textbox('port',class_='textfield',id='port_input'),
+    web.form.Textbox('username',class_='textfield',id='username_input'),
+    web.form.Password('password',class_='textfield',id='password_input'),
+    web.form.Textbox('dbname',class_='textfield',id='dbname_input')
+)
+
+
 class index:
   def GET(self):
     form = logic_form()
-    return render.index(form)
+    form2 = login_form()
+    return render.index(form,form2)
+
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
@@ -63,6 +76,19 @@ class schematic:
   def GET(self):
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
+
+class login:
+  def POST(self):
+    f = login_form()
+    f.validates()
+    print f['username']
+
+    response = {'error' : 'ok'}
+  
+    return json.dumps(response)
+
+  def GET(self):
+    return "login " 
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:

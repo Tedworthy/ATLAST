@@ -1,5 +1,4 @@
-$def with (form)
-
+$def with (form,form2)
 <!DOCTYPE html>
 <html>
 
@@ -42,13 +41,13 @@ $def with (form)
 
     <div class="modal" id="configdialog">
       <p> Configuration Page </p>
-      <form class="rounded" id="configform">
-        <ul>
-        <li>Host: <input type="text" name="host"/></li>
-        <li>Port: <input type="text" name="port"/></li>
-        <li>Table Name: <input type="text" name="port"/></li>
-        <li>Password: <input type="password" name="password"/></li>
-        <input type="submit" value="Submit" />
+      <form class="rounded" id="configform" method="post" action="/login">
+          $:form2.host.render()
+          $:form2.port.render()
+          $:form2.username.render()
+          $:form2.password.render()
+          $:form2.dbname.render()
+        <button type="submit" id="config_submit"> Submit </button>
       </form>
       <button class="close"> Close </button>
     </div>
