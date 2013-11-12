@@ -20,7 +20,7 @@ $(document).ready(function() {
     //});
     
     output += '</p>';
-    $("textarea#schema_table").text(output);
+    $("#schema_table").html(output);
   });
 
   var unicode_chars = {
