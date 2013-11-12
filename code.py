@@ -42,7 +42,7 @@ class index:
     #sql = result.get()
 
     # Example query there for testing, remove when codegen works
-    sql = "SELECT * FROM casting WHERE pqrt = 'Jason Bourne'"; # Dodgy query
+    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
 
     try:
       query_result = query.run_query(sql)
