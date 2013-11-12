@@ -7,7 +7,20 @@ $(document).ready(function() {
     url: "/schema"    
   }).done(function(result) {
     schema = $.parseJSON(result);
-    $("textarea#schema_table").text(JSON.stringify(schema));   
+    $("textarea#schema_table").text(JSON.stringify(schema));
+    
+    output = '<p>';
+    // loop over each object in the array to create table rows
+    //$.each(schema, function() {
+
+      $.each(schema, function(k, v) {
+        output += k;
+      });
+
+    //});
+    
+    output += '</p>';
+    $("textarea#schema_table").text(output);
   });
 
   var unicode_chars = {
