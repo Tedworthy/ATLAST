@@ -1,5 +1,14 @@
 $(document).ready(function() {
 
+  var schema;
+
+  $.ajax({
+    type: "GET",
+    url: "/schema"    
+  }).done(function(result) {
+    schema = $.parseJSON(result);     
+  });
+
   var unicode_chars = {
     "and": "\u22C0",
     "or": "\u22C1",
