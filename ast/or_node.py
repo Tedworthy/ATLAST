@@ -8,8 +8,8 @@ Child structure:
   1 = right formula
 '''
 
-from binary_formula_node import *
+from binary_operator_node import *
 
-class OrNode(BinaryFormulaNode):
+class OrNode(BinaryOperatorNode):
   def __init__(self, left, right):
-    BinaryFormulaNode.__init__(self, left, right)
+    BinaryOperatorNode.__init__(self, left, right)

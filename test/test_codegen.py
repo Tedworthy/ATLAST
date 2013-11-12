@@ -1,9 +1,9 @@
-'
+'''
 PARSE TREE -> SQL
 This file contains tests for the translation from the parse tree to sql.
 
 NOTE: It assumes that the parser works correctly.
-'
+'''
 
 import parsing
 from paste.fixture import TestApp
@@ -24,7 +24,6 @@ class TestCodeGen():
     
     assert(translates_to(logic, sql))
 
-
   def translates_to(logicString, expectedSQLString):
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logicString)
@@ -44,5 +43,3 @@ class TestCodeGen():
     expectedResult = RUN_SQL(expectedSQLString)
 
     return convertedResult == expectedResult
-
-

@@ -1,5 +1,5 @@
 '''
-Unary Formula Node
+Unary Operator Node
 This class implements the AST node of a first order logic formula, in the form
 OP formula
 
@@ -9,7 +9,7 @@ Child structure:
 
 from node import Node
 
-class UnaryFormulaNode(Node):
+class UnaryOperatorNode(Node):
   # Takes a node representing the RHS of the formula
   def __init__(self, formula):
     setFormula(formula)

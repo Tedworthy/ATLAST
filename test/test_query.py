@@ -1,12 +1,12 @@
 from paste.fixture import TestApp
 from nose.tools import *
-from code import app
+from code import web
 from parsing.lexer import *
 
 class TestQuery():
   def test_query(self):
     middleware=[]
-    testApp = TestApp(app.wsgifunc(*middleware))
+    testApp = TestApp(web.app.wsgifunc(*middleware))
     r = testApp.get('/')
     form = r.forms['logic-form']
     print(form.id)
