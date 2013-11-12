@@ -6,8 +6,9 @@ $(document).ready(function() {
     type: "GET",
     url: "/schema"    
   }).done(function(result) {
-    schema = $.parseJSON(result);  
-    $("table#schema").text(JSON.stringify(schema));   
+    schema = $.parseJSON(result);
+    alert(JSON.stringify(schema));
+    $("textarea#schema").text(JSON.stringify(schema));   
   });
 
   var unicode_chars = {
