@@ -1,11 +1,24 @@
 import sys
 import json
 import psycopg2
+import ConfigParser
 
 def db():
-  return psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
-                          port='55432', dbname='filmdb',
-                          user='link', password='triforce')
+  con = None
+  try:
+    config = ConfigParser.RawConfigParser()
+    config.read('dbbackend/db.cfg')
+    host = config.get('DatabaseCon', 'host')
+    port = config.get('DatabaseCon', 'port')
+    user  = config.get('DatabaseCon', 'user')
+    database = config.get('DatabaseCon', 'dbname')
+    password = config.get('DatabaseCon', 'password')
+    print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
+    print "Password: " + password + "\tDatabase Name: "+ database
+    return = psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
+
+        
+        
 
 def run_query(sql):
     cur = db().cursor()
