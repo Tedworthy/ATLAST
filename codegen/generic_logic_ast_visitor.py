@@ -52,7 +52,8 @@ class GenericLogicASTVisitor():
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
         # Check if every element is a variable
-        if set(right_types) == set(left_types) and right_types[0] == 'variable': # TODO What's going on here?
+        if all(x == 'variable' for x in left_types) \
+            and all(x == 'variable' for x in right_types):
           print 'All variables'
           right_ids = [x['node'].getIdentifier() for x in right_keyvals]
           left_ids = [x['node'].getIdentifier() for x in left_keyvals]
@@ -63,14 +64,13 @@ class GenericLogicASTVisitor():
               print 'Binding',right_keyvals[i]['node'],'to',right_keys[i]
               right_keyvals[i]['node'].bindTo(right_keys[i])
             self._node_stack.append(left_node['table'])
-            # TODO: Probably should create a constraint that vars are equal.
             print 'All ids are the same. TADAAAAAA'
             return
         # Tables are still equal, but elements are not all variables, iterate
         # pairwise through the list.
         print 'Working through constraints'
         constraints_list = []
-        for i in range(0, len(right_keyvals)): #TODO is this arbitrary?
+        for i in range(0, len(right_keyvals)): # TODO: arbitrary - refactor
           left_key = left_keyvals[i]
           right_key = right_keyvals[i]
           if right_key['type'] == left_key['type'] == 'variable':
