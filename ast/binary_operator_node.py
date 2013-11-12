@@ -1,5 +1,5 @@
 '''
-BinaryFormula Node
+BinaryOperator Node
 This class implements an abstract AST node for a binary formula.
 
 Child structure:
@@ -9,7 +9,7 @@ Child structure:
 
 from node import Node
 
-class BinaryFormulaNode(Node):
+class BinaryOperatorNode(Node):
   # Takes two nodes representing the LHS and the RHS of the formula.
   def __init__(self, left, right):
     Node.__init__(self)

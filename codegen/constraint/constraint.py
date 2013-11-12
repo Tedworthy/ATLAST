@@ -1,4 +1,4 @@
-class constraint():
+class Constraint():
   EQ = '='
   NEQ = '!='
   GT = '>'
