@@ -1,6 +1,6 @@
-import psycopg2
 import sys
-import csv
+import json
+import psycopg2
 import ConfigParser
 
 
@@ -33,5 +33,3 @@ def query(text):
 
 
 
-result = query("SELECT * FROM films")
-print result
