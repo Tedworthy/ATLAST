@@ -1,9 +1,9 @@
-'
+'''
 PARSE TREE -> SQL
 This file contains tests for the translation from the parse tree to sql.
 
 NOTE: It assumes that the parser works correctly.
-'
+'''
 
 import parsing
 from paste.fixture import TestApp
