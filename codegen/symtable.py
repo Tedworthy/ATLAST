@@ -30,7 +30,6 @@ class SymTable:
     else:
       self.getParent().addGlobal(key, value)
 
-
   def lookup(self, key):
     # Check for the key in this symbol table
     value = self._data.get(key)

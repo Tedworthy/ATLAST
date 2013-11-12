@@ -5,11 +5,13 @@ import parsing.parser
 import parsing.task
 import json
 from dbbackend import query
+from dbbackend import schema
 
 render = web.template.render('templates/')
 
 urls = (
   '/', 'index'
+  '/schema', 'schematic'
 )
 
 logic_form = web.form.Form(
@@ -28,11 +30,11 @@ class index:
     form.validates()
 
     logic_to_translate = form.logic.get_value()
-    web.header('Content-Type','text/html; charset=utf-8', unique=True)
+<<<<<<< HEAD
 
     # RabbitMQ stuff - should work, but commented for the moment until codegen
     # works.
-    ## Create worker thread and start
+    # Create worker thread and start
     #result = parsing.task.add_to_parse_q.delay(logic_to_translate)
 
     ## Wait for worker thread to finish translation
@@ -55,12 +57,19 @@ class index:
 
     return json.dumps(response)
 
+class schematic:
+  def GET(self):
+    schema_dict = web.schema.getAllData()
+    return json.dumps(schema_dict)
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:
       return os.environ['WEBPY_ENV'] == 'test'
 
-app = web.application(urls, globals())
+# Get global vars, create shared global instance of SQLSchema class.
+# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
+web.app = web.application(urls, globals())
+web.schema = schema.Schema()
 
 if (not is_test()) and  __name__ == "__main__":
-  app.run()
+  web.app.run()

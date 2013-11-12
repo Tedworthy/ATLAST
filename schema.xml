@@ -1,0 +1,1 @@
+<root><table name="films"><primaryKey>fid</primaryKey></table><table name="casting"><primaryKey>cid</primaryKey></table><table name="actors"><primaryKey>aid</primaryKey></table></root>

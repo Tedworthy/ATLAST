@@ -1,40 +1,35 @@
 import sys
 import json
 import psycopg2
+import ConfigParser
 
 
-con = None
 
 def query(text):
-
+  con = None
   try:
-  #TODO parse these options from a file 
-    con = psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
-                           port='55432', dbname='filmdb', 
-                           user='link', password='triforce')
+    config = ConfigParser.RawConfigParser()
+    config.read('dbbackend/db.cfg')
+    host = config.get('DatabaseCon', 'host')
+    port = config.get('DatabaseCon', 'port')
+    user  = config.get('DatabaseCon', 'user')
+    database = config.get('DatabaseCon', 'dbname')
+    password = config.get('DatabaseCon', 'password')
+    print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
+    print "Password: " + password + "\tDatabase Name: "+ database
+    con = psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
     cur = con.cursor()
     cur.execute(text)
     result = cur.fetchall()
 
 
   except psycopg2.DatabaseError, e:
-   result = 'ERROR %s' % e
+    result = 'ERROR %s' % e
     
   finally:
-
     if con:
       con.close()
-      return result
+    return result
 
-def db():
-  return psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
-                          port='55432', dbname='filmdb',
-                          user='link', password='triforce')
 
-def query(query):
-    cur = db().cursor()
-    cur.execute(query)
-    r = [dict((cur.description[i][0], value) \
-              for i, value in enumerate(row)) for row in cur.fetchall()]
-    cur.connection.close()
-    return r
+
