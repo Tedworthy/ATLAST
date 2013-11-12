@@ -24,7 +24,6 @@ class TestCodeGen():
     
     assert(translates_to(logic, sql))
 
-
   def translates_to(logicString, expectedSQLString):
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logicString)
@@ -44,5 +43,3 @@ class TestCodeGen():
     expectedResult = RUN_SQL(expectedSQLString)
 
     return convertedResult == expectedResult
-
-
