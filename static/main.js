@@ -87,7 +87,6 @@ $(document).ready(function() {
         $("textarea#sql_result").text(response.error);
       }
 
-      alert(JSON.stringify(response));
       $("textarea#query_result").text(JSON.stringify(response) + "\n");
 
       var table = "";
