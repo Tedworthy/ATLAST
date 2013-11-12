@@ -7,19 +7,20 @@ $(document).ready(function() {
     url: "/schema"    
   }).done(function(result) {
     schema = $.parseJSON(result);
-    $("textarea#schema_table").text(JSON.stringify(schema));
     
     output = '<p>';
     // loop over each object in the array to create table rows
     //$.each(schema, function() {
 
       $.each(schema, function(k, v) {
+        output += ' ';
         output += k;
       });
 
     //});
     
     output += '</p>';
+    $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
   });
 
