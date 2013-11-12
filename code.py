@@ -6,11 +6,14 @@ import parsing.task
 import json
 from dbbackend import query
 from dbbackend import schema
+from web.wsgiserver import CherryPyWSGIServer
 
+CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
+CherryPyWSGIServer.ssl_private_key = './certs/server.key'
 render = web.template.render('templates/')
 
 urls = (
-  '/', 'index'
+  '/', 'index',
   '/schema', 'schematic'
 )
 

@@ -1,4 +1,7 @@
 $(document).ready(function() {
+  $(".modalInput").overlay({mask: '#999', fixed: false}).bind("onBeforeClose", function(e) {
+    $(".error").hide();
+  });
 
   var unicode_chars = {
     "and": "\u22C0",
@@ -112,6 +115,9 @@ $(document).ready(function() {
     $("#logic").insertAtCaret(unicode_chars.forall);
   });
   
+  
+  
+
   // Insert symbols at cursor position
   $.fn.extend({
     insertAtCaret: function(text) {

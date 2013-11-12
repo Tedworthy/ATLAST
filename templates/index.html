@@ -6,9 +6,7 @@ $def with (form)
   <head>
     <title>Logic to SQL</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="static/main.css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="static/jquery.tools.min.js"></script>
     <script src="static/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,6 +17,9 @@ $def with (form)
     <link rel="apple-touch-icon" href="/apple-touch-icon-57x57.png">
     <link rel="apple-touch-startup-image" href="/splash-startup.png">
     -->
+    <link rel="stylesheet" type="text/css" href="static/main.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
   </head>
 
   <body>
@@ -27,15 +28,30 @@ $def with (form)
         <nav>
           <ul>
             <li>
-              <span><i class="icon-search"></i> Query</span>
+              <span><i class="icon-search"></i>Query</span>
             </li>
             <li>
-            <span><i class="icon-edit"></i> Define</span>
-            <span><i class="icon-edit"></i> Configure</span>
+              <span><i class="icon-edit"></i>Define</span>
+            </li>
+            <li>
+              <button class="modalInput" rel="#configdialog">Configure</button>
             </li>
           </ul>
         </nav>
       </header>
+
+    <div class="modal" id="configdialog">
+      <p> Configuration Page </p>
+      <form class="rounded" id="configform">
+        <ul>
+        <li>Host: <input type="text" name="host"/></li>
+        <li>Port: <input type="text" name="port"/></li>
+        <li>Table Name: <input type="text" name="port"/></li>
+        <li>Password: <input type="password" name="password"/></li>
+        <input type="submit" value="Submit" />
+      </form>
+      <button class="close"> Close </button>
+    </div>
 
       <section id="logic_section">
         <form id="logic-form" name="convert_to_sql" action="#" method="post">
