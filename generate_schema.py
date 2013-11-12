@@ -28,14 +28,18 @@ for table in (table[0] for table in tables):
   xmltable.set("name", table)
 
   # Query to retrieve all primary keys from a given table
-  primary_key_query = """ SELECT  pg_attribute.attname,
-                                format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
-                        FROM    pg_index, pg_class, pg_attribute
-                        WHERE   pg_class.oid = '%s'::regclass AND
-                                indrelid = pg_class.oid AND
-                                pg_attribute.attrelid = pg_class.oid AND
-                                pg_attribute.attnum = any(pg_index.indkey) AND 
-                                indisprimary""" % table
+  #primary_key_query = """ SELECT  pg_attribute.attname,
+  #                              format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+  #                      FROM    pg_index, pg_class, pg_attribute
+  #                      WHERE   pg_class.oid = '%s'::regclass AND
+  #                              indrelid = pg_class.oid AND
+  #                              pg_attribute.attrelid = pg_class.oid AND
+  #                              pg_attribute.attnum = any(pg_index.indkey) AND 
+  #                              indisprimary""" % table
+  
+   primary_key_query = """select column_name from information_schema.columns where
+                       %s='captor_prime_aggregates'""" % table;
+  
   # Execute the query
   cur = con.cursor()
   cur.execute(primary_key_query)

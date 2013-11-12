@@ -6,6 +6,7 @@ $(document).ready(function() {
     type: "GET",
     url: "/schema"    
   }).done(function(result) {
+    // See generate_schema.py for the original query
     schema = $.parseJSON(result);
     
     // Print out the name of each table and their primary keys
