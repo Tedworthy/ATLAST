@@ -1,4 +1,6 @@
-class CrossJoinNode():
+from ir_node import IRNode
+
+class CrossJoinNode(IRNode):
   def __init__(self, left, right):
     self._left = left
     self._right = right

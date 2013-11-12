@@ -1,6 +1,8 @@
-class Constraint():
+from ir_node import IRNode
+
+class Constraint(IRNode):
   EQ = '='
-  NEQ = '!='
+  NEQ = '<>'
   GT = '>'
   GTE = '>='
   LT = '<'

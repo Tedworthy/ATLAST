@@ -1,4 +1,6 @@
-class EquiJoinNode():
+from ir_node import IRNode
+
+class EquiJoinNode(IRNode):
   def __init__(self, left, right, constraint_tree):
     self._left = left
     self._right = right

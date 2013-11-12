@@ -1,4 +1,4 @@
-from binop_constraint import *
+from binop_constraint import BinOpConstraint
 
 class AndConstraint(BinOpConstraint):
   def __init__(self, left, right):

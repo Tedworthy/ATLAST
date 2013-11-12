@@ -6,10 +6,9 @@ generic intermediate representation for code generation.
 
 import visit as v
 import ast
-from codegen.sqlir import SQLIR
+from codegen.ir import IR
 from code import web
 from copy import copy, deepcopy
-from table_structure import Table
 
 class GenericLogicASTVisitor():
 

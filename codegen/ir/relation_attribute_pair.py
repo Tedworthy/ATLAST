@@ -1,4 +1,6 @@
-class RelationAttributePair():
+from ir_node import IRNode
+
+class RelationAttributePair(IRNode):
   def __init__(self, relation, attribute):
     self._relation = relation
     self._attribute = attribute
