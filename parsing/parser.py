@@ -1,6 +1,7 @@
 import ply.yacc as yacc 
 import sys
 from lexer import tokens
+from node import *
 
 precedence = (
   ('left', 'IFF'),
@@ -15,37 +16,30 @@ precedence = (
 def p_formula_atomic_formula(p):
   'formula : atomicFormula'
   p[0] = p[1]
-  print p[0]
 
 def p_formula_bracketed(p):
   'formula : LBRACKET formula RBRACKET'
-  p[0] = 'Bracketed' + p[2]
-  print p[0]
+  p[0] = p[2]
 
 def p_formula_iff(p):
   'formula : formula IFF atomicFormula'
-  p[0] = "%s iff %s" % (p[1], p[3])
-  print p[0]
+  p[0] = IffNode(p[1], p[3])
 
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
-  p[0] = "%s or %s" % (p[1], p[3])
-  print p[0]
+  p[0] = OrNode(p[1], p[3])
 
 def p_formula_and(p):
   'formula : formula AND atomicFormula'
-  p[0] = "%s and %s" % (p[1], p[3])
-  print p[0]
+  p[0] = AndNode(p[1], p[3])
 
 def p_formula_not(p):
   'formula : NOT atomicFormula'
-  p[0] = 'Negation of an atomicFormula ' + p[2]
-  print p[0]
+  p[0] = NotNode(p[2])
 
 def p_formula_quantifier(p):
   'formula : quantifier IDENTIFIER LBRACKET formula RBRACKET'
   p[0] = p[1] + p[2] + ' for formula ' + p[4]
-  print p[0]
 
 # Atomic Formula grammar
 
@@ -105,3 +99,4 @@ f = open(input_file, 'r')
 
 parser = yacc.yacc()
 result = parser.parse(f.read().decode('utf8'))
+print result
