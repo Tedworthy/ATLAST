@@ -1,8 +1,7 @@
 $(document).ready(function() {
 
   var schema;
-  $("textarea#logic").css('placeholder', "test!");
-  
+    
   $.ajax({
     type: "GET",
     url: "/schema"    
@@ -71,6 +70,7 @@ $(document).ready(function() {
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $("#convert_button").click(function() {
+  $("textarea#logic").css('placeholder', "test!");
     var input_string = $("textarea#logic").val();
     $.ajax({
       type: "POST",
