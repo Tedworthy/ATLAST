@@ -15,7 +15,9 @@ def db():
     password = config.get('DatabaseCon', 'password')
     print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
     print "Password: " + password + "\tDatabase Name: "+ database
-    return = psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
+    return psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
+  except Exception, e:
+    raise e
 
         
         
