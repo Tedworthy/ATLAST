@@ -38,7 +38,7 @@ for table in (table[0] for table in tables):
   #                              indisprimary""" % table
   
    primary_key_query = """select column_name from information_schema.columns where
-                       %s='captor_prime_aggregates'""" % table;
+                       table_name='%s'""" % table;
   
   # Execute the query
   cur = con.cursor()
