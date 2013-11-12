@@ -15,7 +15,7 @@ $(document).ready(function() {
       output += '<p>Table ' + table + ' has columns ';
       
       $.each(p_keys, function(text, keys) {
-        output += ' ' + keys + ',p';
+        output += 'blah';
       });
       
       output = output.substring(0, output.length - 2);
