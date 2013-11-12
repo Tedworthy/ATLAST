@@ -18,6 +18,7 @@ $(document).ready(function() {
         output += ' ' + keys + ',';
       });
       
+      output = output.substring(0, str.length - 1);
       output += '</p>';
     });
 
