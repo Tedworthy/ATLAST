@@ -15,7 +15,9 @@ $(document).ready(function() {
       output += '<p>Table ' + table + ' has columns ';
       
       $.each(p_keys, function(text, keys) {
+        $.each(keys, function(key) {
         
+        });
           
         
       });
