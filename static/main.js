@@ -12,9 +12,14 @@ $(document).ready(function() {
     // loop over each object in the array to create table rows
     //$.each(schema, function() {
 
-      $.each(schema, function(k, v) {
-        output += ' ';
-        output += k;
+      $.each(schema, function(table, p_keys) {
+        output += 'Table ' + table + 'has primary key ';
+        
+        $.each(p_keys, function(text, keys) {
+          output += keys;
+        });
+        
+        output += '\n';
       });
 
     //});
