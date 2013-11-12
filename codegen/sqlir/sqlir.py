@@ -17,7 +17,7 @@ class SQLIR():
 
   def accept(self, visitor):
     for select in self._select_set:
-
+      select.accept(visitor)
     self._join_tree.accept(visitor)
     for constraint in self._constraint_tree:
       constraint.accept(visitor)
