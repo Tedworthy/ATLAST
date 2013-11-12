@@ -4,7 +4,7 @@ class BinOpConstraint():
     self._right = right
 
   def getLeftConstraint(self):
-    return _left
+    return self._left
 
   def getRightConstraint(self):
-    return _right
+    return self._right
