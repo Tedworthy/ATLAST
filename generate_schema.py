@@ -28,14 +28,20 @@ for table in (table[0] for table in tables):
   xmltable.set("name", table)
 
   # Query to retrieve all primary keys from a given table
-  primary_key_query = """ SELECT  pg_attribute.attname,
-                                format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
-                        FROM    pg_index, pg_class, pg_attribute
-                        WHERE   pg_class.oid = '%s'::regclass AND
-                                indrelid = pg_class.oid AND
-                                pg_attribute.attrelid = pg_class.oid AND
-                                pg_attribute.attnum = any(pg_index.indkey) AND 
-                                indisprimary""" % table
+  #primary_key_query = """ SELECT  pg_attribute.attname,
+  #                              format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+  #                      FROM    pg_index, pg_class, pg_attribute
+  #                      WHERE   pg_class.oid = '%s'::regclass AND
+  #                              indrelid = pg_class.oid AND
+  #                              pg_attribute.attrelid = pg_class.oid AND
+  #                              pg_attribute.attnum = any(pg_index.indkey) AND 
+  #                              indisprimary""" % table
+  
+  # Let's pretend this gives the primary key, and not all the column names
+  # like it actually does
+  primary_key_query = """select column_name from information_schema.columns where
+                       table_name='%s'""" % table
+  
   # Execute the query
   cur = con.cursor()
   cur.execute(primary_key_query)
