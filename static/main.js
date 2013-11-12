@@ -8,22 +8,18 @@ $(document).ready(function() {
   }).done(function(result) {
     schema = $.parseJSON(result);
     
+    // Print out the name of each table and their primary keys
     output = '';
-    // loop over each object in the array to create table rows
-    //$.each(schema, function() {
-
-      $.each(schema, function(table, p_keys) {
-        output += '<p>Table ' + table + ' has primary key ';
-        
-        $.each(p_keys, function(text, keys) {
-          output += keys;
-        });
-        
-        output += '</p>';
+    $.each(schema, function(table, p_keys) {
+      output += '<p>Table ' + table + ' has primary key ';
+      
+      $.each(p_keys, function(text, keys) {
+        output += keys;
       });
+      
+      output += '</p>';
+    });
 
-    //});
-    
     $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
   });
