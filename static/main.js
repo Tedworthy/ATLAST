@@ -8,23 +8,22 @@ $(document).ready(function() {
   }).done(function(result) {
     schema = $.parseJSON(result);
     
-    output = '<p>';
+    output = '';
     // loop over each object in the array to create table rows
     //$.each(schema, function() {
 
       $.each(schema, function(table, p_keys) {
-        output += 'Table ' + table + 'has primary key ';
+        output += '<p>Table ' + table + ' has primary key ';
         
         $.each(p_keys, function(text, keys) {
           output += keys;
         });
         
-        output += '\n';
+        output += '</p>';
       });
 
     //});
     
-    output += '</p>';
     $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
   });
