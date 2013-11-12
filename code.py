@@ -30,7 +30,6 @@ class index:
     form.validates()
 
     logic_to_translate = form.logic.get_value()
-<<<<<<< HEAD
 
     # RabbitMQ stuff - should work, but commented for the moment until codegen
     # works.
