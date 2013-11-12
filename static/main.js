@@ -20,7 +20,7 @@ $(document).ready(function() {
         output += ', ';
       });
       
-      output = output.substring(0, output.length - 2);
+      //output = output.substring(0, output.length - 2);
       output += '</p>';
     });
 
