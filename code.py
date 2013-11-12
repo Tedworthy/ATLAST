@@ -82,7 +82,7 @@ class login:
     f = login_form()
     f.validates()
     print f['username']
-
+    print web.input()
     response = {'error' : 'ok'}
   
     return json.dumps(response)
