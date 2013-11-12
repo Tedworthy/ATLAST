@@ -37,6 +37,8 @@ for table in (table[0] for table in tables):
   #                              pg_attribute.attnum = any(pg_index.indkey) AND 
   #                              indisprimary""" % table
   
+  # Let's pretend this gives the primary key, and not all the column names
+  # like it actually does
   primary_key_query = """select column_name from information_schema.columns where
                        table_name='%s'""" % table
   

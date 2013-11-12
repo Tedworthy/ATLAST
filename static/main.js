@@ -12,10 +12,10 @@ $(document).ready(function() {
     // Print out the name of each table and their primary keys
     output = '';
     $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has primary key ';
+      output += '<p>Table ' + table + ' has columns ';
       
       $.each(p_keys, function(text, keys) {
-        output += keys;
+        output += ' ' + keys + ',';
       });
       
       output += '</p>';
