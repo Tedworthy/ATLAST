@@ -16,7 +16,7 @@ $(document).ready(function() {
       
       $.each(p_keys, function(text, keys) {
         $.each(keys, function(index, key) {
-        
+          alert(key);
         });
           
         
