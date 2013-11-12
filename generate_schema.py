@@ -41,6 +41,7 @@ for table in (table[0] for table in tables):
   # like it actually does
   primary_key_query = """select column_name from information_schema.columns where
                        table_name='%s'""" % table
+  primary_key_query = primary_key_query[:-1]
   
   # Execute the query
   cur = con.cursor()
