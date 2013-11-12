@@ -6,6 +6,7 @@ from dbbackend import schema
 
 render = web.template.render('templates/')
 
+
 urls = (
   '/', 'index',
   '/schema', 'schematic'
