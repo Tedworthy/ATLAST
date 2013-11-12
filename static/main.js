@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
   var schema;
-  $("textarea#logic").css(placeholder, "test!");
+  $("textarea#logic").css('placeholder', "test!");
   
   $.ajax({
     type: "GET",
