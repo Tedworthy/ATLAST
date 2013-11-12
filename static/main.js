@@ -17,10 +17,6 @@ $(document).ready(function() {
       $.each(p_keys, function(text, keys) {
         
           
-        for(String key : keys)
-        {
-            output += ' ' + key + ', ';
-        }
         
       });
       
