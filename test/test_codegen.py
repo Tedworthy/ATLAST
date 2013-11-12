@@ -1,9 +1,7 @@
-'
-PARSE TREE -> SQL
-This file contains tests for the translation from the parse tree to sql.
+# PARSE TREE -> SQL
+# This file contains tests for the translation from the parse tree to sql.
 
-NOTE: It assumes that the parser works correctly.
-'
+# NOTE: It assumes that the parser works correctly.
 
 import parsing
 from paste.fixture import TestApp
@@ -23,7 +21,6 @@ class TestCodeGen():
     sql = "SELECT title FROM film"
     
     assert(translates_to(logic, sql))
-
 
   def translates_to(logicString, expectedSQLString):
     # Create a Logic Tree from the Logic

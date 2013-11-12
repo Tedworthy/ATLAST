@@ -1,25 +1,26 @@
 class SQLIR():
 
   def __init__(self):
-    self._select_set = set()
+    # An ordered list of field names (strings)
+    self._select_set = []
     self._join_tree = None #TODO
-    self._constraint_stack = [] #TODO WHY IS THIS A STACK AND NOT A TREE?
+    self._constraint_tree = [] 
 
   def addSelectNode(self, node):
     self._select_set.add(node)
 
-  def constraint_stack_conjunction(constraint):
-    if len(self._constraint_stack) < 0:
-      self._constraint_stack.push(constraint)
+  def constraint_tree_conjunction(constraint):
+    if len(self._constraint_tree) < 0:
+      self._constraint_tree.push(constraint)
     else:
-      previous_constraint = self._constraint_stack.pop()
+      previous_constraint = self._constraint_tree.pop()
       conjunction = AndConstraint(previous_constraint, constraint)
 
-  def constraint_stack_disjunction(constraint):
-    if len(self._constraint_stack) < 0:
-      self._constraint_stack.push(constraint)
+  def constraint_tree_disjunction(constraint):
+    if len(self._constraint_tree) < 0:
+      self._constraint_tree.push(constraint)
     else:
-      previous_constraint = self._constraint_stack.pop()
+      previous_constraint = self._constraint_tree.pop()
       conjunction = OrConstraint(previous_constraint, constraint)
 
 #  def join_tree_equijoin(table, keys):
@@ -42,9 +43,9 @@ class SQLIR():
 
   def accept(self, visitor):
     for select in self._select_set:
-      select.accept(self)
+
     self._join_tree.accept(visitor)
-    for constraint in self._constraint_stack:
+    for constraint in self._constraint_tree:
       constraint.accept(visitor)
     visitor.visit(self)
 
@@ -58,7 +59,7 @@ class SQLIR():
     string += str(self._join_tree)
     string += "\n"
     string += "  Constraint Stack: ["
-    constraint_strings = map(str, self._constraint_stack)
+    constraint_strings = map(str, self._constraint_tree)
     string += ", ".join(constraint_strings)
     string += "]\n"
     string += "}"
