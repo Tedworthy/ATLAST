@@ -6,7 +6,7 @@ generic intermediate representation for code generation.
 
 import visit as v
 import ast
-from sqlir import SQLIR
+from codegen.sqlir import SQLIR
 from code import web
 from copy import copy, deepcopy
 from table_structure import Table
