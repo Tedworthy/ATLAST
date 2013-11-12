@@ -17,6 +17,7 @@ class GenericLogicASTVisitor():
     # Instance variables go here, if necessary
     self._IR = SQLIR()
     self._node_stack = []
+    self._IR_stack = []
     pass
 
   @v.on('node')
