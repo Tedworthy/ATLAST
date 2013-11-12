@@ -30,8 +30,8 @@ class index:
     # TODO: We have the logic as a string, we need to process it
     logic_to_translate = form.logic.get_value()
     # translated = query.query(logic_to_translate) TODO secure the connection
-    # currently it runs everything as root which is LOLZ 
-    web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+    # currently it runs everything as root which is LOLZ
+    web.header('Content-Type','text/html; charset=utf-8', unique=True)
     result = parsing.task.add_to_parse_q.delay(logic_to_translate)
     while not result.ready():
       time.sleep(0.1) #TODO remove busy waiting, semaphore/callback this bitch

@@ -156,7 +156,7 @@ class GenericLogicASTVisitor():
   @v.when(ast.VariableNode)
   def visit(self, node):
     if node.isFree():
-      self._IR.addSelectNode(node)  
+      self._IR.addSelectNode(node)
       print 'Free variable ' , node , ' found'
     state = {'type' : 'variable', 'node' : node}
     self._node_stack.append(state)
