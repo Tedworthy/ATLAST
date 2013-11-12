@@ -18,11 +18,9 @@ $(document).ready(function() {
         $.each(keys, function(index, key) {
           output += key + ', ';
         });
-          
-        output = output.substring(0, str.length - 2);
       });
       
-      //output = output.substring(0, output.length - 2);
+      output = output.substring(0, output.length - 2);
       output += '</p>';
     });
 
