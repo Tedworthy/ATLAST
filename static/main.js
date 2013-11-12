@@ -17,7 +17,7 @@ $(document).ready(function() {
       $.each(p_keys, function(text, keys) {
         output += ' ';
         output += keys
-        output += ', ';
+        output += 'aaaaaaa, ';
       });
       
       //output = output.substring(0, output.length - 2);
