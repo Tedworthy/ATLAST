@@ -224,17 +224,9 @@ $(document).ready(function() {
   $("#forall_button").click(function() {
     $("#logic").insertAtCursor(unicode_chars.forall);
   });
-<<<<<<< HEAD
-  
-  
-  
-
-  // Insert symbols at cursor position
-=======
 
   // Add textarea cursor manipulation functions to jQuery
   // All three functions based on code from StackOverflow
->>>>>>> testing
   $.fn.extend({
     insertAtCursor:
       function(text) {
