@@ -1,41 +1,48 @@
-class SQLIR():
+class IR():
 
   def __init__(self):
     # An ordered list of field names (strings)
-    self._select_set = []
+    self._relation_attribute_pairs = []
     # A tree containing the table names and fields to join on.
-    self._join_tree = None #TODO
-    self._constraint_tree = [] 
+    self._relation_tree = None
+    self._constraint_tree = None 
 
-  def addSelectNode(self, node):
-    self._select_set.add(node)
+  def getRelationAttributePairs():
+    return self._relation_attribute_pairs
 
+  def setRelationAttributePairs(relationAttributePairs):
+    self._relation_attribute_pairs = relationAttributePairs
 
-  def computeIR(self):
-    # Invoke generic AST visitor here.
-    pass
+  def getRelationTree():
+    return self._relation_tree
+
+  def setRelationTree(relationTree):
+    self._relation_tree = relationTree
+
+  def getConstraintTree():
+    return self._constraint_tree
+
+  def setConstraintTree(constraintTree):
+    self._constraint_tree = constraintTree
 
   def accept(self, visitor):
-    for select in self._select_set:
-      select.accept(visitor)
-    self._join_tree.accept(visitor)
-    for constraint in self._constraint_tree:
-      constraint.accept(visitor)
+    for relAttrPair in self._relation_attribute_pairs:
+      relAttrPair.accept(visitor)
+    self._relation_tree.accept(visitor)
+    self._constraint_tree.accept(visitor)
     visitor.visit(self)
 
   def __repr__(self):
-    string = "SQLIR: {\n"
-    string += "  Select Set: ["
-    select_strings = map(str, self._select_set)
-    string += ", ".join(select_strings)
+    string += "IR = {"
+    string += "  Relation Attribute Pairs: ["
+    string += ", ".join(map(str, self._relation_attribute_pairs))
     string += "]\n"
-    string += "  Join Tree: "
-    string += str(self._join_tree)
+    string += "  Relation Tree: "
+    string += str(self._relation_tree)
     string += "\n"
-    string += "  Constraint Stack: ["
-    constraint_strings = map(str, self._constraint_tree)
-    string += ", ".join(constraint_strings)
-    string += "]\n"
+    string += "  Constraint Tree: "
+    string += str(self._constraint_tree)
+    string += "\n"
     string += "}"
     return string
   
