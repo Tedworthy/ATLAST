@@ -7,8 +7,7 @@ $(document).ready(function() {
     url: "/schema"    
   }).done(function(result) {
     schema = $.parseJSON(result);
-    alert(JSON.stringify(schema));
-    $("textarea#schema").text(JSON.stringify(schema));   
+    $("textarea#schema_table").text(JSON.stringify(schema));   
   });
 
   var unicode_chars = {
