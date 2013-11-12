@@ -1,1 +1,1 @@
-∃x(film_title(x,y) ∧ film_director(x, z))
+∃x(films_title(x,y) ∧ films_director(x, z))

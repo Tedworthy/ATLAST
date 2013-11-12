@@ -43,5 +43,5 @@ class SQLGenerator():
     # similar) and then convert to SQL string, popping the children off the
     # stack if necessary, and then pushing the result to the stack. Or if we
     # have a leaf-style node, we just convert directly to SQL string and push
-    # to stack. 
-
+    # to stack.
+    pass
