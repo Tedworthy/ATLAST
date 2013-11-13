@@ -1,14 +1,11 @@
-$def with (form)
-
+$def with (form,form2)
 <!DOCTYPE html>
 <html>
 
   <head>
     <title>Logic to SQL</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="static/main.css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="static/jquery.tools.min.js"></script>
     <script src="static/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,6 +16,9 @@ $def with (form)
     <link rel="apple-touch-icon" href="/apple-touch-icon-57x57.png">
     <link rel="apple-touch-startup-image" href="/splash-startup.png">
     -->
+    <link rel="stylesheet" type="text/css" href="static/main.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
   </head>
 
   <body>
@@ -27,14 +27,30 @@ $def with (form)
         <nav>
           <ul>
             <li>
-              <span><i class="icon-search"></i> Query</span>
+              <span><i class="icon-search"></i>Query</span>
             </li>
             <li>
-            <span><i class="icon-edit"></i> Define</span>
+              <span><i class="icon-edit"></i>Define</span>
+            </li>
+            <li>
+              <button class="modalInput" rel="#configdialog">Configure</button>
             </li>
           </ul>
         </nav>
       </header>
+
+    <div class="modal" id="configdialog">
+      <p> Configuration Page </p>
+      <form class="rounded" id="configform" method="post" action="/login">
+          $:form2.host.render()
+          $:form2.port.render()
+          $:form2.username.render()
+          $:form2.password.render()
+          $:form2.dbname.render()
+        <button type="submit" id="config_submit"> Submit </button>
+      </form>
+      <button class="close"> Close </button>
+    </div>
 
       <section id="logic_section">
         <form id="logic-form" name="convert_to_sql" action="#" method="post">
