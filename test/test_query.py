@@ -5,34 +5,28 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
+import unittest
 
-class TestQuery():
+class TestQuery(unittest.TestCase):
 
-  global symbolTable
-  symbolTable = None
-  global codegenVisitor
-  codegenVisitor = None
-  global sqlGeneratorVisitor
-  qlGeneratorVisitor = None
+  def setUp(self):
+    self.symbolTable = SymTable()
+    self.codegenVisitor = GenericLogicASTVisitor()
+    self.sqlGeneratorVisitor = SQLGenerator()
 
   def setup_func():
-    symbolTable = SymTable()
-    codegenVisitor = GenericLogicASTVisitor()
-    sqlGeneratorVisitor = SQLGenerator()
-    print 'SETUP'
+    pass
 
   def teardown_func():
-    symbolTable = None
-    codegenVisitor = None
-    sqlGeneratorVisitor = None
+    pass
 
   @with_setup(setup_func, teardown_func)
   def test_two_table_selection_query(self):
     query_string = "∃x(films_title(x, y) ∧ films_director(x, z))".decode('utf8')
     result = parsing.parse_input(query_string)
     # Generate the symbol table
-    result.generateSymbolTable(symbolTable)
+    result.generateSymbolTable(self.symbolTable)
     # Perform the code generation into SQLIR using the visitor
-    result.accept(codegenVisitor)
-    codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
-    assert_equal(sqlGeneratorVisitor._sql, "")
+    result.accept(self.codegenVisitor)
+    self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title, films.director FROM films")
