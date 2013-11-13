@@ -17,6 +17,7 @@ $(document).ready(function() {
     $.each(schema, function(table, p_keys) {
       output += '<p>Table ' + table + ' has columns ';
       
+      alert('the schema is ' + schema);
       $.each(p_keys, function(text, keys) {
         $.each(keys, function(index, key) {
           output += key + ', ';
