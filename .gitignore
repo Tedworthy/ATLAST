@@ -1,11 +1,6 @@
-
-#python compiled files
 *.pyc
-#vim swap files
 *.swp
-
-#ply generated flies
-parser.out
+*.out
 parsetab.py
 #random crap on the server
 *.spec
@@ -16,3 +11,4 @@ tmp*
 webpy*
 
 certs/*
+*.tab
