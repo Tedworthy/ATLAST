@@ -2,6 +2,7 @@ from ir_node import IRNode
 
 class BinOpConstraint(IRNode):
   def __init__(self, left, right):
+    IRNode.__init__(self)
     self._left = left
     self._right = right
 

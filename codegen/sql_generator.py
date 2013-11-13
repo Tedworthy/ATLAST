@@ -9,6 +9,13 @@ import ir
 
 class SQLGenerator():
 
+  def relAttrPairToString(self, relAttrPair):
+    return relAttrPair.getRelation() + "." + relAttrPair.getAttribute()
+
+  def genSelectNodes(self, ir):
+    for relAttrPair in ir.getRelationAttributePairs():
+      self._sql_select_list.append(self.relAttrPairToString(relAttrPair))
+
   def __init__(self):
     self._sql = ""
     self._sql_select_list = []
@@ -31,7 +38,7 @@ class SQLGenerator():
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    self._sql_select_list.append(node.getRelation + "." + node.getAttribute)
+    self._sql_where_stack.append(self.relAttrPairToString(node))
 
   @v.when(ir.RelationNode)
   def visit(self, node):
