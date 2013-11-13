@@ -33,8 +33,9 @@ class SQLGenerator():
     self._sql += ", ".join(self._sql_select_list)
     self._sql += " FROM "
     self._sql += self._sql_from_stack[0]
-    self._sql += " WHERE "
-    self._sql += self._sql_where_stack[0]
+    if len(self._sql_where_stack) > 0:
+      self._sql += " WHERE "
+      self._sql += self._sql_where_stack[0]
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):

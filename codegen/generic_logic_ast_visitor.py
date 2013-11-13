@@ -70,7 +70,7 @@ class GenericLogicASTVisitor():
             ir.setRelationTree(RelationNode(left_node['table']))
             self._IR_stack.append(ir)
             self._node_stack.append(left_node['table'])
-            print 'All ids are the same. TADAAAAAA'
+            print 'All keys are the same. TADAAAAAA'
             return
         # Tables are still equal, but elements are not all variables, iterate
         # pairwise through the list.
@@ -85,13 +85,13 @@ class GenericLogicASTVisitor():
               left_rel_attr = RelationAttributePair(left_node['table'], left_key['node'])
               right_rel_attr = RelationAttributePair(right_node['table'], right_key['node'])
               constraint = Constraint(Constraint.EQ, left_rel_attr, right_rel_attr)
-              constraints_list.push(constraint)
+              constraints_list.push(constraint) ########################################## TODO TODO WHADDAYA DO WITH DEM CONSTRAINTS BRO?
               print 'one key was equal!'
             # Bind both of them to the key field
             # i.e node.bindTo(table.attr)
             print 'Bind together variables'
             table_id = left_node['table'].getIdentifier()
-            left_key['node'].bindTo(table_id + '.' + left_keys[i])
+            left_key['node'].bindTo(table_id + '.' + left_keys[i]) ############################### TODO TODO TODO PROBABLY BOLLOCKS
             right_key['node'].bindTo(table_id + '.' + right_keys[i])
           else:
             print """a mixture of variables and constants found, add some
@@ -136,6 +136,8 @@ class GenericLogicASTVisitor():
           ir.setRelationAttributePairs([rel_attr])
         if not child['node'].bindTo(rel_attr):
           print 'Could not bind'
+          print 'its the top one'
+          print child['node'].getBoundValue()
           previous_binding = child['node'].getBoundValue()
           assert previous_binding != None
           prev_constraints = ir.getConstraintTree()
@@ -164,13 +166,18 @@ class GenericLogicASTVisitor():
 
       key_node = self._node_stack.pop()
       if key_node['type'] == 'variable':
+        rel_attr = RelationAttributePair(relation, keys[i])
+        if key_node['node'].isFree():
+          ir.setRelationAttributePairs([rel_attr])
         if not key_node['node'].bindTo(rel_attr):
           print 'Could not bind'
+          print key_node['node'].getBoundValue()
           previous_binding = key_node['node'].getBoundValue()
           assert previous_binding != None
           prev_constraints = ir.getConstraintTree()
           new_constraint = Constraint(Constraint.EQ, rel_attr, \
             previous_binding)
+          print 
           merged_constraint = None;
           if prev_constraints is None:
             ir.setConstraintTree(new_constraint)
@@ -217,11 +224,7 @@ class GenericLogicASTVisitor():
 
   def conjunctIR(self, left_ir, right_ir, join_classifier=NO_JOIN, keys=[]):
     rel_attr_pairs = left_ir.getRelationAttributePairs()
-    if rel_attr_pairs is None:
-      print "MY NAAAAAMEESSS MITCHELL 1"
     rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
-    if rel_attr_pairs is None:
-      print "MY NAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMES TED 1"
     left_ir.setRelationAttributePairs(rel_attr_pairs)
 
     left_constraints = left_ir.getConstraintTree()
