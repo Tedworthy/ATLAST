@@ -4,6 +4,7 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
+import dbbackend.schema as schema
 
 def print_prefix(message):
   print "[MANUAL]", message
@@ -32,7 +33,7 @@ print_prefix(result)
 
 # Set up a symbol table and code generation visitor
 symbolTable = SymTable()
-codegenVisitor = GenericLogicASTVisitor()
+codegenVisitor = GenericLogicASTVisitor(schema.Schema())
 sqlGeneratorVisitor = SQLGenerator()
 
 # Generate the symbol table

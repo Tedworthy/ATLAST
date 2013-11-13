@@ -4,8 +4,8 @@ $(document).ready(function() {
   });
 
   var unicode_chars = {
-    "and": "\u22C0",
-    "or": "\u22C1",
+    "and": "\u2227",
+    "or": "\u2228",
     "implies": "\u2192",
     "there_exists": "\u2203",
     "forall": "\u2200"
