@@ -3,7 +3,9 @@ import json
 import psycopg2
 import ConfigParser
 
-def db():
+
+
+def query(text):
   con = None
   try:
     config = ConfigParser.RawConfigParser()
@@ -15,21 +17,19 @@ def db():
     password = config.get('DatabaseCon', 'password')
     print "Host: " + host + "\tUser: " + user + "\tPassword: " + port 
     print "Password: " + password + "\tDatabase Name: "+ database
-    return psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
-  except Exception, e:
-    raise e
+    con = psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
+    cur = con.cursor()
+    cur.execute(text)
+    result = cur.fetchall()
 
-        
-        
 
-def run_query(sql):
-    cur = db().cursor()
-    try:
-      cur.execute(sql)
-      r = [dict((cur.description[i][0], value) \
-              for i, value in enumerate(row)) for row in cur.fetchall()]
-    except Exception, e:
-      cur.connection.close()
-      raise e
+  except psycopg2.DatabaseError, e:
+    result = 'ERROR %s' % e
     
-    return r
+  finally:
+    if con:
+      con.close()
+    return result
+
+
+
