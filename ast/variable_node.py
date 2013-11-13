@@ -27,13 +27,15 @@ class VariableNode(Node):
     if candidate_node is None:
         symTable.addGlobal(self._identifier, self)
 
-  # NEED TO ADD TO THE SYMBOL TABLE
   def bindTo(self, variable):
     resolved_variable_node = self._symTable.lookup(self.getIdentifier())
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
       return True
-    return resolved_variable_node._boundValue == variable
+    boundValue = resolved_variable_node._boundValue
+    attr_eq = boundValue.getAttribute() == variable.getAttribute()
+    rel_eq = boundValue.getRelation() == variable.getRelation()
+    return attr_eq and rel_eq
 
   def getBoundValue(self):
     resolved_variable_node = self._symTable.lookup(self.getIdentifier())

@@ -5,43 +5,95 @@ SQL query string ready for a DBMS to interpret.
 '''
 
 import visit as v
-import sqlir
-import ast
-import table_structure
+import ir
 
 class SQLGenerator():
+
+  def relAttrPairToString(self, relAttrPair):
+    return relAttrPair.getRelation() + "." + relAttrPair.getAttribute()
+
+  def genSelectNodes(self, ir):
+    for relAttrPair in ir.getRelationAttributePairs():
+      self._sql_select_list.append(self.relAttrPairToString(relAttrPair))
 
   def __init__(self):
     self._sql = ""
     self._sql_select_list = []
-    self._sql_join_stack = []
-    self._sql_constraint_list = []
+    self._sql_from_stack = []
+    self._sql_where_stack = []
 
   @v.on('node')
   def visit(self, node):
     # Generic node, don't think you're supposed to change this
     pass
 
-  @v.when(sqlir.SQLIR)
+  @v.when(ir.IR)
   def visit(self, node):
     self._sql += "SELECT "
-    self._sql += ",".join(self._sql_select_list)
+    self._sql += ", ".join(self._sql_select_list)
     self._sql += " FROM "
-    self._sql += self._sql_join_stack[0]
-    self._sql += " WHERE "
-    #self._sql += _sql_constraint_list ##### WHY A CONSTRAINT STACK NOT A TREE?
+    self._sql += self._sql_from_stack[0]
+    if len(self._sql_where_stack) > 0:
+      self._sql += " WHERE "
+      self._sql += self._sql_where_stack[0]
 
-  @v.when(ast.VariableNode)
+  @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    self._sql_select_list.append(node.getIdentifier())
-    print "SQL Gen sees VariableNode"
+    self._sql_where_stack.append(self.relAttrPairToString(node))
 
-  @v.when(table_structure.Table)
+  @v.when(ir.RelationNode)
   def visit(self, node):
-    # Unfinished data structures here.
-    # We basically want to call accept on the child nodes (if a join node or
-    # similar) and then convert to SQL string, popping the children off the
-    # stack if necessary, and then pushing the result to the stack. Or if we
-    # have a leaf-style node, we just convert directly to SQL string and push
-    # to stack.
-    pass
+    self._sql_from_stack.append(node.getName())
+
+  @v.when(ir.CrossJoinNode)
+  def visit(self, node):
+    node.getLeft().accept(self)
+    node.getRight().accept(self)
+    rightString = self._sql_from_stack.pop()
+    leftString = self._sql_from_stack.pop()
+    joinString = "(" + leftString + ") CROSS JOIN (" + rightString + ")"
+    self._sql_from_stack.append(joinString)
+
+  @v.when(ir.EquiJoinNode)
+  def visit(self, node):
+    node.getLeft().accept(self)
+    node.getRight().accept(self)
+    rightString = self._sql_from_stack.pop()
+    leftString = self._sql_from_stack.pop()
+    node.getConstraintTree().accept(self)
+    constraintString = self._sql_where_stack.pop()
+    joinString = "(" + leftString + ") JOIN " + \
+                 "(" + rightString + ") ON " + constraint_String
+    self._sql_from_stack.append(joinString)
+
+  @v.when(ir.Constraint)
+  def visit(self, node):
+    node.getLeftTerm().accept(self)
+    node.getRightTerm().accept(self)
+    rightString = self._sql_where_stack.pop()
+    leftString = self._sql_where_stack.pop()
+    opString = node.getOp()
+    constraintString = "(" + leftString + ") " + opString + " " + \
+                       "(" + rightString + ")"
+    self._sql_where_stack.append(constraintString)
+
+  @v.when(ir.AndConstraint)
+  def visit(self, node):
+    node.getLeftConstraint().accept(self)
+    node.getRightConstraint().accept(self)
+    rightString = self._sql_where_stack.pop()
+    leftString = self._sql_where_stack.pop()
+    constraintString = "(" + leftString + ") AND " + \
+                       "(" + rightString + ")"
+    self._sql_where_stack.append(constraintString)
+
+  @v.when(ir.OrConstraint)
+  def visit(self, node):
+    node.getLeftConstraint().accept(self)
+    node.getRightConstraint().accept(self)
+    rightString = self._sql_where_stack.pop()
+    leftString = self._sql_where_stack.pop()
+    constraintString = "(" + leftString + ") OR " + \
+                       "(" + rightString + ")"
+    self._sql_where_stack.append(constraintString)
+

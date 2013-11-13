@@ -1,10 +1,13 @@
-class BinOpConstraint():
+from ir_node import IRNode
+
+class BinOpConstraint(IRNode):
   def __init__(self, left, right):
+    IRNode.__init__(self)
     self._left = left
     self._right = right
 
   def getLeftConstraint(self):
-    return _left
+    return self._left
 
   def getRightConstraint(self):
-    return _right
+    return self._right

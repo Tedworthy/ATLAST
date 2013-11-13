@@ -3,6 +3,7 @@ import os
 import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
+from codegen.sql_generator import SQLGenerator
 
 def print_prefix(message):
   print "[MANUAL]", message
@@ -31,7 +32,8 @@ print_prefix(result)
 
 # Set up a symbol table and code generation visitor
 symbolTable = SymTable()
-sqlirVisitor = GenericLogicASTVisitor()
+codegenVisitor = GenericLogicASTVisitor()
+sqlGeneratorVisitor = SQLGenerator()
 
 # Generate the symbol table
 print_prefix("Generating symbol table...")
@@ -43,7 +45,10 @@ print_prefix(symbolTable)
 
 # Perform the code generation into SQLIR using the visitor
 print_prefix("Generating SQLIR...")
-result.accept(sqlirVisitor)
+result.accept(codegenVisitor)
 
-# Print out the SQLIR
-print_prefix(sqlirVisitor._IR)
+# Print out the IR
+print_prefix(codegenVisitor._IR_stack[0])
+
+codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
+print_prefix(sqlGeneratorVisitor._sql)
