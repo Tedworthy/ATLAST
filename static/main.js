@@ -30,6 +30,7 @@ $(document).ready(function() {
 
     $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
+    alert(output);
   });
 
   var unicode_chars = {
