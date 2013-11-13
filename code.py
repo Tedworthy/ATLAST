@@ -1,5 +1,8 @@
 import web
+import time
 import os
+import parsing.parser
+import parsing.task
 import json
 from dbbackend import query
 from dbbackend import schema
@@ -8,7 +11,6 @@ from web.wsgiserver import CherryPyWSGIServer
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
 CherryPyWSGIServer.ssl_private_key = './certs/server.key'
 render = web.template.render('templates/')
-
 
 urls = (
   '/', 'index',
@@ -44,7 +46,6 @@ class index:
     form.validates()
 
     logic_to_translate = form.logic.get_value()
-    web.header('Content-Type','text/html; charset=utf-8', unique=True)
 
     # RabbitMQ stuff - should work, but commented for the moment until codegen
     # works.
@@ -59,16 +60,15 @@ class index:
     #sql = result.get()
 
     # Example query there for testing, remove when codegen works
-    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
+    sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'";
 
-    try:
-      query_result = query.run_query(sql)
-      error = 'ok'
-    except Exception, e:
-      query_result = {}
-      error = str(e)
+    query_result = query.query(sql)
 
-    response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
+    error = 'ok' # ok = everything worked, otherwise write in the error here
+    response = {'error': error, 'sql': sql, 'query': query_result}
+
+    # Debug - remove later
+    print json.dumps(response)
 
     return json.dumps(response)
 
