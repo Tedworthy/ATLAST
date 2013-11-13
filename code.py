@@ -68,7 +68,7 @@ class index:
       query_result = {}
       error = str(e)
 
-    response = {'error': error, 'sql': sql, 'query': query_result}
+    response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
 
     return json.dumps(response)
 
