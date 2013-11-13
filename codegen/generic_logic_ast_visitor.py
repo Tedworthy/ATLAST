@@ -7,7 +7,6 @@ generic intermediate representation for code generation.
 import visit as v
 import ast
 from codegen.ir import *
-from code import web
 from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
@@ -16,10 +15,11 @@ class GenericLogicASTVisitor():
   EQUI_JOIN = 1
   NO_JOIN = 2
 
-  def __init__(self):
+  def __init__(self, schema):
     # Instance variables go here, if necessary
     self._node_stack = []
     self._IR_stack = []
+    self._schema = schema
 
   @v.on('node')
   def visit(self, node):
@@ -118,7 +118,7 @@ class GenericLogicASTVisitor():
     # Get the table name
     relation = attributes[0]
     # Retrieve the primary keys from the schema
-    keys = web.schema.getPrimaryKeys(relation)
+    keys = self._schema.getPrimaryKeys(relation)
     # Sort the keys alphabetically as our predicates enforce this
     keys = sorted(keys)
     # Iterate over the children from right to left, matching binding values
