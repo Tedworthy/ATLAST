@@ -11,13 +11,13 @@ $(document).ready(function() {
   }).done(function(result) {
     // See generate_schema.py for the original query
     schema = $.parseJSON(result);
-    
+    alert('the schema is ' + schema);
     // Print out the name of each table and their primary keys
     output = '';
     $.each(schema, function(table, p_keys) {
       output += '<p>Table ' + table + ' has columns ';
       
-      alert('the schema is ' + schema);
+      
       $.each(p_keys, function(text, keys) {
         $.each(keys, function(index, key) {
           output += key + ', ';
