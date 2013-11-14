@@ -222,6 +222,27 @@ class GenericLogicASTVisitor():
     rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
     left_ir.setRelationAttributePairs(rel_attr_pairs)
 
+  def combineRelations(self, left_ir, right_ir, join_type):
+    """
+    Combines two Relation trees, leaving the result in the left_irs
+    relationTree attribute. This is primarily used when merging together two
+    IRs. Possible values for join_type is defined in the JoinTypes class within
+    codegen.ir.
+    """
+    left_relation = left_ir.getRelationTree()
+    right_relation = right_ir.getRelationTree()
+    if left_relation is None:
+      left_ir.setRelationTree(right_relation)
+    elif right_relation is None or join_type == JoinTypes.NO_JOIN:
+      left_ir.setRelationTree(left_relation)
+    else:
+      if join_type == JoinTypes.EQUI_JOIN:
+        left_relation = EquiJoinNode(left_relation, right_ir.getRelationTree(), keys)
+        left_ir.setRelationTree(left_relation)
+      elif join_type == JoinTypes.CROSS_JOIN:
+        left_relation = CrossJoinNode(left_relation, right_ir.getRelationTree(), keys)
+        left_ir.setRelationTree(left_relation)
+
   def combineConstraints(self, left_ir, right_ir, bin_op):
     """
     Combines two sets of constraints from seperate IRs, leaving the result in
@@ -243,38 +264,14 @@ class GenericLogicASTVisitor():
 
   def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
     self.extendRelationAttributePairs(left_ir, right_ir)
-
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.AND)
-
-    left_relation = left_ir.getRelationTree()
-    right_relation = right_ir.getRelationTree()
-    if left_relation is None:
-      left_ir.setRelationTree(right_relation)
-    elif right_relation is None or join_classifier == JoinTypes.NO_JOIN:
-      left_ir.setRelationTree(left_relation)
-    else:
-      if join_classifier == JoinTypes.EQUI_JOIN:
-        left_relation = EquiJoinNode(left_relation, right_ir.getRelationTree(), keys)
-        left_ir.setRelationTree(left_relation)
-      elif join_classifier == JoinTypes.CROSS_JOIN:
-        left_relation = CrossJoinNode(left_relation, right_ir.getRelationTree(), keys)
-        left_ir.setRelationTree(left_relation)
+    self.combineRelations(left_ir, right_ir, join_classifier)
 
     return left_ir
 
   def disjunctIR(self, left_ir, right_ir):
     self.extendRelationAttributePairs(left_ir, right_ir)
-
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.OR)
-
-    left_relation = left_ir.getRelationTree()
-    right_relation = right_ir.getRelationTree()
-    if left_relation is None:
-      left_ir.setRelationTree(right_relation)
-    elif right_relation is None:
-      left_ir.setRelationTree(left_relation)
-    else:
-      print 'You are performing the disjunction of two IRs. You are either\
-      crazy, stupid or both'
+    self.combineRelations(left_ir, right_ir, JoinTypes.NO_JOIN)
 
     return left_ir
