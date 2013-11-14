@@ -140,24 +140,7 @@ class GenericLogicASTVisitor():
         rel_attr = RelationAttributePair(relation, keys[i])
         if key_node['node'].isFree():
           ir.setRelationAttributePairs([rel_attr])
-        if not key_node['node'].bindTo(rel_attr):
-          print 'Could not bind'
-          print key_node['node'].getBoundValue()
-          previous_binding = key_node['node'].getBoundValue()
-          assert previous_binding != None
-          prev_constraints = ir.getConstraintTree()
-          new_constraint = Constraint(Constraint.EQ, rel_attr, \
-            previous_binding)
-          print 
-          merged_constraint = None;
-          if prev_constraints is None:
-            ir.setConstraintTree(new_constraint)
-          elif new_constraint is None:
-            ir.setConstraintTree(prev_constraints)
-          else:
-            merged_constraint = AndConstraint(prev_constraints, new_constraint)
-            ir.setConstraintTree(merged_constraint)
-
+        self.bind(key_node['node'], rel_attr, ir)
         merged_ir = self.conjunctIR(merged_ir, ir)
         key_values.append(key_node)
 
