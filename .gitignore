@@ -1,2 +1,18 @@
+
+#python compiled files
 *.pyc
+#vim swap files
 *.swp
+
+#ply generated flies
+parser.out
+parsetab.py
+#random crap on the server
+*.spec
+build
+dist
+temp*
+tmp*
+webpy*
+
+certs/*
