@@ -34,13 +34,11 @@ login_form = web.form.Form(
     web.form.Textbox('dbname',class_='textfield',id='dbname_input')
 )
 
-
 class index:
   def GET(self):
     form = logic_form()
     form2 = login_form()
     return render.index(form,form2)
-
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
