@@ -14,16 +14,26 @@ $(document).ready(function() {
     alert('the schema is ' + schema);
     // Print out the name of each table and their primary keys
     output = '';
+
+    // For each table...
     $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has columns ';
-      
-      
+      output += '<p>Table ' + table + ' has primary keys: ';
+
+      // p_keys is the [(primary keys object), (headings objects)]
       $.each(p_keys, function(text, keys) {
-        $.each(keys, function(index, key) {
-          output += key + ', ';
-        });
+        // text is either "primaryKey" or "column"
+
+        if(text == "primary_keys") {
+          $.each(keys, function(index, key) {
+           output += key + ', ';
+          });
+        } else if (text == "columns") {
+          output += " and has columns ";
+          $.each(keys, function(index, key) {
+            output += key + ', ';
+          });
+        }
       });
-      
       output = output.substring(0, output.length - 2);
       output += '</p>';
     });
