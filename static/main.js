@@ -3,6 +3,36 @@ $(document).ready(function() {
     $(".error").hide();
   });
 
+  var schema;
+    
+  $.ajax({
+    type: "GET",
+    url: "/schema"    
+  }).done(function(result) {
+    // See generate_schema.py for the original query
+    schema = $.parseJSON(result);
+    alert('the schema is ' + schema);
+    // Print out the name of each table and their primary keys
+    output = '';
+    $.each(schema, function(table, p_keys) {
+      output += '<p>Table ' + table + ' has columns ';
+      
+      
+      $.each(p_keys, function(text, keys) {
+        $.each(keys, function(index, key) {
+          output += key + ', ';
+        });
+      });
+      
+      output = output.substring(0, output.length - 2);
+      output += '</p>';
+    });
+
+    $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
+    $("#schema_table").html(output);
+    alert(output);
+  });
+
   var unicode_chars = {
     "and": "\u2227",
     "or": "\u2228",
@@ -62,12 +92,13 @@ $(document).ready(function() {
     }).done(function(result) {
       /* Handle the result of the translation */
       var response = $.parseJSON(result);
+      alert(JSON.stringify(response));
 
       // Print out SQL query produced and the returned JSON object
       if(response.error === 'ok') {
         $("textarea#sql_result").text(response.sql);
       } else {
-        $("textarea#sql_result").text("Failed to convert query into SQL");
+        $("textarea#sql_result").text(response.error);
       }
       
       $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
