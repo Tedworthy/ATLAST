@@ -133,10 +133,10 @@ class GenericLogicASTVisitor():
         if child['node'].isFree():
           ir.setRelationAttributePairs([rel_attr])
         self.bind(child['node'], rel_attr, ir)
+        if i < key_count:
+          key_values.append(child)
       else:
         print 'ConstantNode'
-      if i < key_count:
-        key_values.append(child)
       if merged_ir is None:
         merged_ir = ir
       else:
