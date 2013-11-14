@@ -20,7 +20,6 @@ urls = (
   '/', 'index',
   '/schema', 'schematic',
   '/login', 'login'
-   
 )
 
 logic_form = web.form.Form(
