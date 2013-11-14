@@ -9,15 +9,9 @@ import ir
 
 class SQLGenerator():
 
-  def relAttrPairToString(self, relAttrPair):
-    return relAttrPair.getRelation() + "." + relAttrPair.getAttribute()
-
-  def genSelectNodes(self, ir):
-    for relAttrPair in ir.getRelationAttributePairs():
-      self._sql_select_list.append(self.relAttrPairToString(relAttrPair))
-
   def __init__(self):
     self._sql = ""
+    self._expecting_constraint = False
     self._sql_select_list = []
     self._sql_from_stack = []
     self._sql_where_stack = []
@@ -39,7 +33,12 @@ class SQLGenerator():
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    self._sql_where_stack.append(self.relAttrPairToString(node))
+    string = node.getRelation() + "." + node.getAttribute()
+    if self._expecting_constraint:
+      self._expecting_constraint = False
+      self._sql_where_stack.append(string)
+    else:
+      self._sql_select_list.append(string)
 
   @v.when(ir.RelationNode)
   def visit(self, node):
@@ -68,7 +67,9 @@ class SQLGenerator():
 
   @v.when(ir.Constraint)
   def visit(self, node):
+    self._expecting_constraint = True
     node.getLeftTerm().accept(self)
+    self._expecting_constraint = True
     node.getRightTerm().accept(self)
     rightString = self._sql_where_stack.pop()
     leftString = self._sql_where_stack.pop()

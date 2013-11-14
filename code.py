@@ -53,19 +53,19 @@ class index:
     # RabbitMQ stuff - should work, but commented for the moment until codegen
     # works.
     # Create worker thread and start
-    #result = parsing.task.add_to_parse_q.delay(logic_to_translate)
+    result = parsing.task.add_to_parse_q.delay(logic_to_translate)
 
     ## Wait for worker thread to finish translation
-    #while not result.ready():
-    #  time.sleep(0.1)
+    while not result.ready():
+      time.sleep(0.1)
 
     ## Get the SQL out of the finished worker thread
-    #sql = result.get()
+    sql = result.get()
 
     # Example query there for testing, remove when codegen works
     #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
 
-    sql = "VILLAGE BURNED"
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
     try:
       result = parsing.parse_input(logic_to_translate)
@@ -84,9 +84,6 @@ class index:
 
     response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
 
-    # Debug - remove later
-    print json.dumps(response)
-
     return json.dumps(response)
 
 class schematic:
@@ -101,7 +98,7 @@ class login:
     print f['username']
     print web.input()
     response = {'error' : 'ok'}
-  
+
     return json.dumps(response)
 
   def GET(self):
