@@ -81,6 +81,10 @@ class index:
       error = str(e)
 
     response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
+    print logic_to_translate
+    print error
+    print sql
+    print query_result
 
     return json.dumps(response)
 
