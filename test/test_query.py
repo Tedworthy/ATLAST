@@ -15,6 +15,11 @@ class TestQuery(unittest.TestCase):
     self.codegenVisitor = GenericLogicASTVisitor(schema.Schema())
     self.sqlGeneratorVisitor = SQLGenerator()
 
+  def tearDown(self):
+    self.symbolTable = None
+    self.codegenVisitor = None
+    self.sqlGeneratorVisitor = None
+
   def setup_func():
     pass
 
@@ -22,7 +27,18 @@ class TestQuery(unittest.TestCase):
     pass
 
   @with_setup(setup_func, teardown_func)
-  def test_two_table_selection_query(self):
+  def test_single_table_projection_query(self):
+    query_string = "∃x(films_title(x, y))".decode('utf8')
+    result = parsing.parse_input(query_string)
+    # Generate the symbol table
+    result.generateSymbolTable(self.symbolTable)
+    # Perform the code generation into SQLIR using the visitor
+    result.accept(self.codegenVisitor)
+    self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title FROM films")
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_projection_query(self):
     query_string = "∃x(films_title(x, y) ∧ films_director(x, z))".decode('utf8')
     result = parsing.parse_input(query_string)
     # Generate the symbol table
@@ -33,12 +49,14 @@ class TestQuery(unittest.TestCase):
     assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title, films.director FROM films")
 
   @with_setup(setup_func, teardown_func)
-  def test_single_table_selection_query(self):
-    query_string = "∃x(films_title(x, y))".decode('utf8')
+  def test_two_table_project_select_query(self):
+    query_string = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf8')
     result = parsing.parse_input(query_string)
     # Generate the symbol table
     result.generateSymbolTable(self.symbolTable)
     # Perform the code generation into SQLIR using the visitor
     result.accept(self.codegenVisitor)
     self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
-    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title FROM films")
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.director FROM films WHERE films.title = \"Ben Hur\"")
+
+
