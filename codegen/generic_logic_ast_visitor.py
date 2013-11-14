@@ -9,11 +9,12 @@ import ast
 from codegen.ir import *
 from copy import copy, deepcopy
 
-class GenericLogicASTVisitor():
-
+class JoinTypes():
   CROSS_JOIN = 0
   EQUI_JOIN = 1
   NO_JOIN = 2
+
+class GenericLogicASTVisitor():
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
@@ -42,39 +43,32 @@ class GenericLogicASTVisitor():
     left_ir = self._IR_stack.pop()
     assert left_node
     assert right_node
-    assert len(self._node_stack) == 0
-    print self._IR_stack
-    assert len(self._IR_stack) == 0
     right_keys = right_node['keys']
     left_keys = left_node['keys']
     right_keyvals = right_node['key_values']
     left_keyvals = left_node['key_values']
+    right_table = right_node['table']
+    left_table = left_node['table']
     # Check the left and right nodes are both predicates
     if right_node['type'] == left_node['type'] == 'predicate':
-      print 'Both predicate nodes'
       # Determine if the tables are the same
-      if right_node['table'] == left_node['table']:
-        print 'Tables are equal'
+      if right_table == left_table:
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
         # Check if every element is a variable
         if all(x == 'variable' for x in left_types) \
             and all(x == 'variable' for x in right_types):
-          print 'All variables'
           right_ids = [x['node'].getIdentifier() for x in right_keyvals]
           left_ids = [x['node'].getIdentifier() for x in left_keyvals]
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
             # Should push the equal table on to the stack
             ir = self.conjunctIR(left_ir, right_ir)
-            ir.setRelationTree(RelationNode(left_node['table']))
             self._IR_stack.append(ir)
-            self._node_stack.append(left_node['table'])
-            print 'All keys are the same. TADAAAAAA'
+            self._node_stack.append(left_table)
             return
         # Tables are still equal, but elements are not all variables, iterate
         # pairwise through the list.
-        print 'Working through constraints'
         constraints_list = []
         for i in range(0, len(right_keyvals)): # TODO: arbitrary - refactor
           left_key = left_keyvals[i]
@@ -82,8 +76,8 @@ class GenericLogicASTVisitor():
           if right_key['type'] == left_key['type'] == 'variable':
             if right_key['node'].getIdentifier() == left_key['node'].getIdentifier():
               # Need to add this to the constraint list
-              left_rel_attr = RelationAttributePair(left_node['table'], left_key['node'])
-              right_rel_attr = RelationAttributePair(right_node['table'], right_key['node'])
+              left_rel_attr = RelationAttributePair(left_table, left_key['node'])
+              right_rel_attr = RelationAttributePair(right_table, right_key['node'])
               constraint = Constraint(Constraint.EQ, left_rel_attr, right_rel_attr)
               constraints_list.push(constraint) ########################################## TODO TODO WHADDAYA DO WITH DEM CONSTRAINTS BRO?
               print 'one key was equal!'
@@ -190,6 +184,8 @@ class GenericLogicASTVisitor():
         merged_ir = self.conjunctIR(merged_ir, ir)
         key_values.append(key_node)
 
+    merged_ir.setRelationTree(RelationNode(relation))
+
     self._IR_stack.append(merged_ir)
 
     state = {'type' : 'predicate',
@@ -222,7 +218,7 @@ class GenericLogicASTVisitor():
     self._IR_stack.append(ir)
     print "Seen VariableNode"
 
-  def conjunctIR(self, left_ir, right_ir, join_classifier=NO_JOIN, keys=[]):
+  def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
     rel_attr_pairs = left_ir.getRelationAttributePairs()
     rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
     left_ir.setRelationAttributePairs(rel_attr_pairs)
@@ -241,13 +237,13 @@ class GenericLogicASTVisitor():
     right_relation = right_ir.getRelationTree()
     if left_relation is None:
       left_ir.setRelationTree(right_relation)
-    elif right_relation is None or join_classifier == NO_JOIN:
+    elif right_relation is None or join_classifier == JoinTypes.NO_JOIN:
       left_ir.setRelationTree(left_relation)
     else:
-      if join_classifier == EQUI_JOIN:
+      if join_classifier == JoinTypes.EQUI_JOIN:
         left_relation = EquiJoinNode(left_relation, right_ir.getRelationTree(), keys)
         left_ir.setRelationTree(left_relation)
-      elif join_classifier == CROSS_JOIN:
+      elif join_classifier == JoinTypes.CROSS_JOIN:
         left_relation = CrossJoinNode(left_relation, right_ir.getRelationTree(), keys)
         left_ir.setRelationTree(left_relation)
 
