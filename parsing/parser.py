@@ -89,6 +89,10 @@ def p_term_variable(p):
   'term : IDENTIFIER'
   p[0] = ast.VariableNode(p[1])
 
+def p_term_stringlit(p):
+  'term : STRINGLIT'
+  p[0] = ast.StringLitNode(p[1])
+
 # Parsing and error functions
 
 def p_error(p):

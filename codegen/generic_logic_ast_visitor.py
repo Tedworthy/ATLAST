@@ -126,15 +126,26 @@ class GenericLogicASTVisitor():
       attr = keys[i]
       child = self._node_stack.pop()
       ir = self._IR_stack.pop()
-
-      if child['type'] == 'variable':
-        rel_attr = RelationAttributePair(relation, attr)
+      child_type = child['type']
+      child_node = child['node']
+      rel_attr = RelationAttributePair(relation, attr)
+      # Check if a variable.
+      if child_type == 'variable':
         # If a child is not quantified, add to the projection list
-        if child['node'].isFree():
+        if child_node.isFree():
           ir.setRelationAttributePairs([rel_attr])
-        self.bind(child['node'], rel_attr, ir)
+        self.bind(child_node, rel_attr, ir)
         if i < key_count:
           key_values.append(child)
+      elif child_type == 'string_lit':
+        prev_constraints = ir.getConstraintTree()
+        lit = StringLiteral(child_node.getValue())
+        print lit, ",", child_node.getValue()
+        new_constraint = Constraint(Constraint.EQ, rel_attr, lit)
+        if prev_constraints is None:
+          ir.setConstraintTree(new_constraint)
+        else:
+          ir.setConstraintTree(AndConstraint(prev_constraints, new_constraint))
       else:
         print 'ConstantNode'
       if merged_ir is None:
@@ -161,10 +172,18 @@ class GenericLogicASTVisitor():
   def visit(self, node):
     print "Seen FunctionNode"
 
+  @v.when(ast.StringLitNode)
+  def visit(self, node):
+    state = {'type' : 'string_lit', 'node' : node}
+    self._node_stack.append(state)
+    ir = IR()
+    self._IR_stack.append(ir)
+
   @v.when(ast.ConstantNode)
   def visit(self, node):
     state = {'type' : 'constant', 'node' : node}
     self._node_stack.append(state)
+    ir = IR()
     self._IR_stack.append(ir)
     print "Seen ConstantNode"
 
