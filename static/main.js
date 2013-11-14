@@ -98,7 +98,7 @@ $(document).ready(function() {
       if(response.error === 'ok') {
         $("textarea#sql_result").text(response.sql);
       } else {
-        $("textarea#sql_result").text(respnose.error);
+        $("textarea#sql_result").text(response.error);
       }
       
       $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
