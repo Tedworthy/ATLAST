@@ -114,8 +114,13 @@ class GenericLogicASTVisitor():
     # Python syntax: [1:] ignores first value (index 0), so 1 to end of list.
     binding_values = attributes[1:]
     merged_ir = None
-    while len(binding_values) > 0:
-      attr = binding_values.pop()
+
+    key_count = len(keys)
+    key_values = []
+
+    keys.extend(binding_values)
+    for i in reversed(range(0, len(keys))):
+      attr = keys[i]
       child = self._node_stack.pop()
       ir = self._IR_stack.pop()
       if child['type'] == 'variable':
@@ -124,25 +129,14 @@ class GenericLogicASTVisitor():
         if child['node'].isFree():
           ir.setRelationAttributePairs([rel_attr])
         self.bind(child['node'], rel_attr, ir)
+        if i < key_count:
+          key_values.append(child)
       else:
         print 'ConstantNode'
       if merged_ir is None:
         merged_ir = ir
       else:
         merged_ir = self.conjunctIR(merged_ir, ir)
-
-    key_values = []
-    for i in range(0, len(keys)):
-      ir = self._IR_stack.pop()
-
-      key_node = self._node_stack.pop()
-      if key_node['type'] == 'variable':
-        rel_attr = RelationAttributePair(relation, keys[i])
-        if key_node['node'].isFree():
-          ir.setRelationAttributePairs([rel_attr])
-        self.bind(key_node['node'], rel_attr, ir)
-        merged_ir = self.conjunctIR(merged_ir, ir)
-        key_values.append(key_node)
 
     merged_ir.setRelationTree(RelationNode(relation))
 
