@@ -34,7 +34,6 @@ login_form = web.form.Form(
     web.form.Textbox('dbname',class_='textfield',id='dbname_input')
 )
 
-
 class index:
   def GET(self):
     form = logic_form()
