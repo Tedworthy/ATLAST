@@ -62,6 +62,7 @@ class index:
 
     # Example query there for testing, remove when codegen works
     #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
+    sql = ""
 
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
