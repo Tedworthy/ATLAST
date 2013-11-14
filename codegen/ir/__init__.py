@@ -9,5 +9,6 @@ from equijoin_node import EquiJoinNode
 from crossjoin_node import CrossJoinNode
 from relation_node import RelationNode
 from join_types import JoinTypes
+from constraint_bin_op import ConstraintBinOp
 
 from ir import IR

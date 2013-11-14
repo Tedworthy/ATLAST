@@ -213,11 +213,21 @@ class GenericLogicASTVisitor():
     self._IR_stack.append(ir)
     print "Seen VariableNode"
 
-  def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
+  def extendRelationAttributePairs(self, left_ir, right_ir):
+    """
+    Concatenates together two sets of relation attribute pairs, updating the
+    left IR. This is primarily used when merging together IRs
+    """
     rel_attr_pairs = left_ir.getRelationAttributePairs()
     rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
     left_ir.setRelationAttributePairs(rel_attr_pairs)
 
+  def combineConstraints(self, left_ir, right_ir, bin_op):
+    """
+    Combines two sets of constraints from seperate IRs, leaving the result in
+    the left IR. This is primarily used when merging together IRs. The bin_op
+    passed in should be a flag as defined in the ConstraintBinOp class.
+    """
     left_constraints = left_ir.getConstraintTree()
     right_constraints = right_ir.getConstraintTree()
     if left_constraints is None:
@@ -225,8 +235,16 @@ class GenericLogicASTVisitor():
     elif right_constraints is None:
       left_ir.setConstraintTree(left_constraints)
     else:
-      left_constraints = AndConstraint(left_constraints, right_ir.getConstraintTree())
+      if bin_op == ConstraintBinOp.AND:
+        left_constraints = AndConstraint(left_constraints, right_ir.getConstraintTree())
+      elif bin_op == ConstraintBinOp.OR:
+        left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
+
+  def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
+    self.extendRelationAttributePairs(left_ir, right_ir)
+
+    self.combineConstraints(left_ir, right_ir, ConstraintBinOp.AND)
 
     left_relation = left_ir.getRelationTree()
     right_relation = right_ir.getRelationTree()
@@ -245,19 +263,9 @@ class GenericLogicASTVisitor():
     return left_ir
 
   def disjunctIR(self, left_ir, right_ir):
-    rel_attr_pairs = left_ir.getRelationAttributePairs()
-    rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
-    left_ir.setRelationAttributePairs(rel_attr_pairs)
+    self.extendRelationAttributePairs(left_ir, right_ir)
 
-    left_constraints = left_ir.getConstraintTree()
-    right_constraints = right_ir.getConstraintTree()
-    if left_constraints is None:
-      left_ir.setConstraintTree(right_constraints)
-    elif right_constraints is None:
-      left_ir.setConstraintTree(left_constraints)
-    else:
-      left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
-      left_ir.setConstraintTree(left_constraints)
+    self.combineConstraints(left_ir, right_ir, ConstraintBinOp.OR)
 
     left_relation = left_ir.getRelationTree()
     right_relation = right_ir.getRelationTree()
