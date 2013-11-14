@@ -22,5 +22,4 @@ class TestEndToEnd():
     #form['logic'] = t_THEREEXISTS.encode('utf-8') + 'x(film_title(x, y))'
     r = form.submit()
     assert_equal(r.status, 200)
-    print r
     r.mustcontain("SELECT films.title, films.director FROM films")

@@ -6,12 +6,13 @@ from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
 import unittest
+import dbbackend.schema as schema
 
 class TestQuery(unittest.TestCase):
 
   def setUp(self):
     self.symbolTable = SymTable()
-    self.codegenVisitor = GenericLogicASTVisitor()
+    self.codegenVisitor = GenericLogicASTVisitor(schema.Schema())
     self.sqlGeneratorVisitor = SQLGenerator()
 
   def setup_func():

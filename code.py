@@ -4,6 +4,10 @@ import os
 import parsing.parser
 import parsing.task
 import json
+import parsing
+from codegen.symtable import SymTable
+from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
+from codegen.sql_generator import SQLGenerator
 from dbbackend import query
 from dbbackend import schema
 from web.wsgiserver import CherryPyWSGIServer
@@ -59,12 +63,27 @@ class index:
     ## Get the SQL out of the finished worker thread
     sql = result.get()
 
+    # Example query there for testing, remove when codegen works
+    #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
+
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
-    error = 'ok' # ok = everything worked, otherwise write in the error here
-    response = {'error': error, 'sql': sql, 'query': query_result}
-    # Debug - remove later
-    print json.dumps(response)
+    try:
+      result = parsing.parse_input(logic_to_translate)
+      symbolTable = SymTable()
+      codegenVisitor = GenericLogicASTVisitor(web.schema)
+      sqlGeneratorVisitor = SQLGenerator()
+      result.generateSymbolTable(symbolTable)
+      result.accept(codegenVisitor)
+      codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
+      sql = sqlGeneratorVisitor._sql
+      query_result = query.query(sql)
+      error = 'ok'
+    except Exception, e:
+      query_result = {}
+      error = str(e)
+
+    response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
 
     return json.dumps(response)
 
