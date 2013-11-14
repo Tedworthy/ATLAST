@@ -119,29 +119,11 @@ class GenericLogicASTVisitor():
       child = self._node_stack.pop()
       ir = self._IR_stack.pop()
       if child['type'] == 'variable':
-        print "(" + child['node'].getIdentifier() + ", " + attr + ")"
         rel_attr = RelationAttributePair(relation, attr)
+        # If a child is not quantified, add to the projection list
         if child['node'].isFree():
           ir.setRelationAttributePairs([rel_attr])
-        if not child['node'].bindTo(rel_attr):
-          print 'Could not bind'
-          print 'its the top one'
-          print child['node'].getBoundValue()
-          previous_binding = child['node'].getBoundValue()
-          assert previous_binding != None
-          prev_constraints = ir.getConstraintTree()
-          new_constraint = Constraint(Constraint.EQ, rel_attr, \
-            previous_binding)
-          merged_constraint = None;
-          if prev_constraints is None:
-            ir.setConstraintTree(new_constraint)
-          elif new_constraint is None:
-            ir.setConstraintTree(prev_constraints)
-          else:
-            merged_constraint = AndConstraint(prev_constraints, new_constraint)
-            ir.setConstraintTree(merged_constraint)
-        else:
-          print 'Now Bound'
+        self.bind(child['node'], rel_attr, ir)
       else:
         print 'ConstantNode'
       if merged_ir is None:
@@ -212,6 +194,28 @@ class GenericLogicASTVisitor():
     self._node_stack.append(state)
     self._IR_stack.append(ir)
     print "Seen VariableNode"
+
+# Bindings
+
+  def bind(self, node, rel_attr, ir):
+    if not node.bindTo(rel_attr):
+      # Get the previous binding
+      previous_binding = node.getBoundValue()
+      assert previous_binding != None
+      # Add to the constraints
+      prev_constraints = ir.getConstraintTree()
+      new_constraint = Constraint(Constraint.EQ, rel_attr, \
+        previous_binding)
+      merged_constraint = None;
+      if prev_constraints is None:
+        ir.setConstraintTree(new_constraint)
+      elif new_constraint is None:
+        ir.setConstraintTree(prev_constraints)
+      else:
+        merged_constraint = AndConstraint(prev_constraints, new_constraint)
+        ir.setConstraintTree(merged_constraint)
+
+# Combining IRs
 
   def extendRelationAttributePairs(self, left_ir, right_ir):
     """
