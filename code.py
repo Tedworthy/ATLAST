@@ -78,6 +78,7 @@ class index:
       query_result = query.query(sql)
       error = 'ok'
     except Exception, e:
+      sql = ''
       query_result = {}
       error = str(e)
 
