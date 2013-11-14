@@ -40,6 +40,10 @@ class SQLGenerator():
     else:
       self._sql_select_list.append(string)
 
+  @v.when(ir.StringLiteral)
+  def visit(self, node):
+    self._sql_where_stack.append('"' + node.getString() + '"')
+
   @v.when(ir.RelationNode)
   def visit(self, node):
     self._sql_from_stack.append(node.getName())
@@ -67,6 +71,8 @@ class SQLGenerator():
 
   @v.when(ir.Constraint)
   def visit(self, node):
+    print node.getLeftTerm().getRelation()
+    print node.getLeftTerm().getAttribute()
     self._expecting_constraint = True
     node.getLeftTerm().accept(self)
     self._expecting_constraint = True
@@ -74,8 +80,7 @@ class SQLGenerator():
     rightString = self._sql_where_stack.pop()
     leftString = self._sql_where_stack.pop()
     opString = node.getOp()
-    constraintString = "(" + leftString + ") " + opString + " " + \
-                       "(" + rightString + ")"
+    constraintString = leftString + " " + opString + " " + rightString
     self._sql_where_stack.append(constraintString)
 
   @v.when(ir.AndConstraint)

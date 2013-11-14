@@ -9,11 +9,6 @@ import ast
 from codegen.ir import *
 from copy import copy, deepcopy
 
-class JoinTypes():
-  CROSS_JOIN = 0
-  EQUI_JOIN = 1
-  NO_JOIN = 2
-
 class GenericLogicASTVisitor():
 
   def __init__(self, schema):
@@ -119,70 +114,44 @@ class GenericLogicASTVisitor():
     # Python syntax: [1:] ignores first value (index 0), so 1 to end of list.
     binding_values = attributes[1:]
     merged_ir = None
-    while len(binding_values) > 0:
-      attr = binding_values.pop()
+
+    key_count = len(keys)
+    key_values = []
+
+    # Reverse iterate over the parameters, matching them with keys or
+    # attributes as necessary, binding them and passing keys up to any consumer
+    # node i.e and AndNode.
+    keys.extend(binding_values)
+    for i in reversed(range(0, len(keys))):
+      attr = keys[i]
       child = self._node_stack.pop()
       ir = self._IR_stack.pop()
-      if child['type'] == 'variable':
-        print "(" + child['node'].getIdentifier() + ", " + attr + ")"
-        rel_attr = RelationAttributePair(relation, attr)
-        if child['node'].isFree():
+      child_type = child['type']
+      child_node = child['node']
+      rel_attr = RelationAttributePair(relation, attr)
+      # Check if a variable.
+      if child_type == 'variable':
+        # If a child is not quantified, add to the projection list
+        if child_node.isFree():
           ir.setRelationAttributePairs([rel_attr])
-        if not child['node'].bindTo(rel_attr):
-          print 'Could not bind'
-          print 'its the top one'
-          print child['node'].getBoundValue()
-          previous_binding = child['node'].getBoundValue()
-          assert previous_binding != None
-          prev_constraints = ir.getConstraintTree()
-          new_constraint = Constraint(Constraint.EQ, rel_attr, \
-            previous_binding)
-          merged_constraint = None;
-          if prev_constraints is None:
-            ir.setConstraintTree(new_constraint)
-          elif new_constraint is None:
-            ir.setConstraintTree(prev_constraints)
-          else:
-            merged_constraint = AndConstraint(prev_constraints, new_constraint)
-            ir.setConstraintTree(merged_constraint)
+        self.bind(child_node, rel_attr, ir)
+        if i < key_count:
+          key_values.append(child)
+      elif child_type == 'string_lit':
+        prev_constraints = ir.getConstraintTree()
+        lit = StringLiteral(child_node.getValue())
+        print lit, ",", child_node.getValue()
+        new_constraint = Constraint(Constraint.EQ, rel_attr, lit)
+        if prev_constraints is None:
+          ir.setConstraintTree(new_constraint)
         else:
-          print 'Now Bound'
+          ir.setConstraintTree(AndConstraint(prev_constraints, new_constraint))
       else:
         print 'ConstantNode'
       if merged_ir is None:
         merged_ir = ir
       else:
         merged_ir = self.conjunctIR(merged_ir, ir)
-
-    key_values = []
-    for i in range(0, len(keys)):
-      ir = self._IR_stack.pop()
-
-      key_node = self._node_stack.pop()
-      if key_node['type'] == 'variable':
-        rel_attr = RelationAttributePair(relation, keys[i])
-        if key_node['node'].isFree():
-          ir.setRelationAttributePairs([rel_attr])
-        if not key_node['node'].bindTo(rel_attr):
-          print 'Could not bind'
-          print key_node['node'].getBoundValue()
-          previous_binding = key_node['node'].getBoundValue()
-          assert previous_binding != None
-          prev_constraints = ir.getConstraintTree()
-          new_constraint = Constraint(Constraint.EQ, rel_attr, \
-            previous_binding)
-          print 
-          merged_constraint = None;
-          if prev_constraints is None:
-            ir.setConstraintTree(new_constraint)
-          elif new_constraint is None:
-            ir.setConstraintTree(prev_constraints)
-          else:
-            merged_constraint = AndConstraint(prev_constraints, new_constraint)
-            ir.setConstraintTree(merged_constraint)
-
-        merged_ir = self.conjunctIR(merged_ir, ir)
-        key_values.append(key_node)
 
     merged_ir.setRelationTree(RelationNode(relation))
 
@@ -203,10 +172,18 @@ class GenericLogicASTVisitor():
   def visit(self, node):
     print "Seen FunctionNode"
 
+  @v.when(ast.StringLitNode)
+  def visit(self, node):
+    state = {'type' : 'string_lit', 'node' : node}
+    self._node_stack.append(state)
+    ir = IR()
+    self._IR_stack.append(ir)
+
   @v.when(ast.ConstantNode)
   def visit(self, node):
     state = {'type' : 'constant', 'node' : node}
     self._node_stack.append(state)
+    ir = IR()
     self._IR_stack.append(ir)
     print "Seen ConstantNode"
 
@@ -218,11 +195,64 @@ class GenericLogicASTVisitor():
     self._IR_stack.append(ir)
     print "Seen VariableNode"
 
-  def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
+# Bindings
+
+  def bind(self, node, rel_attr, ir):
+    if not node.bindTo(rel_attr):
+      # Get the previous binding
+      previous_binding = node.getBoundValue()
+      assert previous_binding != None
+      # Add to the constraints
+      prev_constraints = ir.getConstraintTree()
+      new_constraint = Constraint(Constraint.EQ, rel_attr, \
+        previous_binding)
+      merged_constraint = None;
+      if prev_constraints is None:
+        ir.setConstraintTree(new_constraint)
+      elif new_constraint is None:
+        ir.setConstraintTree(prev_constraints)
+      else:
+        merged_constraint = AndConstraint(prev_constraints, new_constraint)
+        ir.setConstraintTree(merged_constraint)
+
+# Combining IRs
+
+  def extendRelationAttributePairs(self, left_ir, right_ir):
+    """
+    Concatenates together two sets of relation attribute pairs, updating the
+    left IR. This is primarily used when merging together IRs
+    """
     rel_attr_pairs = left_ir.getRelationAttributePairs()
     rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
     left_ir.setRelationAttributePairs(rel_attr_pairs)
 
+  def combineRelations(self, left_ir, right_ir, join_type):
+    """
+    Combines two Relation trees, leaving the result in the left_irs
+    relationTree attribute. This is primarily used when merging together two
+    IRs. Possible values for join_type is defined in the JoinTypes class within
+    codegen.ir.
+    """
+    left_relation = left_ir.getRelationTree()
+    right_relation = right_ir.getRelationTree()
+    if left_relation is None:
+      left_ir.setRelationTree(right_relation)
+    elif right_relation is None or join_type == JoinTypes.NO_JOIN:
+      left_ir.setRelationTree(left_relation)
+    else:
+      if join_type == JoinTypes.EQUI_JOIN:
+        left_relation = EquiJoinNode(left_relation, right_ir.getRelationTree(), keys)
+        left_ir.setRelationTree(left_relation)
+      elif join_type == JoinTypes.CROSS_JOIN:
+        left_relation = CrossJoinNode(left_relation, right_ir.getRelationTree(), keys)
+        left_ir.setRelationTree(left_relation)
+
+  def combineConstraints(self, left_ir, right_ir, bin_op):
+    """
+    Combines two sets of constraints from seperate IRs, leaving the result in
+    the left IR. This is primarily used when merging together IRs. The bin_op
+    passed in should be a flag as defined in the ConstraintBinOp class.
+    """
     left_constraints = left_ir.getConstraintTree()
     right_constraints = right_ir.getConstraintTree()
     if left_constraints is None:
@@ -230,48 +260,22 @@ class GenericLogicASTVisitor():
     elif right_constraints is None:
       left_ir.setConstraintTree(left_constraints)
     else:
-      left_constraints = AndConstraint(left_constraints, right_ir.getConstraintTree())
+      if bin_op == ConstraintBinOp.AND:
+        left_constraints = AndConstraint(left_constraints, right_ir.getConstraintTree())
+      elif bin_op == ConstraintBinOp.OR:
+        left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
 
-    left_relation = left_ir.getRelationTree()
-    right_relation = right_ir.getRelationTree()
-    if left_relation is None:
-      left_ir.setRelationTree(right_relation)
-    elif right_relation is None or join_classifier == JoinTypes.NO_JOIN:
-      left_ir.setRelationTree(left_relation)
-    else:
-      if join_classifier == JoinTypes.EQUI_JOIN:
-        left_relation = EquiJoinNode(left_relation, right_ir.getRelationTree(), keys)
-        left_ir.setRelationTree(left_relation)
-      elif join_classifier == JoinTypes.CROSS_JOIN:
-        left_relation = CrossJoinNode(left_relation, right_ir.getRelationTree(), keys)
-        left_ir.setRelationTree(left_relation)
+  def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN, keys=[]):
+    self.extendRelationAttributePairs(left_ir, right_ir)
+    self.combineConstraints(left_ir, right_ir, ConstraintBinOp.AND)
+    self.combineRelations(left_ir, right_ir, join_classifier)
 
     return left_ir
 
   def disjunctIR(self, left_ir, right_ir):
-    rel_attr_pairs = left_ir.getRelationAttributePairs()
-    rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
-    left_ir.setRelationAttributePairs(rel_attr_pairs)
-
-    left_constraints = left_ir.getConstraintTree()
-    right_constraints = right_ir.getConstraintTree()
-    if left_constraints is None:
-      left_ir.setConstraintTree(right_constraints)
-    elif right_constraints is None:
-      left_ir.setConstraintTree(left_constraints)
-    else:
-      left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
-      left_ir.setConstraintTree(left_constraints)
-
-    left_relation = left_ir.getRelationTree()
-    right_relation = right_ir.getRelationTree()
-    if left_relation is None:
-      left_ir.setRelationTree(right_relation)
-    elif right_relation is None:
-      left_ir.setRelationTree(left_relation)
-    else:
-      print 'You are performing the disjunction of two IRs. You are either\
-      crazy, stupid or both'
+    self.extendRelationAttributePairs(left_ir, right_ir)
+    self.combineConstraints(left_ir, right_ir, ConstraintBinOp.OR)
+    self.combineRelations(left_ir, right_ir, JoinTypes.NO_JOIN)
 
     return left_ir
