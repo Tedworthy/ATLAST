@@ -5,7 +5,6 @@ import parsing.parser
 import parsing.task
 import json
 import parsing
-
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
