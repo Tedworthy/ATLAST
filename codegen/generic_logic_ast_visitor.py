@@ -118,21 +118,25 @@ class GenericLogicASTVisitor():
     key_count = len(keys)
     key_values = []
 
+    # Reverse iterate over the parameters, matching them with keys or
+    # attributes as necessary, binding them and passing keys up to any consumer
+    # node i.e and AndNode.
     keys.extend(binding_values)
     for i in reversed(range(0, len(keys))):
       attr = keys[i]
       child = self._node_stack.pop()
       ir = self._IR_stack.pop()
+
       if child['type'] == 'variable':
         rel_attr = RelationAttributePair(relation, attr)
         # If a child is not quantified, add to the projection list
         if child['node'].isFree():
           ir.setRelationAttributePairs([rel_attr])
         self.bind(child['node'], rel_attr, ir)
-        if i < key_count:
-          key_values.append(child)
       else:
         print 'ConstantNode'
+      if i < key_count:
+        key_values.append(child)
       if merged_ir is None:
         merged_ir = ir
       else:
