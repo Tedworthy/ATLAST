@@ -42,7 +42,7 @@ class SQLGenerator():
 
   @v.when(ir.StringLiteral)
   def visit(self, node):
-    self._sql_where_stack.append(node.getString())
+    self._sql_where_stack.append('"' + node.getString() + '"')
 
   @v.when(ir.RelationNode)
   def visit(self, node):
@@ -80,8 +80,7 @@ class SQLGenerator():
     rightString = self._sql_where_stack.pop()
     leftString = self._sql_where_stack.pop()
     opString = node.getOp()
-    constraintString = "(" + leftString + ") " + opString + " " + \
-                       "(" + rightString + ")"
+    constraintString = leftString + " " + opString + " " + rightString
     self._sql_where_stack.append(constraintString)
 
   @v.when(ir.AndConstraint)
