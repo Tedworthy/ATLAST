@@ -40,7 +40,6 @@ class index:
     form2 = login_form()
     return render.index(form,form2)
 
-
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
     # Validates the Form
