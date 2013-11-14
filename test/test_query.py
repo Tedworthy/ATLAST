@@ -31,3 +31,14 @@ class TestQuery(unittest.TestCase):
     result.accept(self.codegenVisitor)
     self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
     assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title, films.director FROM films")
+
+  @with_setup(setup_func, teardown_func)
+  def test_single_table_selection_query(self):
+    query_string = "∃x(films_title(x, y))".decode('utf8')
+    result = parsing.parse_input(query_string)
+    # Generate the symbol table
+    result.generateSymbolTable(self.symbolTable)
+    # Perform the code generation into SQLIR using the visitor
+    result.accept(self.codegenVisitor)
+    self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.title FROM films")
