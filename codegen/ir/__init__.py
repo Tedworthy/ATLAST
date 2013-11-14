@@ -8,4 +8,6 @@ from relation_attribute_pair import RelationAttributePair
 from equijoin_node import EquiJoinNode
 from crossjoin_node import CrossJoinNode
 from relation_node import RelationNode
+from join_types import JoinTypes
+
 from ir import IR
