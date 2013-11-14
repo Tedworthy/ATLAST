@@ -9,11 +9,6 @@ import ast
 from codegen.ir import *
 from copy import copy, deepcopy
 
-class JoinTypes():
-  CROSS_JOIN = 0
-  EQUI_JOIN = 1
-  NO_JOIN = 2
-
 class GenericLogicASTVisitor():
 
   def __init__(self, schema):
