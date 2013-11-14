@@ -60,7 +60,7 @@ class index:
       time.sleep(0.1)
 
     ## Get the SQL out of the finished worker thread
-    sql = result.get()
+    #sql = result.get()
 
     # Example query there for testing, remove when codegen works
     #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
@@ -79,6 +79,7 @@ class index:
       query_result = query.query(sql)
       error = 'ok'
     except Exception, e:
+      sql = ''
       query_result = {}
       error = str(e)
 
