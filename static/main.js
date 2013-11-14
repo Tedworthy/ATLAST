@@ -97,7 +97,7 @@ $(document).ready(function() {
       if(response.error === 'ok') {
         $("textarea#sql_result").text(response.sql);
       } else {
-        $("textarea#sql_result").text("Failed to convert query into SQL");
+        $("textarea#sql_result").text(respnose.error);
       }
       
       $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
