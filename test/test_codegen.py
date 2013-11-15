@@ -26,8 +26,6 @@ class TestCodeGen():
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logicString)
 
-    print logicString
-
     # Generate the Symbol Table from the Logic Tree
     symbolTable = SymTable()
     logicTree.generateSymbolTable(symbolTable)
@@ -44,20 +42,47 @@ class TestCodeGen():
     sqlIR.accept(sqlGenerator)
     convertedSQLString = sqlGenerator.getSQL()
 
+    # If the evaluated query does not match the tests expectation, let the user
+    # know.
+    if convertedSQLString != expectedSQLString:
+      print "Potential error: Translated SQL: {"
+      print convertedSQLString
+      print "}"
+      print "does not match expected result: {"
+      print expectedSQLString
+      print "}"
+
     # Run converted and expected SQL queries and compare results
-
-    print convertedSQLString
-    print expectedSQLString
-
     convertedResult = query.query(convertedSQLString)
     expectedResult = query.query(expectedSQLString)
 
-    return convertedResult == expectedResult
+    result = convertedResult == expectedResult
+    if not result:
+      print "%s != %s", convertedResult, expectedResult
+
+    return result
 
   @with_setup(setup_func, teardown_func)
-  def test_select_1_from_1(self):
+  def test_select_single_table(self):
     logic = "∃x(films_title(x, y))".decode('utf-8')
     sql = "SELECT title FROM films"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-    assert(self.translates_to(logic, sql))
+  @with_setup(setup_func, teardown_func)
+  def test_select_two_from_single_table(self):
+    logic = "∃x(films_title(x, y) ∧ films_director(x, z))".decode('utf8')
+    sql = "SELECT title, director FROM films"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_two_from_table_with_stringlit(self):
+    logic = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf8')
+    sql = "SELECT director FROM films WHERE title = 'Ben Hur'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_cross_join(self):
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
+    sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
