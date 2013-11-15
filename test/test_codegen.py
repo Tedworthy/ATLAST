@@ -144,6 +144,42 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
+  def test_project_lt_constraint(self):
+    logic = "∃x,z(films_title(x, y) ∧ film_made(x, z) ∧ z < '2002-01-01')".decode('utf8')
+    sql = "SELECT title FROM film WHERE made < '2002-01-01'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_project_gt_constraint(self):
+    logic = "∃x,z(films_title(x, y) ∧ film_made(x, z) ∧ z > '2002-12-31')".decode('utf8')
+    sql = "SELECT title FROM film WHERE made > '2002-12-31'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_project_gte_constraint(self):
+    logic = "∃x,z(films_title(x, y) ∧ film_made(x, z) ∧ z >= '2002-01-01')".decode('utf8')
+    sql = "SELECT title FROM film WHERE made >= '2002-01-01'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_project_lte_constraint(self):
+    logic = "∃x,z(films_title(x, y) ∧ film_made(x, z) ∧ z <= '2002-12-31')".decode('utf8')
+    sql = "SELECT title FROM film WHERE made <= '2002-12-31'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_project_eq_constraint(self):
+    logic = "∃x,z(films_title(x, y) ∧ film_origin(x, z) ∧ z = 'US')".decode('utf8')
+    sql = "SELECT title FROM film WHERE origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_project_two_multiple_constraints(self):
+    logic = "∃x,a,c(films_title(x, a) ∧ films_director(x, b) ∧ film_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf8')
+    sql = "SELECT director FROM film WHERE title = 'Psycho' AND origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
   def test_two_table_cross_join(self):
     logic = "∃x,y(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2"
