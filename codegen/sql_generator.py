@@ -16,6 +16,9 @@ class SQLGenerator():
     self._sql_from_stack = []
     self._sql_where_stack = []
 
+  def getSQL(self):
+    return self._sql
+
   @v.on('node')
   def visit(self, node):
     # Generic node, don't think you're supposed to change this

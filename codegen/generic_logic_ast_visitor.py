@@ -307,3 +307,6 @@ class GenericLogicASTVisitor():
     self.combineRelations(left_ir, right_ir, JoinTypes.NO_JOIN)
 
     return left_ir
+
+  def getIR(self):
+    return self._IR_stack[0]
