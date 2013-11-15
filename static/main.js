@@ -102,7 +102,7 @@ $(document).ready(function() {
     }).done(function(result) {
       /* Handle the result of the translation */
       var response = $.parseJSON(result);
-      alert(JSON.stringify(response));
+      //alert(JSON.stringify(response));
 
       // Print out SQL query produced and the returned JSON object
       if(response.error === 'ok') {
