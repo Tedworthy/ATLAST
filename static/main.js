@@ -67,6 +67,8 @@ $(document).ready(function() {
     "implies": { "regex": /->/g, "result": unicode_chars.implies },
     "there_exists": { "regex": /\\E/g, "result": unicode_chars.there_exists },
     "forall": { "regex": /\\A/g, "result": unicode_chars.forall }
+    "iff": { "regex": /<->/g, "result": unicode_chars.forall }
+    
   };
   $("#config_submit").click(function()  {
     user = $("#user_input").val();
