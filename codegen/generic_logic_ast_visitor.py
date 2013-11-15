@@ -64,8 +64,8 @@ class GenericLogicASTVisitor():
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
-        left_rel = RelationAlias(left_table, left_table + '1')
-        right_rel = RelationAlias(right_table, right_table + '2')
+        left_rel = RelationAliasNode(left_table, left_table + '1')
+        right_rel = RelationAliasNode(right_table, right_table + '2')
         join_constraints = None
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
@@ -90,6 +90,8 @@ class GenericLogicASTVisitor():
               print """a mixture of variables and constants found, add some
               constraints"""
         # Join constraints calculated. Now work out how to join.
+        left_ir.setRelationTree(left_rel)
+        right_ir.setRelationTree(right_rel)
         if join_constraints is None:
           self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
         else:

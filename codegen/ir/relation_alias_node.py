@@ -1,6 +1,6 @@
 from ir_node import IRNode
 
-class RelationAlias(IRNode):
+class RelationAliasNode(IRNode):
   def __init__(self, name, alias):
     self._name = name
     self._alias = alias
