@@ -11,7 +11,7 @@ $(document).ready(function() {
   }).done(function(result) {
     // See generate_schema.py for the original query
     schema = $.parseJSON(result);
-    alert('the schema is ' + schema);
+    //alert('the schema is ' + schema);
     // Print out the name of each table and their primary keys
     output = '';
     $.each(schema, function(table, p_keys) {
@@ -28,9 +28,9 @@ $(document).ready(function() {
       output += '</p>';
     });
 
-    $("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
+    //$("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
-    alert(output);
+    //alert(output);
   });
 
   var unicode_chars = {
