@@ -64,6 +64,10 @@ class GenericLogicASTVisitor():
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
+        left_rel = RelationAlias(left_table, left_table + '1')
+        right_rel = RelationAlias(right_table, right_table + '2')
+        left_rel_attr = RelationAliasAttributePair(left_table, left_rel, left_keys[i])
+        right_rel_attr = RelationAliasAttributePair(right_table, right_rel + '2', right_keys[j])
         join_constraints = None
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
@@ -76,14 +80,12 @@ class GenericLogicASTVisitor():
             if left_type == right_type == 'variable':
               if left_node.getIdentifier() == right_node.getIdentifier():
                 # Need to add this to the constraint list
-                left_rel_attr = RelationAttributePair(left_table, left_keys[i])
-                right_rel_attr = RelationAttributePair(right_table, right_keys[j])
                 constraint = Constraint(Constraint.EQ, left_rel_attr,
                     right_rel_attr)
                 if join_constraints is None:
                   join_constraints = constraint
                 else:
-                  join_constraints = AndConstraint(join_constarints, constraint)
+                  join_constraints = AndConstraint(join_constraints, constraint)
             else:
               print """a mixture of variables and constants found, add some
               constraints"""

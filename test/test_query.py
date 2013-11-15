@@ -57,6 +57,7 @@ class TestQuery(unittest.TestCase):
     # Perform the code generation into SQLIR using the visitor
     result.accept(self.codegenVisitor)
     self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
-    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.director FROM films WHERE films.title = \"Ben Hur\"")
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films.director FROM
+        films WHERE films.title = 'Ben Hur'")
 
 

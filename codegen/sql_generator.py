@@ -42,7 +42,7 @@ class SQLGenerator():
 
   @v.when(ir.StringLiteral)
   def visit(self, node):
-    self._sql_where_stack.append('"' + node.getString() + '"')
+    self._sql_where_stack.append("'" + node.getString() + "'")
 
   @v.when(ir.RelationNode)
   def visit(self, node):
