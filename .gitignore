@@ -15,5 +15,7 @@ temp*
 tmp*
 webpy*
 
+schema.xml
+
 certs/*
 *.*~

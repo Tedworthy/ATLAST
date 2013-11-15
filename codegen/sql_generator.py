@@ -33,16 +33,25 @@ class SQLGenerator():
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    string = node.getRelation() + "." + node.getAttribute()
+    string = node.getRelation().getAlias() + "." + node.getAttribute()
     if self._expecting_constraint:
       self._expecting_constraint = False
       self._sql_where_stack.append(string)
     else:
       self._sql_select_list.append(string)
 
+  @v.when(ir.StringLiteral)
+  def visit(self, node):
+    self._sql_where_stack.append("'" + node.getString() + "'")
+
   @v.when(ir.RelationNode)
   def visit(self, node):
-    self._sql_from_stack.append(node.getName())
+    relation_alias = None
+    if node.hasAlias():
+      relation_alias = node.getName() + ' AS ' + node.getAlias()
+    else:
+      relation_alias = node.getName()
+    self._sql_from_stack.append(relation_alias)
 
   @v.when(ir.CrossJoinNode)
   def visit(self, node):
@@ -50,7 +59,7 @@ class SQLGenerator():
     node.getRight().accept(self)
     rightString = self._sql_from_stack.pop()
     leftString = self._sql_from_stack.pop()
-    joinString = "(" + leftString + ") CROSS JOIN (" + rightString + ")"
+    joinString = leftString + " CROSS JOIN " + rightString
     self._sql_from_stack.append(joinString)
 
   @v.when(ir.EquiJoinNode)
@@ -67,6 +76,8 @@ class SQLGenerator():
 
   @v.when(ir.Constraint)
   def visit(self, node):
+    print node.getLeftTerm().getRelation().getAlias()
+    print node.getLeftTerm().getAttribute()
     self._expecting_constraint = True
     node.getLeftTerm().accept(self)
     self._expecting_constraint = True
@@ -74,8 +85,7 @@ class SQLGenerator():
     rightString = self._sql_where_stack.pop()
     leftString = self._sql_where_stack.pop()
     opString = node.getOp()
-    constraintString = "(" + leftString + ") " + opString + " " + \
-                       "(" + rightString + ")"
+    constraintString = leftString + " " + opString + " " + rightString
     self._sql_where_stack.append(constraintString)
 
   @v.when(ir.AndConstraint)
