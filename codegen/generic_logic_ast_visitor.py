@@ -70,6 +70,13 @@ class GenericLogicASTVisitor():
         right_rel = right_ir.getRelationTree()
         right_rel.setAlias(right_table + '2')
         join_constraints = None
+
+        for rel_attr in left_ir.getRelationAttributePairs():
+          rel_attr.setRelation(left_rel)
+
+        for rel_attr in right_ir.getRelationAttributePairs():
+          rel_attr.setRelation(right_rel)
+
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
             left_key = left_keyvals[i]
