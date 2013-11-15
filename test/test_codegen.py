@@ -28,18 +28,25 @@ class TestCodeGen():
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logicString)
 
-    # Generate an AST from the Logic Tree
+    # Generate the Symbol Table from the Logic Tree
+    symbolTable = SymTable()
+    logicTree.generateSymbolTable(symbolTable)
+
+    # Generate an AST from the Logic Tree (uses Symbol Table)
     astGenerator = GenericLogicASTVisitor()
     logicTree.accept(astGenerator)
 
     # Pull out the SQL IR
-    sqlIR = astGenerator._IR
+    sqlIR = astGenerator.getIR()
 
     # Convert the IR to an SQL string
-    convertedSQLString = SQL_IR_TO_SQL_STRING(sqlIR)
-    
+    sqlGenerator = SQLGenerator()
+    sqlIR.accept(sqlGenerator)
+    convertedSQLString = sqlIR.getSQL()
+   
+    return true
     # Run converted and expected SQL queries and compare results
-    convertedResult = RUN_SQL(convertedSQLString)
-    expectedResult = RUN_SQL(expectedSQLString)
+    # convertedResult = RUN_SQL(convertedSQLString)
+    # expectedResult = RUN_SQL(expectedSQLString)
 
-    return convertedResult == expectedResult
+    # return convertedResult == expectedResult
