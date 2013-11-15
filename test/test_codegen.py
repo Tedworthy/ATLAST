@@ -1,5 +1,4 @@
-# coding=utf-8
-
+# -*- coding=utf-8 -*-
 '''
 PARSE TREE -> SQL
 This file contains tests for the translation from the parse tree to sql.
@@ -51,7 +50,10 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_select_1_from_1(self):
-    logic = "∃x(films_title(x, y))"
+    logic = "∃x(films_title(x, y))".decode('utf-8')
+    print "∃x(films_title(x, y))".decode('utf-8')
+    print logic
+    print "ha gaaay"
     sql = "SELECT title FROM films"
     
     assert(self.translates_to(logic, sql))
