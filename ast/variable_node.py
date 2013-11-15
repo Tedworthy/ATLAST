@@ -34,7 +34,7 @@ class VariableNode(Node):
       return True
     boundValue = resolved_variable_node._boundValue
     attr_eq = boundValue.getAttribute() == variable.getAttribute()
-    rel_eq = boundValue.getRelation() == variable.getRelation()
+    rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
     return attr_eq and rel_eq
 
   def getBoundValue(self):

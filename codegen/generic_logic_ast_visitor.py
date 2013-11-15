@@ -48,6 +48,7 @@ class GenericLogicASTVisitor():
     if right_node['type'] == left_node['type'] == 'predicate':
       # Determine if the tables are the same
       if right_table == left_table:
+        print 'Tables were equal'
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
         # Check if every element is a variable
@@ -57,15 +58,16 @@ class GenericLogicASTVisitor():
           left_ids = [x['node'].getIdentifier() for x in left_keyvals]
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
+            print 'All ids equal'
             # Should push the equal table on to the stack
-            ir = self.conjunctIR(left_ir, right_ir)
-            self._IR_stack.append(ir)
+            self.conjunctIR(left_ir, right_ir)
+            self._IR_stack.append(left_ir)
             self._node_stack.append(left_table)
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
-        left_rel = RelationAliasNode(left_table, left_table + '1')
-        right_rel = RelationAliasNode(right_table, right_table + '2')
+        left_rel = RelationNode(left_table, left_table + '1')
+        right_rel = RelationNode(right_table, right_table + '2')
         join_constraints = None
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
@@ -75,8 +77,8 @@ class GenericLogicASTVisitor():
             left_node = left_key['node']
             right_type = right_key['type']
             right_node = right_key['node']
-            left_rel_attr = RelationAliasAttributePair(left_table, left_rel, left_keys[i])
-            right_rel_attr = RelationAliasAttributePair(right_table, right_rel, right_keys[j])
+            left_rel_attr = RelationAttributePair(left_rel, left_keys[i])
+            right_rel_attr = RelationAttributePair(right_rel, right_keys[j])
             if left_type == right_type == 'variable':
               if left_node.getIdentifier() == right_node.getIdentifier():
                 # Need to add this to the constraint list
@@ -141,7 +143,7 @@ class GenericLogicASTVisitor():
       ir = self._IR_stack.pop()
       child_type = child['type']
       child_node = child['node']
-      rel_attr = RelationAttributePair(relation, attr)
+      rel_attr = RelationAttributePair(RelationNode(relation), attr)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
@@ -166,7 +168,7 @@ class GenericLogicASTVisitor():
         merged_ir = ir
       # Merging IRs
       else:
-        merged_ir = self.conjunctIR(merged_ir, ir)
+        self.conjunctIR(merged_ir, ir)
 
     # Add the relation from the predicate to the IR
     merged_ir.setRelationTree(RelationNode(relation))

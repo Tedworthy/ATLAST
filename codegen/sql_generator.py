@@ -33,7 +33,7 @@ class SQLGenerator():
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    string = node.getRelation() + "." + node.getAttribute()
+    string = node.getRelation().getAlias() + "." + node.getAttribute()
     if self._expecting_constraint:
       self._expecting_constraint = False
       self._sql_where_stack.append(string)
@@ -45,10 +45,6 @@ class SQLGenerator():
     self._sql_where_stack.append("'" + node.getString() + "'")
 
   @v.when(ir.RelationNode)
-  def visit(self, node):
-    self._sql_from_stack.append(node.getName())
-  
-  @v.when(ir.RelationAliasNode)
   def visit(self, node):
     self._sql_from_stack.append(node.getAlias())
 
@@ -75,7 +71,7 @@ class SQLGenerator():
 
   @v.when(ir.Constraint)
   def visit(self, node):
-    print node.getLeftTerm().getRelation()
+    print node.getLeftTerm().getRelation().getAlias()
     print node.getLeftTerm().getAttribute()
     self._expecting_constraint = True
     node.getLeftTerm().accept(self)
