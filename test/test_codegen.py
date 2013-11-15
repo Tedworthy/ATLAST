@@ -1,3 +1,5 @@
+# coding=utf-8
+
 '''
 PARSE TREE -> SQL
 This file contains tests for the translation from the parse tree to sql.
@@ -23,6 +25,8 @@ class TestCodeGen():
     # Create a Logic Tree from the Logic
     logicTree = parse_input(logicString)
 
+    print logicString
+
     # Generate the Symbol Table from the Logic Tree
     symbolTable = SymTable()
     logicTree.generateSymbolTable(symbolTable)
@@ -47,7 +51,7 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_select_1_from_1(self):
-    logic = t_THEREEXISTS + "x(films_title(x, y))"
+    logic = "∃x(films_title(x, y))"
     sql = "SELECT title FROM films"
     
     assert(self.translates_to(logic, sql))
