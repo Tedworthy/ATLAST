@@ -52,8 +52,9 @@ class TestCodeGen():
       print expectedSQLString
       print "}"
 
-    # Run converted and expected SQL queries and compare results
-    convertedResult = query.query(convertedSQLString)
+    # Run converted and expected SQL queries and compare results.
+    # Force decode to ASCII as unicode SQL throws a massive wobbly.
+    convertedResult = query.query(convertedSQLString.decode('ascii', 'ignore'))
     expectedResult = query.query(expectedSQLString)
 
     result = convertedResult == expectedResult
