@@ -54,7 +54,7 @@ class SQLGenerator():
     node.getRight().accept(self)
     rightString = self._sql_from_stack.pop()
     leftString = self._sql_from_stack.pop()
-    joinString = "(" + leftString + ") CROSS JOIN (" + rightString + ")"
+    joinString = leftString + " CROSS JOIN " + rightString
     self._sql_from_stack.append(joinString)
 
   @v.when(ir.EquiJoinNode)
