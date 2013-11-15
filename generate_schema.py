@@ -2,8 +2,6 @@ import xml.etree.cElementTree as ET
 from lxml import etree
 import psycopg2
 
-print 'Generating schema.xml...'
-
 # Establish the connection
 con = psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
                        port='55432', dbname='filmdb', 
@@ -30,6 +28,7 @@ for table in (table[0] for table in tables):
   xmltable.set("name", table)
 
   # Query to retrieve all primary keys from a given table
+<<<<<<< HEAD
   primary_key_query = """ SELECT  pg_attribute.attname,
                                 format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
                         FROM    pg_index, pg_class, pg_attribute
@@ -44,6 +43,22 @@ for table in (table[0] for table in tables):
                       WHERE table_name = '%s' """ % table
 
   # Execute the primary key query (TODO refactor, dat code duplication)
+=======
+  #primary_key_query = """ SELECT  pg_attribute.attname,
+  #                              format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+  #                      FROM    pg_index, pg_class, pg_attribute
+  #                      WHERE   pg_class.oid = '%s'::regclass AND
+  #                              indrelid = pg_class.oid AND
+  #                              pg_attribute.attrelid = pg_class.oid AND
+  #                              pg_attribute.attnum = any(pg_index.indkey) AND 
+  #                              indisprimary""" % table
+  
+  # Let's pretend this gives the primary key, and not all the column names
+  # like it actually does
+  primary_key_query = """select column_name from information_schema.columns where
+                       table_name='%s'""" % table
+  # Execute the query
+>>>>>>> codegen
   cur = con.cursor()
   cur.execute(primary_key_query)
   keys = cur.fetchall()
@@ -53,18 +68,6 @@ for table in (table[0] for table in tables):
     xml_primary_key = etree.SubElement(xmltable, "primaryKey")
     xml_primary_key.text = key
 
-  # Execute the columns query
-  cur = con.cursor()
-  cur.execute(columns_query)
-  keys = cur.fetchall()
-
-  # Iterate through all the keys returned, and add them to the table structure
-  for key in (key[0] for key in keys):
-    xml_primary_key = etree.SubElement(xmltable, "column")
-    xml_primary_key.text = key
-
 # Write the xml to a file
 tree = ET.ElementTree(root)
 tree.write("schema.xml")
-
-print 'Schema generated!'

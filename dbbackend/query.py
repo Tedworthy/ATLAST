@@ -22,7 +22,6 @@ def query(text):
     cur.execute(text)
     result = cur.fetchall()
 
-
   except psycopg2.DatabaseError, e:
     result = 'ERROR %s' % e
     
@@ -30,6 +29,3 @@ def query(text):
     if con:
       con.close()
     return result
-
-
-
