@@ -66,8 +66,6 @@ class GenericLogicASTVisitor():
         # through the keys, working out where to join.
         left_rel = RelationAlias(left_table, left_table + '1')
         right_rel = RelationAlias(right_table, right_table + '2')
-        left_rel_attr = RelationAliasAttributePair(left_table, left_rel, left_keys[i])
-        right_rel_attr = RelationAliasAttributePair(right_table, right_rel + '2', right_keys[j])
         join_constraints = None
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
@@ -77,6 +75,8 @@ class GenericLogicASTVisitor():
             left_node = left_key['node']
             right_type = right_key['type']
             right_node = right_key['node']
+            left_rel_attr = RelationAliasAttributePair(left_table, left_rel, left_keys[i])
+            right_rel_attr = RelationAliasAttributePair(right_table, right_rel, right_keys[j])
             if left_type == right_type == 'variable':
               if left_node.getIdentifier() == right_node.getIdentifier():
                 # Need to add this to the constraint list
