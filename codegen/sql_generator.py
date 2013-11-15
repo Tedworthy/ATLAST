@@ -16,6 +16,9 @@ class SQLGenerator():
     self._sql_from_stack = []
     self._sql_where_stack = []
 
+  def getSQL(self):
+    return self._sql
+
   @v.on('node')
   def visit(self, node):
     # Generic node, don't think you're supposed to change this
@@ -33,7 +36,7 @@ class SQLGenerator():
 
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
-    string = node.getRelation() + "." + node.getAttribute()
+    string = node.getRelation().getAlias() + "." + node.getAttribute()
     if self._expecting_constraint:
       self._expecting_constraint = False
       self._sql_where_stack.append(string)
@@ -42,11 +45,16 @@ class SQLGenerator():
 
   @v.when(ir.StringLiteral)
   def visit(self, node):
-    self._sql_where_stack.append('"' + node.getString() + '"')
+    self._sql_where_stack.append("'" + node.getString() + "'")
 
   @v.when(ir.RelationNode)
   def visit(self, node):
-    self._sql_from_stack.append(node.getName())
+    relation_alias = None
+    if node.hasAlias():
+      relation_alias = node.getName() + ' AS ' + node.getAlias()
+    else:
+      relation_alias = node.getName()
+    self._sql_from_stack.append(relation_alias)
 
   @v.when(ir.CrossJoinNode)
   def visit(self, node):
@@ -71,7 +79,7 @@ class SQLGenerator():
 
   @v.when(ir.Constraint)
   def visit(self, node):
-    print node.getLeftTerm().getRelation()
+    print node.getLeftTerm().getRelation().getAlias()
     print node.getLeftTerm().getAttribute()
     self._expecting_constraint = True
     node.getLeftTerm().accept(self)

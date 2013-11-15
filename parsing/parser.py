@@ -46,12 +46,20 @@ def p_formula_not(p):
   'formula : NOT atomicFormula'
   p[0] = ast.NotNode(p[2])
 
+def p_quantifier_list(p):
+  'quantifier_list : IDENTIFIER COMMA quantifier_list'
+  p[0] = [p[1]] + p[3]
+
+def p_quantifier_single(p):
+  'quantifier_list : IDENTIFIER'
+  p[0] = [p[1]]
+
 def p_formula_forall(p):
-  'formula : FORALL IDENTIFIER LBRACKET formula RBRACKET'
+  'formula : FORALL quantifier_list LBRACKET formula RBRACKET'
   p[0] = ast.ForAllNode(p[2], p[4])
 
 def p_formula_thereexists(p):
-  'formula : THEREEXISTS IDENTIFIER LBRACKET formula RBRACKET'
+  'formula : THEREEXISTS quantifier_list LBRACKET formula RBRACKET'
   p[0] = ast.ThereExistsNode(p[2], p[4])
 
 # Atomic Formula grammar
