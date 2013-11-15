@@ -31,12 +31,21 @@ def p_formula_iff(p):
 #Automatically turn A=>B into ~A V B
 def p_formula_implies(p):
   'formula : formula IMPLIES atomicFormula'
-  p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
+  #Equivalences
+  # P => Q  <=>  ~P V Q
+  #Demorgans Law
+  # P V Q <=> ~(~P ^ ~Q)
+  #Using both
+  # P => Q   <=> ~P V Q <=> ~(P ^ ~Q)
+  p[0] =  ast.NotNode(ast.AndNode(p[1],ast.NotNode(p[3])))
 #  p[0] = ast.ImpliesNode(p[1], p[3])
 
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
-  p[0] = ast.OrNode(p[1], p[3])
+  #DEMORGANS LAWWWZZZ
+  # P V Q <=> ~(~P ^ ~Q)
+  p[0] = ast.NotNode(ast.AndNode(ast.NotNode(p[1]),ast.NotNode(p[3])))
+#  p[0] = ast.OrNode(p[1], p[3])
 
 def p_formula_and(p):
   'formula : formula AND atomicFormula'
