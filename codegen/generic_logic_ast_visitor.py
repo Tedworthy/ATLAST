@@ -58,7 +58,6 @@ class GenericLogicASTVisitor():
           left_ids = [x['node'].getIdentifier() for x in left_keyvals]
           # Finally check if each and every element is the same!
           if right_ids == left_ids:
-            print 'All ids equal'
             # Should push the equal table on to the stack
             self.conjunctIR(left_ir, right_ir)
             self._IR_stack.append(left_ir)

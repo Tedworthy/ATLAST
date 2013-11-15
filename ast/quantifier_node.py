@@ -10,7 +10,7 @@ class QuantifierNode(Node):
   def __init__(self, identifier, formula):
     Node.__init__(self)
     self.setChild(0, formula)
-    self._identifier = identifier
+    self._identifier = identifier[0]
     self._boundValue = None
 
   def getBoundValue(self):
