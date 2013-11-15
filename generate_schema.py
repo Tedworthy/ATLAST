@@ -2,6 +2,8 @@ import xml.etree.cElementTree as ET
 from lxml import etree
 import psycopg2
 
+print 'Generating schema.xml...'
+
 # Establish the connection
 con = psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
                        port='55432', dbname='filmdb', 
@@ -64,3 +66,5 @@ for table in (table[0] for table in tables):
 # Write the xml to a file
 tree = ET.ElementTree(root)
 tree.write("schema.xml")
+
+print 'Schema generated!'
