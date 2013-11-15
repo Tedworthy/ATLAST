@@ -62,6 +62,7 @@ class index:
 
     # Example query there for testing, remove when codegen works
     #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
+    sql = ""
 
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
@@ -83,6 +84,10 @@ class index:
       error = str(e)
 
     response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
+    print logic_to_translate
+    print error
+    print sql
+    print query_result
 
     return json.dumps(response)
 

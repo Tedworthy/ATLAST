@@ -28,6 +28,22 @@ for table in (table[0] for table in tables):
   xmltable.set("name", table)
 
   # Query to retrieve all primary keys from a given table
+<<<<<<< HEAD
+  primary_key_query = """ SELECT  pg_attribute.attname,
+                                format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+                        FROM    pg_index, pg_class, pg_attribute
+                        WHERE   pg_class.oid = '%s'::regclass AND
+                                indrelid = pg_class.oid AND
+                                pg_attribute.attrelid = pg_class.oid AND
+                                pg_attribute.attnum = any(pg_index.indkey) AND 
+                                indisprimary""" % table
+
+  columns_query = """ SELECT column_name
+                      FROM information_schema.columns
+                      WHERE table_name = '%s' """ % table
+
+  # Execute the primary key query (TODO refactor, dat code duplication)
+=======
   #primary_key_query = """ SELECT  pg_attribute.attname,
   #                              format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
   #                      FROM    pg_index, pg_class, pg_attribute
@@ -42,6 +58,7 @@ for table in (table[0] for table in tables):
   primary_key_query = """select column_name from information_schema.columns where
                        table_name='%s'""" % table
   # Execute the query
+>>>>>>> codegen
   cur = con.cursor()
   cur.execute(primary_key_query)
   keys = cur.fetchall()
