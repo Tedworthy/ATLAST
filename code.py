@@ -65,6 +65,7 @@ class index:
 
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
+    # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
     try:
       result = parsing.parse_input(logic_to_translate)
       symbolTable = SymTable()
