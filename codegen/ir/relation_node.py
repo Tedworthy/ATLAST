@@ -16,3 +16,6 @@ class RelationNode(IRNode):
       return self.getName()
     else:
       return self._alias
+
+  def hasAlias(self):
+    return self._alias is not None;

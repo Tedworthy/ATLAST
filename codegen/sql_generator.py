@@ -46,7 +46,12 @@ class SQLGenerator():
 
   @v.when(ir.RelationNode)
   def visit(self, node):
-    self._sql_from_stack.append(node.getAlias())
+    relation_alias = None
+    if node.hasAlias():
+      relation_alias = node.getName() + ' AS ' + node.getAlias()
+    else:
+      relation_alias = node.getName()
+    self._sql_from_stack.append(relation_alias)
 
   @v.when(ir.CrossJoinNode)
   def visit(self, node):

@@ -68,4 +68,4 @@ class TestQuery(unittest.TestCase):
     # Perform the code generation into SQLIR using the visitor
     result.accept(self.codegenVisitor)
     self.codegenVisitor._IR_stack[0].accept(self.sqlGeneratorVisitor)
-    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films1.title, films2.director FROM films1 CROSS JOIN films2")
+    assert_equal(self.sqlGeneratorVisitor._sql, "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2")
