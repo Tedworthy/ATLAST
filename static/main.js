@@ -17,7 +17,7 @@ $(document).ready(function() {
 
     // For each table...
     $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has primary keys: ';
+      output += '<p>Table ' + table + ' has primary keys: ';unifcuniasdasdasasfaeg
 
       // p_keys is the [(primary keys object), (headings objects)]
       $.each(p_keys, function(text, keys) {
@@ -48,7 +48,9 @@ $(document).ready(function() {
     "or": "\u2228",
     "implies": "\u2192",
     "there_exists": "\u2203",
-    "forall": "\u2200"
+    "forall": "\u2200",
+    "not": "\u00AC",
+    "iff": "\u2194"
   }
 
   var keys = {
@@ -179,7 +181,14 @@ $(document).ready(function() {
   $("#forall_button").click(function() {
     $("#logic").insertAtCaret(unicode_chars.forall);
   });
+ 
+  $("#not_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.not);
+  });
   
+  $("#iff_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.iff);
+  });
   
   
 
