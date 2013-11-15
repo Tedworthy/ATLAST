@@ -75,6 +75,69 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
+  def test_select_three_from_single_table(self):
+    logic = "∃x(films_title(x, y) ∧ films_director(x, z) ∧ films_made(x, a))".decode('utf8')
+    sql = "SELECT title, director, made FROM films"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+ 
+  @with_setup(setup_func, teardown_func)
+  def test_select_key_from_single_table(self):
+    logic = "film(x)".decode('utf8')
+    sql = "SELECT fid FROM film"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_one_from_single_table_condition_on_one_field(self):
+    logic = "∃x(films_title(x, y) ∧ y = 'The Bourne Identity'".decode('utf8')
+    sql = "SELECT title FROM film WHERE title = 'The Bourne Identity'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_one_from_single_table_condition_on_other_field(self):
+    logic = "∃x(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US'".decode('utf8')
+    sql = "SELECT title, origin FROM films WHERE origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_two_from_single_table_condition_on_one_field(self):
+    logic = "∃x(film_title(x, y) ∧ film_origin(x, z) ∧ z = 'US'".decode('utf8')
+    sql = "SELECT title, origin FROM films WHERE origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_select_two_from_single_table_condition_on_one_field_literal(self):
+    logic = "∃x(film_title(x, y) ∧ film_origin(x, 'US')".decode('utf8')
+    sql = "SELECT title, origin FROM films WHERE origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_two_from_single_table_condition_on_one_field_literal(self):
+    logic = "∃x(film_title(x, y) ∧ film_origin(x, 'US')".decode('utf8')
+    sql = "SELECT title, origin FROM films WHERE origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_three_from_single_table_condition_on_two(self):
+    logic = "∃x(film_title(x, y) ∧ film_director(s, b) ∧ film_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US'".decode('utf8')
+    sql = "SELECT title, director, origin FROM film WHERE title = 'Psycho' AND origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_select_three_from_single_table_condition_on_two_literal(self):
+    logic = "∃x(film_title(x, 'Psycho') ∧ film_director(s, b) ∧ film_origin(x, 'US')".decode('utf8')
+    sql = "SELECT title, director, origin FROM film WHERE title = 'Psycho' AND origin = 'US'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+
+
+
+
+
+
+
+
+
+@with_setup(setup_func, teardown_func)
   def test_select_two_from_table_with_stringlit(self):
     logic = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf8')
     sql = "SELECT director FROM films WHERE title = 'Ben Hur'"
