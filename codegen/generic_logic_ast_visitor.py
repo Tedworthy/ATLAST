@@ -38,17 +38,16 @@ class GenericLogicASTVisitor():
     left_ir = self._IR_stack.pop()
     assert left_node
     assert right_node
-    right_keys = right_node['keys']
-    left_keys = left_node['keys']
-    right_keyvals = right_node['key_values']
-    left_keyvals = left_node['key_values']
     right_table = right_node['table']
     left_table = left_node['table']
     # Check the left and right nodes are both predicates
     if right_node['type'] == left_node['type'] == 'predicate':
+      right_keys = right_node['keys']
+      left_keys = left_node['keys']
+      right_keyvals = right_node['key_values']
+      left_keyvals = left_node['key_values']
       # Determine if the tables are the same
       if right_table.getName() == left_table.getName():
-        print 'Tables were equal'
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
         # Check if every element is a variable
@@ -81,13 +80,13 @@ class GenericLogicASTVisitor():
             left_key = left_keyvals[i]
             right_key = right_keyvals[j]
             left_type = left_key['type']
-            left_node = left_key['node']
+            left_key_node = left_key['node']
             right_type = right_key['type']
-            right_node = right_key['node']
+            right_key_node = right_key['node']
             left_rel_attr = RelationAttributePair(left_table, left_keys[i])
             right_rel_attr = RelationAttributePair(right_table, right_keys[j])
             if left_type == right_type == 'variable':
-              if left_node.getIdentifier() == right_node.getIdentifier():
+              if left_key_node.getIdentifier() == right_key_node.getIdentifier():
                 # Need to add this to the constraint list
                 constraint = Constraint(Constraint.EQ, left_rel_attr,
                     right_rel_attr)
@@ -106,6 +105,21 @@ class GenericLogicASTVisitor():
         self._IR_stack.append(left_ir)
       else:
         print 'Tables are different'
+    # Mixture of predicates and constraints
+    elif right_node['type'] == 'predicate' and left_node['type'] == 'constraint' \
+      or right_node['type'] == 'constraint' and left_node['type'] == 'predicate':
+      left_is_predicate = left_node['type'] == predicate
+      right_ir = self._IR_stack.pop()
+      left_ir = self._IR_stack.pop()
+      if left_is_predicate:
+        conjunctIR(left_ir, right_ir)
+        self._IR_stack.append(left_ir)
+        self._node_stack.append(left_node)
+      else:
+        conjunctIR(right_ir, left_ir)
+        self._IR_stack.append(right_ir)
+        self._node_stack.append(right_node)
+
     print "And(",left_node,",",right_node,")"
 
   @v.when(ast.NotNode)
@@ -192,6 +206,39 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.BinaryEqualityNode)
   def visit(self, node):
+    state = { 'type' : 'constraint',
+              'node' : node}
+    right_child = self._node_stack.pop()
+    left_child = self._node_stack.pop()
+    right_ir = self._IR_stack.pop()
+    left_ir = self._IR_stack.pop()
+
+    self.conjunctIR(left_ir, right_ir)
+    prev_constraints = left_ir.getConstraintTree()
+    new_constraint = None
+    if left_child['type'] == right_child['type'] == 'variable':
+      # Bind two variables together
+      bind(left_child['node'], right_child['node'], left_ir)
+    elif right_child['type'] == 'variable' and left_child['type'] == 'string_lit':
+      # Constrain the right child to the string literal
+      new_constraint = Constraint(Constraint.EQ, \
+          right_child['node'].getBoundValue(), \
+          StringLiteral(left_child['node'].getValue()))
+    elif right_child['type'] == 'string_lit' and left_child['type'] == 'variable':
+      # Constraint the left child to the string literal
+      new_constraint = Constraint(Constraint.EQ, \
+          left_child['node'].getBoundValue(), \
+          StringLiteral(right_child['node'].getValue()))
+    if new_constraint is not None:
+      if prev_constraints is None:
+        left_ir.setConstraintTree(new_constraint)
+      else:
+        left_ir.setConstraintTree(AndConstraint(prev_constraints,
+          new_constraint))
+
+    self._IR_stack.append(left_ir)
+    self._node_stack.append(state)
+
     print "Seen BinaryEqualityNode"
 
   @v.when(ast.FunctionNode)
