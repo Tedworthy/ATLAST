@@ -33,7 +33,7 @@ class Schema():
 
   def gatherColumns(self, table):
     values = []
-    for column in table.iter('column'):
+    for column in table.iter('columnName'):
       values.append(column.text)
     return values
 
