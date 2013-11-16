@@ -161,6 +161,7 @@ class GenericLogicASTVisitor():
     # attributes as necessary, binding them and passing keys up to any consumer
     # node i.e and AndNode.
     keys.extend(binding_values)
+    print '#########',keys
     for i in reversed(range(0, len(keys))):
       attr = keys[i]
       child = self._node_stack.pop()
@@ -173,6 +174,7 @@ class GenericLogicASTVisitor():
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
           ir.setRelationAttributePairs([rel_attr])
+        print 'Binding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         self.bind(child_node, rel_attr, ir)
         if i < key_count:
           key_values.append(child)
@@ -222,14 +224,18 @@ class GenericLogicASTVisitor():
     prev_constraints = left_ir.getConstraintTree()
     new_constraint = None
     if left_child['type'] == right_child['type'] == 'variable':
+      print 'Both variables'
       # Bind two variables together
       bind(left_child['node'], right_child['node'], left_ir)
     elif right_child['type'] == 'variable' and left_child['type'] == 'string_lit':
       # Constrain the right child to the string literal
+      print 'Left string, right node'
       new_constraint = Constraint(Constraint.EQ, \
           right_child['node'].getBoundValue(), \
           StringLiteral(left_child['node'].getValue()))
     elif right_child['type'] == 'string_lit' and left_child['type'] == 'variable':
+      print 'Right string, left node'
+      print left_child['node'].getBoundValue().getAttribute(),'=',right_child['node'].getValue()
       # Constraint the left child to the string literal
       new_constraint = Constraint(Constraint.EQ, \
           left_child['node'].getBoundValue(), \
@@ -279,9 +285,10 @@ class GenericLogicASTVisitor():
     if not node.bindTo(rel_attr):
       # Get the previous binding
       previous_binding = node.getBoundValue()
-      assert previous_binding != None
+      assert previous_binding is not None
       # Add to the constraints
       prev_constraints = ir.getConstraintTree()
+      print '#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
       new_constraint = Constraint(Constraint.EQ, rel_attr, \
         previous_binding)
       merged_constraint = None;
