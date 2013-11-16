@@ -195,7 +195,7 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_condition_on_two(self):
-    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ^ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf8')
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
  
