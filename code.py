@@ -64,6 +64,7 @@ class index:
     #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
     sql = ""
 
+    
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
 
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
