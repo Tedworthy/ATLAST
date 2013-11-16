@@ -208,7 +208,7 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
-  def test_two_table_join_on_field_order_does_not_matter(self):
+  def test_two_table_join_on_field_order_should_not_matter(self):
     logic = "∃x(casting_aid(y, x) ∧ actors_name(x, z))".decode('utf8')
     sql = "SELECT casting.cid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
@@ -224,4 +224,18 @@ class TestCodeGen():
     logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x)) ∧ casting_fid(y, a)".decode('utf8')
     sql = "SELECT actors.name, casting.cid, casting_fid FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field_select_three_order_should_not_matter(self):
+    logic = "∃x(casting_fid(y, a) ∧ actors_name(x, z) ∧ casting_aid(y, x))".decode('utf8')
+    sql = "SELECT casting.cid, casting_fid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x,a,c,f(casting_aid(c, a) ∧ actors_name(a, aname) ∧ casting_fid(c, f) ∧ film_name(f, fname))".decode('utf8')
+    sql = "SELECT innerjoin1.name, films.name FROM (casting JOIN actors ON casting.aid = actors.aid) AS innerjoin1 JOIN films ON innerjoin1.fid = films.fid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+
 
