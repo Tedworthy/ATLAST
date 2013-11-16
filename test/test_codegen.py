@@ -122,7 +122,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_select_three_from_one_condition_on_two_literal(self):
     logic = "∃x(films_title(x, 'Psycho') ∧ films_director(x, b) ∧ films_origin(x, 'US'))".decode('utf8')
-    sql = "SELECT title, director, origin FROM films WHERE title = 'Psycho' AND origin = 'US'"
+    sql = "SELECT director FROM films WHERE title = 'Psycho' AND origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
@@ -195,7 +195,7 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_condition_on_two(self):
-    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ^ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf8')
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
  

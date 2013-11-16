@@ -99,6 +99,7 @@ def p_term_variable(p):
 
 def p_term_stringlit(p):
   'term : STRINGLIT'
+  print p[1]
   p[0] = ast.StringLitNode(p[1])
 
 # Parsing and error functions
