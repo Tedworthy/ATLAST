@@ -69,22 +69,12 @@ class GenericLogicASTVisitor():
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
-        
+
+        # Alias the relations
         left_table.setAlias(left_table.getName() + '1')
         right_table.setAlias(right_table.getName() + '2')
-        
-        #left_rel = left_ir.getRelationTree()
-        #left_rel.setAlias(left_table + '1')
-        #right_rel = right_ir.getRelationTree()
-        #right_rel.setAlias(right_table + '2')
+
         join_constraints = None
-
-        # Set the project statements to now refer to the alias of the relation
-        #for rel_attr in left_ir.getRelationAttributePairs():
-        #  rel_attr.setRelation(left_rel)
-
-        #for rel_attr in right_ir.getRelationAttributePairs():
-        #  rel_attr.setRelation(right_rel)
 
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
