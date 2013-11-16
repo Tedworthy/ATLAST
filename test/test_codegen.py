@@ -122,7 +122,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_select_three_from_one_condition_on_two_literal(self):
     logic = "∃x(films_title(x, 'Psycho') ∧ films_director(x, b) ∧ films_origin(x, 'US'))".decode('utf8')
-    sql = "SELECT title, director, origin FROM films WHERE title = 'Psycho' AND origin = 'US'"
+    sql = "SELECT director FROM films WHERE title = 'Psycho' AND origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
@@ -161,12 +161,6 @@ class TestCodeGen():
     sql = "SELECT title FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-  @with_setup(setup_func, teardown_func)
-  def test_select_one_no_condition_on_others(self):
-    logic = "∃x, a(films_title(x, a) ∧ films_director(x, b))".decode('utf8')
-    sql = "SELECT director FROM films WHERE title = 'Psycho' AND origin = 'US'"
-    assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
   @with_setup(setup_func, teardown_func)
   def test_select_one_condition_on_others(self):
     logic = "∃x,a,c(films_title(x, a) ∧ films_director(x, b) ∧ films_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf8')
