@@ -17,7 +17,8 @@ $(document).ready(function() {
 
     // For each table...
     $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has primary keys: ';unifcuniasdasdasasfaeg
+
+      output += '<p>Table ' + table + ' has primary keys: ';
 
       // p_keys is the [(primary keys object), (headings objects)]
       $.each(p_keys, function(text, keys) {

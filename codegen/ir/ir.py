@@ -26,8 +26,8 @@ class IR():
     self._constraint_tree = constraintTree
 
   def accept(self, visitor):
-    ################################################################################################################################################################################################ TODO SORT IT OUT CHATLEY
-    visitor.genSelectNodes(self)
+    for relAttrPair in self._relation_attribute_pairs:
+      relAttrPair.accept(visitor)
     self._relation_tree.accept(visitor)
     if self._constraint_tree is not None:
       self._constraint_tree.accept(visitor)

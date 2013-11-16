@@ -1,0 +1,1 @@
+∃x(films_title(x, 'Ben Hur') ∧ films_director(x, y))
