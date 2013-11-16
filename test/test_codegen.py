@@ -237,3 +237,16 @@ class TestCodeGen():
     sql = "SELECT innerjoin1.name, films.name FROM (casting JOIN actors ON casting.aid = actors.aid) AS innerjoin1 JOIN films ON innerjoin1.fid = films.fid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  ''' NEGATIONS '''
+
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x(actors_name(x, y) ∧ y != 'Matt Damon')".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
