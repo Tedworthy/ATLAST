@@ -38,14 +38,14 @@ class GenericLogicASTVisitor():
     left_ir = self._IR_stack.pop()
     assert left_node
     assert right_node
-    right_table = right_node['table']
-    left_table = left_node['table']
     # Check the left and right nodes are both predicates
     if right_node['type'] == left_node['type'] == 'predicate':
       right_keys = right_node['keys']
       left_keys = left_node['keys']
       right_keyvals = right_node['key_values']
       left_keyvals = left_node['key_values']
+      right_table = right_node['table']
+      left_table = left_node['table']
       # Determine if the tables are the same
       if right_table.getName() == left_table.getName():
         right_types = [x['type'] for x in right_keyvals]
@@ -108,15 +108,13 @@ class GenericLogicASTVisitor():
     # Mixture of predicates and constraints
     elif right_node['type'] == 'predicate' and left_node['type'] == 'constraint' \
       or right_node['type'] == 'constraint' and left_node['type'] == 'predicate':
-      left_is_predicate = left_node['type'] == predicate
-      right_ir = self._IR_stack.pop()
-      left_ir = self._IR_stack.pop()
+      left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
-        conjunctIR(left_ir, right_ir)
+        self.conjunctIR(left_ir, right_ir)
         self._IR_stack.append(left_ir)
         self._node_stack.append(left_node)
       else:
-        conjunctIR(right_ir, left_ir)
+        self.conjunctIR(right_ir, left_ir)
         self._IR_stack.append(right_ir)
         self._node_stack.append(right_node)
 
