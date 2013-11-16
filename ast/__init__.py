@@ -1,5 +1,5 @@
 from and_node import AndNode
-from binary_equality_node import BinaryEqualityNode
+from binary_operator_node import BinaryOperatorNode
 from constant_node import ConstantNode
 from forall_node import ForAllNode
 from function_node import FunctionNode

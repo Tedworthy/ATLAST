@@ -14,6 +14,7 @@ class TokenEnum(object):
   GTE = "GTE"
   LTE = "LTE"
   EQ = "EQ"
+  NEQ = "NEQ"
   LBRACKET = "LBRACKET"
   RBRACKET = "RBRACKET"
   COMMA = "COMMA"
@@ -37,6 +38,7 @@ tokens = (
   TokenEnum.GTE,
   TokenEnum.LTE,
   TokenEnum.EQ,
+  TokenEnum.NEQ,
   TokenEnum.LBRACKET,
   TokenEnum.RBRACKET,
   TokenEnum.COMMA,
@@ -57,9 +59,10 @@ t_IMPLIES = u"\u2192"
 t_IFF = u"\u2194"
 t_GT = ">"
 t_LT = "<"
-t_GTE = u"\u2265"
-t_LTE = u"\u2264"
+t_GTE = u">="
+t_LTE = u"<="
 t_EQ = "="
+t_NEQ = u"\u2260"
 t_LBRACKET = "\("
 t_RBRACKET = "\)"
 t_COMMA = ","

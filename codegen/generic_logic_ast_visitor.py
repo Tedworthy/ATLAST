@@ -211,8 +211,10 @@ class GenericLogicASTVisitor():
     self._node_stack.append(state)
     print self._node_stack
 
-  @v.when(ast.BinaryEqualityNode)
+  @v.when(ast.BinaryOperatorNode)
   def visit(self, node):
+    op = node.getOp()
+    op = self.binOpToConstraintsOp(op)
     state = { 'type' : 'constraint',
               'node' : node}
     right_child = self._node_stack.pop()
@@ -230,14 +232,14 @@ class GenericLogicASTVisitor():
     elif right_child['type'] == 'variable' and left_child['type'] == 'string_lit':
       # Constrain the right child to the string literal
       print 'Left string, right node'
-      new_constraint = Constraint(Constraint.EQ, \
+      new_constraint = Constraint(op, \
           right_child['node'].getBoundValue(), \
           StringLiteral(left_child['node'].getValue()))
     elif right_child['type'] == 'string_lit' and left_child['type'] == 'variable':
       print 'Right string, left node'
       print left_child['node'].getBoundValue().getAttribute(),'=',right_child['node'].getValue()
       # Constraint the left child to the string literal
-      new_constraint = Constraint(Constraint.EQ, \
+      new_constraint = Constraint(op, \
           left_child['node'].getBoundValue(), \
           StringLiteral(right_child['node'].getValue()))
     if new_constraint is not None:
@@ -251,6 +253,16 @@ class GenericLogicASTVisitor():
     self._node_stack.append(state)
 
     print "Seen BinaryEqualityNode"
+    
+  def binOpToConstraintsOp(self, op):
+    return {
+        ast.BinaryOperatorNode.EQ : Constraint.EQ,
+        ast.BinaryOperatorNode.LT : Constraint.LT,
+        ast.BinaryOperatorNode.LTE : Constraint.LTE,
+        ast.BinaryOperatorNode.GT : Constraint.GT,
+        ast.BinaryOperatorNode.GTE : Constraint.GTE,
+        ast.BinaryOperatorNode.NEQ : Constraint.NEQ
+    }[op]
 
   @v.when(ast.FunctionNode)
   def visit(self, node):

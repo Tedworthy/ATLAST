@@ -12,4 +12,4 @@ from binary_operator_node import BinaryOperatorNode
 
 class AndNode(BinaryOperatorNode):
   def __init__(self, left, right):
-    BinaryOperatorNode.__init__(self, left, right)
+    BinaryOperatorNode.__init__(self, left, right, BinaryOperatorNode.AND)

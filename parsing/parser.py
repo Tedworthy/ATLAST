@@ -70,7 +70,27 @@ def p_atomic_formula_predicate(p):
 
 def p_atomic_formula_eq(p):
   'atomicFormula : term EQ term'
-  p[0] = ast.BinaryEqualityNode(p[1], p[3])
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.EQ)
+
+def p_atomic_formula_lt(p):
+  'atomicFormula : term LT term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.LT)
+
+def p_atomic_formula_lte(p):
+  'atomicFormula : term LTE term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.LTE)
+
+def p_atomic_formula_gt(p):
+  'atomicFormula : term GT term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.GT)
+
+def p_atomic_formula_gte(p):
+  'atomicFormula : term GTE term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.GTE)
+
+def p_atomic_formula_neq(p):
+  'atomicFormula : term NEQ term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.NEQ)
 
 # Term list grammar
 
