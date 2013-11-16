@@ -17,6 +17,7 @@ $(document).ready(function() {
 
     // For each table...
     $.each(schema, function(table, p_keys) {
+
       output += '<p>Table ' + table + ' has primary keys: ';
 
       // p_keys is the [(primary keys object), (headings objects)]
@@ -48,7 +49,9 @@ $(document).ready(function() {
     "or": "\u2228",
     "implies": "\u2192",
     "there_exists": "\u2203",
-    "forall": "\u2200"
+    "forall": "\u2200",
+    "not": "\u00AC",
+    "iff": "\u2194"
   }
 
   var keys = {
@@ -64,7 +67,8 @@ $(document).ready(function() {
     "or": { "regex": /\\\//g, "result": unicode_chars.or },
     "implies": { "regex": /->/g, "result": unicode_chars.implies },
     "there_exists": { "regex": /\\E/g, "result": unicode_chars.there_exists },
-    "forall": { "regex": /\\A/g, "result": unicode_chars.forall }
+    "forall": { "regex": /\\A/g, "result": unicode_chars.forall },
+    "iff": { "regex": /<>/g, "result": unicode_chars.iff }
   };
   $("#config_submit").click(function()  {
     user = $("#user_input").val();
@@ -179,7 +183,14 @@ $(document).ready(function() {
   $("#forall_button").click(function() {
     $("#logic").insertAtCaret(unicode_chars.forall);
   });
+ 
+  $("#not_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.not);
+  });
   
+  $("#iff_button").click(function() {
+    $("#logic").insertAtCaret(unicode_chars.iff);
+  });
   
   
 

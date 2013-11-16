@@ -3,6 +3,18 @@ $def with (form,form2)
 <html>
 
   <head>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45800576-1', 'srjallan.com');
+  ga('send', 'pageview');
+
+</script>
+  
     <title>Logic to SQL</title>
     <meta charset="utf-8">
     <script src="static/jquery.tools.min.js"></script>
@@ -62,10 +74,13 @@ $def with (form,form2)
           <input type="button" value="&rarr;" id="implies_button" />
           <input type="button" value="&exist;" id="there_exists_button" />
           <input type="button" value="&forall;" id="forall_button" />
+          <input type="button" value="&iff;" id="iff_button" />
+          <input type="button" value="&not;" id="not_button" />
         </form>
       </section>
 
       <div id='example' align='center'>Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
+      <div id='Broken' align='center'>Broken stuff: firefox json return sometimes fails, sql result no longer returns column headings </div>
       <div id='schema' align='center'> </div>
       <div id='schema_table' align='center'> </div>
 
