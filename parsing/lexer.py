@@ -87,7 +87,7 @@ def t_IDENTIFIER(t):
   return t
 
 def t_STRINGLIT(t):
-  r'\'(.*)\''
+  r'[\'"]([^\'^"]*)[\'"]'
   t.value = t.value[1:-1]
   return t
 

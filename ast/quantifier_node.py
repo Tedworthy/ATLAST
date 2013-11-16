@@ -5,12 +5,13 @@ another quantifier node.
 '''
 
 from node import *
+from variable_declaration_node import VariableDeclarationNode
 
 class QuantifierNode(Node):
-  def __init__(self, identifier, formula):
+  def __init__(self, identifiers, formula):
     Node.__init__(self)
     self.setChild(0, formula)
-    self._identifier = identifier
+    self._identifiers = identifiers
     self._boundValue = None
 
   def getBoundValue(self):
@@ -19,12 +20,14 @@ class QuantifierNode(Node):
   def setBoundValue(self, boundValue):
     self._boundValue = boundValue
 
-  def getIdentifier(self):
-    return self._identifier
+  def getIdentifiers(self):
+    return self._identifiers
 
   def generateSymbolTable(self, symTable):
     self._symTable = symTable
-    symTable.addItem(self.getIdentifier(), self)
+    for identifier in self.getIdentifiers():
+      dec = VariableDeclarationNode(symTable)
+      symTable.addItem(identifier, dec)
     childSymbolTable = SymTable(symTable)
 
     for child in self.getChildren():
