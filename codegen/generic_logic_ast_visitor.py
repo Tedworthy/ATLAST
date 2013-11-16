@@ -108,16 +108,23 @@ class GenericLogicASTVisitor():
     # Mixture of predicates and constraints
     elif right_node['type'] == 'predicate' and left_node['type'] == 'constraint' \
       or right_node['type'] == 'constraint' and left_node['type'] == 'predicate':
+      print 'Mixture!'
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
+        print 'Left is predicate'
         self.conjunctIR(left_ir, right_ir)
         self._IR_stack.append(left_ir)
         self._node_stack.append(left_node)
       else:
+        print 'Right is predicate'
         self.conjunctIR(right_ir, left_ir)
         self._IR_stack.append(right_ir)
         self._node_stack.append(right_node)
-
+    else:
+      print 'Both constraints'
+      self.conjunctIR(left_ir, right_ir)
+      self._IR_stack.append(left_ir)
+      self._node_stack.append(left_node)
     print "And(",left_node,",",right_node,")"
 
   @v.when(ast.NotNode)
