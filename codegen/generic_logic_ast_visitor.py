@@ -68,7 +68,6 @@ class GenericLogicASTVisitor():
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
-
         # Alias the relations
         left_table.setAlias(left_table.getName() + '1')
         right_table.setAlias(right_table.getName() + '2')
@@ -101,7 +100,12 @@ class GenericLogicASTVisitor():
         if join_constraints is None:
           self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
         else:
-          self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints)
+          self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints) 
+        state = {'type' : 'join',
+                'table' : left_ir.getRelationTree(),
+                'key_values' : left_keyvals + right_keyvals
+                }
+        self._node_stack.append(state)
         self._IR_stack.append(left_ir)
       else:
         print 'Tables are different'
