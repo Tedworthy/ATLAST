@@ -59,7 +59,7 @@ class TestCodeGen():
 
     result = convertedResult == expectedResult
     if not result:
-      print "%s != %s", convertedResult, expectedResult
+      print convertedResult, "!=", expectedResult
 
     return result
 
@@ -108,7 +108,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_select_two_from_single_table_condition_on_one_field_literal(self):
     logic = "∃x(films_title(x, y) ∧ films_origin(x, 'US'))".decode('utf8')
-    sql = "SELECT title, origin FROM films WHERE origin = 'US'"
+    sql = "SELECT title FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
