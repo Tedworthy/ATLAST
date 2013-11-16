@@ -47,7 +47,7 @@ class GenericLogicASTVisitor():
     # Check the left and right nodes are both predicates
     if right_node['type'] == left_node['type'] == 'predicate':
       # Determine if the tables are the same
-      if right_table == left_table:
+      if right_table.getName() == left_table.getName():
         print 'Tables were equal'
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
@@ -61,21 +61,20 @@ class GenericLogicASTVisitor():
             # Should push the equal table on to the stack
             self.conjunctIR(left_ir, right_ir)
             self._IR_stack.append(left_ir)
-            self._node_stack.append(left_table)
+            state = {'type' : 'predicate',
+                    'table' : left_table,
+                    'key_values' : left_keyvals,
+                    'keys' : left_keys}
+            self._node_stack.append(state)
             return
         # Tables are still equal, but elements are not all variables. Iterate
         # through the keys, working out where to join.
-        left_rel = left_ir.getRelationTree()
-        left_rel.setAlias(left_table + '1')
-        right_rel = right_ir.getRelationTree()
-        right_rel.setAlias(right_table + '2')
+
+        # Alias the relations
+        left_table.setAlias(left_table.getName() + '1')
+        right_table.setAlias(right_table.getName() + '2')
+
         join_constraints = None
-
-        for rel_attr in left_ir.getRelationAttributePairs():
-          rel_attr.setRelation(left_rel)
-
-        for rel_attr in right_ir.getRelationAttributePairs():
-          rel_attr.setRelation(right_rel)
 
         for i in range(0, len(left_keyvals)):
           for j in range(0, len(right_keyvals)):
@@ -85,8 +84,8 @@ class GenericLogicASTVisitor():
             left_node = left_key['node']
             right_type = right_key['type']
             right_node = right_key['node']
-            left_rel_attr = RelationAttributePair(left_rel, left_keys[i])
-            right_rel_attr = RelationAttributePair(right_rel, right_keys[j])
+            left_rel_attr = RelationAttributePair(left_table, left_keys[i])
+            right_rel_attr = RelationAttributePair(right_table, right_keys[j])
             if left_type == right_type == 'variable':
               if left_node.getIdentifier() == right_node.getIdentifier():
                 # Need to add this to the constraint list
@@ -126,9 +125,9 @@ class GenericLogicASTVisitor():
     # Split out the attributes of the predicate
     attributes = node.getIdentifier().split('_')
     # Get the table name
-    relation = attributes[0]
+    relation = RelationNode(attributes[0])
     # Retrieve the primary keys from the schema
-    keys = self._schema.getPrimaryKeys(relation)
+    keys = self._schema.getPrimaryKeys(relation.getName())
     # Sort the keys alphabetically as our predicates enforce this
     keys = sorted(keys)
     # Iterate over the children from right to left, matching binding values
@@ -149,7 +148,7 @@ class GenericLogicASTVisitor():
       ir = self._IR_stack.pop()
       child_type = child['type']
       child_node = child['node']
-      rel_attr = RelationAttributePair(RelationNode(relation), attr)
+      rel_attr = RelationAttributePair(relation, attr)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
@@ -177,7 +176,7 @@ class GenericLogicASTVisitor():
         self.conjunctIR(merged_ir, ir)
 
     # Add the relation from the predicate to the IR
-    merged_ir.setRelationTree(RelationNode(relation))
+    merged_ir.setRelationTree(relation)
 
     # Push the IR for the predicate node onto the IR stack.
     self._IR_stack.append(merged_ir)
