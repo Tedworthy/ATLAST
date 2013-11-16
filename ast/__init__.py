@@ -1,5 +1,5 @@
 from and_node import AndNode
-from binary_equality_node import BinaryEqualityNode
+from binary_operator_node import BinaryOperatorNode
 from constant_node import ConstantNode
 from forall_node import ForAllNode
 from function_node import FunctionNode
@@ -10,4 +10,6 @@ from or_node import OrNode
 from predicate_node import PredicateNode
 from thereexists_node import ThereExistsNode
 from variable_node import VariableNode
+from variable_declaration_node import VariableDeclarationNode
 from n_arity_application_node import NArityApplicationNode
+from stringlit_node import StringLitNode

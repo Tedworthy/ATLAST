@@ -46,12 +46,20 @@ def p_formula_not(p):
   'formula : NOT atomicFormula'
   p[0] = ast.NotNode(p[2])
 
+def p_quantifier_list(p):
+  'quantifier_list : IDENTIFIER COMMA quantifier_list'
+  p[0] = [p[1]] + p[3]
+
+def p_quantifier_single(p):
+  'quantifier_list : IDENTIFIER'
+  p[0] = [p[1]]
+
 def p_formula_forall(p):
-  'formula : FORALL IDENTIFIER LBRACKET formula RBRACKET'
+  'formula : FORALL quantifier_list LBRACKET formula RBRACKET'
   p[0] = ast.ForAllNode(p[2], p[4])
 
 def p_formula_thereexists(p):
-  'formula : THEREEXISTS IDENTIFIER LBRACKET formula RBRACKET'
+  'formula : THEREEXISTS quantifier_list LBRACKET formula RBRACKET'
   p[0] = ast.ThereExistsNode(p[2], p[4])
 
 # Atomic Formula grammar
@@ -62,7 +70,27 @@ def p_atomic_formula_predicate(p):
 
 def p_atomic_formula_eq(p):
   'atomicFormula : term EQ term'
-  p[0] = ast.BinaryEqualityNode(p[1], p[3])
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.EQ)
+
+def p_atomic_formula_lt(p):
+  'atomicFormula : term LT term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.LT)
+
+def p_atomic_formula_lte(p):
+  'atomicFormula : term LTE term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.LTE)
+
+def p_atomic_formula_gt(p):
+  'atomicFormula : term GT term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.GT)
+
+def p_atomic_formula_gte(p):
+  'atomicFormula : term GTE term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.GTE)
+
+def p_atomic_formula_neq(p):
+  'atomicFormula : term NEQ term'
+  p[0] = ast.BinaryOperatorNode(p[1], p[3], ast.BinaryOperatorNode.NEQ)
 
 # Term list grammar
 
@@ -88,6 +116,11 @@ def p_term_constant(p):
 def p_term_variable(p):
   'term : IDENTIFIER'
   p[0] = ast.VariableNode(p[1])
+
+def p_term_stringlit(p):
+  'term : STRINGLIT'
+  print p[1]
+  p[0] = ast.StringLitNode(p[1])
 
 # Parsing and error functions
 

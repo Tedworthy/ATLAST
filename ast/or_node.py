@@ -12,4 +12,4 @@ from binary_operator_node import *
 
 class OrNode(BinaryOperatorNode):
   def __init__(self, left, right):
-    BinaryOperatorNode.__init__(self, left, right)
+    BinaryOperatorNode.__init__(self, left, right, BinaryOperatorNode.OR)

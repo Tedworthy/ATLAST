@@ -8,6 +8,9 @@ class RelationAttributePair(IRNode):
   def getRelation(self):
     return self._relation
 
+  def setRelation(self, relation):
+    self._relation = relation
+
   def getAttribute(self):
     return self._attribute
 

@@ -19,6 +19,7 @@ class Schema():
         print 'Error: table tag encountered with no associated name. Skipping.'
         break
       table_data['primary_keys'] = self.gatherPrimaryKeys(table)
+      table_data['columns'] = self.gatherColumns(table)
       #table_data[foreign_keys] = getForeignKeys(table) etc...
       big_data[table_name] = table_data
 
@@ -30,6 +31,12 @@ class Schema():
       values.append(primaryKey.text)
     return values
 
+  def gatherColumns(self, table):
+    values = []
+    for column in table.iter('columnName'):
+      values.append(column.text)
+    return values
+
   def getPrimaryKeys(self, table_name):
     table_data = self._data.get(table_name)
     if table_data is None:
@@ -38,7 +45,13 @@ class Schema():
 
     return table_data.get('primary_keys')
 
+  def getColumns(self, table_name):
+    table_data = self._data.get(table_name)
+    if table_data is None:
+      print 'Error: table', table_name, 'not in schema!'
+      return None
+
+    return table_data.get('columns')
+
   def getAllData(self):
     return self._data
-
-
