@@ -108,7 +108,7 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
   
   @with_setup(setup_func, teardown_func)
-  def test_select_two_from_one_condition_on_one_literal(self):
+  def test_select_two_from_one_condition_on_one_right_literal(self):
     logic = "∃x(films_title(x, y) ∧ films_origin(x, 'US'))".decode('utf8')
     sql = "SELECT title FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
@@ -126,7 +126,7 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
-  def test_select_two_from_one_condition_on_one_literal(self):
+  def test_select_two_from_one_condition_on_one_left_literal(self):
     logic = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf8')
     sql = "SELECT director FROM films WHERE title = 'Ben Hur'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
@@ -170,7 +170,7 @@ class TestCodeGen():
   ''' SINGLE TABLE JOINS '''
   
   @with_setup(setup_func, teardown_func)
-  def test_single_table_cross_join_select_two(self):
+  def test_single_table_cross_join_select_one(self):
     logic = "∃x,y,a(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
     sql = "SELECT films2.director FROM films AS films1 CROSS JOIN films AS films2"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
