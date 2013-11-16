@@ -237,5 +237,3 @@ class TestCodeGen():
     sql = "SELECT innerjoin1.name, films.name FROM (casting JOIN actors ON casting.aid = actors.aid) AS innerjoin1 JOIN films ON innerjoin1.fid = films.fid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-
-
