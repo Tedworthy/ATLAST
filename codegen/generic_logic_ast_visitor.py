@@ -194,7 +194,7 @@ class GenericLogicASTVisitor():
         merged_ir = ir
       # Merging IRs
       else:
-        self.conjunctIR(merged_ir, ir)
+        merged_ir = self.conjunctIR(ir, merged_ir)
 
     # Add the relation from the predicate to the IR
     merged_ir.setRelationTree(relation)
