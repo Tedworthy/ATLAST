@@ -174,8 +174,8 @@ class GenericLogicASTVisitor():
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
           ir.setRelationAttributePairs([rel_attr])
-        print 'Binding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         self.bind(child_node, rel_attr, ir)
+        print 'Binding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         if i < key_count:
           key_values.append(child)
       elif child_type == 'string_lit':
