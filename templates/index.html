@@ -48,16 +48,8 @@ $def with (form,form2)
       </header>
 
     <div class="modal" id="configdialog">
-      <p> Configuration Page </p>
+      <p><b> Configuration Page</b> </p>
           $:form2.render()
-      <form class="rounded" id="configform" method="post" action="/login">
-          $:form2.host.render()
-          $:form2.port.render()
-          $:form2.username.render()
-          $:form2.password.render()
-          $:form2.dbname.render()
-        <button type="submit" id="config_submit"> Submit </button>
-      </form>
       <button class="close"> Close </button>
     </div>
 
