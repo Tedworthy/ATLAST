@@ -1,4 +1,4 @@
-
+*.log
 #python compiled files
 *.pyc
 #vim swap files
