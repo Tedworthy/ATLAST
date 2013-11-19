@@ -27,11 +27,12 @@ logic_form = web.form.Form(
 )
 
 login_form = web.form.Form(
-    web.form.Textbox('host', class_='textfield',id='port_input'),
+    web.form.Textbox('host', class_='textfield',id='host_input'),
     web.form.Textbox('port',class_='textfield',id='port_input'),
     web.form.Textbox('username',class_='textfield',id='username_input'),
     web.form.Password('password',class_='textfield',id='password_input'),
-    web.form.Textbox('dbname',class_='textfield',id='dbname_input')
+    web.form.Textbox('dbname',class_='textfield',id='dbname_input'),
+    web.form.Button('Connect', id='config_submit')
 )
 
 class index:
@@ -95,16 +96,24 @@ class schematic:
 
 class login:
   def POST(self):
-    f = login_form()
-    f.validates()
-    print f['username']
-    print web.input()
-    response = {'error' : 'ok'}
+    try:
+      f = login_form()
+      f.validates()
+      ## ADD SOME VALIDATION HERE##
 
-    return json.dumps(response)
+      print web.input()
+      web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+
+      response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
+      return json.dumps(response)
+
+    except Error (e):
+      print e
+      return json.dumps({'error' : str(e)})
 
   def GET(self):
-    return "login " 
+    response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
+    return json.dumps(response) 
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:
