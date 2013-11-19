@@ -49,6 +49,7 @@ $def with (form,form2)
 
     <div class="modal" id="configdialog">
       <p> Configuration Page </p>
+          $:form2.render()
       <form class="rounded" id="configform" method="post" action="/login">
           $:form2.host.render()
           $:form2.port.render()
