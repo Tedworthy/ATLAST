@@ -1,0 +1,37 @@
+#!/bin/bash
+
+trap clean_up INT
+
+function clean_up() {
+  echo "[runserver] Stopping Logic to SQL..."
+  kill -TERM $L2SQLPID
+
+  echo "[runserver] Stopping Celery..."
+  echo "[runserver] Stopping RabbitMQ..."
+
+  echo "[runserver] Finished"
+  exit 0
+}
+
+echo "[runserver] Starting RabbitMQ..."
+rabbitmq-server &
+RABBITMQPID=$!
+sleep 3
+
+rabbitmqctl start_app
+sleep 3
+
+echo "[runserver] Starting Celery..."
+celery --app=parsing.task worker -l info &
+CELERYPID=$!
+sleep 3
+
+echo "[runserver] Starting Logic to SQL..."
+python code.py $1 &
+L2SQLPID=$!
+
+echo "RabbitMQ: $RABBITMQPID"
+echo "Celery: $CELERYPID"
+echo "L2SQL: $L2SQLPID"
+
+wait $RABBITMQPID
