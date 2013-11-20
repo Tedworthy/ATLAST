@@ -2,7 +2,26 @@ import xml.etree.cElementTree as ET
 from lxml import etree
 import psycopg2
 
+
+con = establish_connection(config_data)
+
+
+
 # Establish the connection
+'''
+def establish_connection(config_data):
+  config_data['host']
+  config_data['password'] 
+  config_data['dbname']
+  config_data['port']
+  config_data['username']
+  con =  psycopg2.connect(host=config_data['host'],
+                       port=config_data['port'], dbname=config_data['dbname'], 
+                       user=config_data['username'], password=config_data['password'])
+  return con
+
+'''
+
 con = psycopg2.connect(host='axa-prj-03.doc.ic.ac.uk',
                        port='55432', dbname='filmdb', 
                        user='link', password='triforce')
