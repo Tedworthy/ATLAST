@@ -10,6 +10,7 @@ from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
 from dbbackend import query
 from dbbackend import schema
+import generate_schema 
 from web.wsgiserver import CherryPyWSGIServer
 
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
@@ -106,7 +107,8 @@ class login:
       config_data =  web.input()
       print config_data
       # TODO: Validate user input #
-      print config_data['host']
+      generate_schema.generate_db_schema(config_data)
+      web.schema = schema.Schema()
       web.header('Content-Type','text/html; charset=utf-8', unique=True) 
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
