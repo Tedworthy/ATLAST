@@ -78,7 +78,9 @@ class index:
       result.accept(codegenVisitor)
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
-      query_result = query.query(sql)
+      con = query.establish_connection(query.parse_config_file('dbbackend/db.cfg'))
+      query_result = query.query(con,sql)
+      con.close()
       error = 'ok'
     except Exception, e:
       sql = ''
