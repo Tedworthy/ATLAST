@@ -110,14 +110,17 @@ class login:
       f.validates()
       ## ADD SOME VALIDATION HERE##
 
-      print web.input()
+      config_data =  web.input()
+      print config_data
+      # TODO: Validate user input #
+      print config_data['host']
       web.header('Content-Type','text/html; charset=utf-8', unique=True) 
-
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
 
-    except Error (e):
-      print e
+    except Exception, e:
+      print 'I Died'
+      print str(e)
       return json.dumps({'error' : str(e)})
 
   def GET(self):

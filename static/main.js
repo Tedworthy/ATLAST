@@ -73,7 +73,8 @@ $(document).ready(function() {
   };
 
   $("#config_submit").click(function()  {
-    user = $("#user_input").val();
+    user = $("#username_input").val();
+
     $.post(
       "/login", {
         user : user,
