@@ -61,12 +61,17 @@ class index:
     ## Get the SQL out of the finished worker thread
     #sql = result.get()
 
-    # Example query there for testing, remove when codegen works
-    #sql = "SELECT * FROM casting WHERE part = 'Jason Bourne'"; # Dodgy query
-    sql = ""
-
-    
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
+
+    # Set up a response dictionary
+    response = {
+        'status': '',
+        'logic': logic_to_translate,
+        'sql': '',
+        'query_columns': [],
+        'query_rows': [],
+        'error': ''
+      }
 
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
     try:
@@ -79,13 +84,17 @@ class index:
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
       query_result = query.query(sql)
-      error = 'ok'
+      if query_result['status'] == 'ok':
+        response['status'] = 'ok'
+        response['sql'] = sql
+        response['query_columns'] = query_result['columns']
+        response['query_rows'] = query_result['rows']
+      else:
+        response['status'] = 'db_error'
+        response['error'] = query_result['error']
     except Exception, e:
-      sql = ''
-      query_result = {}
-      error = str(e)
-
-    response = {'logic': logic_to_translate, 'error': error, 'sql': sql, 'query': query_result}
+      response['status'] = 'exception_error'
+      response['error'] = 'ERROR: %s' % str(e)
 
     return json.dumps(response)
 

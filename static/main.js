@@ -88,7 +88,6 @@ $(document).ready(function() {
         var n = noty({text: 'Configuration Accepted'})
         $(".close").trigger("click")
         n.fadeOut('slow')
-        
       }
     });
   });
@@ -102,40 +101,39 @@ $(document).ready(function() {
         "logic" : input_string
       }
     }).done(function(result) {
-      /* Handle the result of the translation */
+      // Convert the JSON from the server to a response object
       var response = $.parseJSON(result);
-      //alert(JSON.stringify(response));
 
-      // Print out SQL query produced and the returned JSON object
-      if(response.error === 'ok') {
+      // Check the result of the translation and act appropriately
+      if (response.status === 'ok') {
         $("textarea#sql_result").text(response.sql);
-      } else {
-        $("textarea#sql_result").text(response.error);
-      }
 
-      $("textarea#query_result").text(JSON.stringify(response.query) + "\n");
+        // Create an HTML table
+        var table = '<table border="1" align="center"> <tr>';
 
-      // Print rows from result of running query on database
-      var table = '<table border="1" align="center"> <tr>';
-      var first_row = response.query[0];
-      $.each(first_row, function(k, v) {
-        table += '<th>' + k + '</th>';
-      });
-      table += '</tr>';
-
-      // loop over each object in the array to create rows
-      $.each(response.query, function() {
-        table += '<tr>';
-        $.each(this, function(k, v) {
-          table += ('<td>' + v + '</td>');
+        // Construct the header of the table from the query column names
+        $.each(response.query_columns, function(i, column) {
+          table += '<th>' + column + '</th>';
         });
-        table += '</tr>'
-      });
+        table += '</tr>';
 
-      // Add the resulting table to the page
-      $("#results_table").html(table);
+        // Construct the body of the table from the query row data
+        $.each(response.query_rows, function(i, row) {
+          table += '<tr>';
+          $.each(row, function(i, dataItem) {
+            table += ('<td>' + dataItem + '</td>');
+          });
+          table += '</tr>'
+        });
+
+        // Add the resulting table to the page
+        $("#results_table").html(table);
+      } else {
+        // Something went wrong, so print the error.
+        $("textarea#sql_result").text(response.error);
+        $("#results_table").html("");
+      }
     });
-
     return false;
   });
 

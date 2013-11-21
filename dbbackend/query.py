@@ -7,6 +7,12 @@ import ConfigParser
 
 def query(text):
   con = None
+  result = {
+      "status": "",
+      "error": "",
+      "columns": [],
+      "rows": []
+    }
   try:
     config = ConfigParser.RawConfigParser()
     config.read('dbbackend/db.cfg')
@@ -20,11 +26,12 @@ def query(text):
     con = psycopg2.connect('host='+host+' port='+port+' dbname='+database+' user='+user +' password='+password)
     cur = con.cursor()
     cur.execute(text)
-    result = cur.fetchall()
-
+    result["rows"] = cur.fetchall()
+    result["columns"] = [desc[0] for desc in cur.description]
+    result["status"] = "ok"
   except psycopg2.DatabaseError, e:
-    result = 'ERROR %s' % e
-    
+    result["error"] = 'ERROR: %s' % e
+    result["status"] = "error"
   finally:
     if con:
       con.close()
