@@ -14,6 +14,7 @@ def parse_config_file(file):
       config_data['username']  = config.get('DatabaseCon', 'user')
       config_data['dbname'] = config.get('DatabaseCon', 'dbname')
       config_data['password'] = config.get('DatabaseCon', 'password')
+      config_data['Error'] = '0'
     except Exception, e:
         print str(e)
         config_data['Error'] = '1'
