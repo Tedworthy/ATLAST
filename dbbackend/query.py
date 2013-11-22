@@ -38,11 +38,11 @@ def query(con,query):
   try:
     cur = con.cursor()
     cur.execute(query)
-    result["rows"] = cur.fetchall()
-    result["columns"] = [desc[0] for desc in cur.description]
-    result["status"] = "ok"
+    result['rows'] = cur.fetchall()
+    result['columns'] = [desc[0] for desc in cur.description]
+    result['status'] = "ok"
   except psycopg2.DatabaseError, e:
-    result["error"] = 'ERROR: %s' % e
-    result["status"] = "error"
+    result['error'] = 'ERROR: %s' % e
+    result['status'] = "error"
   finally:
     return result

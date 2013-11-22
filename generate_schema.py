@@ -25,19 +25,19 @@ columns_query = """ SELECT column_name
 
 def generate_db_schema(config_data):
   con = establish_connection(config_data)
-  tables = query(con,table_query)
+  tables = query(con,table_query)['rows']
   root = etree.Element("root")
   for table in (table[0] for table in tables):
     # Create a structure with the name of the table
     xmltable = etree.SubElement(root, "table")
     xmltable.set("name", table)
-    keys = query(con,primary_key_query % table)
+    keys = query(con,primary_key_query % table)['rows']
     
     for key in (key[0] for key in keys):
       xml_primary_key = etree.SubElement(xmltable, "primaryKey")
       xml_primary_key.text = key
     
-    columns = query(con,columns_query % table)
+    columns = query(con,columns_query % table)['rows']
 
     for column in (column[0] for column in columns):
       xml_primary_key = etree.SubElement(xmltable, "columnName")
