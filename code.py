@@ -8,7 +8,9 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
-from dbbackend import query
+from dbbackend.postgres import postgres_backend
+from dbbackend.config_parser import *
+
 from dbbackend import schema
 import generate_schema 
 from web.wsgiserver import CherryPyWSGIServer
@@ -85,8 +87,10 @@ class index:
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
       #TODO - Save the config_data to a session variable and use that instead
-      con = query.establish_connection(query.parse_config_file('dbbackend/db.cfg'))
-      query_result = query.query(con,sql)
+      config_data = parse_config_file('dbbackend/db.cfg')
+      con = postgres_backend.establish_connection(config_data)
+      query_result = postgres_backend.execute_query(con,sql)
+
       if query_result['status'] == 'ok':
         response['status'] = 'ok'
         response['sql'] = sql
@@ -143,4 +147,5 @@ web.app = web.application(urls, globals())
 web.schema = schema.Schema()
 
 if (not is_test()) and  __name__ == "__main__":
+  generate_schema.generate_db_schema(postgres_backend.establish_connection(parse_config_file('dbbackend/db.cfg')))
   web.app.run()

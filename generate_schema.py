@@ -1,7 +1,8 @@
 import xml.etree.cElementTree as ET
 from lxml import etree
 import psycopg2
-from dbbackend.query import *
+from dbbackend.postgres.postgres_backend import *
+from dbbackend.config_parser import *
 
 table_query = """ SELECT table_name
                   FROM information_schema.tables

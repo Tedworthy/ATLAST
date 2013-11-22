@@ -10,7 +10,8 @@ from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
 import dbbackend.schema as schema
-import dbbackend.query as query
+from dbbackend.postgres import *
+from dbbackend.config_parser import *
 from paste.fixture import TestApp
 from nose.tools import *
 
@@ -54,9 +55,10 @@ class TestCodeGen():
 
     # Run converted and expected SQL queries and compare results.
     # Force decode to ASCII as unicode SQL throws a massive wobbly.
-    con = query.establish_connection(query.parse_config_file('dbbackend/db.cfg'))
-    convertedResult = query.query(con,convertedSQLString.decode('ascii', 'ignore'))
-    expectedResult = query.query(con,expectedSQLString)
+    config_data = parse_config_file('dbbackend/db.cfg')
+    con = postgres_backend.establish_connection(config_data)
+    convertedResult = postgres_backend.execute_query(con,convertedSQLString.decode('ascii', 'ignore'))
+    expectedResult = postgres_backend.execute_query(con,expectedSQLString)
     con.close()
     result = convertedResult == expectedResult
     if not result:
