@@ -10,6 +10,7 @@ from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
 from dbbackend import query
 from dbbackend import schema
+import generate_schema 
 from web.wsgiserver import CherryPyWSGIServer
 
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
@@ -83,7 +84,9 @@ class index:
       result.accept(codegenVisitor)
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
-      query_result = query.query(sql)
+      #TODO - Save the config_data to a session variable and use that instead
+      con = query.establish_connection(query.parse_config_file('dbbackend/db.cfg'))
+      query_result = query.query(con,sql)
       if query_result['status'] == 'ok':
         response['status'] = 'ok'
         response['sql'] = sql
@@ -92,6 +95,8 @@ class index:
       else:
         response['status'] = 'db_error'
         response['error'] = query_result['error']
+
+      con.close()
     except Exception, e:
       response['status'] = 'exception_error'
       response['error'] = 'ERROR: %s' % str(e)
@@ -113,7 +118,8 @@ class login:
       config_data =  web.input()
       print config_data
       # TODO: Validate user input #
-      print config_data['host']
+      generate_schema.generate_db_schema(config_data)
+      web.schema = schema.Schema()
       web.header('Content-Type','text/html; charset=utf-8', unique=True) 
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
