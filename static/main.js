@@ -73,10 +73,11 @@ $(document).ready(function() {
   };
 
   $("#config_submit").click(function()  {
-    user = $("#user_input").val();
+    user = $("#username_input").val();
+
     $.post(
       "/login", {
-        user : user,
+        username : user,
         password : $("#password_input").val(),
         host : $("#host_input").val(),
         port : $("#port_input").val(),
