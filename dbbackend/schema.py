@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 class Schema():
-  def __init__(self, filename='schema.xml'):
+  def __init__(self, filename='dbbackend/schema.xml'):
     self._tree = ET.parse(filename)
     self._root = self._tree.getroot()
     self._data = self.gatherTableData()

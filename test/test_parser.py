@@ -15,7 +15,7 @@ class TestParser():
     f = open('test/input_file.txt', 'r')
     input = f.read().decode('utf-8')
     table = SymTable()
-    syntax_tree = parsing.parse_input(input)
-    syntax_tree.generateSymbolTable(table)
+    logicTree = parsing.parse_input(input)
+    logicTree.generateSymbolTable(table)
     assert_equals(str(table), 'q,x,p')
 

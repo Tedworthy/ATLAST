@@ -10,8 +10,8 @@ from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
 import dbbackend.schema as schema
-from dbbackend.postgres import *
-from dbbackend.config_parser import *
+import dbbackend.postgres.postgres_backend as pg
+import dbbackend.config_parser as cp
 from paste.fixture import TestApp
 from nose.tools import *
 
@@ -22,52 +22,52 @@ class TestCodeGen():
 
   def teardown_func():
     pass
-  
-  def translates_to(self, logicString, expectedSQLString):
+
+  def translates_to(self, logic, expectedSQL):
     # Create a Logic Tree from the Logic
-    logicTree = parsing.parse_input(logicString)
+    logicTree = parsing.parse_input(logic)
 
     # Generate the Symbol Table from the Logic Tree
     symbolTable = SymTable()
     logicTree.generateSymbolTable(symbolTable)
 
-    # Generate an AST from the Logic Tree (uses Symbol Table)
-    astGenerator = GenericLogicASTVisitor(schema.Schema())
-    logicTree.accept(astGenerator)
+    # Generate an IR from the Logic Tree (uses Symbol Table)
+    irGenerator = GenericLogicASTVisitor(schema.Schema())
+    logicTree.accept(irGenerator)
 
     # Pull out the SQL IR
-    sqlIR = astGenerator.getIR()
+    sqlIR = irGenerator.getIR()
 
-    # Convert the IR to an SQL string
+    # Translate the IR to an SQL string
     sqlGenerator = SQLGenerator()
     sqlIR.accept(sqlGenerator)
-    convertedSQLString = sqlGenerator.getSQL()
+    translatedSQL = sqlGenerator.getSQL()
 
-    # If the evaluated query does not match the tests expectation, let the user
-    # know.
-    if convertedSQLString != expectedSQLString:
-      print "Potential error: Translated SQL: {"
-      print convertedSQLString
+    # If the query result does not match the expectation, let the user know.
+    if translatedSQL != expectedSQL:
+      print "WARNING: Translated SQL does not match the expected result"
+      print "Translated SQL: {"
+      print translatedSQL
       print "}"
-      print "does not match expected result: {"
-      print expectedSQLString
+      print "Expected SQL: {"
+      print expectedSQL
       print "}"
 
-    # Run converted and expected SQL queries and compare results.
+    # Run translated and expected SQL queries and compare results.
     # Force decode to ASCII as unicode SQL throws a massive wobbly.
-    config_data = parse_config_file('dbbackend/db.cfg')
-    con = postgres_backend.establish_connection(config_data)
-    convertedResult = postgres_backend.execute_query(con,convertedSQLString.decode('ascii', 'ignore'))
-    expectedResult = postgres_backend.execute_query(con,expectedSQLString)
+    config_data = cp.parse_file('dbbackend/db.cfg')
+    con = pg.connect(config_data)
+    translatedResult = pg.query(con, translatedSQL.decode('ascii', 'ignore'))
+    expectedResult = pg.query(con, expectedSQL)
     con.close()
-    result = convertedResult == expectedResult
+    result = translatedResult == expectedResult
     if not result:
-      print convertedResult, "!=", expectedResult
+      print translatedResult, " != ", expectedResult
 
     return result
 
   ''' SINGLE TABLE QUERIES '''
-  
+
   @with_setup(setup_func, teardown_func)
   def test_select_one_from_one(self):
     logic = "∃x(films_title(x, y))".decode('utf-8')
@@ -76,129 +76,129 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_select_two_from_one(self):
-    logic = "∃x(films_title(x, y) ∧ films_director(x, z))".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ films_director(x, z))".decode('utf-8')
     sql = "SELECT title, director FROM films"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_three_from_one(self):
-    logic = "∃x(films_title(x, y) ∧ films_director(x, z) ∧ films_made(x, a))".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ films_director(x, z) ∧ films_made(x, a))".decode('utf-8')
     sql = "SELECT title, director, made FROM films"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
- 
+
   @with_setup(setup_func, teardown_func)
   def test_select_key_from_one(self):
-    logic = "films(x)".decode('utf8')
+    logic = "films(x)".decode('utf-8')
     sql = "SELECT fid FROM films"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_one_from_one_condition_on_one(self):
-    logic = "∃x(films_title(x, y) ∧ y = 'The Bourne Identity')".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ y = 'The Bourne Identity')".decode('utf-8')
     sql = "SELECT title FROM films WHERE title = 'The Bourne Identity'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_one_from_one_condition_on_one_other(self):
-    logic = "∃x(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf-8')
     sql = "SELECT title, origin FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_two_from_one_condition_on_one(self):
-    logic = "∃x(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf-8')
     sql = "SELECT title, origin FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_select_two_from_one_condition_on_one_right_literal(self):
-    logic = "∃x(films_title(x, y) ∧ films_origin(x, 'US'))".decode('utf8')
+    logic = "∃x(films_title(x, y) ∧ films_origin(x, 'US'))".decode('utf-8')
     sql = "SELECT title FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_three_from_one_condition_on_two(self):
-    logic = "∃x(films_title(x, a) ∧ films_director(x, b) ∧ films_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf8')
+    logic = "∃x(films_title(x, a) ∧ films_director(x, b) ∧ films_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf-8')
     sql = "SELECT title, director, origin FROM films WHERE title = 'Psycho' AND origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_three_from_one_condition_on_two_literal(self):
-    logic = "∃x(films_title(x, 'Psycho') ∧ films_director(x, b) ∧ films_origin(x, 'US'))".decode('utf8')
+    logic = "∃x(films_title(x, 'Psycho') ∧ films_director(x, b) ∧ films_origin(x, 'US'))".decode('utf-8')
     sql = "SELECT director FROM films WHERE title = 'Psycho' AND origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_two_from_one_condition_on_one_left_literal(self):
-    logic = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf8')
+    logic = "∃x(films_title(x, 'Ben Hur') ∧ films_director(x, z))".decode('utf-8')
     sql = "SELECT director FROM films WHERE title = 'Ben Hur'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_lt_constraint(self):
-    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z < '2002-01-01')".decode('utf8')
+    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z < '2002-01-01')".decode('utf-8')
     sql = "SELECT title FROM films WHERE made < '2002-01-01'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_gt_constraint(self):
-    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z > '2002-12-31')".decode('utf8')
+    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z > '2002-12-31')".decode('utf-8')
     sql = "SELECT title FROM films WHERE made > '2002-12-31'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_gte_constraint(self):
-    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z >= '2002-01-01')".decode('utf8')
+    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z >= '2002-01-01')".decode('utf-8')
     sql = "SELECT title FROM films WHERE made >= '2002-01-01'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_lte_constraint(self):
-    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z <= '2002-12-31')".decode('utf8')
+    logic = "∃x,z(films_title(x, y) ∧ films_made(x, z) ∧ z <= '2002-12-31')".decode('utf-8')
     sql = "SELECT title FROM films WHERE made <= '2002-12-31'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_eq_constraint(self):
-    logic = "∃x,z(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf8')
+    logic = "∃x,z(films_title(x, y) ∧ films_origin(x, z) ∧ z = 'US')".decode('utf-8')
     sql = "SELECT title FROM films WHERE origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_one_condition_on_others(self):
-    logic = "∃x,a,c(films_title(x, a) ∧ films_director(x, b) ∧ films_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf8')
+    logic = "∃x,a,c(films_title(x, a) ∧ films_director(x, b) ∧ films_origin(x, c) ∧ a = 'Psycho' ∧ c = 'US')".decode('utf-8')
     sql = "SELECT director FROM films WHERE title = 'Psycho' AND origin = 'US'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   ''' SINGLE TABLE JOINS '''
-  
+
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_select_one(self):
-    logic = "∃x,y,a(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
+    logic = "∃x,y,a(films_title(x, a) ∧ films_director(y, b))".decode('utf-8')
     sql = "SELECT films2.director FROM films AS films1 CROSS JOIN films AS films2"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_select_two(self):
-    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b))".decode('utf-8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_select_key(self):
-    logic = "∃x(films_title(x, a) ∧ films_director(y, b))".decode('utf8')
+    logic = "∃x(films_title(x, a) ∧ films_director(y, b))".decode('utf-8')
     sql = "SELECT films1.title, films2.fid, films2.director FROM films AS films1 CROSS JOIN films AS films2"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_condition_on_one(self):
-    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ b = 'Paul Greengrass')".decode('utf8')
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ b = 'Paul Greengrass')".decode('utf-8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_condition_on_two(self):
-    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf8')
+    logic = "∃x,y(films_title(x, a) ∧ films_director(y, b) ∧ a = 'Ben Hur' ∧ b = 'Paul Greengrass')".decode('utf-8')
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
- 
+
