@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 import ply.yacc as yacc 
 import sys
 import os
@@ -5,11 +7,11 @@ from lexer import *
 import ast
 
 precedence = (
+  ('right', 'NOT'),
   ('left', 'IFF'),
   ('left', 'IMPLIES'),
   ('left', 'OR'),
   ('left', 'AND'),
-  ('left', 'NOT'),
 )
 
 # Formula grammar
@@ -32,20 +34,49 @@ def p_formula_iff(p):
 def p_formula_implies(p):
   'formula : formula IMPLIES atomicFormula'
   p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
-#  p[0] = ast.ImpliesNode(p[1], p[3])
 
+### A \/ B ###
+def p_formula_or_error_right(p):
+  'formula : formula OR error'
+  print "Syntax Error in right hand formula"
+
+def p_formula_or_error_left(p):
+  'formula : error OR atomicFormula'
+  print "Syntax Error in left hand formula"
+## using logical equivalence 
+## P \/ Q === ~(~P /\ ~Q)
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
-  p[0] = ast.OrNode(p[1], p[3])
+  p[0] = ast.NotNode(ast.AndNode(ast.NotNode(p[1]), ast.NotNode(p[3])))
+
+
+
+### A /\ B ###
+def p_formula_and_error_right(p):
+  'formula : formula AND error'
+  print "Syntax Error: in right hand formula of:\n\t formula AND atomicFormula"
+
+def p_formula_and_error_left(p):
+  'formula : error AND atomicFormula'
+  print "Syntax Error in left hand formula:\n\t formula AND atomicFormula"
 
 def p_formula_and(p):
-  'formula : formula AND atomicFormula'
+  'formula : formula AND formula'
   p[0] = ast.AndNode(p[1], p[3])
 
+
+### ~ A ###
+def p_formula_not_error(p):
+  'formula : NOT error'
+  print "Syntax Error in Not statement. bad atmoic formula"
+
 def p_formula_not(p):
-  'formula : NOT atomicFormula'
+  'formula : NOT formula '
+  print 'reducing to NOT formula'
   p[0] = ast.NotNode(p[2])
 
+
+#### QUANTIFIER FORMULAS
 def p_quantifier_list(p):
   'quantifier_list : IDENTIFIER COMMA quantifier_list'
   p[0] = [p[1]] + p[3]
@@ -63,6 +94,10 @@ def p_formula_thereexists(p):
   p[0] = ast.ThereExistsNode(p[2], p[4])
 
 # Atomic Formula grammar
+# Creates a shift reduce conflict
+# def p_bracketed_atomic_formula(p):
+#    'atomicFormula : LBRACKET atomicFormula RBRACKET'
+#     p[0] = p[2]
 
 def p_atomic_formula_predicate(p):
   'atomicFormula : IDENTIFIER LBRACKET term_list RBRACKET'
@@ -125,7 +160,13 @@ def p_term_stringlit(p):
 # Parsing and error functions
 
 def p_error(p):
-  print "Syntax error"
+  if p is None:
+    print "Syntax Error: Unexpected EOF"
+  else:
+    print "Syntax error at line '%s' : unexpected token '%s' " % (p.lineno, unicode(p.value))
+
+  
+  
 
 def parse_input(input):
   parser = yacc.yacc()

@@ -1,3 +1,4 @@
+# -*- coding=utf-8 -*-
 import web
 import time
 import os
@@ -89,7 +90,8 @@ class index:
       result.accept(codegenVisitor)
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
-      #TODO - Save the config_data to a session variable and use that instead
+   
+  #TODO - Save the config_data to a session variable and use that instead
       config_data = cp.parse_file('dbbackend/db.cfg')
       con = pg.connect(config_data)
       query_result = pg.query(con, sql)
@@ -106,6 +108,7 @@ class index:
       con.close()
     except Exception, e:
       response['status'] = 'exception_error'
+      print e
       response['error'] = 'ERROR: %s' % str(e)
 
     return json.dumps(response)
@@ -120,12 +123,13 @@ class login:
     try:
       f = login_form()
       f.validates()
-      ## ADD SOME VALIDATION HERE##
 
       config_data =  web.input()
       print config_data
-      # TODO: Validate user input #
+   
+     # TODO: Validate user input #
       generate_schema.generate_db_schema(config_data)
+    #TODO: store in session variable not global variable#
       web.schema = schema.Schema()
       web.header('Content-Type','text/html; charset=utf-8', unique=True) 
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
@@ -144,11 +148,13 @@ def is_test():
   if 'WEBPY_ENV' is os.environ:
       return os.environ['WEBPY_ENV'] == 'test'
 
-# Get global vars, create shared global instance of SQLSchema class.
-# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
 web.app = web.application(urls, globals())
-web.schema = schema.Schema()
 
 if (not is_test()) and  __name__ == "__main__":
   gs.generate_db_schema(pg.connect(cp.parse_file('dbbackend/db.cfg')))
   web.app.run()
+
+# Get global vars, create shared global instance of SQLSchema class.
+# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
+web.schema = schema.Schema()
+

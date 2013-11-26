@@ -111,3 +111,12 @@ class SQLGenerator():
                        "(" + rightString + ")"
     self._sql_where_stack.append(constraintString)
 
+  @v.when(ir.UnaryConstraint)
+  def visit(self,node):
+    print 'Generating code for unary constraint'
+    node.getConstraint().accept(self)
+    childString = self._sql_where_stack.pop()
+    constraintString = node.getOp() + "(" + childString + ")"
+    self._sql_where_stack.append(constraintString)
+
+

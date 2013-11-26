@@ -1,11 +1,14 @@
 import psycopg2
 
 def connect(config_data):
-  con = psycopg2.connect(host=config_data['host'],
-                         port=config_data['port'],
-                         database=config_data['dbname'],
-                         user=config_data['username'],
-                         password=config_data['password'])
+  try:
+    con = psycopg2.connect(host=config_data['host'],
+                           port=config_data['port'],
+                           database=config_data['dbname'],
+                           user=config_data['username'],
+                           password=config_data['password'])
+  except Exception, e:
+    return 'ERROR'
   return con
 
 def query(con, query):
