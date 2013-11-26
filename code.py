@@ -45,29 +45,24 @@ login_form = web.form.Form(
 class index:
   def GET(self):
     web.header('Content-Type','text/html; charset=utf-8', unique = True)
-    form = logic_form()
-    form2 = login_form()
-    return render.index(form,form2)
+    logicForm = logic_form()
+    loginForm = login_form()
+    return render.index(logicForm,loginForm)
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
     # Validates the Form
-    form = logic_form()
-    form.validates()
+    logicForm = logic_form()
+    logicForm.validates()
 
-    logic_to_translate = form.logic.get_value()
+    logic_to_translate = logicForm.logic.get_value()
 
-    # RabbitMQ stuff - should work, but commented for the moment until codegen
-    # works.
-    # Create worker thread and start
+    # Create worker thread and start (currently pointless - see later comment)
     result = parsing.task.add_to_parse_q.delay(logic_to_translate)
 
-    ## Wait for worker thread to finish translation
+    # Wait for worker thread to finish translation
     while not result.ready():
       time.sleep(0.1)
-
-    ## Get the SQL out of the finished worker thread
-    #sql = result.get()
 
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
 
