@@ -166,7 +166,7 @@ class GenericLogicASTVisitor():
     ir = self.popIR()
     ### CASE 1: ~Constraint
     #### Simply invert the constraint
-    if child['type'] == 'constraint'
+    if child['type'] == 'constraint':
       print 'Evaluating negation of constraint'  
       op = ir.getOp()
       print 'Inverting: ' + op
@@ -180,13 +180,13 @@ class GenericLogicASTVisitor():
 
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
-    else if child['type'] == 'Predicate'
+    else if child['type'] == 'Predicate':
 
     ### Case 3: ~(A /\ B)
     #### I'm unsure about this case.
     #### Perhaps we can just push the not inside
     #### the brackets and forget about this case.
-    else if child['type'] == 'AND node'
+    else if child['type'] == 'AND node':
 
     print "Seen NotNode"
 
