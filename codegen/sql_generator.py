@@ -114,9 +114,13 @@ class SQLGenerator():
   @v.when(ir.UnaryConstraint)
   def visit(self,node):
     print 'Generating code for unary constraint'
-    node.getConstraint().accept(self)
-    childString = self._sql_where_stack.pop()
-    constraintString = node.getOp() + "(" + childString + ")"
-    self._sql_where_stack.append(constraintString)
+    constraints = node.getConstraint()
+    if constraints is not None:
+      constraints.accept(self)
+      childString = self._sql_where_stack.pop()
+      constraintString = node.getOp() + "(" + childString + ")"
+      self._sql_where_stack.append(constraintString)
+    else:
+      print 'Unfortunately there were no constraints my good chap.\nCarry on!'
 
 
