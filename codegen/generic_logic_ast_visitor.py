@@ -7,6 +7,7 @@ generic intermediate representation for code generation.
 import visit as v
 import ast
 from codegen.ir import *
+
 from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
@@ -14,15 +15,6 @@ class GenericLogicASTVisitor():
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
-    self._invert_dict = {'=' : self.invert_EQ,
-                         '<>': self.invert_NEQ,
-                         '>' : self.invert_LT,
-                         '>=': self.invert_LTE,
-                         '<' : self.invert_GT,
-                         '<=': self.invert_GTE,
-                         'IS': self.invert_IS,
-                         'IS NOT' : self.invert_ISNOT,
-                         'NULL': self.invert_NULL, }
     self._node_stack = []
     self._IR_stack = []
     self._schema = schema
@@ -42,6 +34,7 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.AndNode)
   def visit(self, node):
+    print 'Start processing AND node'
     # Pop relevant objects off the stack
     right_node = self.popNode()
     left_node = self.popNode()
@@ -165,17 +158,17 @@ class GenericLogicASTVisitor():
     child = self.popNode()
     ir = self.popIR()
     ### CASE 1: ~Constraint
-    #### Simply invert the constraint
+    #### Simply insert a NOT node into the constraint tree
     if child['type'] == 'constraint':
-      print 'Evaluating negation of constraint'  
-      op = ir.getOp()
-      print 'Inverting: ' + op
-      op = self._invert_dict[op]()
-      print 'Inverted: ' + op
-      left = ir.getLeftTerm()
-      right = ir.getRightTerm()
-      self.pushIR(Constraint(op,left,right))
-    #Invert constraint
+      print 'Evaluating NOT constraint, IR: '  + ir.__repr__()
+      constraint_tree = ir.getConstraintTree()
+      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+      self.pushIR(ir)
+      state = {
+         'type' : 'constraint',
+         'node' : node 
+      }
+      self.pushNode(state)
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
     elif child['type'] == 'Predicate':
@@ -185,8 +178,7 @@ class GenericLogicASTVisitor():
     #### Perhaps we can just push the not inside
     #### the brackets and forget about this case.
     #    elif child['type'] == 'AND node':
-
-    print "Seen NotNode"
+    print 'Finished processing NOT node'
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
@@ -473,30 +465,3 @@ class GenericLogicASTVisitor():
     return self._IR_stack[0]
 
 
-##functions used to invert constraint ops
-  def invert_EQ(self):
-    return '<>'
-  
-  def invert_NEQ(self):
-    return '='
-  
-  def invert_GT(self):
-    return '<='
-
-  def invert_GTE(self):
-    return '<'
-
-  def invert_LT(self):
-    return '>='
-
-  def invert_LTE(self):
-    return '>'
-
-  def invert_IS(self):
-    return 'IS NOT'
-
-  def invert_ISNOT(self):
-    return 'IS'
-
-  def invert_NULL(self):
-    return 'NOT NULL'

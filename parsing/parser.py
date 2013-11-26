@@ -7,11 +7,11 @@ from lexer import *
 import ast
 
 precedence = (
+  ('right', 'NOT'),
   ('left', 'IFF'),
   ('left', 'IMPLIES'),
   ('left', 'OR'),
   ('left', 'AND'),
-  ('left', 'NOT'),
 )
 
 # Formula grammar
@@ -34,20 +34,48 @@ def p_formula_iff(p):
 def p_formula_implies(p):
   'formula : formula IMPLIES atomicFormula'
   p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
-#  p[0] = ast.ImpliesNode(p[1], p[3])
+
+### A \/ B ###
+def p_formula_or_error_right(p):
+  'formula : formula OR error'
+  print "Syntax Error in right hand formula"
+
+def p_formula_or_error_left(p):
+  'formula : error OR atomicFormula'
+  print "Syntax Error in left hand formula"
 
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
   p[0] = ast.OrNode(p[1], p[3])
 
+
+
+### A /\ B ###
+def p_formula_and_error_right(p):
+  'formula : formula AND error'
+  print "Syntax Error: in right hand formula of:\n\t formula AND atomicFormula"
+
+def p_formula_and_error_left(p):
+  'formula : error AND atomicFormula'
+  print "Syntax Error in left hand formula:\n\t formula AND atomicFormula"
+
 def p_formula_and(p):
-  'formula : formula AND atomicFormula'
+  'formula : formula AND formula'
   p[0] = ast.AndNode(p[1], p[3])
 
-def p_formula_not(p):
-  'formula : NOT  formula '
-  p[0] = ast.NotNode(p[2])
 
+### ~ A ###
+def p_formula_not_error(p):
+  'formula : NOT error'
+  print "Syntax Error in Not statement. bad atmoic formula"
+
+def p_formula_not(p):
+  'formula : NOT LBRACKET atomicFormula RBRACKET'
+  print 'reducing to NOT formula'
+  p[0] = ast.NotNode(p[3])
+
+
+#### QUANTIFIER FORMULAS
 def p_quantifier_list(p):
   'quantifier_list : IDENTIFIER COMMA quantifier_list'
   p[0] = [p[1]] + p[3]
