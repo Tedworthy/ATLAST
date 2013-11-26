@@ -244,7 +244,7 @@ class TestCodeGen():
   
   @with_setup(setup_func, teardown_func)
   def test_two_table_join_on_field_select_three(self):
-    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x)) ∧ casting_fid(y, a)".decode('utf8')
+    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x) ∧ casting_fid(y, a))".decode('utf8')
     sql = "SELECT actors.name, casting.cid, casting_fid FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
