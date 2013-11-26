@@ -213,7 +213,7 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_negation_predicate(self):
-    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))" 
+    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8') 
     sql = "SELECT actors.name FROM actors WHERE NOT (actors.name = 'Matt Damon')"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
