@@ -24,6 +24,7 @@ class TestCodeGen():
     pass
 
   def translates_to(self, logic, expectedSQL):
+    print 'Logic Recieved: ' + logic
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logic)
 
@@ -212,15 +213,15 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_negation_predicate(self):
-    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon')) ".decode(utf-8) 
+    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))" 
     sql = "SELECT actors.name FROM actors WHERE NOT (actors.name = 'Matt Damon')"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   ''' 2 Table joins '''
 
   @with_setup(setup_func, teardown_func)
-  def test_negation_predicate(self):
-    logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y)".decode('utf8')
+  def test_join_two_tables(self):
+    logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y))".decode('utf8')
     sql = "SELECT actors.fid FROM films JOIN actors USING(fid)"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
