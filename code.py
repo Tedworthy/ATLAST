@@ -149,12 +149,12 @@ def is_test():
       return os.environ['WEBPY_ENV'] == 'test'
 
 web.app = web.application(urls, globals())
+
 if (not is_test()) and  __name__ == "__main__":
   gs.generate_db_schema(pg.connect(cp.parse_file('dbbackend/db.cfg')))
   web.app.run()
 
 # Get global vars, create shared global instance of SQLSchema class.
 # http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
-
 web.schema = schema.Schema()
 
