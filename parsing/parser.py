@@ -129,7 +129,8 @@ def p_term_stringlit(p):
 # Parsing and error functions
 
 def p_error(p):
-  print "Syntax error"
+  print "Illegal Character '%s'" + p.value[0]
+  
 
 def parse_input(input):
   parser = yacc.yacc()
