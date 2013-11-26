@@ -95,7 +95,7 @@ $(document).ready(function() {
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $("#convert_button").click(function() {
     var input_string = $("textarea#logic").val();
-    if(input_string != "") {   
+    if(input_string !== "") {   
       $.ajax({
         type: "POST",
         data: {
