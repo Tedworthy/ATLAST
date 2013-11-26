@@ -18,6 +18,8 @@ class GenericLogicASTVisitor():
     self._node_stack = []
     self._IR_stack = []
     self._schema = schema
+    self._alias = 0
+
 
   @v.on('node')
   def visit(self, node):
@@ -93,8 +95,9 @@ class GenericLogicASTVisitor():
         # working out where to join.
 
         # Alias the relations
-        left_table.setAlias(left_table.getName() + '1')
-        right_table.setAlias(right_table.getName() + '2')
+        left_table.setAlias(left_table.getName() + self.getGlobalAliasNumber())
+        right_table.setAlias(right_table.getName() +
+            self.getGlobalAliasNumber())
 
         join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
             left_keys, right_keys, left_table, right_table);
@@ -378,6 +381,11 @@ class GenericLogicASTVisitor():
     return self._IR_stack.pop()
 
 # Solve join constraints
+
+  def getGlobalAliasNumber(self):
+    result = self._alias
+    self._alias = self._alias + 1
+    return str(result)
 
   # Loop through left and right keyvals
   def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
