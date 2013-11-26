@@ -1,3 +1,4 @@
+# -*- coding=utf-8 -*-
 import web
 import time
 import os
@@ -80,34 +81,36 @@ class index:
       }
 
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
-    try:
-      result = parsing.parse_input(logic_to_translate)
-      symbolTable = SymTable()
-      codegenVisitor = GenericLogicASTVisitor(web.schema)
-      sqlGeneratorVisitor = SQLGenerator()
-      result.generateSymbolTable(symbolTable)
-      result.accept(codegenVisitor)
-      codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
-      sql = sqlGeneratorVisitor._sql
-     
-    #TODO - Save the config_data to a session variable and use that instead
-      config_data = cp.parse_file('dbbackend/db.cfg')
-      con = pg.connect(config_data)
-      query_result = pg.query(con, sql)
+#    try:
+    result = parsing.parse_input(logic_to_translate)
+    symbolTable = SymTable()
+    codegenVisitor = GenericLogicASTVisitor(web.schema)
+    sqlGeneratorVisitor = SQLGenerator()
+    result.generateSymbolTable(symbolTable)
+    result.accept(codegenVisitor)
+    codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
+    sql = sqlGeneratorVisitor._sql
+   
+  #TODO - Save the config_data to a session variable and use that instead
+    config_data = cp.parse_file('dbbackend/db.cfg')
+    con = pg.connect(config_data)
+    query_result = pg.query(con, sql)
 
-      if query_result['status'] == 'ok':
-        response['status'] = 'ok'
-        response['sql'] = sql
-        response['query_columns'] = query_result['columns']
-        response['query_rows'] = query_result['rows']
-      else:
-        response['status'] = 'db_error'
-        response['error'] = query_result['error']
+    if query_result['status'] == 'ok':
+      response['status'] = 'ok'
+      response['sql'] = sql
+      response['query_columns'] = query_result['columns']
+      response['query_rows'] = query_result['rows']
+    else:
+      response['status'] = 'db_error'
+      response['error'] = query_result['error']
 
-      con.close()
-    except Exception, e:
-      response['status'] = 'exception_error'
-      response['error'] = 'ERROR: %s' % str(e)
+    con.close()
+ #   except Exception, e:
+ #     response['status'] = 'exception_error'
+ #     print e
+ #     raise e
+ #     response['error'] = 'ERROR: %s' % str(e)
 
     return json.dumps(response)
 
