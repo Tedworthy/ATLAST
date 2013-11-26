@@ -25,7 +25,7 @@ render = web.template.render('templates/')
 
 urls = (
   '/', 'index',
-  '/schema', 'schematic',
+  '/schema', 'db_schema',
   '/login', 'login'
 )
 
@@ -90,8 +90,8 @@ class index:
       result.accept(codegenVisitor)
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
-   
-  #TODO - Save the config_data to a session variable and use that instead
+
+      #TODO - Save the config_data to a session variable and use that instead
       config_data = cp.parse_file('dbbackend/db.cfg')
       con = pg.connect(config_data)
       query_result = pg.query(con, sql)
@@ -113,7 +113,7 @@ class index:
 
     return json.dumps(response)
 
-class schematic:
+class db_schema:
   def GET(self):
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
