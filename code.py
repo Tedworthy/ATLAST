@@ -68,7 +68,7 @@ class index:
     ## Get the SQL out of the finished worker thread
     #sql = result.get()
 
-    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
 
     # Set up a response dictionary
     response = {
