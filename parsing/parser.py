@@ -43,10 +43,11 @@ def p_formula_or_error_right(p):
 def p_formula_or_error_left(p):
   'formula : error OR atomicFormula'
   print "Syntax Error in left hand formula"
-
+## using logical equivalence 
+## P \/ Q === ~(~P /\ ~Q)
 def p_formula_or(p):
   'formula : formula OR atomicFormula'
-  p[0] = ast.OrNode(p[1], p[3])
+  p[0] = ast.NotNode(ast.AndNode(ast.NotNode(p[1]), ast.NotNode(p[3])))
 
 
 
@@ -70,7 +71,7 @@ def p_formula_not_error(p):
   print "Syntax Error in Not statement. bad atmoic formula"
 
 def p_formula_not(p):
-  'formula : NOT LBRACKET atomicFormula RBRACKET'
+  'formula : NOT LBRACKET formula RBRACKET'
   print 'reducing to NOT formula'
   p[0] = ast.NotNode(p[3])
 

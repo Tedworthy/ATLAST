@@ -157,15 +157,23 @@ class GenericLogicASTVisitor():
   def visit(self, node):
     child = self.popNode()
     ir = self.popIR()
+    
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
     if child['type'] == 'constraint':
       print 'Evaluating NOT constraint, IR: '  + ir.__repr__()
       constraint_tree = ir.getConstraintTree()
-      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+
+      if isinstance(constraint_tree,UnaryConstraint):
+        print 'removing redundant NOT'
+        ir.setConstraintTree(constraint_tree.getConstraint())
+      else:
+        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+  
       self.pushIR(ir)
       state = {
          'type' : 'constraint',
+         'notNode' : 'true',
          'node' : node 
       }
       self.pushNode(state)
