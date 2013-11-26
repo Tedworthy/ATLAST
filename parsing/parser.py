@@ -134,7 +134,7 @@ def p_error(p):
   if p is None:
     print "Syntax Error: Unexpected EOF"
   else:
-    print "Syntax error at line{}: unexpected token {} ".format(p.lineno, p.value.decode('utf-8'))
+    print "Syntax error at line '%s' : unexpected token '%s' " % (p.lineno, unicode(p.value))
 
   
   
