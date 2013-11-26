@@ -157,36 +157,40 @@ class GenericLogicASTVisitor():
   def visit(self, node):
     child = self.popNode()
     ir = self.popIR()
-    
+    constraint_tree = ir.getConstraintTree()
+
+    print ' *** Start Negation Evaluation ***'    
+    print '\tType of child: ' + child['type']
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
     if child['type'] == 'constraint':
-      print 'Evaluating NOT constraint, IR: '  + ir.__repr__()
-      constraint_tree = ir.getConstraintTree()
-
+      print '\tEvaluating NOT(Constraint)' 
+     
+      ## Quick and dirty hack
+      ## NOT(rest_of_tree) -> (rest_of_tree)
       if isinstance(constraint_tree,UnaryConstraint):
-        print 'removing redundant NOT'
+        print '\yRemoving redundant NOT'
         ir.setConstraintTree(constraint_tree.getConstraint())
       else:
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
   
-      self.pushIR(ir)
-      state = {
-         'type' : 'constraint',
-         'notNode' : 'true',
-         'node' : node 
-      }
-      self.pushNode(state)
+
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
-    elif child['type'] == 'Predicate':
-      print 'Predicate Negation'
-    ### Case 3: ~(A /\ B)
-    #### I'm unsure about this case.
-    #### Perhaps we can just push the not inside
-    #### the brackets and forget about this case.
-    #    elif child['type'] == 'AND node':
-    print 'Finished processing NOT node'
+    elif child['type'] == 'predicate':
+      print '\tEvaluating Predicate Negation'
+      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
+      
+
+    self.pushIR(ir)
+    state = {
+       'type' : 'constraint',
+       'notNode' : 'true',
+       'node' : node 
+    }
+    self.pushNode(state)
+
+    print '*** End Negation Evaluation ***'
 
   @v.when(ast.ForAllNode)
   def visit(self, node):

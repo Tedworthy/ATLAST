@@ -71,9 +71,9 @@ def p_formula_not_error(p):
   print "Syntax Error in Not statement. bad atmoic formula"
 
 def p_formula_not(p):
-  'formula : NOT LBRACKET formula RBRACKET'
+  'formula : NOT formula '
   print 'reducing to NOT formula'
-  p[0] = ast.NotNode(p[3])
+  p[0] = ast.NotNode(p[2])
 
 
 #### QUANTIFIER FORMULAS
