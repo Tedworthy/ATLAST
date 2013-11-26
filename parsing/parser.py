@@ -45,7 +45,7 @@ def p_formula_and(p):
   p[0] = ast.AndNode(p[1], p[3])
 
 def p_formula_not(p):
-  'formula : NOT LBRACKET atomicFormula RBRACKET'
+  'formula : NOT  formula '
   p[0] = ast.NotNode(p[2])
 
 def p_quantifier_list(p):
