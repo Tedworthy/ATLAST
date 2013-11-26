@@ -11,6 +11,16 @@ from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
+    self._invert_dict = { '=' : invert_EQ,
+                          '<>': invert_NEQ,
+                          '>' : invert_LT,
+                          '>=': invert_LTE,
+                          '<' : invert_GT,
+                          '<=': invert_GTE,
+                          'IS': invert_IS,
+                          'IS NOT' : invert_ISNOT,
+                          'NULL': invert_NULL, }
+
   def __init__(self, schema):
     # Instance variables go here, if necessary
     self._node_stack = []
@@ -152,6 +162,32 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.NotNode)
   def visit(self, node):
+    child = self.popNode()
+    ir = self.popIR()
+    ### CASE 1: ~Constraint
+    #### Simply invert the constraint
+    if child['type'] == 'constraint'
+      print 'Evaluating negation of constraint'  
+      op = ir.getOp()
+      print 'Inverting: ' + op
+      op = self._invert_dict[op]()
+      print 'Inverted: ' + op
+      left = ir.getLeftTerm()
+      right = ir.getRightTerm()
+      self.pushIR(Constraint(op,left,right))
+      
+      #Invert constraint
+
+    ### Case 2: ~Predicate(x,y)
+    #### Compute the set difference
+    else if child['type'] == 'Predicate'
+
+    ### Case 3: ~(A /\ B)
+    #### I'm unsure about this case.
+    #### Perhaps we can just push the not inside
+    #### the brackets and forget about this case.
+    else if child['type'] == 'AND node'
+
     print "Seen NotNode"
 
   @v.when(ast.ForAllNode)
@@ -437,3 +473,32 @@ class GenericLogicASTVisitor():
 
   def getIR(self):
     return self._IR_stack[0]
+
+
+##functions used to invert constraint ops
+  def invert_EQ(self):
+    return '<>'
+  
+  def invert_NEQ(self):
+    return '='
+  
+  def invert_GT(self):
+    return '<='
+
+  def invert_GTE(self):
+    return '<'
+
+  def invert_LT(self):
+    return '>='
+
+  def invert_LTE(self):
+    return '>'
+
+  def invert_IS(self):
+    return 'IS NOT'
+
+  def invert_ISNOT(self):
+    return 'IS'
+
+  def invert_NULL(self):
+    return 'NOT NULL'
