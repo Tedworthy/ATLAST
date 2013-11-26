@@ -11,15 +11,15 @@ from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
-    _invert_dict = {      '=' : invert_EQ,
-                          '<>': invert_NEQ,
-                          '>' : invert_LT,
-                          '>=': invert_LTE,
-                          '<' : invert_GT,
-                          '<=': invert_GTE,
-                          'IS': invert_IS,
-                          'IS NOT' : invert_ISNOT,
-                          'NULL': invert_NULL, }
+  _invert_dict = {'=' : invert_EQ,
+                  '<>': invert_NEQ,
+                  '>' : invert_LT,
+                  '>=': invert_LTE,
+                  '<' : invert_GT,
+                  '<=': invert_GTE,
+                  'IS': invert_IS,
+                  'IS NOT' : invert_ISNOT,
+                  'NULL': invert_NULL, }
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
