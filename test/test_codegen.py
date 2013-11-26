@@ -203,25 +203,79 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-  ''' NEGATIONS '''
-
-  @with_setup(setup_func, teardown_func)
-  def test_NEQ_Constraint(self):
-    logic = "∃x(actors_name(x, y) ∧ ¬(y = 'Matt Damon'))".decode('utf8')
-    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
-    assert self.translates_to(logic, sql), "Error, expected answers not equal"
-
-  @with_setup(setup_func, teardown_func)
-  def test_negation_predicate(self):
-    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8') 
-    sql = "SELECT actors.name FROM actors WHERE NOT (actors.name = 'Matt Damon')"
-    assert self.translates_to(logic, sql), "Error, expected answers not equal"
-
-  ''' 2 Table joins '''
+  ''' MULTIPLE TABLE JOINS '''
 
   @with_setup(setup_func, teardown_func)
   def test_join_two_tables(self):
     logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y))".decode('utf8')
     sql = "SELECT actors.fid FROM films JOIN actors USING(fid)"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field(self):
+    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x))".decode('utf8')
+    sql = "SELECT actors.name, casting.cid FROM actors JOIN casting ON actors.aid = casting.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field_order_should_not_matter(self):
+    logic = "∃x(casting_aid(y, x) ∧ actors_name(x, z))".decode('utf8')
+    sql = "SELECT casting.cid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field_condition_on_one(self):
+    logic = "∃x(actors_name(x, 'Matt Damon') ∧ casting_aid(y, x))".decode('utf8')
+    sql = "SELECT casting.cid FROM actors JOIN casting ON actors.aid = casting.aid WHERE actors.name = 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field_select_three(self):
+    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x)) ∧ casting_fid(y, a)".decode('utf8')
+    sql = "SELECT actors.name, casting.cid, casting_fid FROM actors JOIN casting ON actors.aid = casting.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_two_table_join_on_field_select_three_order_should_not_matter(self):
+    logic = "∃x(casting_fid(y, a) ∧ actors_name(x, z) ∧ casting_aid(y, x))".decode('utf8')
+    sql = "SELECT casting.cid, casting_fid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x,a,c,f(casting_aid(c, a) ∧ actors_name(a, aname) ∧ casting_fid(c, f) ∧ film_name(f, fname))".decode('utf8')
+    sql = "SELECT innerjoin1.name, films.name FROM (casting JOIN actors ON casting.aid = actors.aid) AS innerjoin1 JOIN films ON innerjoin1.fid = films.fid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  ''' NEGATIONS '''
+
+  @with_setup(setup_func, teardown_func)
+  def test_negate_one_condition(self):
+    logic = "∃x(actors_name(x, y) ∧ ¬(y = 'Matt Damon'))".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_negate_one_condition_in_predicate(self):
+    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_negate_two_conditions(self):
+    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ (director <> 'Doug Liman') ∧ (title <> 'The Bourne Ultimatum') ∧ x <= 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_negate_two_conditions_in_predicate(self):
+    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ ¬(film_director(x, 'Doug Liman')) ∧ ¬(film_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_negate_one_relational(self):
+    logic = "∃x(film_title(x, title) ∧ ¬(x > 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
