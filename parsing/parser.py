@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 import ply.yacc as yacc 
 import sys
 import os
@@ -132,7 +134,7 @@ def p_error(p):
   if p is None:
     print "Syntax Error: Unexpected EOF"
   else:
-    print "Syntax error at line{}: unexpected token {} ".format(p.lineno, p.value)
+    print "Syntax error at line{}: unexpected token {} ".format(p.lineno, p.value.decode('utf-8'))
 
   
   
