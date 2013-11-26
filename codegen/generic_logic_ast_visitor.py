@@ -11,7 +11,7 @@ from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
-    self._invert_dict = { '=' : invert_EQ,
+    _invert_dict = {      '=' : invert_EQ,
                           '<>': invert_NEQ,
                           '>' : invert_LT,
                           '>=': invert_LTE,
