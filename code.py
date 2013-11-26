@@ -16,7 +16,6 @@ import dbbackend.generate_schema as gs
 import dbbackend.postgres.postgres_backend as pg
 import dbbackend.config_parser as cp
 
-
 from web.wsgiserver import CherryPyWSGIServer
 
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
@@ -105,10 +104,10 @@ class index:
         response['error'] = query_result['error']
 
       con.close()
-    except Exception, e:
+    except Exception, error:
+      print error
       response['status'] = 'exception_error'
-      print e
-      response['error'] = 'ERROR: %s' % str(e)
+      response['error'] = 'ERROR: %s' % str(error)
 
     return json.dumps(response)
 
@@ -135,10 +134,10 @@ class login:
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
 
-    except Exception, e:
-      print 'I Died'
-      print str(e)
-      return json.dumps({'error' : str(e)})
+    except Exception, error:
+      print 'Login failed'
+      print str(error)
+      return json.dumps({'error' : str(error)})
 
   def GET(self):
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
