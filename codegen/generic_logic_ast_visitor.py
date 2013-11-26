@@ -48,6 +48,8 @@ class GenericLogicASTVisitor():
     # Precompute some booleans to make cases easier to understand
     both_predicates = right_node['type'] == 'predicate' and \
                       left_node['type'] == 'predicate'
+    both_constraints = right_node['type'] == 'constraints' and \
+                      left_node['type'] == 'constraints'
     mixture_constraints_predicates = (right_node['type'] == 'predicate' and \
                                       left_node['type'] == 'constraint') or \
                                      (right_node['type'] == 'constraint' and \
@@ -94,30 +96,8 @@ class GenericLogicASTVisitor():
         left_table.setAlias(left_table.getName() + '1')
         right_table.setAlias(right_table.getName() + '2')
 
-        join_constraints = None
-
-        # Loop through left and right keyvals
-        for i in range(0, len(left_keyvals)):
-          for j in range(0, len(right_keyvals)):
-            left_key  = left_keyvals[i]
-            right_key = right_keyvals[j]
-            left_rel_attr  = RelationAttributePair(left_table, left_keys[i])
-            right_rel_attr = RelationAttributePair(right_table, right_keys[j])
-            left_key_node_id  = left_key['node'].getIdentifier()
-            right_key_node_id = right_key['node'].getIdentifier()
-            # Check if both keys are variables
-            if left_key['type'] == right_key['type'] == 'variable':
-              # If the identifiers match, add this as a constraint
-              if left_key_node_id == right_key_node_id:
-                constraint = Constraint(Constraint.EQ, \
-                                        left_rel_attr, right_rel_attr)
-                if join_constraints is None:
-                  join_constraints = constraint
-                else:
-                  join_constraints = AndConstraint(join_constraints, constraint)
-            else:
-              print """a mixture of variables and constants found, add some
-              constraints"""
+        join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
+            left_keys, right_keys, left_table, right_table);
 
         # Join constraints calculated. Now work out how to join.
         if join_constraints is None:
@@ -146,7 +126,7 @@ class GenericLogicASTVisitor():
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    else:
+    elif both_constraints:
       print 'Both constraints'
       self.conjunctIR(left_ir, right_ir)
       self.pushIR(left_ir)
@@ -396,6 +376,35 @@ class GenericLogicASTVisitor():
 
   def popIR(self):
     return self._IR_stack.pop()
+
+# Solve join constraints
+
+  # Loop through left and right keyvals
+  def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
+      right_keys, left_table, right_table):
+    join_constraints = None
+    for i in range(0, len(left_keyvals)):
+      for j in range(0, len(right_keyvals)):
+        left_key  = left_keyvals[i]
+        right_key = right_keyvals[j]
+        left_rel_attr  = RelationAttributePair(left_table, left_keys[i])
+        right_rel_attr = RelationAttributePair(right_table, right_keys[j])
+        left_key_node_id  = left_key['node'].getIdentifier()
+        right_key_node_id = right_key['node'].getIdentifier()
+        # Check if both keys are variables
+        if left_key['type'] == right_key['type'] == 'variable':
+          # If the identifiers match, add this as a constraint
+          if left_key_node_id == right_key_node_id:
+            constraint = Constraint(Constraint.EQ, \
+                                    left_rel_attr, right_rel_attr)
+            if join_constraints is None:
+              join_constraints = constraint
+            else:
+              join_constraints = AndConstraint(join_constraints, constraint)
+        else:
+          print """a mixture of variables and constants found, add some
+          constraints"""
+    return join_constraints
 
 # Bindings
 
