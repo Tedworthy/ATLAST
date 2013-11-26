@@ -175,9 +175,7 @@ class GenericLogicASTVisitor():
       left = ir.getLeftTerm()
       right = ir.getRightTerm()
       self.pushIR(Constraint(op,left,right))
-      
-      #Invert constraint
-
+    #Invert constraint
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
     elif child['type'] == 'Predicate':
@@ -186,7 +184,7 @@ class GenericLogicASTVisitor():
     #### I'm unsure about this case.
     #### Perhaps we can just push the not inside
     #### the brackets and forget about this case.
-    elif child['type'] == 'AND node':
+    #    elif child['type'] == 'AND node':
 
     print "Seen NotNode"
 
