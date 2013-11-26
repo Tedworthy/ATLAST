@@ -28,13 +28,15 @@ class VariableNode(Node):
         symTable.addGlobal(self._identifier, self)
 
   def bindTo(self, variable):
+    attr_eq = True
+    rel_eq = True
     resolved_variable_node = self._symTable.lookup(self.getIdentifier())
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
-      return True
-    boundValue = resolved_variable_node._boundValue
-    attr_eq = boundValue.getAttribute() == variable.getAttribute()
-    rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
+    else:
+      boundValue = resolved_variable_node._boundValue
+      attr_eq = boundValue.getAttribute() == variable.getAttribute()
+      rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
     return attr_eq and rel_eq
 
   def getBoundValue(self):

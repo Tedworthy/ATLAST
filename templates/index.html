@@ -45,6 +45,11 @@ $def with (form,form2)
             </li>
             <li>
               <button class="modalInput" rel="#configdialog">Configure</button>
+              
+            </li>
+            <li>
+               <button class="modalInput" rel="#helpdialog">Help</button>
+
             </li>
           </ul>
         </nav>
@@ -53,6 +58,33 @@ $def with (form,form2)
       <p><b> Configuration Page</b> </p>
           $:form2.render()
       <button class="close"> Close </button>
+
+    </div>
+    <div class="modal" id="helpdialog">
+        <strong>Instructions</strong>
+     <p> Input a logical statement in the 'Logic box'
+      An example statement would be of the form:</p>
+
+            <ul><li> &#8707key(&lttable_name&gt_&ltfield_name&gt(key,value))</li></ul>
+
+      <p>The above query binds 'key' to be a row in the table_name specified, 
+      Any unbound variables in the predicate then act as selectors for the 
+      corresponding SELECT SQL query. I.E. the above query will return every field_name
+      in table_name for which there is a value for field_name. this is an example of
+      project field_name (tablename) in relational algebra.</p>
+
+      <p>Use the buttons to input the logical symbols, or if you are a wizard you can
+      use the following shortcuts:</p>
+          <ul>
+          <li> '\A' for the FORALL symbol </li>
+          <li> '\E' for THERE EXISTS </li>
+          <li> '/\' for the AND symbol </li>
+          <li> '\/' for the OR symbol </li>
+          <li> '<->' for the IF AND ONLY IF symbol </li>
+          <li> '->' for the IMPLIES symbol </li>
+          </ul>
+      <button class="close"> Close </button>
+
     </div>
 
       <section id="logic_section">
@@ -70,7 +102,7 @@ $def with (form,form2)
       </section>
 
       <div id='example' align='center'>Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
-      <div id='Broken' align='center'>Broken stuff: Firefox AJAX requests to /schema sometimes fail...</div>
+      <div id='Broken' align='center'>Broken stuff: Firefox AJAX requests to /schema sometimes fail... so if you want to view the schema switch to chrome :)</div>
       <div id='schema' align='center'></div>
       <div id='schema_table' align='center'></div>
 

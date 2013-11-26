@@ -2,8 +2,8 @@ from constraint import Constraint
 from or_constraint import OrConstraint
 from and_constraint import AndConstraint
 from binop_constraint import BinOpConstraint
+from null_node import NullNode
 from unary_constraint import UnaryConstraint
-
 from relation_attribute_pair import RelationAttributePair
 
 from equijoin_node import EquiJoinNode

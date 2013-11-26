@@ -157,10 +157,12 @@ class GenericLogicASTVisitor():
   def visit(self, node):
     child = self.popNode()
     ir = self.popIR()
+    child_node = child['node']
     constraint_tree = ir.getConstraintTree()
 
     print ' *** Start Negation Evaluation ***'    
     print '\tType of child: ' + child['type']
+    print '\tCurrent IR: ' + ir.__repr__()
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
     if child['type'] == 'constraint':
@@ -169,7 +171,7 @@ class GenericLogicASTVisitor():
       ## Quick and dirty hack
       ## NOT(rest_of_tree) -> (rest_of_tree)
       if isinstance(constraint_tree,UnaryConstraint):
-        print '\yRemoving redundant NOT'
+        print '\tRemoving redundant NOT'
         ir.setConstraintTree(constraint_tree.getConstraint())
       else:
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
@@ -179,9 +181,17 @@ class GenericLogicASTVisitor():
     #### Compute the set difference
     elif child['type'] == 'predicate':
       print '\tEvaluating Predicate Negation'
-      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
+      # Case 2a: something of the form ~\Ez(foo_bar(x,z)) 
+      # in which case we need to add the constraint that x has no bar
+      if constraint_tree == None:
+        print '\tSet constraint that z IS NULL'
+        self.bind(child_node.getChildren()[1],NullNode(),ir)
+        print '\tZ Now bound'
+      # Case 2b: string literal -  ~foo_bar(x,'stringlit')
+      else:
+        print '\tCurrent constraint tree: ' 
+        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
       
-
     self.pushIR(ir)
     state = {
        'type' : 'constraint',
@@ -269,7 +279,8 @@ class GenericLogicASTVisitor():
         'type': 'predicate',
         'table': relation,
         'key_values': key_values,
-        'keys': keys
+        'keys': keys,
+        'node' : node
       }
     self.pushNode(state)
     print self._node_stack
@@ -306,7 +317,7 @@ class GenericLogicASTVisitor():
     if both_variables:
       print 'Both variables'
       # Bind two variables together
-      bind(left_child['node'], right_child['node'], left_ir)
+      self.bind(left_child['node'], right_child['node'], left_ir)
 
     elif mixture_variables_string_lits:
       if left_variable_right_string_lit:
@@ -389,6 +400,7 @@ class GenericLogicASTVisitor():
 # Bindings
 
   def bind(self, node, rel_attr, ir):
+    print 'In Bind'
     if not node.bindTo(rel_attr):
       # Get the previous binding
       previous_binding = node.getBoundValue()
@@ -396,8 +408,7 @@ class GenericLogicASTVisitor():
       # Add to the constraints
       prev_constraints = ir.getConstraintTree()
       print '#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
-      new_constraint = Constraint(Constraint.EQ, rel_attr, \
-        previous_binding)
+      new_constraint = Constraint(Constraint.EQ, rel_attr, previous_binding)
       merged_constraint = None;
       if prev_constraints is None:
         ir.setConstraintTree(new_constraint)
