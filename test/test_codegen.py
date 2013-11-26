@@ -212,8 +212,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_single_table_cross_join_three_times(self):
     logic = "∃x,y,z(films_title(x, a) ∧ films_director(y, b) ∧ films_length(z, c))".decode('utf-8')
-    sql = "SELECT films1.title, films2.director, films3.director FROM films AS
-    films1 CROSS JOIN films AS films2 CROSS JOIN films as films3"
+    sql = "SELECT films1.title, films2.director, films3.director FROM films AS films1 CROSS JOIN films AS films2 CROSS JOIN films as films3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   ''' MULTIPLE TABLE JOINS '''
