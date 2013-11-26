@@ -52,10 +52,8 @@ class GenericLogicASTVisitor():
                       left_node['type'] == 'predicate'
     both_constraints = right_node['type'] == 'constraints' and \
                       left_node['type'] == 'constraints'
-    mixture_constraints_predicates = (right_node['type'] == 'predicate' and \
-                                      left_node['type'] == 'constraint') or \
-                                     (right_node['type'] == 'constraint' and \
-                                      left_node['type'] == 'predicate')
+    mixture_constraints_predicates = left_node['type'] == 'constraint' or \
+                                     right_node['type'] == 'constraint'
 
     # Check the left and right nodes are both predicates
     if both_predicates:
@@ -114,6 +112,11 @@ class GenericLogicASTVisitor():
       self.pushNode(state)
       self.pushIR(left_ir)
     # Mixture of predicates and constraints
+    elif both_constraints:
+      print 'Both constraints'
+      self.conjunctIR(left_ir, right_ir)
+      self.pushIR(left_ir)
+      self.pushNode(left_node)
     elif mixture_constraints_predicates:
       print 'Mixture!'
       left_is_predicate = left_node['type'] == 'predicate'
@@ -127,11 +130,6 @@ class GenericLogicASTVisitor():
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    elif both_constraints:
-      print 'Both constraints'
-      self.conjunctIR(left_ir, right_ir)
-      self.pushIR(left_ir)
-      self.pushNode(left_node)
     print "And(",left_node,",",right_node,")"
 
   @v.when(ast.NotNode)
