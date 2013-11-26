@@ -90,31 +90,29 @@ class GenericLogicASTVisitor():
             self.pushNode(state)
             return
 
-        # Tables are still equal, but elements are variables with different
-        # identifiers, or are not all variables. Iterate through the keys,
-        # working out where to join.
+      # Tables may be equal, but elements are variables with different
+      # identifiers, or are not all variables. Iterate through the keys,
+      # working out where to join.
 
-        # Alias the relations
-        left_table.setAlias(left_table.getName() + self.getGlobalAliasNumber())
-        right_table.setAlias(right_table.getName() +
-            self.getGlobalAliasNumber())
+      # Alias the relations
+      left_table.setAlias(left_table.getName() + self.getGlobalAliasNumber())
+      right_table.setAlias(right_table.getName() +
+          self.getGlobalAliasNumber())
 
-        join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
-            left_keys, right_keys, left_table, right_table);
+      join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
+          left_keys, right_keys, left_table, right_table);
 
-        # Join constraints calculated. Now work out how to join.
-        if join_constraints is None:
-          self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
-        else:
-          self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints)
-        state = {'type' : 'join',
-                'table' : left_ir.getRelationTree(),
-                'key_values' : left_keyvals + right_keyvals
-                }
-        self.pushNode(state)
-        self.pushIR(left_ir)
+      # Join constraints calculated. Now work out how to join.
+      if join_constraints is None:
+        self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
-        print 'Tables are different'
+        self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints)
+      state = {'type' : 'join',
+              'table' : left_ir.getRelationTree(),
+              'key_values' : left_keyvals + right_keyvals
+              }
+      self.pushNode(state)
+      self.pushIR(left_ir)
     # Mixture of predicates and constraints
     elif mixture_constraints_predicates:
       print 'Mixture!'
