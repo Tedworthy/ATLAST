@@ -179,7 +179,7 @@ class GenericLogicASTVisitor():
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
     elif child['type'] == 'Predicate':
-
+      print 'Predicate Negation'
     ### Case 3: ~(A /\ B)
     #### I'm unsure about this case.
     #### Perhaps we can just push the not inside
