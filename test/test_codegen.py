@@ -202,16 +202,45 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  ''' JOINS ON TWO TABLES '''
+  
   ''' NEGATIONS '''
 
   @with_setup(setup_func, teardown_func)
-  def test_three_table_join_select_two(self):
+  def test_negate_one_condition(self):
     logic = "∃x(actors_name(x, y) ∧ y != 'Matt Damon')".decode('utf8')
     sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
-  def test_three_table_join_select_two(self):
+  def test_negate_one_condition_in_predicate(self):
     logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8')
     sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_negate_two_conditions(self):
+    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ (director <> 'Doug Liman') ∧ (title <> 'The Bourne Ultimatum') ∧ x <= 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_negate_two_conditions_in_predicate(self):
+    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ ¬(film_director(x, 'Doug Liman')) ∧ ¬(film_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_negate_one_relational(self):
+    logic = "∃x(film_title(x, title) ∧ ¬(x > 3)".decode('utf8')
+    sql = "SELECT film.title FROM films WHERE film.fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+
+
+
+
+
+
+
+
