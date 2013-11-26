@@ -92,6 +92,12 @@ class TestCodeGen():
     logic = "films(x)".decode('utf-8')
     sql = "SELECT fid FROM films"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_select_key_from_one_condition_on_key(self):
+    logic = "films(x) ∧ x <= 3".decode('utf-8')
+    sql = "SELECT fid FROM films WHERE fid <= 3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_select_one_from_one_condition_on_one(self):
