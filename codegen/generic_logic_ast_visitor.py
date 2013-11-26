@@ -11,18 +11,18 @@ from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
-  _invert_dict = {'=' : invert_EQ,
-                  '<>': invert_NEQ,
-                  '>' : invert_LT,
-                  '>=': invert_LTE,
-                  '<' : invert_GT,
-                  '<=': invert_GTE,
-                  'IS': invert_IS,
-                  'IS NOT' : invert_ISNOT,
-                  'NULL': invert_NULL, }
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
+    self._invert_dict = {'=' : self.invert_EQ,
+                         '<>': self.invert_NEQ,
+                         '>' : self.invert_LT,
+                         '>=': self.invert_LTE,
+                         '<' : self.invert_GT,
+                         '<=': self.invert_GTE,
+                         'IS': self.invert_IS,
+                         'IS NOT' : self.invert_ISNOT,
+                         'NULL': self.invert_NULL, }
     self._node_stack = []
     self._IR_stack = []
     self._schema = schema
