@@ -297,9 +297,9 @@ class TestCodeGen():
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
   def test_implies_simple(self):
-    logic_implies = "∃x(¬(film_title(x, y) →  film_director(x, 'Ted Sales')))".decode('utf8')
-    logic_or      = "∃x(¬(¬film_title(x, y) ∨ film_director(x, 'Ted Sales')))".decode('utf8')
-    logic_and     = "∃x(film_title(x, y) ∧ ¬film_director(x, 'Ted Sales'))".decode('utf8')
+    logic_implies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
     sql = "SELECT films.title FROM films WHERE ¬(director == 'Ted Sales')"
     assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
     assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
@@ -307,10 +307,10 @@ class TestCodeGen():
 
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
-  def test_implies_simple(self):
-    logic_implies = "∃x(¬(film_title(x, y) ↔  film_director(x, 'Ted Sales')))".decode('utf8')
-    logic_or      = "∃x(¬((film_title(x, y) ∧ film_director(x, 'Ted Sales')) ∨ (¬film_title(x, y) ∧ ¬film_director(x, 'Ted Sales'))))".decode('utf8')
-    logic_and     = "∃x(¬(film_title(x, y) ∧ film_director(x, 'Ted Sales')) ∧ ¬(¬film_title(x, y) ∧ ¬film_director(x, 'Ted Sales')))".decode('utf8')
+  def test_iff_simple(self):
+    logic_implies = "∃x(¬(films_title(x, y) ↔  films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬((films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∨ (¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))))".decode('utf8')
+    logic_and     = "∃x(¬(films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∧ ¬(¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales')))".decode('utf8')
     sql = "SELECT idonthaveaclue FROM huh WHERE holyshit = 1"
     assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
     assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
