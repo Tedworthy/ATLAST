@@ -57,7 +57,7 @@ class index:
 
     logic_to_translate = logicForm.logic.get_value()
 
-    # Create worker thread and start (currently pointless - see later comment)
+    # Create worker thread and start (CURRENTLY POINTLESS - see later comment)
     result = parsing.task.add_to_parse_q.delay(logic_to_translate)
 
     # Wait for worker thread to finish translation
@@ -79,11 +79,14 @@ class index:
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
     try:
       result = parsing.parse_input(logic_to_translate)
+      
       symbolTable = SymTable()
-      codegenVisitor = GenericLogicASTVisitor(web.schema)
-      sqlGeneratorVisitor = SQLGenerator()
       result.generateSymbolTable(symbolTable)
+      
+      codegenVisitor = GenericLogicASTVisitor(web.schema)
       result.accept(codegenVisitor)
+      
+      sqlGeneratorVisitor = SQLGenerator()
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
 
