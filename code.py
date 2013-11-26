@@ -115,6 +115,7 @@ class index:
 
 class schematic:
   def GET(self):
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
 
