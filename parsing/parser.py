@@ -129,7 +129,12 @@ def p_term_stringlit(p):
 # Parsing and error functions
 
 def p_error(p):
-  print "Illegal Character '%s'" + p.value[0]
+  if p is None:
+    print "Syntax Error: Unexpected EOF"
+  else:
+    print "Syntax error at line{}: unexpected token {} ".format(p.lineno, p.value)
+
+  
   
 
 def parse_input(input):
