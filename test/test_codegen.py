@@ -219,8 +219,8 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   def test_join_two_tables(self):
-    logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y))".decode('utf8')
-    sql = "SELECT actors.fid FROM films JOIN actors USING(fid)"
+    logic = "∃x(films(x) ∧ actors_fid(x,y))".decode('utf8')
+    sql = "SELECT actors.fid FROM films JOIN actors ON films.fid = actors.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)

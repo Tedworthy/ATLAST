@@ -106,7 +106,7 @@ class GenericLogicASTVisitor():
       if join_constraints is None:
         self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
-        self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints)
+        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
       state = {'type' : 'join',
               'table' : left_ir.getRelationTree(),
               'key_values' : left_keyvals + right_keyvals
