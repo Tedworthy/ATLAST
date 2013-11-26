@@ -263,19 +263,19 @@ class TestCodeGen():
   
   @with_setup(setup_func, teardown_func)
   def test_negate_two_conditions(self):
-    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ (director <> 'Doug Liman') ∧ (title <> 'The Bourne Ultimatum') ∧ x <= 3)".decode('utf8')
-    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧  ¬(director = 'Doug Liman') ∧  ¬(title = 'The Bourne Ultimatum') )".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE films.director != 'Doug Liman' AND films.title != 'The Bourne Ultimatum' "
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
   
   @with_setup(setup_func, teardown_func)
   def test_negate_two_conditions_in_predicate(self):
-    logic = "∃x(film_title(x, title) ∧ film_director(x, director) ∧ ¬(film_director(x, 'Doug Liman')) ∧ ¬(film_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
-    sql = "SELECT film.title FROM films WHERE film.director != 'Doug Liman' AND film.title != 'The Bourne Ultimatum' AND film.fid <= 3"
+    logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧ ¬(films_director(x, 'Doug Liman')) ∧ ¬(films_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE films.director != 'Doug Liman' AND films.title != 'The Bourne Ultimatum' AND films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_negate_one_relational(self):
-    logic = "∃x(film_title(x, title) ∧ ¬(x > 3)".decode('utf8')
-    sql = "SELECT film.title FROM films WHERE film.fid <= 3"
+    logic = "∃x(films_title(x, title) ∧ ¬(x > 3))".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 

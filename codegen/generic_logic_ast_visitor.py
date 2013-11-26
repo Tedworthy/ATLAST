@@ -189,7 +189,7 @@ class GenericLogicASTVisitor():
         print '\tZ Now bound'
       # Case 2b: string literal -  ~foo_bar(x,'stringlit')
       else:
-        print '\tCurrent constraint tree: ' + constraint_tree
+        print '\tCurrent constraint tree: ' 
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
       
     self.pushIR(ir)
@@ -317,7 +317,7 @@ class GenericLogicASTVisitor():
     if both_variables:
       print 'Both variables'
       # Bind two variables together
-      bind(left_child['node'], right_child['node'], left_ir)
+      self.bind(left_child['node'], right_child['node'], left_ir)
 
     elif mixture_variables_string_lits:
       if left_variable_right_string_lit:
