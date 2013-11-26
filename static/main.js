@@ -100,10 +100,7 @@ $(document).ready(function() {
       data: {
         "logic" : input_string
       }
-    }).done(function(result) {
-      // Convert the JSON from the server to a response object
-      var response = $.parseJSON(result);
-
+    }).done(function(response) {
       // Check the result of the translation and act appropriately
       if (response.status === 'ok') {
         $("textarea#sql_result").text(response.sql);
