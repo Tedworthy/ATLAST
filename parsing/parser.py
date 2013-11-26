@@ -63,6 +63,9 @@ def p_formula_thereexists(p):
   p[0] = ast.ThereExistsNode(p[2], p[4])
 
 # Atomic Formula grammar
+def p_bracketed_atomic_formula(p):
+  'atomicFormula : LBRACKET atomicFormula RBRACKET'
+  p[0] = p[2]
 
 def p_atomic_formula_predicate(p):
   'atomicFormula : IDENTIFIER LBRACKET term_list RBRACKET'
