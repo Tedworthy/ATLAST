@@ -44,6 +44,7 @@ login_form = web.form.Form(
 
 class index:
   def GET(self):
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
     form = logic_form()
     form2 = login_form()
     return render.index(form,form2)
@@ -127,12 +128,12 @@ class login:
 
       config_data =  web.input()
       print config_data
-   
-     # TODO: Validate user input #
+
+      # TODO: Validate user input
       generate_schema.generate_db_schema(config_data)
-    #TODO: store in session variable not global variable#
+      # TODO: store in session variable not global variable
       web.schema = schema.Schema()
-      web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+      web.header('Content-Type','application/json; charset=utf-8', unique=True)
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
 
@@ -142,8 +143,9 @@ class login:
       return json.dumps({'error' : str(e)})
 
   def GET(self):
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
     response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
-    return json.dumps(response) 
+    return json.dumps(response)
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:

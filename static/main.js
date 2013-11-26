@@ -9,8 +9,6 @@ $(document).ready(function() {
     type: "GET",
     url: "/schema"
   }).done(function(schema) {
-    // See generate_schema.py for the original query
-    
     // Print out the name of each table and their primary keys
     output = '';
 
@@ -37,9 +35,7 @@ $(document).ready(function() {
       output += '</p>';
     });
 
-    //$("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
-    //alert(output);
   });
 
   var unicode_chars = {
@@ -81,9 +77,7 @@ $(document).ready(function() {
         host : $("#host_input").val(),
         port : $("#port_input").val(),
         dbname : $("#dbname_input").val() }
-    ).done(function(result) {
-
-     var response = result;
+    ).done(function(response) {
       if (response.error === 'ok') {
         var n = noty({text: 'Configuration Accepted'})
         $(".close").trigger("click")
