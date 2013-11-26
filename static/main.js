@@ -8,10 +8,9 @@ $(document).ready(function() {
   $.ajax({
     type: "GET",
     url: "/schema"
-  }).done(function(result) {
+  }).done(function(schema) {
     // See generate_schema.py for the original query
-    schema = $.parseJSON(result);
-    //alert('the schema is ' + schema);
+    
     // Print out the name of each table and their primary keys
     output = '';
 
@@ -84,7 +83,7 @@ $(document).ready(function() {
         dbname : $("#dbname_input").val() }
     ).done(function(result) {
 
-     var response = $.parseJSON(result);
+     var response = result;
       if (response.error === 'ok') {
         var n = noty({text: 'Configuration Accepted'})
         $(".close").trigger("click")
@@ -101,10 +100,7 @@ $(document).ready(function() {
       data: {
         "logic" : input_string
       }
-    }).done(function(result) {
-      // Convert the JSON from the server to a response object
-      var response = $.parseJSON(result);
-
+    }).done(function(response) {
       // Check the result of the translation and act appropriately
       if (response.status === 'ok') {
         $("textarea#sql_result").text(response.sql);

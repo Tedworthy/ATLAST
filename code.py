@@ -68,7 +68,7 @@ class index:
     ## Get the SQL out of the finished worker thread
     #sql = result.get()
 
-    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
 
     # Set up a response dictionary
     response = {
@@ -115,6 +115,7 @@ class index:
 
 class db_schema:
   def GET(self):
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
 
