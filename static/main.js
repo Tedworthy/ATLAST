@@ -50,7 +50,7 @@ $(document).ready(function() {
     "iff": "\u2194",
     "exists": "\u2203",
     "forall": "\u2200",
-    "not": "\u00AC"
+    "not": "\u00ac"
   }
 
   var keys = {

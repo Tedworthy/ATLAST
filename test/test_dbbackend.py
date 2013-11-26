@@ -22,7 +22,7 @@ class TestBackend():
     assert(config_data['error'] == '1')
 
   def test_establish_connection_no_data(self):
-    con = pg.connect()
+    con = pg.connect(None)
     assert(True)
 
   def test_establish_connection_valid_data(self):
@@ -36,13 +36,17 @@ class TestBackend():
     assert(True)
 
   def test_query_nocon_validdata(self):
-    pg.query()
+    pg.query(None,'SELECT * FROM films')
     assert(True)
 
   def test_query_validcon_validdata(self):
-    pg.query()
+    config_data = cp.parse_file('dbbackend/db.cfg')
+    con = pg.connect(config_data)
+    pg.query(con,'SELECT * FROM films')
     assert(True)
 
   def test_query_validcon_invaliddata(self):
-    pg.query()
+    config_data = cp.parse_file('dbbackend/db.cfg')
+    con = pg.connect(config_data)
+    pg.query(con,'ADSFS')
     assert(True)

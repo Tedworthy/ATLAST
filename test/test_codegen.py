@@ -24,6 +24,7 @@ class TestCodeGen():
     pass
 
   def translates_to(self, logic, expectedSQL):
+    print 'Logic Recieved: ' + logic
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logic)
 
@@ -202,13 +203,11 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-  ''' JOINS ON TWO TABLES '''
-  
   ''' NEGATIONS '''
 
   @with_setup(setup_func, teardown_func)
   def test_negate_one_condition(self):
-    logic = "∃x(actors_name(x, y) ∧ y != 'Matt Damon')".decode('utf8')
+    logic = "∃x(actors_name(x, y) ∧ ¬(y = 'Matt Damon'))".decode('utf8')
     sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
@@ -238,9 +237,10 @@ class TestCodeGen():
 
 
 
+  ''' Max has added a lovely join for us... '''
 
-
-
-
-
-
+  @with_setup(setup_func, teardown_func)
+  def test_join_two_tables(self):
+    logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y))".decode('utf8')
+    sql = "SELECT actors.fid FROM films JOIN actors USING(fid)"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"

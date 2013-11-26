@@ -1,3 +1,4 @@
+# -*- coding=utf-8 -*-
 import web
 import time
 import os
@@ -89,8 +90,8 @@ class index:
       result.accept(codegenVisitor)
       codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
       sql = sqlGeneratorVisitor._sql
-     
-    #TODO - Save the config_data to a session variable and use that instead
+   
+  #TODO - Save the config_data to a session variable and use that instead
       config_data = cp.parse_file('dbbackend/db.cfg')
       con = pg.connect(config_data)
       query_result = pg.query(con, sql)
@@ -107,6 +108,7 @@ class index:
       con.close()
     except Exception, e:
       response['status'] = 'exception_error'
+      print e
       response['error'] = 'ERROR: %s' % str(e)
 
     return json.dumps(response)

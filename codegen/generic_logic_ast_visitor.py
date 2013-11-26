@@ -7,9 +7,11 @@ generic intermediate representation for code generation.
 import visit as v
 import ast
 from codegen.ir import *
+
 from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
+
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
@@ -32,6 +34,7 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.AndNode)
   def visit(self, node):
+    print 'Start processing AND node'
     # Pop relevant objects off the stack
     right_node = self.popNode()
     left_node = self.popNode()
@@ -152,7 +155,42 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.NotNode)
   def visit(self, node):
-    print "Seen NotNode"
+    child = self.popNode()
+    ir = self.popIR()
+    constraint_tree = ir.getConstraintTree()
+
+    print ' *** Start Negation Evaluation ***'    
+    print '\tType of child: ' + child['type']
+    ### CASE 1: ~Constraint
+    #### Simply insert a NOT node into the constraint tree
+    if child['type'] == 'constraint':
+      print '\tEvaluating NOT(Constraint)' 
+     
+      ## Quick and dirty hack
+      ## NOT(rest_of_tree) -> (rest_of_tree)
+      if isinstance(constraint_tree,UnaryConstraint):
+        print '\yRemoving redundant NOT'
+        ir.setConstraintTree(constraint_tree.getConstraint())
+      else:
+        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+  
+
+    ### Case 2: ~Predicate(x,y)
+    #### Compute the set difference
+    elif child['type'] == 'predicate':
+      print '\tEvaluating Predicate Negation'
+      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
+      
+
+    self.pushIR(ir)
+    state = {
+       'type' : 'constraint',
+       'notNode' : 'true',
+       'node' : node 
+    }
+    self.pushNode(state)
+
+    print '*** End Negation Evaluation ***'
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
@@ -437,3 +475,5 @@ class GenericLogicASTVisitor():
 
   def getIR(self):
     return self._IR_stack[0]
+
+

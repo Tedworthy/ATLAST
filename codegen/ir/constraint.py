@@ -10,7 +10,7 @@ class Constraint(IRNode):
   IS = 'IS'
   ISNOT = 'IS NOT'
   NULL = 'NULL'
-
+  NOT = 'NOT'
   def __init__(self, op, left, right):
     self._op = op
     self._left = left
