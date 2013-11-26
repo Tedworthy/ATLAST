@@ -292,7 +292,7 @@ class TestCodeGen():
     sql = "SELECT films.title FROM films WHERE films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-''' IMPLIES AND IFF '''
+  ''' IMPLIES AND IFF '''
 
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
