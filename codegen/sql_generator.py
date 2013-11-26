@@ -81,14 +81,23 @@ class SQLGenerator():
   def visit(self, node):
     print node.getLeftTerm().getRelation().getAlias()
     print node.getLeftTerm().getAttribute()
+
     self._expecting_constraint = True
     node.getLeftTerm().accept(self)
     self._expecting_constraint = True
     node.getRightTerm().accept(self)
+    print self._sql_where_stack
     rightString = self._sql_where_stack.pop()
-    leftString = self._sql_where_stack.pop()
+    if self._sql_where_stack:
+      leftString = self._sql_where_stack.pop()
+    else: 
+      leftString = ''
     opString = node.getOp()
-    constraintString = leftString + " " + opString + " " + rightString
+    if leftString == 'IS NULL':
+      constraintString = rightString + " " + leftString
+    else:
+      constraintString = leftString + " " + opString + " " + rightString
+
     self._sql_where_stack.append(constraintString)
 
   @v.when(ir.AndConstraint)
@@ -123,4 +132,10 @@ class SQLGenerator():
     else:
       print 'Unfortunately there were no constraints my good chap.\nCarry on!'
 
+  @v.when(ir.NullNode)
+  def visit(self,node):
+    print 'Generating code for NULL Node'
+    constraintString = "IS NULL"
+    self._sql_where_stack.append(constraintString)
 
+  
