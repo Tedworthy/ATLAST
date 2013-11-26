@@ -217,10 +217,11 @@ class TestCodeGen():
 
   ''' MULTIPLE TABLE JOINS '''
 
+  #MixTutnem
   @with_setup(setup_func, teardown_func)
   def test_join_two_tables(self):
-    logic = "∃x(films(x) ∧ actors_fid(x,y))".decode('utf8')
-    sql = "SELECT actors.fid FROM films JOIN actors ON films.fid = actors.aid"
+    logic = "∃x(films(x) ∧ casting_fid(y,x))".decode('utf8')
+    sql = "SELECT casting.cid FROM films JOIN casting ON films.fid = casting.fid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
@@ -290,4 +291,29 @@ class TestCodeGen():
     logic = "∃x(films_title(x, title) ∧ ¬(x > 3))".decode('utf8')
     sql = "SELECT films.title FROM films WHERE films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  ''' IMPLIES AND IFF '''
+
+  # Query tested in implies form, in or form and conjunctive normal form.
+  @with_setup(setup_func, teardown_func)
+  def test_implies_simple(self):
+    logic_implies = "∃x(¬(film_title(x, y) →  film_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬(¬film_title(x, y) ∨ film_director(x, 'Ted Sales')))".decode('utf8')
+    logic_and     = "∃x(film_title(x, y) ∧ ¬film_director(x, 'Ted Sales'))".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE ¬(director == 'Ted Sales')"
+    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
+    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+
+  # Query tested in implies form, in or form and conjunctive normal form.
+  @with_setup(setup_func, teardown_func)
+  def test_implies_simple(self):
+    logic_implies = "∃x(¬(film_title(x, y) ↔  film_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬((film_title(x, y) ∧ film_director(x, 'Ted Sales')) ∨ (¬film_title(x, y) ∧ ¬film_director(x, 'Ted Sales'))))".decode('utf8')
+    logic_and     = "∃x(¬(film_title(x, y) ∧ film_director(x, 'Ted Sales')) ∧ ¬(¬film_title(x, y) ∧ ¬film_director(x, 'Ted Sales')))".decode('utf8')
+    sql = "SELECT idonthaveaclue FROM huh WHERE holyshit = 1"
+    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
+    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+
 
