@@ -202,3 +202,16 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  ''' NEGATIONS '''
+
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x(actors_name(x, y) ∧ y != 'Matt Damon')".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_three_table_join_select_two(self):
+    logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8')
+    sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
