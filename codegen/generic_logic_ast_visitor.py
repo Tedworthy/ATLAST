@@ -276,7 +276,7 @@ class GenericLogicASTVisitor():
         'node' : node
       }
     self.pushNode(state)
-    print '\t' + str(self._node_stack)
+    print '\t' + str(merged_ir)
     print '*** IR Generator: End PredicateNode ***'    
 
   @v.when(ast.BinaryOperatorNode)
@@ -393,7 +393,7 @@ class GenericLogicASTVisitor():
     self.pushNode(state)
     print "\tSeen Variable: " + str(node.getIdentifier())
     self.pushIR(ir)
-    print '*** IR Generator: Begin VariableNode ***'   
+    print '*** IR Generator: End VariableNode ***'   
 
 
 # Stack manipulating functions
