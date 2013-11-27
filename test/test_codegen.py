@@ -346,8 +346,8 @@ class TestCodeGen():
 
   @with_setup(setup_func, teardown_func)
   # "Get me all actors and the roles they've played."
-  def test_fariba_three(self):
+  def test_fariba_four(self):
     logic = "∃x,a(casting_part(x, y) ∧ casting_aid(x, a) ∧ actors_name(a, b))".decode('utf8')
-    sql = "SELECT casting.part, actors.name FROM casting JOIN actors"
+    sql = "SELECT casting.part, actors.name FROM casting JOIN actors ON casting.aid = actors.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
