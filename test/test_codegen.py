@@ -340,14 +340,14 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   # "Get me directors where all their films are greater than 100 minutes long."
   def test_fariba_three(self):
-  logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) →  (film_length(y, len) ∧ len >'100')))".decode('utf8')
-  sql = "SELECT films.director FROM films WHERE films.director NOT IN (SELECT films.director FROM films WHERE length <= '100');"
-  assert self.translates_to(logic, sql), "Error, expected answers not equal"
+    logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) →  (film_length(y, len) ∧ len >'100')))".decode('utf8')
+    sql = "SELECT films.director FROM films WHERE films.director NOT IN (SELECT films.director FROM films WHERE length <= '100')"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   # "Get me all actors and the roles they've played."
   def test_fariba_three(self):
-  logic = "∃x,a(casting_part(x, y) ∧ casting_aid(x, a) ∧ actors_name(a, b))".decode('utf8')
-  sql = "SELECT casting.part, actors.name FROM casting JOIN actors;"
-  assert self.translates_to(logic, sql), "Error, expected answers not equal"
+    logic = "∃x,a(casting_part(x, y) ∧ casting_aid(x, a) ∧ actors_name(a, b))".decode('utf8')
+    sql = "SELECT casting.part, actors.name FROM casting JOIN actors"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
