@@ -17,7 +17,7 @@ class GenericLogicASTVisitor():
     self._node_stack = []
     self._IR_stack = []
     self._schema = schema
-    self._alias = 0
+    self._alias = 1
 
 
   @v.on('node')
@@ -46,7 +46,6 @@ class GenericLogicASTVisitor():
     print '\tLeft IR: ' + str(left_ir)
     print '\tRigh IR: ' + str(right_ir)
 
-
     # Sanity check the objects
     assert left_node
     assert right_node
@@ -65,6 +64,15 @@ class GenericLogicASTVisitor():
       left_keys = left_node['keys']
       right_keyvals = right_node['key_values']
       left_keyvals = left_node['key_values']
+      left_attr_vals = left_node['attr_values']
+      right_attr_vals = right_node['attr_values']
+      left_attrs = left_node['attrs']
+      right_attrs = right_node['attrs']
+
+      left_comb_vals = left_keyvals + left_attr_vals
+      right_comb_vals = right_keyvals + right_attr_vals
+      left_comb_keys = left_keys + left_attrs
+      right_comb_keys = right_keys + right_attrs
 
       left_tables = set([x.getRelation() for x in left_keys])
       right_tables = set([x.getRelation() for x in right_keys])
@@ -89,7 +97,9 @@ class GenericLogicASTVisitor():
             state = {
                 'type' : 'predicate',
                 'key_values' : left_keyvals,
-                'keys' : left_keys
+                'keys' : left_keys,
+                'attrs' : left_attrs,
+                'attr_values' : left_attr_vals
               }
             self.pushNode(state)
             print 'Generated IR : ' + str(left_ir)
@@ -112,8 +122,8 @@ class GenericLogicASTVisitor():
         relation = iter(right_tables).next()
         relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
 
-      join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
-          left_keys, right_keys);
+      join_constraints = self.getJoinConstraints(left_comb_vals,
+          right_comb_vals, left_comb_keys, right_comb_keys);
 
       # Join constraints calculated. Now work out how to join.
       if join_constraints is None:
@@ -122,7 +132,9 @@ class GenericLogicASTVisitor():
         self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
       state = {'type' : 'predicate',
                'keys' : left_keys + right_keys,
-              'key_values' : left_keyvals + right_keyvals
+              'key_values' : left_keyvals + right_keyvals,
+              'attrs' : left_attrs + right_attrs,
+              'attr_values' : left_attr_vals + right_attr_vals
               }
       self.pushNode(state)
       self.pushIR(left_ir)
@@ -239,9 +251,10 @@ class GenericLogicASTVisitor():
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
-      elements[i] = rel_attr
       if i < key_count:
-        key_values.append(child)
+        child['key'] = True
+      elements[i] = rel_attr
+      key_values.insert(0, child)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
@@ -279,8 +292,10 @@ class GenericLogicASTVisitor():
     # consume.
     state = {
         'type': 'predicate',
-        'key_values': key_values,
-        'keys': elements,
+        'key_values': key_values[:key_count],
+        'keys': elements[:key_count],
+        'attr_values': key_values[key_count:],
+        'attrs': elements[key_count:],
         'node' : node
       }
     self.pushNode(state)
@@ -435,10 +450,10 @@ class GenericLogicASTVisitor():
         right_key_val = right_keyvals[j]
         left_rel_attr  = left_keys[i]
         right_rel_attr = right_keys[j]
-        left_key_node_id  = left_key_val['node'].getIdentifier()
-        right_key_node_id = right_key_val['node'].getIdentifier()
         # Check if both keys are variables
         if left_key_val['type'] == right_key_val['type'] == 'variable':
+          left_key_node_id  = left_key_val['node'].getIdentifier()
+          right_key_node_id = right_key_val['node'].getIdentifier()
           # If the identifiers match, add this as a constraint
           if left_key_node_id == right_key_node_id:
             constraint = Constraint(Constraint.EQ, \
