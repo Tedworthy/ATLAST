@@ -127,12 +127,12 @@ $(document).ready(function() {
           var sql_result_lines = sql_result.split("\n");  
           alert(sql_result_lines.length);
           $("textarea#sql_result").text(sql_result);
-          $("textarea#sql_result").css("height", "200px");
           $("#results_table").html("");
         }
         
         var sql_result_lines = sql_result.split("\n");  
-        alert(sql_result_lines.length);
+        alert((sql_result_lines.length * 16 + 6).toString());
+        $("textarea#sql_result").css("height", "200px");
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
