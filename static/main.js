@@ -126,7 +126,7 @@ $(document).ready(function() {
           if(response.sql !== '') {
             var sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
           } else {
-            var sql_result = response.sql;
+            var sql_result = response.error;
           }
           
           var sql_result_lines = sql_result.split("\n");  
