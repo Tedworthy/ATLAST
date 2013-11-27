@@ -27,15 +27,17 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.IffNode)
   def visit(self, node):
-    print "Seen IffNode"
+    print "*** IR Generator:  Begin IffNode - ERROR ***"
+    print "*** IR Generator:  End IffNode - ERROR ***"
 
   @v.when(ast.OrNode)
   def visit(self, node):
-    print "Seen OrNode"
+    print "*** IR Generator:  Begin OrNode - ERROR ***"
+    print "*** IR Generator:  End OrNode - ERROR ***"
 
   @v.when(ast.AndNode)
   def visit(self, node):
-    print 'Start processing AND node'
+    print "*** IR Generator:  Begin AndNode ***"
     # Pop relevant objects off the stack
     right_node = self.popNode()
     left_node = self.popNode()
@@ -118,24 +120,25 @@ class GenericLogicASTVisitor():
       self.pushIR(left_ir)
     # Mixture of predicates and constraints
     elif both_constraints:
-      print 'Both constraints'
+      print '\tBoth constraints'
       self.conjunctIR(left_ir, right_ir)
       self.pushIR(left_ir)
       self.pushNode(left_node)
     elif mixture_constraints_predicates:
-      print 'Mixture!'
+      print '\tMixture!'
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
-        print 'Left is predicate'
+        print '\tLeft is predicate'
         self.conjunctIR(left_ir, right_ir)
         self.pushIR(left_ir)
         self.pushNode(left_node)
       else:
-        print 'Right is predicate'
+        print '\tRight is predicate'
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    print "And(",left_node,",",right_node,")"
+    print "\tAnd(",left_node,",",right_node,")"
+    print "*** IR Generator:  End AndNode ***"
 
   @v.when(ast.NotNode)
   def visit(self, node):
@@ -144,7 +147,7 @@ class GenericLogicASTVisitor():
     child_node = child['node']
     constraint_tree = ir.getConstraintTree()
 
-    print ' *** Start Negation Evaluation ***'    
+    print '*** IR Generator: Begin NotNode ***'    
     print '\tType of child: ' + child['type']
     print '\tCurrent IR: ' + ir.__repr__()
     ### CASE 1: ~Constraint
@@ -185,18 +188,21 @@ class GenericLogicASTVisitor():
     }
     self.pushNode(state)
 
-    print '*** End Negation Evaluation ***'
+    print '*** IR Generator: End NotNode ***'    
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
-    print "Seen ForAllNode"
+    print ' *** IR Generator: Begin ForAllNode - Unimplemented ***'    
+    print ' *** IR Generator: End ForAllNode - Unimplemented ***'    
 
   @v.when(ast.ThereExistsNode)
   def visit(self, node):
-    print "Seen ThereExistsNode"
+    print '*** IR Generator: Begin ThereExistsNode - Unimplemented ***'    
+    print '*** IR Generator: End ThereExistsNode - Unimplemented ***'    
 
   @v.when(ast.PredicateNode)
   def visit(self, node):
+    print '*** IR Generator: Begin PredicateNode ***'    
     # Split out the attributes of the predicate
     attributes = node.getIdentifier().split('_')
     # Get the table name
@@ -217,7 +223,7 @@ class GenericLogicASTVisitor():
     # attributes as necessary, binding them and passing keys up to any consumer
     # node i.e and AndNode.
     keys.extend(binding_values)
-    print '#########',keys
+    print '\t#########',keys
     for i in reversed(range(0, len(keys))):
       attr = keys[i]
       child = self.popNode()
@@ -232,7 +238,7 @@ class GenericLogicASTVisitor():
         if child_node.isFree():
           ir.setRelationAttributePairs([rel_attr])
         self.bind(child_node, rel_attr, ir)
-        print 'Binding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
+        print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         if i < key_count:
           key_values.append(child)
       elif child_type == 'string_lit':
@@ -245,7 +251,7 @@ class GenericLogicASTVisitor():
         else:
           ir.setConstraintTree(AndConstraint(prev_constraints, new_constraint))
       else:
-        print 'ConstantNode'
+        print '\tConstantNode'
       # Lazy instantiation of merged_ir.
       if merged_ir is None:
         merged_ir = ir
@@ -268,10 +274,12 @@ class GenericLogicASTVisitor():
         'node' : node
       }
     self.pushNode(state)
-    print self._node_stack
+    print '\t' + str(self._node_stack)
+    print '*** IR Generator: End PredicateNode ***'    
 
   @v.when(ast.BinaryOperatorNode)
   def visit(self, node):
+    print '*** IR Generator: Begin BinaryOperatorNode - Partially Implemented ***'    
     # Set up state and operator
     op = node.getOp()
     op = self.binOpToConstraintsOp(op)
@@ -300,7 +308,7 @@ class GenericLogicASTVisitor():
     prev_constraints = left_ir.getConstraintTree()
 
     if both_variables:
-      print 'Both variables'
+      print '\tBoth variables'
 #      print 'left_child: ' + left_child['node'] + '\tright_child: ' + right_child['node']
       # Bind two variables together
       if op  == Constraint.EQ:
@@ -325,11 +333,11 @@ class GenericLogicASTVisitor():
 
     elif mixture_variables_string_lits:
       if left_variable_right_string_lit:
-        print 'Left variable, right string lit'
+        print '\tLeft variable, right string lit'
         var_node = left_child['node']
         lit_node = right_child['node']
       else:
-        print 'Right variable, left string lit'
+        print '\tRight variable, left string lit'
         var_node = right_child['node']
         lit_node = left_child['node']
 
@@ -345,7 +353,7 @@ class GenericLogicASTVisitor():
     # Finally, push relevant objects onto the stacks
     self.pushIR(left_ir)
     self.pushNode(state)
-    print "Seen BinaryOperatorNode"
+    print '*** IR Generator: End BinaryOperatorNode - Partially Implemented ***'    
 
   def binOpToConstraintsOp(self, op):
     return {
@@ -359,33 +367,40 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.FunctionNode)
   def visit(self, node):
-    print "Seen FunctionNode"
+    print ' *** IR Generator: Begin FunctionNode - Unimplemented ***'   
+    print ' *** IR Generator: End FunctionNode - Unimplemented ***'     
 
   # TODO Refactor replicated code here...
   @v.when(ast.StringLitNode)
   def visit(self, node):
+    print '*** IR Generator: Begin StringLitNode ***'   
     ir = IR()
     state = {'type' : 'string_lit', 'node' : node}
     self.pushNode(state)
     self.pushIR(ir)
+    print '*** IR Generator: End StringLitNode ***'   
 
   # TODO ...and here...
   @v.when(ast.ConstantNode)
   def visit(self, node):
+    print ' *** IR Generator: Begin ConstantNode ***'   
+
     ir = IR()
     state = {'type' : 'constant', 'node' : node}
     self.pushNode(state)
     self.pushIR(ir)
-    print "Seen ConstantNode"
-
+    print ' *** IR Generator: End ConstantNode ***'   
   # TODO ...and here.
   @v.when(ast.VariableNode)
   def visit(self, node):
+    print '*** IR Generator: Begin VariableNode ***'   
     ir = IR()
     state = {'type' : 'variable', 'node' : node}
     self.pushNode(state)
+    print "\tSeen Variable: " + str(node.getIdentifier())
     self.pushIR(ir)
-    print "Seen Variable: " + str(node.getIdentifier())
+    print '*** IR Generator: Begin VariableNode ***'   
+
 
 # Stack manipulating functions
 
@@ -431,7 +446,7 @@ class GenericLogicASTVisitor():
             else:
               join_constraints = AndConstraint(join_constraints, constraint)
         else:
-          print """a mixture of variables and constants found, add some
+          print """\ta mixture of variables and constants found, add some
           constraints"""
     return join_constraints
 
@@ -444,7 +459,7 @@ class GenericLogicASTVisitor():
       assert previous_binding is not None
       # Add to the constraints
       prev_constraints = ir.getConstraintTree()
-      print '#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
+      print '\t#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
       new_constraint = Constraint(Constraint.EQ, rel_attr, previous_binding)
       merged_constraint = None;
       if prev_constraints is None:

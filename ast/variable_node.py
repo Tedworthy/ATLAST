@@ -34,7 +34,6 @@ class VariableNode(Node):
     attr_eq = True
     rel_eq = True
     resolved_variable_node = self._symTable.lookup(self.getIdentifier())
-    print '***In Bind To ***'
     print '\tVariable is a VariableNode? ' +  str(isinstance(variable,VariableNode)) 
     print '\tResolved_Variable_Node is a VariableNode? ' +  str(isinstance(resolved_variable_node,VariableNode))    
     print '\t' + str(resolved_variable_node)
@@ -56,7 +55,6 @@ class VariableNode(Node):
       boundValue = resolved_variable_node._boundValue
       attr_eq = boundValue.getAttribute() == variable.getAttribute()
       rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
-    print '***End Bind To ***'
 
     return attr_eq and rel_eq
 
