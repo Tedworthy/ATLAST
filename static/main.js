@@ -8,10 +8,7 @@ $(document).ready(function() {
   $.ajax({
     type: "GET",
     url: "/schema"
-  }).done(function(result) {
-    // See generate_schema.py for the original query
-    schema = $.parseJSON(result);
-    //alert('the schema is ' + schema);
+  }).done(function(schema) {
     // Print out the name of each table and their primary keys
     output = '';
 
@@ -38,9 +35,7 @@ $(document).ready(function() {
       output += '</p>';
     });
 
-    //$("#schema").html('<p>' + JSON.stringify(schema) + '</p>');
     $("#schema_table").html(output);
-    //alert(output);
   });
 
   var unicode_chars = {
@@ -82,9 +77,7 @@ $(document).ready(function() {
         host : $("#host_input").val(),
         port : $("#port_input").val(),
         dbname : $("#dbname_input").val() }
-    ).done(function(result) {
-
-     var response = $.parseJSON(result);
+    ).done(function(response) {
       if (response.error === 'ok') {
         var n = noty({text: 'Configuration Accepted'})
         $(".close").trigger("click")
@@ -96,45 +89,46 @@ $(document).ready(function() {
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $("#convert_button").click(function() {
     var input_string = $("textarea#logic").val();
-    $.ajax({
-      type: "POST",
-      data: {
-        "logic" : input_string
-      }
-    }).done(function(result) {
-      // Convert the JSON from the server to a response object
-      var response = $.parseJSON(result);
+    if(input_string !== "") {   
+      $.ajax({
+        type: "POST",
+        data: {
+          "logic" : input_string
+        }
+      }).done(function(response) {
+        // Check the result of the translation and act appropriately
+        if (response.status === 'ok') {
+          $("textarea#sql_result").text(response.sql);
 
-      // Check the result of the translation and act appropriately
-      if (response.status === 'ok') {
-        $("textarea#sql_result").text(response.sql);
+          // Create an HTML table
+          var table = '<table border="1" align="center"> <tr>';
 
-        // Create an HTML table
-        var table = '<table border="1" align="center"> <tr>';
-
-        // Construct the header of the table from the query column names
-        $.each(response.query_columns, function(i, column) {
-          table += '<th>' + column + '</th>';
-        });
-        table += '</tr>';
-
-        // Construct the body of the table from the query row data
-        $.each(response.query_rows, function(i, row) {
-          table += '<tr>';
-          $.each(row, function(i, dataItem) {
-            table += ('<td>' + dataItem + '</td>');
+          // Construct the header of the table from the query column names
+          $.each(response.query_columns, function(i, column) {
+            table += '<th>' + column + '</th>';
           });
-          table += '</tr>'
-        });
+          table += '</tr>';
 
-        // Add the resulting table to the page
-        $("#results_table").html(table);
-      } else {
-        // Something went wrong, so print the error.
-        $("textarea#sql_result").text(response.error);
-        $("#results_table").html("");
-      }
-    });
+          // Construct the body of the table from the query row data
+          $.each(response.query_rows, function(i, row) {
+            table += '<tr>';
+            $.each(row, function(i, dataItem) {
+              table += ('<td>' + dataItem + '</td>');
+            });
+            table += '</tr>'
+          });
+
+          // Add the resulting table to the page
+          $("#results_table").html(table);
+        } else {
+          // Something went wrong, so print the error.
+          $("textarea#sql_result").text(response.error);
+          $("#results_table").html("");
+        }
+      });
+    } else {
+      $("textarea#sql_result").text("No input to convert");
+    }
     return false;
   });
 
