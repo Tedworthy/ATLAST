@@ -19,3 +19,6 @@ class RelationNode(IRNode):
 
   def hasAlias(self):
     return self._alias is not None;
+
+  def __repr__(self):
+    return self.getAlias()

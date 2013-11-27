@@ -115,7 +115,7 @@ class SQLGenerator():
       constraintString = rightString + " " + leftString
     else:
       constraintString = leftString + " " + opString + " " + rightString
-
+    print '\tConstraint Added: ' + constraintString
     self._sql_where_stack.append(constraintString)
     print '*** SQL Generator: End Constraint ***'
 
@@ -151,6 +151,7 @@ class SQLGenerator():
       constraints.accept(self)
       childString = self._sql_where_stack.pop()
       constraintString = node.getOp() + "(" + childString + ")"
+      print '\tUnary Constraint Added: ' + constraintString
       self._sql_where_stack.append(constraintString)
     else:
       print 'Unfortunately there were no constraints my good chap.\nCarry on!'

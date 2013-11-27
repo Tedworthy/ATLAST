@@ -11,3 +11,7 @@ class BinOpConstraint(IRNode):
 
   def getRightConstraint(self):
     return self._right
+
+  def __repr__(self):
+    string = 'BinOp[]'
+    return string
