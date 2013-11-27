@@ -123,7 +123,7 @@ $(document).ready(function() {
         } else {
           // Something went wrong, so print the error.
           $("textarea#sql_result").text(response.sql.concat("\n\n\nDatabase error message:\n", response.error));
-          $("textarea#sql_result").style.css="200px";
+          $("textarea#sql_result").css("height", "200px");
           $("#results_table").html("");
         }
       });
