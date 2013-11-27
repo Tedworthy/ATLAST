@@ -122,7 +122,7 @@ $(document).ready(function() {
           $("#results_table").html(table);
         } else {
           // Something went wrong, so print the error.
-          $("textarea#sql_result").text(response.error);
+          $("textarea#sql_result").text(response.sql.concat("\n\n", response.error));
           $("#results_table").html("");
         }
       });

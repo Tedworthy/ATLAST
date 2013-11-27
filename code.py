@@ -81,11 +81,12 @@ class index:
         result = parsing.parse_input(logic_to_translate)
 
         symbolTable = SymTable()
-        codegenVisitor = GenericLogicASTVisitor(web.schema)
-        sqlGeneratorVisitor = SQLGenerator()
         result.generateSymbolTable(symbolTable)
+        
+        codegenVisitor = GenericLogicASTVisitor(web.schema)
         result.accept(codegenVisitor)
 
+        sqlGeneratorVisitor = SQLGenerator()
         codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
         sql = sqlGeneratorVisitor._sql
      
@@ -99,8 +100,10 @@ class index:
           response['sql'] = sql
           response['query_columns'] = query_result['columns']
           response['query_rows'] = query_result['rows']
+          response['error'] = ''
         else:
           response['status'] = 'db_error'
+          response['sql'] = sql
           response['error'] = query_result['error']
 
         con.close()
