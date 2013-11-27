@@ -138,7 +138,8 @@ class GenericLogicASTVisitor():
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    print "\tAnd(",left_node,",",right_node,")"
+    print right_ir
+ #     print "\tAnd(",left_node,",",right_node,")"
     print "*** IR Generator:  End AndNode ***"
 
   @v.when(ast.NotNode)
@@ -314,13 +315,7 @@ class GenericLogicASTVisitor():
       # Bind two variables together
       if op  == Constraint.EQ:
         self.bind(left_child['node'], right_child['node'], left_ir)
-      elif op == Constraint.LTE:
-        print '\tAdd a constraint'
-      elif op == Constraint.LT:
-        print '\tAdd a constraint'
-      elif op == Constraint.GTE:
-        print '\tAdd a constraint'
-      elif op == Constraint.GT:
+      else:
         print '\tAdd a constraint'
         print '\tRight Node: '  + right_child['node'].getIdentifier()
         constraint = Constraint(op, left_child['node'].getBoundValue(), VariableNode(right_child['node'].getIdentifier()))
@@ -328,8 +323,6 @@ class GenericLogicASTVisitor():
         left_ir.setConstraintTree(constraint)
         
         
-      elif op == Constraint.NEQ:
-        print '\tAdd a constraint'
 
 
     elif mixture_variables_string_lits:
