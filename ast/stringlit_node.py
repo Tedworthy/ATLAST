@@ -7,3 +7,6 @@ class StringLitNode(Node):
 
   def getValue(self):
     return self._value
+
+  def __repr__(self):
+    return self.getValue()

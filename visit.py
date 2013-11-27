@@ -1,3 +1,6 @@
+# SOURCE:
+# http://curtis.schlak.com/2013/06/20/follow-up-to-python-visitor-pattern.html
+
 # visit.py
 # Updated 2013-06-20 to fix bug on line 38
 

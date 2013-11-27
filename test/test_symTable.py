@@ -7,7 +7,7 @@ class TestSymbolTable():
     table = SymTable()
     table.addItem(1,"Joe")
     assert_equal(table._data[1], "Joe")
-    
+
   def test_retrievals_local(self):
     table = SymTable()
     table.addItem(1,"Joe")
@@ -27,7 +27,7 @@ class TestSymbolTable():
     table = SymTable()
     assert_equal( table._parent, None)
     assert_equal( table._data, {})
- 
+
   def test_set_parent_in_constructor(self):
     table = SymTable(SymTable())
     assert table._parent is not None
@@ -59,7 +59,4 @@ class TestSymbolTable():
     childTable.addGlobal(1,"Joe")
     assert_equal(table._data[1], "Joe")
     assert("Joe" not in childTable._data.values())
-
-
-
 

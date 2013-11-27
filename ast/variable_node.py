@@ -4,6 +4,7 @@ This class implements the AST node of a first order logic variable.
 '''
 
 from node import Node
+from variable_declaration_node import VariableDeclarationNode
 
 class VariableNode(Node):
   # Takes a name for the variable.
@@ -27,14 +28,34 @@ class VariableNode(Node):
     if candidate_node is None:
         symTable.addGlobal(self._identifier, self)
 
+  #sets self.boundValue to variable and returns True on success
+  #if already bound returns false
   def bindTo(self, variable):
+    attr_eq = True
+    rel_eq = True
     resolved_variable_node = self._symTable.lookup(self.getIdentifier())
+    print '\tVariable is a VariableNode? ' +  str(isinstance(variable,VariableNode)) 
+    print '\tResolved_Variable_Node is a VariableNode? ' +  str(isinstance(resolved_variable_node,VariableNode))    
+    print '\t' + str(resolved_variable_node)
+    
+
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
-      return True
-    boundValue = resolved_variable_node._boundValue
-    attr_eq = boundValue.getAttribute() == variable.getAttribute()
-    rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
+
+    #TODO remove this case... its fucked
+    elif isinstance(variable,VariableNode) and isinstance(resolved_variable_node, VariableDeclarationNode):
+      print 'Dun Bingung de wariable node to de wariable node'
+      print '\tValue of variable: ' + variable.getIdentifier()
+      print '\tValue of resolved_variable_node: ' + str(resolved_variable_node.getBoundValue().getAttribute())
+
+      resolved_variable_node.setBoundValue(variable)
+
+      
+    else:
+      boundValue = resolved_variable_node._boundValue
+      attr_eq = boundValue.getAttribute() == variable.getAttribute()
+      rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
+
     return attr_eq and rel_eq
 
   def getBoundValue(self):
@@ -53,4 +74,5 @@ class VariableNode(Node):
     # this case the variable must be free (it has not been found quanitified
     # anywhere else).
     return val._symTable.hasParent() or self == val
-
+  def __repr__(self):
+    return self.getIdentifier()

@@ -76,7 +76,7 @@ literals = '+-*/'
 # Spaces are taken out completely
 t_ignore = ' '
 
-t_CONSTANT = r'[A-Z]+'
+t_CONSTANT = r'[A-Z]+ | [0-9]+'
 
 reserved = {
   t_TRUE : TokenEnum().TRUE,

@@ -12,7 +12,8 @@ from node import Node
 class UnaryOperatorNode(Node):
   # Takes a node representing the RHS of the formula
   def __init__(self, formula):
-    setFormula(formula)
+    Node.__init__(self)
+    self.setChild(0, formula)
 
-  def setFormula(formula):
-    Node.setChild(0, formula)
+  def __repr__(self):
+    return 'UnaryOp(' + str(self.getChild(0)) + ')'

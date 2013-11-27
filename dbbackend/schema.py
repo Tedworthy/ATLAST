@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 class Schema():
-  def __init__(self, filename='schema.xml'):
+  def __init__(self, filename='dbbackend/schema.xml'):
     self._tree = ET.parse(filename)
     self._root = self._tree.getroot()
     self._data = self.gatherTableData()
@@ -55,3 +55,18 @@ class Schema():
 
   def getAllData(self):
     return self._data
+
+  def relationAttributeExists(self, relation, attribute):
+    table_data = self._data.get(relation)
+    if table_data is None:
+      return False
+
+    for column in table_data.get('columns'):
+      if column == attribute:
+        return True
+
+    return False
+
+  def relationExists(self, relation):
+    table_data = self._data.get(relation)
+    return table_data is not None

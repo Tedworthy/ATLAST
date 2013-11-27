@@ -3,7 +3,8 @@
 *.pyc
 #vim swap files
 *.swp
-
+#pid files
+*.pid
 #ply generated flies
 parser.out
 parsetab.py
@@ -19,3 +20,5 @@ schema.xml
 
 certs/*
 *.*~
+.DS_Store
+._*

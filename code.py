@@ -1,3 +1,4 @@
+# -*- coding=utf-8 -*-
 import web
 import time
 import os
@@ -8,9 +9,14 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
-from dbbackend import query
+from semanticanalysis.semantic_analyser import SemanticAnalyser
+
 from dbbackend import schema
-import generate_schema 
+
+import dbbackend.generate_schema as gs
+import dbbackend.postgres.postgres_backend as pg
+import dbbackend.config_parser as cp
+
 from web.wsgiserver import CherryPyWSGIServer
 
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
@@ -19,8 +25,9 @@ render = web.template.render('templates/')
 
 urls = (
   '/', 'index',
-  '/schema', 'schematic',
-  '/login', 'login'
+  '/schema', 'db_schema',
+  '/login', 'login',
+  '/tables', 'tables'
 )
 
 logic_form = web.form.Form(
@@ -38,31 +45,27 @@ login_form = web.form.Form(
 
 class index:
   def GET(self):
-    form = logic_form()
-    form2 = login_form()
-    return render.index(form,form2)
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    logicForm = logic_form()
+    loginForm = login_form()
+    return render.index(logicForm,loginForm)
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
     # Validates the Form
-    form = logic_form()
-    form.validates()
+    logicForm = logic_form()
+    logicForm.validates()
 
-    logic_to_translate = form.logic.get_value()
+    logic_to_translate = logicForm.logic.get_value()
 
-    # RabbitMQ stuff - should work, but commented for the moment until codegen
-    # works.
-    # Create worker thread and start
+    # Create worker thread and start (CURRENTLY POINTLESS - see later comment)
     result = parsing.task.add_to_parse_q.delay(logic_to_translate)
 
-    ## Wait for worker thread to finish translation
+    # Wait for worker thread to finish translation
     while not result.ready():
       time.sleep(0.1)
 
-    ## Get the SQL out of the finished worker thread
-    #sql = result.get()
-
-    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
 
     # Set up a response dictionary
     response = {
@@ -76,71 +79,98 @@ class index:
 
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
     try:
-      result = parsing.parse_input(logic_to_translate)
-      symbolTable = SymTable()
-      codegenVisitor = GenericLogicASTVisitor(web.schema)
-      sqlGeneratorVisitor = SQLGenerator()
-      result.generateSymbolTable(symbolTable)
-      result.accept(codegenVisitor)
-      codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
-      sql = sqlGeneratorVisitor._sql
-      #TODO - Save the config_data to a session variable and use that instead
-      con = query.establish_connection(query.parse_config_file('dbbackend/db.cfg'))
-      query_result = query.query(con,sql)
-      if query_result['status'] == 'ok':
-        response['status'] = 'ok'
-        response['sql'] = sql
-        response['query_columns'] = query_result['columns']
-        response['query_rows'] = query_result['rows']
-      else:
-        response['status'] = 'db_error'
-        response['error'] = query_result['error']
+        result = parsing.parse_input(logic_to_translate)
 
-      con.close()
+        symbolTable = SymTable()
+        codegenVisitor = GenericLogicASTVisitor(web.schema)
+        sqlGeneratorVisitor = SQLGenerator()
+
+        result.generateSymbolTable(symbolTable)
+
+        # Semantic Analysis
+        semantic_analyser = SemanticAnalyser(result, web.schema)
+        semantic_analyser.analyse()
+
+        result.accept(codegenVisitor)
+
+        sqlGeneratorVisitor = SQLGenerator()
+        codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
+        sql = sqlGeneratorVisitor._sql
+
+        #TODO - Save the config_data to a session variable and use that instead
+        config_data = cp.parse_file('dbbackend/db.cfg')
+        con = pg.connect(config_data)
+        query_result = pg.query(con, sql)
+
+        # If the query ran correctly on the database
+        if query_result['status'] == 'ok':
+          response['status'] = 'ok'
+          response['sql'] = sql
+          response['query_columns'] = query_result['columns']
+          response['query_rows'] = query_result['rows']
+          response['error'] = ''
+        else:
+          response['status'] = 'db_error'
+          response['sql'] = sql
+          response['error'] = query_result['error']
+
+        con.close()
     except Exception, e:
       response['status'] = 'exception_error'
+      print e
       response['error'] = 'ERROR: %s' % str(e)
 
     return json.dumps(response)
 
-class schematic:
+class db_schema:
   def GET(self):
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
+
+class tables:
+  def GET(self):
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    return render.tables()
 
 class login:
   def POST(self):
     try:
       f = login_form()
       f.validates()
-      ## ADD SOME VALIDATION HERE##
 
       config_data =  web.input()
       print config_data
-      # TODO: Validate user input #
+
+      # TODO: Validate user input
       generate_schema.generate_db_schema(config_data)
+      # TODO: store in session variable not global variable
       web.schema = schema.Schema()
-      web.header('Content-Type','text/html; charset=utf-8', unique=True) 
+      web.header('Content-Type','application/json; charset=utf-8', unique=True)
       response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
       return json.dumps(response)
 
-    except Exception, e:
-      print 'I Died'
-      print str(e)
-      return json.dumps({'error' : str(e)})
+    except Exception, error:
+      print 'Login failed'
+      print str(error)
+      return json.dumps({'error' : str(error)})
 
   def GET(self):
+    web.header('Content-Type','application/json; charset=utf-8', unique = True)
     response = {'error' : 'ok', 'Content-Type' : 'text/plain'}
-    return json.dumps(response) 
+    return json.dumps(response)
 
 def is_test():
   if 'WEBPY_ENV' is os.environ:
       return os.environ['WEBPY_ENV'] == 'test'
 
-# Get global vars, create shared global instance of SQLSchema class.
-# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
 web.app = web.application(urls, globals())
-web.schema = schema.Schema()
 
 if (not is_test()) and  __name__ == "__main__":
+  gs.generate_db_schema(pg.connect(cp.parse_file('dbbackend/db.cfg')))
   web.app.run()
+
+# Get global vars, create shared global instance of SQLSchema class.
+# http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
+web.schema = schema.Schema()
+

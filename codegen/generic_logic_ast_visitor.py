@@ -7,6 +7,7 @@ generic intermediate representation for code generation.
 import visit as v
 import ast
 from codegen.ir import *
+
 from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
@@ -16,6 +17,8 @@ class GenericLogicASTVisitor():
     self._node_stack = []
     self._IR_stack = []
     self._schema = schema
+    self._alias = 1
+
 
   @v.on('node')
   def visit(self, node):
@@ -24,19 +27,24 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.IffNode)
   def visit(self, node):
-    print "Seen IffNode"
+    print "*** IR Generator:  Begin IffNode - ERROR ***"
+    print "*** IR Generator:  End IffNode - ERROR ***"
 
   @v.when(ast.OrNode)
   def visit(self, node):
-    print "Seen OrNode"
+    print "*** IR Generator:  Begin OrNode - ERROR ***"
+    print "*** IR Generator:  End OrNode - ERROR ***"
 
   @v.when(ast.AndNode)
   def visit(self, node):
+    print "*** IR Generator:  Begin AndNode ***"
     # Pop relevant objects off the stack
     right_node = self.popNode()
     left_node = self.popNode()
     right_ir = self.popIR()
     left_ir = self.popIR()
+    print '\tLeft IR: ' + str(left_ir)
+    print '\tRigh IR: ' + str(right_ir)
 
     # Sanity check the objects
     assert left_node
@@ -45,10 +53,10 @@ class GenericLogicASTVisitor():
     # Precompute some booleans to make cases easier to understand
     both_predicates = right_node['type'] == 'predicate' and \
                       left_node['type'] == 'predicate'
-    mixture_constraints_predicates = (right_node['type'] == 'predicate' and \
-                                      left_node['type'] == 'constraint') or \
-                                     (right_node['type'] == 'constraint' and \
-                                      left_node['type'] == 'predicate')
+    both_constraints = right_node['type'] == 'constraints' and \
+                      left_node['type'] == 'constraints'
+    mixture_constraints_predicates = left_node['type'] == 'constraint' or \
+                                     right_node['type'] == 'constraint'
 
     # Check the left and right nodes are both predicates
     if both_predicates:
@@ -56,19 +64,44 @@ class GenericLogicASTVisitor():
       left_keys = left_node['keys']
       right_keyvals = right_node['key_values']
       left_keyvals = left_node['key_values']
-      right_table = right_node['table']
-      left_table = left_node['table']
+      left_attr_vals = left_node['attr_values']
+      right_attr_vals = right_node['attr_values']
+      left_attrs = left_node['attrs']
+      right_attrs = right_node['attrs']
+
+      left_comb_vals = left_keyvals + left_attr_vals
+      right_comb_vals = right_keyvals + right_attr_vals
+      left_comb_keys = left_keys + left_attrs
+      right_comb_keys = right_keys + right_attrs
+
+      left_tables = set([x.getRelation() for x in left_keys])
+      right_tables = set([x.getRelation() for x in right_keys])
+      left_tables_alias = set([x.getAlias() for x in left_tables])
+      right_tables_alias = set([x.getAlias() for x in right_tables])
 
       # Determine if the tables are the same
-      if right_table.getName() == left_table.getName():
-        right_types = [x['type'] for x in right_keyvals]
-        left_types = [x['type'] for x in left_keyvals]
+      table_intersections = left_tables_alias.intersection(right_tables_alias)
+      for matching_table in table_intersections:
+
+        filtered_left_keyvals = []
+        filtered_right_keyvals = []
+
+        for i in range(0, len(left_keyvals)):
+          if left_keys[i].getRelation().getAlias() == matching_table:
+            filtered_left_keyvals.append(left_keyvals[i])
+
+        for i in range(0, len(right_keyvals)):
+          if right_keys[i].getRelation().getAlias() == matching_table:
+            filtered_right_keyvals.append(right_keyvals[i])
+
+        left_types = [x['type'] for x in filtered_left_keyvals]
+        right_types = [x['type'] for x in filtered_right_keyvals]
 
         # Check if every element is a variable
         if all(x == 'variable' for x in left_types) \
           and all(x == 'variable' for x in right_types):
-          right_ids = [x['node'].getIdentifier() for x in right_keyvals]
-          left_ids = [x['node'].getIdentifier() for x in left_keyvals]
+          right_ids = [x['node'].getIdentifier() for x in filtered_right_keyvals]
+          left_ids = [x['node'].getIdentifier() for x in filtered_left_keyvals]
           # Finally check if each and every element is the same
           if right_ids == left_ids:
             # Should push the equal table on to the stack
@@ -76,94 +109,134 @@ class GenericLogicASTVisitor():
             self.pushIR(left_ir)
             state = {
                 'type' : 'predicate',
-                'table' : left_table,
                 'key_values' : left_keyvals,
-                'keys' : left_keys
+                'keys' : left_keys,
+                'attrs' : left_attrs,
+                'attr_values' : left_attr_vals
               }
             self.pushNode(state)
+            print 'Generated IR : ' + str(left_ir)
+ #     print "\tAnd(",left_node,",",right_node,")"
+            print "*** IR Generator:  End AndNode ***"
+
             return
 
-        # Tables are still equal, but elements are variables with different
-        # identifiers, or are not all variables. Iterate through the keys,
-        # working out where to join.
+      # Tables may be equal, but elements are variables with different
+      # identifiers, or are not all variables. Iterate through the keys,
+      # working out where to join.
 
-        # Alias the relations
-        left_table.setAlias(left_table.getName() + '1')
-        right_table.setAlias(right_table.getName() + '2')
+      # Alias the relations. If there is only one alias in a given side of the
+      # and node, it is not a join and so will need to be aliased. Otherwise, a
+      # join has already occured, and so there is no need for a further alias.
 
-        join_constraints = None
+      if len(left_tables) == 1:
+        relation = iter(left_tables).next()
+        if (relation.getAlias() in right_tables_alias):
+          relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
+      if len(right_tables) == 1:
+        relation = iter(right_tables).next()
+        if (relation.getAlias() in left_tables_alias):
+          relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
 
-        # Loop through left and right keyvals
-        for i in range(0, len(left_keyvals)):
-          for j in range(0, len(right_keyvals)):
-            left_key  = left_keyvals[i]
-            right_key = right_keyvals[j]
-            left_rel_attr  = RelationAttributePair(left_table, left_keys[i])
-            right_rel_attr = RelationAttributePair(right_table, right_keys[j])
-            left_key_node_id  = left_key['node'].getIdentifier()
-            right_key_node_id = right_key['node'].getIdentifier()
-            # Check if both keys are variables
-            if left_key['type'] == right_key['type'] == 'variable':
-              # If the identifiers match, add this as a constraint
-              if left_key_node_id == right_key_node_id:
-                constraint = Constraint(Constraint.EQ, \
-                                        left_rel_attr, right_rel_attr)
-                if join_constraints is None:
-                  join_constraints = constraint
-                else:
-                  join_constraints = AndConstraint(join_constraints, constraint)
-            else:
-              print """a mixture of variables and constants found, add some
-              constraints"""
+      join_constraints = self.getJoinConstraints(left_comb_vals,
+          right_comb_vals, left_comb_keys, right_comb_keys);
 
-        # Join constraints calculated. Now work out how to join.
-        if join_constraints is None:
-          self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
-        else:
-          self.conjunctIR(left_ir, right_ir, JoinTypes.Join, join_constraints)
-        state = {'type' : 'join',
-                'table' : left_ir.getRelationTree(),
-                'key_values' : left_keyvals + right_keyvals
-                }
-        self.pushNode(state)
-        self.pushIR(left_ir)
+      # Join constraints calculated. Now work out how to join.
+      if join_constraints is None:
+        self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
-        print 'Tables are different'
+        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
+      state = {'type' : 'predicate',
+               'keys' : left_keys + right_keys,
+              'key_values' : left_keyvals + right_keyvals,
+              'attrs' : left_attrs + right_attrs,
+              'attr_values' : left_attr_vals + right_attr_vals
+              }
+      self.pushNode(state)
+      self.pushIR(left_ir)
     # Mixture of predicates and constraints
+    elif both_constraints:
+      self.conjunctIR(left_ir, right_ir)
+      self.pushIR(left_ir)
+      self.pushNode(left_node)
     elif mixture_constraints_predicates:
-      print 'Mixture!'
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
-        print 'Left is predicate'
         self.conjunctIR(left_ir, right_ir)
         self.pushIR(left_ir)
         self.pushNode(left_node)
       else:
-        print 'Right is predicate'
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    else:
-      print 'Both constraints'
-      self.conjunctIR(left_ir, right_ir)
-      self.pushIR(left_ir)
-      self.pushNode(left_node)
-    print "And(",left_node,",",right_node,")"
+
+    print right_ir
+    
+ #     print "\tAnd(",left_node,",",right_node,")"
+    print "*** IR Generator:  End AndNode ***"
 
   @v.when(ast.NotNode)
   def visit(self, node):
-    print "Seen NotNode"
+    child = self.popNode()
+    ir = self.popIR()
+    child_node = child['node']
+    constraint_tree = ir.getConstraintTree()
+
+    print '*** IR Generator: Begin NotNode ***'    
+    print '\tCurrent IR: ' + ir.__repr__()
+    ### CASE 1: ~Constraint
+    #### Simply insert a NOT node into the constraint tree
+    if child['type'] == 'constraint':
+      print '\tEvaluating NOT(Constraint)' 
+     
+      ## Quick and dirty hack
+      ## NOT(rest_of_tree) -> (rest_of_tree)
+      if isinstance(constraint_tree,UnaryConstraint):
+        print '\tRemoving redundant NOT'
+        ir.setConstraintTree(constraint_tree.getConstraint())
+      else:
+        print '\tAdding NOT(constraints) to tree'
+        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+  
+
+    ### Case 2: ~Predicate(x,y)
+    #### Compute the set difference
+    elif child['type'] == 'predicate':
+      print '\tEvaluating Predicate Negation'
+      # Case 2a: something of the form ~\Ez(foo_bar(x,z)) 
+      # in which case we need to add the constraint that x has no bar
+      if constraint_tree == None:
+        print '\tSet constraint that z IS NULL'
+        self.bind(child_node.getChildren()[1],NullNode(),ir)
+        print '\tZ Now bound'
+      # Case 2b: string literal -  ~foo_bar(x,'stringlit')
+      else:
+        print '\tCurrent constraint tree: ' 
+        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
+      
+    self.pushIR(ir)
+    state = {
+       'type' : 'constraint',
+       'notNode' : 'true',
+       'node' : node 
+    }
+    self.pushNode(state)
+    print '\tIR Generated: ' + str(ir)
+    print '*** IR Generator: End NotNode ***'    
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
-    print "Seen ForAllNode"
+    print ' *** IR Generator: Begin ForAllNode - Unimplemented ***'    
+    print ' *** IR Generator: End ForAllNode - Unimplemented ***'    
 
   @v.when(ast.ThereExistsNode)
   def visit(self, node):
-    print "Seen ThereExistsNode"
+    print '*** IR Generator: Begin ThereExistsNode - Unimplemented ***'    
+    print '*** IR Generator: End ThereExistsNode - Unimplemented ***'    
 
   @v.when(ast.PredicateNode)
   def visit(self, node):
+    print '*** IR Generator: Begin PredicateNode ***'    
     # Split out the attributes of the predicate
     attributes = node.getIdentifier().split('_')
     # Get the table name
@@ -183,24 +256,30 @@ class GenericLogicASTVisitor():
     # Reverse iterate over the parameters, matching them with keys or
     # attributes as necessary, binding them and passing keys up to any consumer
     # node i.e and AndNode.
-    keys.extend(binding_values)
-    print '#########',keys
-    for i in reversed(range(0, len(keys))):
-      attr = keys[i]
+    elements = keys[:]
+    elements.extend(binding_values)
+    #keys.extend(binding_values)
+    #print '\t#########',keys
+    for i in reversed(range(0, len(elements))):
+      attr = elements[i]
       child = self.popNode()
       ir = self.popIR()
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
+      if i < key_count:
+        child['key'] = True
+      elements[i] = rel_attr
+      key_values.insert(0, child)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
-          ir.setRelationAttributePairs([rel_attr])
+          ir.addRelationAttributePair(rel_attr)
         self.bind(child_node, rel_attr, ir)
-        print 'Binding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
-        if i < key_count:
-          key_values.append(child)
+        print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
+        #if (i < key_count):
+        #  key_values.append(child)
       elif child_type == 'string_lit':
         # Add a constraint that the attribute should equal the relevant value
         prev_constraints = ir.getConstraintTree()
@@ -211,7 +290,7 @@ class GenericLogicASTVisitor():
         else:
           ir.setConstraintTree(AndConstraint(prev_constraints, new_constraint))
       else:
-        print 'ConstantNode'
+        print '\tConstantNode'
       # Lazy instantiation of merged_ir.
       if merged_ir is None:
         merged_ir = ir
@@ -229,15 +308,19 @@ class GenericLogicASTVisitor():
     # consume.
     state = {
         'type': 'predicate',
-        'table': relation,
-        'key_values': key_values,
-        'keys': keys
+        'key_values': key_values[:key_count],
+        'keys': elements[:key_count],
+        'attr_values': key_values[key_count:],
+        'attrs': elements[key_count:],
+        'node' : node
       }
     self.pushNode(state)
-    print self._node_stack
+    print '\t' + str(merged_ir)
+    print '*** IR Generator: End PredicateNode ***'    
 
   @v.when(ast.BinaryOperatorNode)
   def visit(self, node):
+    print '*** IR Generator: Begin BinaryOperatorNode - Partially Implemented ***'    
     # Set up state and operator
     op = node.getOp()
     op = self.binOpToConstraintsOp(op)
@@ -266,17 +349,28 @@ class GenericLogicASTVisitor():
     prev_constraints = left_ir.getConstraintTree()
 
     if both_variables:
-      print 'Both variables'
+      print '\tBoth variables'
+#      print 'left_child: ' + left_child['node'] + '\tright_child: ' + right_child['node']
       # Bind two variables together
-      bind(left_child['node'], right_child['node'], left_ir)
+      if op  == Constraint.EQ:
+        self.bind(left_child['node'], right_child['node'], left_ir)
+      else:
+        print '\tAdd a constraint'
+        print '\tRight Node: '  + right_child['node'].getIdentifier()
+        constraint = Constraint(op, left_child['node'].getBoundValue(), VariableNode(right_child['node'].getIdentifier()))
+        #TODO check if prevconstraints is empty or not
+        left_ir.setConstraintTree(constraint)
+        
+        
+
 
     elif mixture_variables_string_lits:
       if left_variable_right_string_lit:
-        print 'Left variable, right string lit'
+        print '\tLeft variable, right string lit'
         var_node = left_child['node']
         lit_node = right_child['node']
       else:
-        print 'Right variable, left string lit'
+        print '\tRight variable, left string lit'
         var_node = right_child['node']
         lit_node = left_child['node']
 
@@ -292,7 +386,7 @@ class GenericLogicASTVisitor():
     # Finally, push relevant objects onto the stacks
     self.pushIR(left_ir)
     self.pushNode(state)
-    print "Seen BinaryOperatorNode"
+    print '*** IR Generator: End BinaryOperatorNode - Partially Implemented ***'    
 
   def binOpToConstraintsOp(self, op):
     return {
@@ -306,33 +400,40 @@ class GenericLogicASTVisitor():
 
   @v.when(ast.FunctionNode)
   def visit(self, node):
-    print "Seen FunctionNode"
+    print ' *** IR Generator: Begin FunctionNode - Unimplemented ***'   
+    print ' *** IR Generator: End FunctionNode - Unimplemented ***'     
 
   # TODO Refactor replicated code here...
   @v.when(ast.StringLitNode)
   def visit(self, node):
+    print '*** IR Generator: Begin StringLitNode ***'   
     ir = IR()
     state = {'type' : 'string_lit', 'node' : node}
     self.pushNode(state)
     self.pushIR(ir)
+    print '*** IR Generator: End StringLitNode ***'   
 
   # TODO ...and here...
   @v.when(ast.ConstantNode)
   def visit(self, node):
+    print ' *** IR Generator: Begin ConstantNode ***'   
+
     ir = IR()
     state = {'type' : 'constant', 'node' : node}
     self.pushNode(state)
     self.pushIR(ir)
-    print "Seen ConstantNode"
-
+    print ' *** IR Generator: End ConstantNode ***'   
   # TODO ...and here.
   @v.when(ast.VariableNode)
   def visit(self, node):
+    print '*** IR Generator: Begin VariableNode ***'   
     ir = IR()
     state = {'type' : 'variable', 'node' : node}
     self.pushNode(state)
+    print "\tSeen Variable: " + str(node.getIdentifier())
     self.pushIR(ir)
-    print "Seen VariableNode"
+    print '*** IR Generator: End VariableNode ***'   
+
 
 # Stack manipulating functions
 
@@ -348,6 +449,40 @@ class GenericLogicASTVisitor():
   def popIR(self):
     return self._IR_stack.pop()
 
+# Solve join constraints
+
+  def getGlobalAliasNumber(self):
+    result = self._alias
+    self._alias = self._alias + 1
+    return str(result)
+
+  # Loop through left and right keyvals
+  def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
+      right_keys):
+    join_constraints = None
+    for i in range(0, len(left_keyvals)):
+      for j in range(0, len(right_keyvals)):
+        left_key_val  = left_keyvals[i]
+        right_key_val = right_keyvals[j]
+        left_rel_attr  = left_keys[i]
+        right_rel_attr = right_keys[j]
+        # Check if both keys are variables
+        if left_key_val['type'] == right_key_val['type'] == 'variable':
+          left_key_node_id  = left_key_val['node'].getIdentifier()
+          right_key_node_id = right_key_val['node'].getIdentifier()
+          # If the identifiers match, add this as a constraint
+          if left_key_node_id == right_key_node_id:
+            constraint = Constraint(Constraint.EQ, \
+                                    left_rel_attr, right_rel_attr)
+            if join_constraints is None:
+              join_constraints = constraint
+            else:
+              join_constraints = AndConstraint(join_constraints, constraint)
+        else:
+          print """\ta mixture of variables and constants found, add some
+          constraints"""
+    return join_constraints
+
 # Bindings
 
   def bind(self, node, rel_attr, ir):
@@ -357,9 +492,8 @@ class GenericLogicASTVisitor():
       assert previous_binding is not None
       # Add to the constraints
       prev_constraints = ir.getConstraintTree()
-      print '#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
-      new_constraint = Constraint(Constraint.EQ, rel_attr, \
-        previous_binding)
+      print '\t#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
+      new_constraint = Constraint(Constraint.EQ, rel_attr, previous_binding)
       merged_constraint = None;
       if prev_constraints is None:
         ir.setConstraintTree(new_constraint)
@@ -376,9 +510,7 @@ class GenericLogicASTVisitor():
     Concatenates together two sets of relation attribute pairs, updating the
     left IR. This is primarily used when merging together IRs
     """
-    rel_attr_pairs = left_ir.getRelationAttributePairs()
-    rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
-    left_ir.setRelationAttributePairs(rel_attr_pairs)
+    left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs())
 
   def combineRelations(self, left_ir, right_ir, join_type, keys=None):
     """
@@ -437,3 +569,5 @@ class GenericLogicASTVisitor():
 
   def getIR(self):
     return self._IR_stack[0]
+
+
