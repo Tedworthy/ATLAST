@@ -114,6 +114,7 @@ class GenericLogicASTVisitor():
       else:
         self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
       state = {'type' : 'predicate',
+               'keys' : left_keys + right_keys,
               'key_values' : left_keyvals + right_keyvals
               }
       self.pushNode(state)
