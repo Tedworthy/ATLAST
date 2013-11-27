@@ -30,10 +30,10 @@ def p_formula_iff(p):
   p[0] = ast.OrNode(ast.AndNode(p[1],p[3]),
                     ast.AndNode(ast.NotNode(p[1]),ast.NotNode(p[3])))
 
-#Automatically turn A=>B into ~A V B
+#Automatically turn A=>B into ~A V B into ~ (A /\ ~ B)
 def p_formula_implies(p):
   'formula : formula IMPLIES atomicFormula'
-  p[0] =  ast.OrNode(ast.NotNode(p[1]),p[3])
+  p[0] =   ast.NotNode(ast.AndNode(p[1],ast.NotNode(p[3])))
 
 ### A \/ B ###
 def p_formula_or_error_right(p):
