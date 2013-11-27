@@ -1,0 +1,7 @@
+∃x(films_title(x, y) ∧(films_origin(x, 'France') ∨ films_origin(x, 'Australia')))
+∃x,len(films_director(x, dir) ∧ films_length(x, len) ∧ len > '100')
+∃x,y(films_director(x, dir) ∧ films_director(y, dir) ∧ films_length(y, len) ∧ len > 100)
+∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) → film_length(y, len) ∧ len ))
+∃x(films_title(x, y) ∧ ¬films_director(x, z)) ∧ /  ))
+∃x(casting_part(x, y) ∧ casting_aid(x, a) ∧ actors_name(a, b))
+(films_title(x, title) ∧ films_director(x, director) ∧ ¬(films_director(x, 'Doug Liman')) ∧ ¬(films_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)

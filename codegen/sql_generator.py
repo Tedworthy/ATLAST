@@ -88,8 +88,8 @@ class SQLGenerator():
     leftString = self._sql_from_stack.pop()
     node.getConstraintTree().accept(self)
     constraintString = self._sql_where_stack.pop()
-    joinString = "(" + leftString + ") JOIN " + \
-                 "(" + rightString + ") ON " + constraintString
+    joinString = leftString + " JOIN " + \
+                 rightString + " ON " + constraintString
     self._sql_from_stack.append(joinString)
     print '*** SQL Generator: End EquiJoinNode ***'
 
@@ -150,7 +150,7 @@ class SQLGenerator():
     if constraints is not None:
       constraints.accept(self)
       childString = self._sql_where_stack.pop()
-      constraintString = node.getOp() + "(" + childString + ")"
+      constraintString = node.getOp() + ' ' + childString + ' '
       print '\tUnary Constraint Added: ' + constraintString
       self._sql_where_stack.append(constraintString)
     else:
