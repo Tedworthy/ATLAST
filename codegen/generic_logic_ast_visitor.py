@@ -80,17 +80,34 @@ class GenericLogicASTVisitor():
       right_tables_alias = set([x.getAlias() for x in right_tables])
 
       # Determine if the tables are the same
-      if left_tables_alias == right_tables_alias:
-        right_types = [x['type'] for x in right_keyvals]
-        left_types = [x['type'] for x in left_keyvals]
+      table_intersections = left_tables_alias.intersection(right_tables_alias)
+      for matching_table in table_intersections:
+
+        filtered_left_keyvals = []
+        filtered_right_keyvals = []
+
+        for i in range(0, len(left_keyvals)):
+          if left_keys[i].getRelation().getAlias() == matching_table:
+            filtered_left_keyvals.append(left_keyvals[i])
+
+        for i in range(0, len(right_keyvals)):
+          if right_keys[i].getRelation().getAlias() == matching_table:
+            filtered_right_keyvals.append(right_keyvals[i])
+
+        left_types = [x['type'] for x in filtered_left_keyvals]
+        right_types = [x['type'] for x in filtered_right_keyvals]
 
         # Check if every element is a variable
         if all(x == 'variable' for x in left_types) \
           and all(x == 'variable' for x in right_types):
-          right_ids = [x['node'].getIdentifier() for x in right_keyvals]
-          left_ids = [x['node'].getIdentifier() for x in left_keyvals]
+          right_ids = [x['node'].getIdentifier() for x in filtered_right_keyvals]
+          left_ids = [x['node'].getIdentifier() for x in filtered_left_keyvals]
+          print 'ALL VARIABLES'
           # Finally check if each and every element is the same
+          print left_ids
+          print right_ids
           if right_ids == left_ids:
+            print 'EQUAL IDS'
             # Should push the equal table on to the stack
             self.conjunctIR(left_ir, right_ir)
             self.pushIR(left_ir)
