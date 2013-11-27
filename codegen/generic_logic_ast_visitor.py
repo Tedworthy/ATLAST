@@ -115,12 +115,15 @@ class GenericLogicASTVisitor():
       # Alias the relations. If there is only one alias in a given side of the
       # and node, it is not a join and so will need to be aliased. Otherwise, a
       # join has already occured, and so there is no need for a further alias.
+
       if len(left_tables) == 1:
         relation = iter(left_tables).next()
-        relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
+        if (relation.getAlias() in right_tables_alias):
+          relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
       if len(right_tables) == 1:
         relation = iter(right_tables).next()
-        relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
+        if (relation.getAlias() in left_tables_alias):
+          relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
 
       join_constraints = self.getJoinConstraints(left_comb_vals,
           right_comb_vals, left_comb_keys, right_comb_keys);
