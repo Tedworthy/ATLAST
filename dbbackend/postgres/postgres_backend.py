@@ -16,7 +16,16 @@ def query(con, query):
   try:
     cur = con.cursor()
     cur.execute(query)
-    result['rows'] = cur.fetchall()
+
+    # Convert all rows to string representation
+    result['rows'] = []
+    for row in cur.fetchall():
+      result_row = []
+      for val in row:
+        result_row.append(str(val))
+      result['rows'].append(result_row)
+
+#    result['rows'] = cur.fetchall()
     result['columns'] = [desc[0] for desc in cur.description]
     result['status'] = 'ok'
   except psycopg2.DatabaseError, e:
