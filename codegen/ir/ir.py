@@ -35,15 +35,15 @@ class IR():
 
   def __repr__(self):
     string = "IR = {\n"
-    string += "  Relation Attribute Pairs: ["
-    string += ", ".join(map(str, self._relation_attribute_pairs))
-    string += "]\n"
-    string += "  Relation Tree: "
+    string += "\t  Relation Attribute Pairs: ["
+    string += '\t, '.join(map(str,self._relation_attribute_pairs))
+    string += "\t]\n"
+    string += "\t  Relation Tree: "
     string += str(self._relation_tree)
-    string += "\n"
-    string += "  Constraint Tree: "
+    string += "\t\n"
+    string += "\t  Constraint Tree: "
     string += str(self._constraint_tree)
     string += "\n"
-    string += "}"
+    string += "\t}"
     return string
 

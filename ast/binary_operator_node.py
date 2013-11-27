@@ -20,6 +20,17 @@ class BinaryOperatorNode(Node):
   OR = 7
   IMPLIES = 8
   IFF = 9
+
+  op_map = {   0: 'EQ',     
+               1: 'LT',     
+               2: 'LTE',    
+               3: 'GT',     
+               4: 'GTE',    
+               5: 'NEQ',    
+               6: 'AND',    
+               7: 'OR',     
+               8: 'IMPLIES',
+               9: 'IFF' }     
   # Takes two nodes representing the LHS and the RHS of the formula.
   def __init__(self, left, right, op):
     Node.__init__(self)
@@ -28,10 +39,13 @@ class BinaryOperatorNode(Node):
     self._op = op
 
   def getLeft(self):
-    return Node.getChild(0)
+    return self.getChild(0)
 
   def getRight(self):
-    return Node.getChild(1)
+    return self.getChild(1)
 
   def getOp(self):
     return self._op
+
+  def __repr__(self):
+    return self.op_map[self.getOp()] + '(' + str(self.getLeft()) + ',' + str(self.getRight()) + ')'

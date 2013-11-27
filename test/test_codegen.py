@@ -278,7 +278,7 @@ class TestCodeGen():
   def test_negate_two_conditions(self):
     logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧  ¬(director = 'Doug Liman') ∧  ¬(title = 'The Bourne Ultimatum') )".decode('utf8')
 
-    sql = "SELECT films.title FROM films WHERE NOT(films.director = 'Doug Liman') AND NOT(films.title = 'The Bourne Ultimatum') "
+    sql = "SELECT films.title, films.director FROM films WHERE NOT(films.director = 'Doug Liman') AND NOT(films.title = 'The Bourne Ultimatum') "
 
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
   

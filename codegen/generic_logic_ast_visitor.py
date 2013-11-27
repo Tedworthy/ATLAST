@@ -43,6 +43,9 @@ class GenericLogicASTVisitor():
     left_node = self.popNode()
     right_ir = self.popIR()
     left_ir = self.popIR()
+    print '\tLeft IR: ' + str(left_ir)
+    print '\tRigh IR: ' + str(right_ir)
+
 
     # Sanity check the objects
     assert left_node
@@ -89,6 +92,10 @@ class GenericLogicASTVisitor():
                 'keys' : left_keys
               }
             self.pushNode(state)
+            print 'Generated IR : ' + str(left_ir)
+ #     print "\tAnd(",left_node,",",right_node,")"
+            print "*** IR Generator:  End AndNode ***"
+
             return
 
       # Tables may be equal, but elements are variables with different
@@ -121,24 +128,22 @@ class GenericLogicASTVisitor():
       self.pushIR(left_ir)
     # Mixture of predicates and constraints
     elif both_constraints:
-      print '\tBoth constraints'
       self.conjunctIR(left_ir, right_ir)
       self.pushIR(left_ir)
       self.pushNode(left_node)
     elif mixture_constraints_predicates:
-      print '\tMixture!'
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
-        print '\tLeft is predicate'
         self.conjunctIR(left_ir, right_ir)
         self.pushIR(left_ir)
         self.pushNode(left_node)
       else:
-        print '\tRight is predicate'
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
+
     print right_ir
+    
  #     print "\tAnd(",left_node,",",right_node,")"
     print "*** IR Generator:  End AndNode ***"
 
@@ -150,7 +155,6 @@ class GenericLogicASTVisitor():
     constraint_tree = ir.getConstraintTree()
 
     print '*** IR Generator: Begin NotNode ***'    
-    print '\tType of child: ' + child['type']
     print '\tCurrent IR: ' + ir.__repr__()
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
@@ -189,7 +193,7 @@ class GenericLogicASTVisitor():
        'node' : node 
     }
     self.pushNode(state)
-
+    print '\tIR Generated: ' + str(ir)
     print '*** IR Generator: End NotNode ***'    
 
   @v.when(ast.ForAllNode)

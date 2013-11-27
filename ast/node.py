@@ -14,7 +14,7 @@ class Node():
     self._symTable = None
 
   def getChild(self, num):
-    if num >= _numChildren:
+    if num >= self._numChildren:
       raise IndexError("Index", num, "out of bounds in Node.getChild")
     return self._children[num]
 

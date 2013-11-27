@@ -7,11 +7,12 @@ from lexer import *
 import ast
 
 precedence = (
-  ('right', 'NOT'),
+
   ('left', 'IFF'),
   ('left', 'IMPLIES'),
   ('left', 'OR'),
   ('left', 'AND'),
+  ('right', 'NOT'),
 )
 
 # Formula grammar
@@ -72,7 +73,7 @@ def p_formula_not_error(p):
 
 def p_formula_not(p):
   'formula : NOT formula '
-  print 'reducing to NOT formula'
+  print 'Reducing to NOT(' + str(p[2]) + ')'
   p[0] = ast.NotNode(p[2])
 
 

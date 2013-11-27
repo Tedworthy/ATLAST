@@ -150,7 +150,7 @@ class SQLGenerator():
     if constraints is not None:
       constraints.accept(self)
       childString = self._sql_where_stack.pop()
-      constraintString = node.getOp() + ' ' + childString + ' '
+      constraintString = node.getOp() + ' (' + childString + ' )'
       print '\tUnary Constraint Added: ' + constraintString
       self._sql_where_stack.append(constraintString)
     else:
