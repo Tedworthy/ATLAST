@@ -316,8 +316,27 @@ class GenericLogicASTVisitor():
 
     if both_variables:
       print 'Both variables'
+#      print 'left_child: ' + left_child['node'] + '\tright_child: ' + right_child['node']
       # Bind two variables together
-      self.bind(left_child['node'], right_child['node'], left_ir)
+      if op  == Constraint.EQ:
+        self.bind(left_child['node'], right_child['node'], left_ir)
+      elif op == Constraint.LTE:
+        print '\tAdd a constraint'
+      elif op == Constraint.LT:
+        print '\tAdd a constraint'
+      elif op == Constraint.GTE:
+        print '\tAdd a constraint'
+      elif op == Constraint.GT:
+        print '\tAdd a constraint'
+        print '\tRight Node: '  + right_child['node'].getIdentifier()
+        constraint = Constraint(op, left_child['node'].getBoundValue(), VariableNode(right_child['node'].getIdentifier()))
+        #TODO check if prevconstraints is empty or not
+        left_ir.setConstraintTree(constraint)
+        
+        
+      elif op == Constraint.NEQ:
+        print '\tAdd a constraint'
+
 
     elif mixture_variables_string_lits:
       if left_variable_right_string_lit:
@@ -381,7 +400,7 @@ class GenericLogicASTVisitor():
     state = {'type' : 'variable', 'node' : node}
     self.pushNode(state)
     self.pushIR(ir)
-    print "Seen VariableNode"
+    print "Seen Variable: " + str(node.getIdentifier())
 
 # Stack manipulating functions
 
@@ -400,7 +419,6 @@ class GenericLogicASTVisitor():
 # Bindings
 
   def bind(self, node, rel_attr, ir):
-    print 'In Bind'
     if not node.bindTo(rel_attr):
       # Get the previous binding
       previous_binding = node.getBoundValue()

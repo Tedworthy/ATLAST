@@ -10,6 +10,7 @@ from equijoin_node import EquiJoinNode
 from crossjoin_node import CrossJoinNode
 from relation_node import RelationNode
 from string_literal import StringLiteral
+from variable_node import VariableNode
 
 from join_types import JoinTypes
 from constraint_bin_op import ConstraintBinOp
