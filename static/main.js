@@ -98,7 +98,8 @@ $(document).ready(function() {
       }).done(function(response) {
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          $("textarea#sql_result").text(response.sql);
+          var sql_result = response.sql;
+          $("textarea#sql_result").text(sql_result);
 
           // Create an HTML table
           var table = '<table border="1" align="center"> <tr>';
@@ -122,9 +123,19 @@ $(document).ready(function() {
           $("#results_table").html(table);
         } else {
           // Something went wrong, so print the error.
-          $("textarea#sql_result").text(response.sql.concat("\n\n\nDatabase error message:\n", response.error));
+          if(response.sql !== '') {
+            var sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
+          } else {
+            var sql_result = response.error;
+          }
+          
+          var sql_result_lines = sql_result.split("\n");  
+          $("textarea#sql_result").text(sql_result);
           $("#results_table").html("");
         }
+        
+        var sql_result_lines = sql_result.split("\n");  
+        $("textarea#sql_result").css("height", (sql_result_lines.length * 16 + 8).toString().concat("px"));
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
