@@ -224,16 +224,20 @@ class GenericLogicASTVisitor():
     # Reverse iterate over the parameters, matching them with keys or
     # attributes as necessary, binding them and passing keys up to any consumer
     # node i.e and AndNode.
-    keys.extend(binding_values)
-    print '\t#########',keys
-    for i in reversed(range(0, len(keys))):
-      attr = keys[i]
+    elements = keys[:]
+    elements.extend(binding_values)
+    #keys.extend(binding_values)
+    #print '\t#########',keys
+    for i in reversed(range(0, len(elements))):
+      attr = elements[i]
       child = self.popNode()
       ir = self.popIR()
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
-      keys[i] = rel_attr
+      elements[i] = rel_attr
+      if i < key_count:
+        key_values.append(child)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
@@ -241,8 +245,8 @@ class GenericLogicASTVisitor():
           ir.setRelationAttributePairs([rel_attr])
         self.bind(child_node, rel_attr, ir)
         print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
-        if i < key_count:
-          key_values.append(child)
+        #if (i < key_count):
+        #  key_values.append(child)
       elif child_type == 'string_lit':
         # Add a constraint that the attribute should equal the relevant value
         prev_constraints = ir.getConstraintTree()
@@ -272,7 +276,7 @@ class GenericLogicASTVisitor():
     state = {
         'type': 'predicate',
         'key_values': key_values,
-        'keys': keys,
+        'keys': elements,
         'node' : node
       }
     self.pushNode(state)
