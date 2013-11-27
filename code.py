@@ -95,6 +95,7 @@ class index:
         con = pg.connect(config_data)
         query_result = pg.query(con, sql)
 
+        # If the query ran correctly on the database
         if query_result['status'] == 'ok':
           response['status'] = 'ok'
           response['sql'] = sql
