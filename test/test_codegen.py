@@ -285,7 +285,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_negate_two_conditions_in_predicate(self):
     logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧ ¬(films_director(x, 'Doug Liman')) ∧ ¬(films_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
-    sql = "SELECT films.title FROM films WHERE NOT(films.director = 'Doug Liman') AND NOT(films.title = 'The Bourne Ultimatum') AND films.fid <= 3"
+    sql = "SELECT films.title, films.director FROM films WHERE NOT(films.director = 'Doug Liman') AND NOT(films.title = 'The Bourne Ultimatum') AND films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
