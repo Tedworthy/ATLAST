@@ -74,4 +74,5 @@ class VariableNode(Node):
     # this case the variable must be free (it has not been found quanitified
     # anywhere else).
     return val._symTable.hasParent() or self == val
-
+  def __repr__(self):
+    return self.getIdentifier()

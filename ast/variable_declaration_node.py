@@ -11,3 +11,6 @@ class VariableDeclarationNode(Node):
 
   def setBoundValue(self, boundValue):
     self._boundValue = boundValue
+
+  def __repr__(self):
+    return str(self.getBoundValue())

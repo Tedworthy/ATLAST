@@ -14,3 +14,6 @@ class UnaryOperatorNode(Node):
   def __init__(self, formula):
     Node.__init__(self)
     self.setChild(0, formula)
+
+  def __repr__(self):
+    return 'UnaryOp(' + str(self.getChild(0)) + ')'
