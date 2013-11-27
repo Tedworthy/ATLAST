@@ -6,3 +6,6 @@ class StringLiteral(IRNode):
 
   def getString(self):
     return self._string
+
+  def __repr__(self):
+    return  "'" + self._string + "'"

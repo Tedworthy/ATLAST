@@ -159,6 +159,7 @@ class GenericLogicASTVisitor():
         print '\tRemoving redundant NOT'
         ir.setConstraintTree(constraint_tree.getConstraint())
       else:
+        print '\tAdding NOT(constraints) to tree'
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
   
 

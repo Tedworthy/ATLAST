@@ -12,4 +12,5 @@ class UnaryConstraint(IRNode):
   def getOp(self):
     return self._op
 
-
+  def __repr__(self):
+    return self.getOp() + '(' + str(self.getConstraint()) + ')'

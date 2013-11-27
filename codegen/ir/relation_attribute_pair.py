@@ -14,3 +14,6 @@ class RelationAttributePair(IRNode):
   def getAttribute(self):
     return self._attribute
 
+
+  def __repr__(self):
+    return str(self.getRelation()) + '_' + str(self.getAttribute())
