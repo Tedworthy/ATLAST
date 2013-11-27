@@ -25,7 +25,8 @@ render = web.template.render('templates/')
 urls = (
   '/', 'index',
   '/schema', 'db_schema',
-  '/login', 'login'
+  '/login', 'login',
+  '/tables', 'tables'
 )
 
 logic_form = web.form.Form(
@@ -80,11 +81,12 @@ class index:
         result = parsing.parse_input(logic_to_translate)
 
         symbolTable = SymTable()
-        codegenVisitor = GenericLogicASTVisitor(web.schema)
-        sqlGeneratorVisitor = SQLGenerator()
         result.generateSymbolTable(symbolTable)
+        
+        codegenVisitor = GenericLogicASTVisitor(web.schema)
         result.accept(codegenVisitor)
 
+        sqlGeneratorVisitor = SQLGenerator()
         codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
         sql = sqlGeneratorVisitor._sql
      
@@ -93,13 +95,16 @@ class index:
         con = pg.connect(config_data)
         query_result = pg.query(con, sql)
 
+        # If the query ran correctly on the database
         if query_result['status'] == 'ok':
           response['status'] = 'ok'
           response['sql'] = sql
           response['query_columns'] = query_result['columns']
           response['query_rows'] = query_result['rows']
+          response['error'] = ''
         else:
           response['status'] = 'db_error'
+          response['sql'] = sql
           response['error'] = query_result['error']
 
         con.close()
@@ -115,6 +120,11 @@ class db_schema:
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
+
+class tables:
+  def GET(self):
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    return render.tables()
 
 class login:
   def POST(self):
