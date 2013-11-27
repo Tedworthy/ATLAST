@@ -98,7 +98,8 @@ $(document).ready(function() {
       }).done(function(response) {
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          $("textarea#sql_result").text(response.sql);
+          var sql_result = response.sql;
+          $("textarea#sql_result").text(sql_result);
 
           // Create an HTML table
           var table = '<table border="1" align="center"> <tr>';
@@ -129,6 +130,9 @@ $(document).ready(function() {
           $("textarea#sql_result").css("height", "200px");
           $("#results_table").html("");
         }
+        
+        var sql_result_lines = sql_result.split("\n");  
+        alert(sql_result_lines.length);
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
