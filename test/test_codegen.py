@@ -300,7 +300,7 @@ class TestCodeGen():
     logic_implies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
     logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
     logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
-    sql = "SELECT films.title FROM films WHERE ¬(director == 'Ted Sales')"
+    sql = "SELECT films.title FROM films WHERE NOT (director == 'Ted Sales')"
     assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
     assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
     assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
