@@ -1,3 +1,4 @@
+import error.lexer_exceptions as le
 import ply.lex as lex
 
 class TokenEnum(object):
@@ -99,7 +100,15 @@ def t_newline(t):
   t.lexer.lineno += len(t.value)
 
 def t_error(t):
-  print "Illegal character '%s'" % t.value[0]
+  last_newline = t.lexer.lexdata.rfind('\n', 0, t.lexer.lexpos)
+  last_newline = max(0, last_newline)
+  position = t.lexer.lexpos - last_newline + 1
+  if not t.lexer.error:
+    t.lexer.error = le.LexerException(t.lexer.lineno, position, \
+        unicode(t.value[0]))
   t.lexer.skip(1)
 
-lex.lex()
+def getLexer():
+  lexer = lex.lex()
+  lexer.error = None
+  return lexer

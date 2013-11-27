@@ -79,6 +79,7 @@ class index:
     # TODO: This currently overwrites all of the effort made by our RabbitMQ setup!!
     try:
         result = parsing.parse_input(logic_to_translate)
+        print 'RESULT FROM PARSER WAS "%s"' % result
 
         symbolTable = SymTable()
         result.generateSymbolTable(symbolTable)
