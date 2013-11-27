@@ -9,6 +9,7 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
+from semanticanalysis.semantic_analyser import SemanticAnalyser
 import dbbackend.schema as schema
 import dbbackend.postgres.postgres_backend as pg
 import dbbackend.config_parser as cp
@@ -28,12 +29,17 @@ class TestCodeGen():
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logic)
 
+    # Run dat semantic analysis bro
+    db_schema = schema.Schema()
+    semantic_analyser = SemanticAnalyser(logicTree, db_schema)
+    semantic_analyser.analyse()
+
     # Generate the Symbol Table from the Logic Tree
     symbolTable = SymTable()
     logicTree.generateSymbolTable(symbolTable)
 
     # Generate an IR from the Logic Tree (uses Symbol Table)
-    irGenerator = GenericLogicASTVisitor(schema.Schema())
+    irGenerator = GenericLogicASTVisitor(db_schema)
     logicTree.accept(irGenerator)
 
     # Pull out the SQL IR
