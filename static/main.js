@@ -125,7 +125,7 @@ $(document).ready(function() {
           var sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
           //var sql_result_lines = sql_result.split("\n");  
           //alert(sql_result_lines.length);
-          $("textarea#sql_result").text(sql_result));
+          $("textarea#sql_result").text(sql_result);
           $("textarea#sql_result").css("height", "200px");
           $("#results_table").html("");
         }
