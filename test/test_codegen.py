@@ -45,7 +45,7 @@ class TestCodeGen():
     translatedSQL = sqlGenerator.getSQL()
 
     # If the query result does not match the expectation, let the user know.
-    if translatedSQL != expectedSQL:
+    if translatedSQL.replace('\n', ' ') != expectedSQL.replace('\n', ' '):
       print "WARNING: Translated SQL does not match the expected result"
       print "Translated SQL: {"
       print translatedSQL
