@@ -61,7 +61,7 @@ class TestCodeGen():
     translatedResult = pg.query(con, translatedSQL.decode('ascii', 'ignore'))
     expectedResult = pg.query(con, expectedSQL)
     con.close()
-    result = translatedResult == expectedResult
+    result = translatedResult.replace('\n', ' ') == expectedResult
     if not result:
       print translatedResult, " != ", expectedResult
 
