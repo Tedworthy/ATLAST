@@ -12,7 +12,6 @@ from copy import copy, deepcopy
 
 class GenericLogicASTVisitor():
 
-
   def __init__(self, schema):
     # Instance variables go here, if necessary
     self._node_stack = []
@@ -61,11 +60,14 @@ class GenericLogicASTVisitor():
       left_keys = left_node['keys']
       right_keyvals = right_node['key_values']
       left_keyvals = left_node['key_values']
-      right_table = right_node['table']
-      left_table = left_node['table']
+
+      left_tables = set([x.getRelation() for x in left_keys])
+      right_tables = set([x.getRelation() for x in right_keys])
+      left_tables_alias = set([x.getAlias() for x in left_tables])
+      right_tables_alias = set([x.getAlias() for x in right_tables])
 
       # Determine if the tables are the same
-      if right_table.getName() == left_table.getName():
+      if left_tables_alias == right_tables_alias:
         right_types = [x['type'] for x in right_keyvals]
         left_types = [x['type'] for x in left_keyvals]
 
@@ -81,7 +83,6 @@ class GenericLogicASTVisitor():
             self.pushIR(left_ir)
             state = {
                 'type' : 'predicate',
-                'table' : left_table,
                 'key_values' : left_keyvals,
                 'keys' : left_keys
               }
@@ -92,21 +93,25 @@ class GenericLogicASTVisitor():
       # identifiers, or are not all variables. Iterate through the keys,
       # working out where to join.
 
-      # Alias the relations
-      left_table.setAlias(left_table.getName() + self.getGlobalAliasNumber())
-      right_table.setAlias(right_table.getName() +
-          self.getGlobalAliasNumber())
+      # Alias the relations. If there is only one alias in a given side of the
+      # and node, it is not a join and so will need to be aliased. Otherwise, a
+      # join has already occured, and so there is no need for a further alias.
+      if len(left_tables) == 1:
+        relation = iter(left_tables).next()
+        relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
+      if len(right_tables) == 1:
+        relation = iter(right_tables).next()
+        relation.setAlias(relation.getName() + self.getGlobalAliasNumber())
 
       join_constraints = self.getJoinConstraints(left_keyvals, right_keyvals,
-          left_keys, right_keys, left_table, right_table);
+          left_keys, right_keys);
 
       # Join constraints calculated. Now work out how to join.
       if join_constraints is None:
         self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
         self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
-      state = {'type' : 'join',
-              'table' : left_ir.getRelationTree(),
+      state = {'type' : 'predicate',
               'key_values' : left_keyvals + right_keyvals
               }
       self.pushNode(state)
@@ -219,6 +224,7 @@ class GenericLogicASTVisitor():
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
+      keys[i] = rel_attr
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
@@ -256,7 +262,6 @@ class GenericLogicASTVisitor():
     # consume.
     state = {
         'type': 'predicate',
-        'table': relation,
         'key_values': key_values,
         'keys': keys,
         'node' : node
@@ -404,18 +409,18 @@ class GenericLogicASTVisitor():
 
   # Loop through left and right keyvals
   def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
-      right_keys, left_table, right_table):
+      right_keys):
     join_constraints = None
     for i in range(0, len(left_keyvals)):
       for j in range(0, len(right_keyvals)):
-        left_key  = left_keyvals[i]
-        right_key = right_keyvals[j]
-        left_rel_attr  = RelationAttributePair(left_table, left_keys[i])
-        right_rel_attr = RelationAttributePair(right_table, right_keys[j])
-        left_key_node_id  = left_key['node'].getIdentifier()
-        right_key_node_id = right_key['node'].getIdentifier()
+        left_key_val  = left_keyvals[i]
+        right_key_val = right_keyvals[j]
+        left_rel_attr  = left_keys[i]
+        right_rel_attr = right_keys[j]
+        left_key_node_id  = left_key_val['node'].getIdentifier()
+        right_key_node_id = right_key_val['node'].getIdentifier()
         # Check if both keys are variables
-        if left_key['type'] == right_key['type'] == 'variable':
+        if left_key_val['type'] == right_key_val['type'] == 'variable':
           # If the identifiers match, add this as a constraint
           if left_key_node_id == right_key_node_id:
             constraint = Constraint(Constraint.EQ, \
