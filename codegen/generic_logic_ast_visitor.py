@@ -102,12 +102,8 @@ class GenericLogicASTVisitor():
           and all(x == 'variable' for x in right_types):
           right_ids = [x['node'].getIdentifier() for x in filtered_right_keyvals]
           left_ids = [x['node'].getIdentifier() for x in filtered_left_keyvals]
-          print 'ALL VARIABLES'
           # Finally check if each and every element is the same
-          print left_ids
-          print right_ids
           if right_ids == left_ids:
-            print 'EQUAL IDS'
             # Should push the equal table on to the stack
             self.conjunctIR(left_ir, right_ir)
             self.pushIR(left_ir)
@@ -279,7 +275,7 @@ class GenericLogicASTVisitor():
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
-          ir.setRelationAttributePairs([rel_attr])
+          ir.addRelationAttributePair(rel_attr)
         self.bind(child_node, rel_attr, ir)
         print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         #if (i < key_count):
@@ -514,9 +510,7 @@ class GenericLogicASTVisitor():
     Concatenates together two sets of relation attribute pairs, updating the
     left IR. This is primarily used when merging together IRs
     """
-    rel_attr_pairs = left_ir.getRelationAttributePairs()
-    rel_attr_pairs.extend(right_ir.getRelationAttributePairs())
-    left_ir.setRelationAttributePairs(rel_attr_pairs)
+    left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs())
 
   def combineRelations(self, left_ir, right_ir, join_type, keys=None):
     """
