@@ -45,7 +45,7 @@ class TestCodeGen():
     translatedSQL = sqlGenerator.getSQL()
 
     # If the query result does not match the expectation, let the user know.
-    if translatedSQL != expectedSQL:
+    if translatedSQL.replace('\n', ' ') != expectedSQL.replace('\n', ' '):
       print "WARNING: Translated SQL does not match the expected result"
       print "Translated SQL: {"
       print translatedSQL
@@ -61,7 +61,7 @@ class TestCodeGen():
     translatedResult = pg.query(con, translatedSQL.decode('ascii', 'ignore'))
     expectedResult = pg.query(con, expectedSQL)
     con.close()
-    result = translatedResult.replace('\n', ' ') == expectedResult
+    result = translatedResult == expectedResult
     if not result:
       print translatedResult, " != ", expectedResult
 
