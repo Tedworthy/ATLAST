@@ -25,7 +25,8 @@ render = web.template.render('templates/')
 urls = (
   '/', 'index',
   '/schema', 'db_schema',
-  '/login', 'login'
+  '/login', 'login',
+  '/tables', 'tables'
 )
 
 logic_form = web.form.Form(
@@ -115,6 +116,11 @@ class db_schema:
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
     schema_dict = web.schema.getAllData()
     return json.dumps(schema_dict)
+
+class tables:
+  def GET(self):
+    web.header('Content-Type','text/html; charset=utf-8', unique = True)
+    return render.tables()
 
 class login:
   def POST(self):
