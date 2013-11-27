@@ -131,7 +131,7 @@ $(document).ready(function() {
         }
         
         var sql_result_lines = sql_result.split("\n");  
-        $("textarea#sql_result").css("height", (sql_result_lines.length * 16 + 6).toString().concat("px"));
+        $("textarea#sql_result").css("height", (sql_result_lines.length * 16).toString().concat("px"));
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
