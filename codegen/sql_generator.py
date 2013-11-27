@@ -89,7 +89,7 @@ class SQLGenerator():
     node.getConstraintTree().accept(self)
     constraintString = self._sql_where_stack.pop()
     joinString = "(" + leftString + ") JOIN " + \
-                 "(" + rightString + ") ON " + constraint_String
+                 "(" + rightString + ") ON " + constraintString
     self._sql_from_stack.append(joinString)
     print '*** SQL Generator: End EquiJoinNode ***'
 

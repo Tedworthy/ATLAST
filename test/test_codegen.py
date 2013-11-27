@@ -209,12 +209,19 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = 'Ben Hur' AND films2.director = 'Paul Greengrass'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  @with_setup(setup_func, teardown_func)
+  def test_single_table_cross_join_three_times(self):
+    logic = "∃x,y,z(films_title(x, a) ∧ films_director(y, b) ∧ films_length(z, c))".decode('utf-8')
+    sql = "SELECT films1.title, films2.director, films3.director FROM films AS films1 CROSS JOIN films AS films2 CROSS JOIN films as films3"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
   ''' MULTIPLE TABLE JOINS '''
 
+  #MixTutnem
   @with_setup(setup_func, teardown_func)
   def test_join_two_tables(self):
-    logic = "∃x(films_fid(x, x) ∧ actors_fid(x,y))".decode('utf8')
-    sql = "SELECT actors.fid FROM films JOIN actors USING(fid)"
+    logic = "∃x(films(x) ∧ casting_fid(y,x))".decode('utf8')
+    sql = "SELECT casting.cid FROM films JOIN casting ON films.fid = casting.fid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
@@ -237,7 +244,7 @@ class TestCodeGen():
   
   @with_setup(setup_func, teardown_func)
   def test_two_table_join_on_field_select_three(self):
-    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x)) ∧ casting_fid(y, a)".decode('utf8')
+    logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x) ∧ casting_fid(y, a))".decode('utf8')
     sql = "SELECT actors.name, casting.cid, casting_fid FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
@@ -284,4 +291,29 @@ class TestCodeGen():
     logic = "∃x(films_title(x, title) ∧ ¬(x > 3))".decode('utf8')
     sql = "SELECT films.title FROM films WHERE films.fid <= 3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  ''' IMPLIES AND IFF '''
+
+  # Query tested in implies form, in or form and conjunctive normal form.
+  @with_setup(setup_func, teardown_func)
+  def test_implies_simple(self):
+    logic_implies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE ¬(director == 'Ted Sales')"
+    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
+    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+
+  # Query tested in implies form, in or form and conjunctive normal form.
+  @with_setup(setup_func, teardown_func)
+  def test_iff_simple(self):
+    logic_implies = "∃x(¬(films_title(x, y) ↔  films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬((films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∨ (¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))))".decode('utf8')
+    logic_and     = "∃x(¬(films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∧ ¬(¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales')))".decode('utf8')
+    sql = "SELECT idonthaveaclue FROM huh WHERE holyshit = 1"
+    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
+    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+
 
