@@ -9,6 +9,7 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
+from semanticanalysis.semantic_analyser import SemanticAnalyser
 
 from dbbackend import schema
 
@@ -81,15 +82,21 @@ class index:
         result = parsing.parse_input(logic_to_translate)
 
         symbolTable = SymTable()
-        result.generateSymbolTable(symbolTable)
-        
         codegenVisitor = GenericLogicASTVisitor(web.schema)
+        sqlGeneratorVisitor = SQLGenerator()
+
+        result.generateSymbolTable(symbolTable)
+
+        # Semantic Analysis
+        semantic_analyser = SemanticAnalyser(result, web.schema)
+        semantic_analyser.analyse()
+
         result.accept(codegenVisitor)
 
         sqlGeneratorVisitor = SQLGenerator()
         codegenVisitor._IR_stack[0].accept(sqlGeneratorVisitor)
         sql = sqlGeneratorVisitor._sql
-     
+
         #TODO - Save the config_data to a session variable and use that instead
         config_data = cp.parse_file('dbbackend/db.cfg')
         con = pg.connect(config_data)
