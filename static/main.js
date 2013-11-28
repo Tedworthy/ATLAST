@@ -96,9 +96,11 @@ $(document).ready(function() {
           "logic" : input_string
         }
       }).done(function(response) {
+        var sql_result;
+        
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          var sql_result = response.sql;
+          sql_result = response.sql;
           $("textarea#sql_result").text(sql_result);
 
           // Create an HTML table
@@ -124,21 +126,25 @@ $(document).ready(function() {
         } else {
           // Something went wrong, so print the error.
           if(response.sql !== '') {
-            var sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
+            sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
           } else {
-            var sql_result = response.error;
+            sql_result = response.error;
           }
-          
-          var sql_result_lines = sql_result.split("\n");  
+        
           $("textarea#sql_result").text(sql_result);
           $("#results_table").html("");
         }
         
-        var sql_result_lines = sql_result.split("\n");  
-        $("textarea#sql_result").css("height", (sql_result_lines.length * 16 + 8).toString().concat("px"));
+        var linecount = 0, cols = 100;
+        var sql_result_lines = sql_result.split("\n");
+        $.each(sql_result_lines, function(i, l) {
+          linecount += Math.ceil(l.length/cols);
+        });
+        $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
+      $("textarea#sql_result").css("height", (1 * 16 + 8).toString().concat("px"));
     }
     return false;
   });
