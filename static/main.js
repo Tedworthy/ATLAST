@@ -128,8 +128,7 @@ $(document).ready(function() {
           } else {
             var sql_result = response.error;
           }
-          
-          var sql_result_lines = sql_result.split("\n");  
+        
           $("textarea#sql_result").text(sql_result);
           $("#results_table").html("");
         }
@@ -138,7 +137,8 @@ $(document).ready(function() {
         var cols = 100;
         var sql_result_lines = sql_result.split("\n");
         $.each(sql_result_lines, function(l) {
-          linecount += Math.ceil(l.length/cols);
+          var currentLines = Math.ceil(l.length/cols)
+          linecount += currentLines;
         });
         $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
