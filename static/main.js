@@ -132,19 +132,19 @@ $(document).ready(function() {
           $("textarea#sql_result").text(sql_result);
           $("#results_table").html("");
         }
-        
-        var linecount = 0;
-        var cols = 100;
-        var sql_result_lines = sql_result.split("\n");
-        $.each(sql_result_lines, function(i, l) {
-          var currentLines = Math.ceil(l.length/cols);
-          linecount += currentLines;
-        });
-        $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
     } else {
-      $("textarea#sql_result").text("No input to convert");
+      var sql_result = "No input to convert";
+      $("textarea#sql_result").text(sql_result);
     }
+    
+    var linecount = 0, cols = 100;
+    var sql_result_lines = sql_result.split("\n");
+    $.each(sql_result_lines, function(i, l) {
+      linecount += Math.ceil(l.length/cols);
+    });
+    $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
+
     return false;
   });
 
