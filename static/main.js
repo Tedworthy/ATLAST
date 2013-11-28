@@ -136,7 +136,7 @@ $(document).ready(function() {
         var linecount = 0;
         var cols = 100;
         var sql_result_lines = sql_result.split("\n");
-        $.each(sql_result_lines, function(l) {
+        $.each(sql_result_lines, function(i, l) {
           var currentLines = Math.ceil(l.length/cols);
           linecount += currentLines;
         });
