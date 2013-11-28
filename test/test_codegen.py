@@ -9,6 +9,7 @@ import parsing
 from codegen.symtable import SymTable
 from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
 from codegen.sql_generator import SQLGenerator
+from semanticanalysis.semantic_analyser import SemanticAnalyser
 import dbbackend.schema as schema
 import dbbackend.postgres.postgres_backend as pg
 import dbbackend.config_parser as cp
@@ -28,12 +29,17 @@ class TestCodeGen():
     # Create a Logic Tree from the Logic
     logicTree = parsing.parse_input(logic)
 
+    # Run dat semantic analysis bro
+    db_schema = schema.Schema()
+    semantic_analyser = SemanticAnalyser(logicTree, db_schema)
+    semantic_analyser.analyse()
+
     # Generate the Symbol Table from the Logic Tree
     symbolTable = SymTable()
     logicTree.generateSymbolTable(symbolTable)
 
     # Generate an IR from the Logic Tree (uses Symbol Table)
-    irGenerator = GenericLogicASTVisitor(schema.Schema())
+    irGenerator = GenericLogicASTVisitor(db_schema)
     logicTree.accept(irGenerator)
 
     # Pull out the SQL IR
@@ -245,13 +251,13 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   def test_two_table_join_on_field_select_three(self):
     logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x) ∧ casting_fid(y, a))".decode('utf8')
-    sql = "SELECT actors.name, casting.cid, casting_fid FROM actors JOIN casting ON actors.aid = casting.aid"
+    sql = "SELECT actors.name, casting.cid, casting.fid FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   def test_two_table_join_on_field_select_three_order_should_not_matter(self):
     logic = "∃x(casting_fid(y, a) ∧ actors_name(x, z) ∧ casting_aid(y, x))".decode('utf8')
-    sql = "SELECT casting.cid, casting_fid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
+    sql = "SELECT casting.cid, casting.fid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
   
   @with_setup(setup_func, teardown_func)
@@ -305,16 +311,14 @@ class TestCodeGen():
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
   def test_implies_simple(self):
+    logic_implies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
+    logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
 
-    logic_implies = "∃x(films_title(x, y) →  films_director(x, 'Ted Sales'))".decode('utf8')
-#    logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
- #   logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
-    ##Thats not quite what this logic means in SQL sam, why not start smaller.......
-
-    sql = "SELECT films.title FROM films WHERE films.director = 'Ted Sales'"
+    sql = "SELECT films.title FROM films WHERE NOT(films.director = 'Ted Sales')"
     assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
 #    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
- #   assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+#    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
 
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
@@ -322,9 +326,40 @@ class TestCodeGen():
     logic_implies = "∃x(¬(films_title(x, y) ↔  films_director(x, 'Ted Sales')))".decode('utf8')
     logic_or      = "∃x(¬((films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∨ (¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))))".decode('utf8')
     logic_and     = "∃x(¬(films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∧ ¬(¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales')))".decode('utf8')
+    
     sql = "SELECT films.title FROM films WHERE films.director = 'Ted Sales'"
     assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
 #    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
- #   assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
+#    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
 
+  ''' Fariba Tests '''
+  # These tests come directly from what Fariba got us to type. They are not in any particular order and may be covered by previous tests.
+  
+  @with_setup(setup_func, teardown_func)
+  def test_fariba_one(self):
+    # "Get me all film titles with origin either 'France' or 'Australia'"
+    logic = "∃x(films_title(x, y) ∧ (films_origin(x, 'France') ∨ films_origin(x, 'Australia')))".decode('utf8')
+    sql = "SELECT films.title FROM films WHERE origin = 'France' OR origin = 'Australia'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  
+  @with_setup(setup_func, teardown_func)
+  def test_fariba_two(self):
+    # "Get me directors with films greater than 100 minutes long."
+    logic = "∃x,len(films_director(x, dir) ∧ films_length(x, len) ∧ len > '100')".decode('utf8')
+    sql = "SELECT films.director FROM films WHERE films.length > '100'"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  #@with_setup(setup_func, teardown_func)
+  ## "Get me directors where all their films are greater than 100 minutes long."
+  #def test_fariba_three(self):
+  #  logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) →  (film_length(y, len) ∧ len >'100')))".decode('utf8')
+  #  sql = "SELECT films.director FROM films WHERE films.director NOT IN (SELECT films.director FROM films WHERE length <= '100')"
+  #  assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  # "Get me all actors and the roles they've played."
+  def test_fariba_four(self):
+    logic = "∃x,a(casting_part(x, y) ∧ casting_aid(x, a) ∧ actors_name(a, b))".decode('utf8')
+    sql = "SELECT casting.part, actors.name FROM casting JOIN actors ON casting.aid = actors.aid"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 

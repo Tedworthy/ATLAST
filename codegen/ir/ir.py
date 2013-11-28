@@ -10,8 +10,19 @@ class IR():
   def getRelationAttributePairs(self):
     return self._relation_attribute_pairs
 
+  def addRelationAttributePair(self, rel_attr):
+    for existing in self._relation_attribute_pairs:
+      if existing.getRelation().getAlias() == rel_attr.getRelation().getAlias()\
+        and existing.getAttribute() == rel_attr.getAttribute():
+        return
+    self._relation_attribute_pairs.append(rel_attr)
+
+  def addRelationAttributePairs(self, pairs):
+    for p in pairs:
+      self.addRelationAttributePair(p)
+
   def setRelationAttributePairs(self, relationAttributePairs):
-    self._relation_attribute_pairs = relationAttributePairs
+    self._relation_attribute_pairs = relationAttributePairs;
 
   def getRelationTree(self):
     return self._relation_tree
