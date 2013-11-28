@@ -1,10 +1,11 @@
 # -*- coding=utf-8 -*-
 
-import ply.yacc as yacc 
+import ply.yacc as yacc
 import sys
 import os
 from lexer import *
 import ast
+import error.parser_exceptions as pe
 
 precedence = (
 
@@ -14,6 +15,8 @@ precedence = (
   ('left', 'AND'),
   ('right', 'NOT'),
 )
+
+parseError = None
 
 # Formula grammar
 
@@ -161,15 +164,27 @@ def p_term_stringlit(p):
 # Parsing and error functions
 
 def p_error(p):
-  if p is None:
-    print "Syntax Error: Unexpected EOF"
-  else:
-    print "Syntax error at line '%s' : unexpected token '%s' " % (p.lineno, unicode(p.value))
-
-  
-  
+  global parseError
+  if not parseError:
+    if p is None:
+      parseError = pe.ParserEOIException()
+      print "Syntax Error: Unexpected EOF"
+    else:
+      last_newline = p.lexer.lexdata.rfind('\n', 0, p.lexer.lexpos)
+      last_newline = max(0, last_newline)
+      position = p.lexer.lexpos - last_newline + 1 # TODO might be an issue
+      parseError = pe.ParserTokenException(p.lineno, position, unicode(p.value))
+      print "Syntax error at line '%s' : unexpected token '%s' " % (p.lineno, unicode(p.value))
 
 def parse_input(input):
+  global parseError
+  lexer = getLexer()
   parser = yacc.yacc()
-  result = parser.parse(input)
+  result = parser.parse(input, lexer)
+  if lexer.error:
+    raise lexer.error
+  if parseError:
+    exception = parseError
+    parseError = None
+    raise exception
   return result
