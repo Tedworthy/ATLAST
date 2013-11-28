@@ -1,5 +1,6 @@
 # -*- coding=utf-8 -*-
 import web
+import shelve
 import time
 import os
 import parsing.parser
@@ -22,6 +23,7 @@ from web.wsgiserver import CherryPyWSGIServer
 CherryPyWSGIServer.ssl_certificate = './certs/server.crt'
 CherryPyWSGIServer.ssl_private_key = './certs/server.key'
 render = web.template.render('templates/')
+#web.config.debug = False
 
 urls = (
   '/', 'index',
@@ -42,6 +44,10 @@ login_form = web.form.Form(
     web.form.Textbox('dbname',class_='textfield',id='dbname_input'),
     web.form.Button('Connect', id='config_submit')
 )
+web.app = web.application(urls, globals())
+shelf = shelve.open('session')
+shelfStore = web.session.ShelfStore(shelf)
+session = web.session.Session(web.app, shelfStore, initializer={'config_data' : {} })
 
 class index:
   def GET(self):
@@ -98,8 +104,8 @@ class index:
         sql = sqlGeneratorVisitor._sql
 
         #TODO - Save the config_data to a session variable and use that instead
-        config_data = cp.parse_file('dbbackend/db.cfg')
-        con = pg.connect(config_data)
+#       config_data = cp.parse_file('dbbackend/db.cfg')
+        con = pg.connect(session.store.shelf.get('config_data'))
         query_result = pg.query(con, sql)
 
         # If the query ran correctly on the database
@@ -141,9 +147,10 @@ class login:
 
       config_data =  web.input()
       print config_data
-
+      session.store.shelf['config_data'] = config_data
       # TODO: Validate user input
-      generate_schema.generate_db_schema(config_data)
+      con = pg.connect(session.store.shelf.get('config_data'))
+      gs.generate_db_schema(con)
       # TODO: store in session variable not global variable
       web.schema = schema.Schema()
       web.header('Content-Type','application/json; charset=utf-8', unique=True)
@@ -164,7 +171,7 @@ def is_test():
   if 'WEBPY_ENV' is os.environ:
       return os.environ['WEBPY_ENV'] == 'test'
 
-web.app = web.application(urls, globals())
+
 
 if (not is_test()) and  __name__ == "__main__":
   gs.generate_db_schema(pg.connect(cp.parse_file('dbbackend/db.cfg')))
