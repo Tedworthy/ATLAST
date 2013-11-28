@@ -88,6 +88,7 @@ $(document).ready(function() {
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
   $("#convert_button").click(function() {
+  var sql_result;
     var input_string = $("textarea#logic").val();
     if(input_string !== "") {   
       $.ajax({
@@ -98,7 +99,7 @@ $(document).ready(function() {
       }).done(function(response) {
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          var sql_result = response.sql;
+          sql_result = response.sql;
           $("textarea#sql_result").text(sql_result);
 
           // Create an HTML table
@@ -124,9 +125,9 @@ $(document).ready(function() {
         } else {
           // Something went wrong, so print the error.
           if(response.sql !== '') {
-            var sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
+            sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
           } else {
-            var sql_result = response.error;
+            sql_result = response.error;
           }
         
           $("textarea#sql_result").text(sql_result);
@@ -134,7 +135,7 @@ $(document).ready(function() {
         }
       });
     } else {
-      var sql_result = "No input to convert";
+      sql_result = "No input to convert";
       $("textarea#sql_result").text(sql_result);
     }
     
