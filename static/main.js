@@ -137,7 +137,7 @@ $(document).ready(function() {
         var cols = 100;
         var sql_result_lines = sql_result.split("\n");
         $.each(sql_result_lines, function(l) {
-          var currentLines = Math.ceil(l.length/cols)
+          var currentLines = Math.ceil(l.length/cols);
           linecount += currentLines;
         });
         $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
