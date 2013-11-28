@@ -134,8 +134,13 @@ $(document).ready(function() {
           $("#results_table").html("");
         }
         
-        var sql_result_lines = sql_result.split("\n");  
-        $("textarea#sql_result").css("height", (sql_result_lines.length * 16 + 8).toString().concat("px"));
+        var linecount = 0;
+        var cols = 100;
+        var sql_result_lines = sql_result.split("\n");
+        $.each(sql_result_lines, function(l) {
+          linecount += Math.ceil(l.length/cols);
+        });
+        $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
     } else {
       $("textarea#sql_result").text("No input to convert");
