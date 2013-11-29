@@ -16,7 +16,7 @@ if [[ "$1" == "start" ]]; then
   sleep 3
 
   echo "[SERVER] Starting Celery..."
-  celery --app=parsing.task worker -l info &
+  celery --app=task worker -l info &
   echo $! > celery.pid
   sleep 3
 else
