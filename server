@@ -7,20 +7,30 @@ if [[ $# != 1 || ( "$1" != "start" && "$1" != "stop" ) ]]; then
 fi
 
 if [[ "$1" == "start" ]]; then
-  echo "[SERVER] Starting RabbitMQ..."
-  rabbitmq-server &
-  echo $! > rabbitmq.pid
-  sleep 3
+  if [[ -e rabbitmq.pid ]]; then
+    echo "[SERVER] RabbitMQ appears to be running."
+    echo "[SERVER] Remove rabbitmq.pid & run this script again to force start."
+  else
+    echo "[SERVER] Starting RabbitMQ..."
+    rabbitmq-server &
+    echo $! > rabbitmq.pid
+    sleep 3
+  fi
 
   rabbitmqctl start_app
-  sleep 3
+  sleep 2
 
-  echo "[SERVER] Starting Celery..."
-  celery --app=task worker -l info &
-  echo $! > celery.pid
-  sleep 3
+  if [[ -e celery.pid ]]; then
+    echo "[SERVER] Celery appears to be running."
+    echo "[SERVER] Remove celery.pid & run this script again to force start."
+  else
+    echo "[SERVER] Starting Celery..."
+    celery --app=task worker -l info &
+    echo $! > celery.pid
+    sleep 2
+  fi
 else
-  if [ -e celery.pid ]; then
+  if [[ -e celery.pid ]]; then
     echo "[SERVER] Stopping Celery..."
     kill $(cat celery.pid)
     rm celery.pid
@@ -32,7 +42,7 @@ else
   rabbitmqctl stop_app
   sleep 1
 
-  if [ -e rabbitmq.pid ]; then
+  if [[ -e rabbitmq.pid ]]; then
     echo "[SERVER] Stopping RabbitMQ..."
     kill $(cat rabbitmq.pid)
     rm rabbitmq.pid
