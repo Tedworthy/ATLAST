@@ -28,17 +28,15 @@ def addToProcessingQueue(logic, schema):
       'error': ''
     }
 
-  # Parse the logic into a logic ASTa
-  print "PARSING"
+  # Parse the logic into a logic AST
   try:
     logicAST = p.parse_input(logic)
   except Exception, e:
     response['status'] = 'parse_error'
-    response['error'] = json.dumps(e.__dict__)
+    response['error'] = json.dumps(e.getDict())
     return response
 
   # Generate a symbol table based on the logic AST
-  print "SYMBOLTABLE"
   try:
     symbolTable = st.SymTable()
     logicAST.generateSymbolTable(symbolTable)
@@ -47,7 +45,6 @@ def addToProcessingQueue(logic, schema):
     return response
 
   # Run a pass of semantic analysis on the logic AST to check for errors
-  print "SEMANTICANALYSIS"
   try:
     semanticAnalyser = sa.SemanticAnalyser(logicAST, schema)
     semanticAnalyser.analyse()
@@ -56,7 +53,6 @@ def addToProcessingQueue(logic, schema):
     return response
 
   # Generate an IR based on the logic AST
-  print "IRGENERATION"
   try:
     irVisitor = irv.GenericLogicASTVisitor(schema)
     logicAST.accept(irVisitor)
@@ -65,7 +61,6 @@ def addToProcessingQueue(logic, schema):
     return response
 
   # Generate an SQL string based on the above IR
-  print "SQLGENERATION"
   try:
     sqlGeneratorVisitor = sg.SQLGenerator()
     irVisitor.getIR().accept(sqlGeneratorVisitor)
@@ -74,7 +69,6 @@ def addToProcessingQueue(logic, schema):
     # Handle SQL generation errors
     return response
 
-  print "DATABASE"
   # TODO - Save the config_data to a session variable and use that instead
   # TODO - Check for database connection issues
   # Parse the database config file, open a connection to the database, and
