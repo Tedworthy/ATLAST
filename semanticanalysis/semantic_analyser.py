@@ -7,7 +7,7 @@ This class performs semantic analysis on an SQL IR and returns any error
 messages in the case of a semantic failure.
 '''
 
-class SemanticAnalyser():
+class SemanticAnalyser:
   def __init__(self, ast, schema):
     self._ast = ast
     self._schema = schema
@@ -16,10 +16,10 @@ class SemanticAnalyser():
 
   def analyse(self):
     # Compliance with database schema.
-    sc = scv.SchemaComplianceVisitor(self._schema)
-    self._ast.accept(sc)
-    self._success &= sc.getSuccess();
-    self._errorLog += sc.getErrorLog();
+    scVisitor = scv.SchemaComplianceVisitor(self._schema)
+    self._ast.accept(scVisitor)
+    self._success &= scVisitor.getSuccess();
+    self._errorLog += scVisitor.getErrorLog();
     # ... more semantic checks here?
 
     if not self._success:

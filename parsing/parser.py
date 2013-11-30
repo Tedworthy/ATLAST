@@ -6,6 +6,7 @@ import os
 from lexer import *
 import ast
 import error.parser_exceptions as pe
+import error.exception_group as eg
 
 precedence = (
 
@@ -15,8 +16,6 @@ precedence = (
   ('left', 'AND'),
   ('right', 'NOT'),
 )
-
-parseError = None
 
 # Formula grammar
 
@@ -53,8 +52,6 @@ def p_formula_or(p):
   'formula : formula OR atomicFormula'
   p[0] = ast.NotNode(ast.AndNode(ast.NotNode(p[1]), ast.NotNode(p[3])))
 
-
-
 ### A /\ B ###
 def p_formula_and_error_right(p):
   'formula : formula AND error'
@@ -67,7 +64,6 @@ def p_formula_and_error_left(p):
 def p_formula_and(p):
   'formula : formula AND formula'
   p[0] = ast.AndNode(p[1], p[3])
-
 
 ### ~ A ###
 def p_formula_not_error(p):
@@ -141,7 +137,6 @@ def p_term_list_single(p):
   'term_list : term'
   p[0] = [p[1]]
 
-
 # Term grammar
 
 def p_term_function(p):
@@ -164,27 +159,19 @@ def p_term_stringlit(p):
 # Parsing and error functions
 
 def p_error(p):
-  global parseError
-  if not parseError:
-    if p is None:
-      parseError = pe.ParserEOIException()
-      print "Syntax Error: Unexpected EOF"
-    else:
-      last_newline = p.lexer.lexdata.rfind('\n', 0, p.lexer.lexpos)
-      last_newline = max(0, last_newline)
-      position = p.lexer.lexpos - last_newline + 1 # TODO might be an issue
-      parseError = pe.ParserTokenException(p.lineno, position, unicode(p.value))
-      print "Syntax error at line '%s' : unexpected token '%s' " % (p.lineno, unicode(p.value))
+  if p is None:
+    p.lexer.errors.append(pe.ParserEOIException())
+  else:
+    last_newline = p.lexer.lexdata.rfind('\n', 0, p.lexer.lexpos)
+    last_newline = max(0, last_newline + 1)
+    position = p.lexer.lexpos - last_newline + 1 # TODO might be an issue
+    p.lexer.errors.append(pe.ParserTokenException(p.lineno, position, \
+        unicode(p.value)))
 
 def parse_input(input):
-  global parseError
   lexer = getLexer()
   parser = yacc.yacc()
   result = parser.parse(input, lexer)
-  if lexer.error:
-    raise lexer.error
-  if parseError:
-    exception = parseError
-    parseError = None
-    raise exception
+  if lexer.errors:
+    raise eg.ExceptionGroup(lexer.errors)
   return result
