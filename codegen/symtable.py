@@ -41,4 +41,4 @@ class SymTable:
     return value
 
   def __repr__(self):
-    return ','.join(self._data) if self._data else "Empty" 
+    return ','.join(self._data) if self._data else "Empty"

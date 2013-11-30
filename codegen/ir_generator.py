@@ -1,7 +1,7 @@
 '''
-Generic Logic AST Visitor
-This class implements the visitor pattern over the AST, converting it to a
-generic intermediate representation for code generation.
+IR Generator
+This class implements the visitor pattern over the AST, converting it to an
+intermediate representation for further code generation.
 '''
 
 import visit as v
@@ -10,7 +10,7 @@ from codegen.ir import *
 
 from copy import copy, deepcopy
 
-class GenericLogicASTVisitor():
+class IRGenerator:
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
@@ -18,7 +18,6 @@ class GenericLogicASTVisitor():
     self._IR_stack = []
     self._schema = schema
     self._alias = 1
-
 
   @v.on('node')
   def visit(self, node):
@@ -44,7 +43,7 @@ class GenericLogicASTVisitor():
     right_ir = self.popIR()
     left_ir = self.popIR()
     print '\tLeft IR: ' + str(left_ir)
-    print '\tRigh IR: ' + str(right_ir)
+    print '\tRight IR: ' + str(right_ir)
 
     # Sanity check the objects
     assert left_node
@@ -569,5 +568,4 @@ class GenericLogicASTVisitor():
 
   def getIR(self):
     return self._IR_stack[0]
-
 

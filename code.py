@@ -2,14 +2,8 @@
 import web
 import time
 import os
-import parsing.parser
-import task as worker
 import json
-import parsing
-from codegen.symtable import SymTable
-from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
-from codegen.sql_generator import SQLGenerator
-from semanticanalysis.semantic_analyser import SemanticAnalyser
+import task as worker
 
 from dbbackend import schema
 

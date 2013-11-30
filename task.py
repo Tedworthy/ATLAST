@@ -9,7 +9,7 @@ import dbbackend.config_parser as cp
 import parsing.parser as p
 
 import codegen.symtable as st
-import codegen.generic_logic_ast_visitor as irv
+import codegen.ir_generator as irg
 import codegen.sql_generator as sg
 
 import semanticanalysis.semantic_analyser as sa
@@ -54,8 +54,8 @@ def addToProcessingQueue(logic, schema):
 
   # Generate an IR based on the logic AST
   try:
-    irVisitor = irv.GenericLogicASTVisitor(schema)
-    logicAST.accept(irVisitor)
+    irGeneratorVisitor = irg.IRGenerator(schema)
+    logicAST.accept(irGeneratorVisitor)
   except Exception, e:
     # Handle ir generation errors
     return response
@@ -63,7 +63,7 @@ def addToProcessingQueue(logic, schema):
   # Generate an SQL string based on the above IR
   try:
     sqlGeneratorVisitor = sg.SQLGenerator()
-    irVisitor.getIR().accept(sqlGeneratorVisitor)
+    irGeneratorVisitor.getIR().accept(sqlGeneratorVisitor)
     sql = sqlGeneratorVisitor.getSQL()
   except Exception, e:
     # Handle SQL generation errors

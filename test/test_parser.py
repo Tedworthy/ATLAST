@@ -1,10 +1,11 @@
  # coding=utf-8
 from paste.fixture import TestApp
 from nose.tools import *
-import parsing
-from codegen.symtable import SymTable
-from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
+
 import sys
+import parsing as p
+import codegen.symtable as st
+import codegen.ir_generator as ir
 
 class TestParser():
   def test_io(self):
@@ -13,9 +14,9 @@ class TestParser():
 
   def test_symboltable_generation(self):
     f = open('test/input_file.txt', 'r')
-    input = f.read().decode('utf-8')
-    table = SymTable()
-    logicTree = parsing.parse_input(input)
-    logicTree.generateSymbolTable(table)
-    assert_equals(str(table), 'q,x,p')
+    logic = f.read().decode('utf-8')
+    symbolTable = st.SymTable()
+    logicAST = p.parse_input(logic)
+    logicAST.generateSymbolTable(symbolTable)
+    assert_equals(str(symbolTable), 'q,x,p')
 
