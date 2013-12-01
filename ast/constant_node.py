@@ -12,5 +12,5 @@ class ConstantNode(Node):
     super(ConstantNode, self).__init__(lineNo, position)
     self._value = value
 
-  def getValue():
+  def getValue(self):
     return self._value

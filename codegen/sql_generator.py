@@ -57,6 +57,12 @@ class SQLGenerator():
     self._sql_where_stack.append("'" + node.getString() + "'")
     print '*** SQL Generator: End StringLiteral ***'
 
+  @v.when(ir.Constant)
+  def visit(self, node):
+    print '*** SQL Generator: Begin Constant ***'
+    self._sql_where_stack.append(str(node.getValue()))
+    print '*** SQL Generator: End Constant ***'
+
   @v.when(ir.RelationNode)
   def visit(self, node):
     print '*** SQL Generator: Begin RelationNode ***'

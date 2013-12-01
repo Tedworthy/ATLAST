@@ -9,12 +9,11 @@ import error.parser_exceptions as pe
 import error.exception_group as eg
 
 precedence = (
-
   ('left', 'IFF'),
   ('left', 'IMPLIES'),
   ('left', 'OR'),
   ('left', 'AND'),
-  ('right', 'NOT'),
+  ('right', 'NOT')
 )
 
 # Formula grammar
@@ -29,7 +28,7 @@ def p_formula_bracketed(p):
 
 #Automatically turn A <=> B into (A^B)V(~A^~B) #firstyearlogicbro
 def p_formula_iff(p):
-  'formula : formula IFF atomicFormula'
+  'formula : formula IFF formula'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.OrNode(lineNo, pos, ast.AndNode(lineNo, pos, p[1], p[3]), \
@@ -39,25 +38,17 @@ def p_formula_iff(p):
 
 #Automatically turn A=>B into ~A V B into ~ (A /\ ~ B)
 def p_formula_implies(p):
-  'formula : formula IMPLIES atomicFormula'
+  'formula : formula IMPLIES formula'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.NotNode(lineNo, pos, ast.AndNode(lineNo, pos, p[1], \
                                               ast.NotNode(lineNo, pos, p[3])))
 
 ### A \/ B ###
-def p_formula_or_error_right(p):
-  'formula : formula OR error'
-  print "Syntax Error in right hand formula"
-
-def p_formula_or_error_left(p):
-  'formula : error OR atomicFormula'
-  print "Syntax Error in left hand formula"
-
 ## using logical equivalence
 ## P \/ Q === ~(~P /\ ~Q)
 def p_formula_or(p):
-  'formula : formula OR atomicFormula'
+  'formula : formula OR formula'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.NotNode(lineNo, pos, ast.AndNode(lineNo, pos, \
@@ -65,14 +56,6 @@ def p_formula_or(p):
                                               ast.NotNode(lineNo, pos, p[3])))
 
 ### A /\ B ###
-def p_formula_and_error_right(p):
-  'formula : formula AND error'
-  print "Syntax Error: in right hand formula of:\n\t formula AND atomicFormula"
-
-def p_formula_and_error_left(p):
-  'formula : error AND atomicFormula'
-  print "Syntax Error in left hand formula:\n\t formula AND atomicFormula"
-
 def p_formula_and(p):
   'formula : formula AND formula'
   lineNo = p.lexer.lineno
@@ -80,12 +63,8 @@ def p_formula_and(p):
   p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
 
 ### ~ A ###
-def p_formula_not_error(p):
-  'formula : NOT error'
-  print "Syntax Error in Not statement. bad atomic formula"
-
 def p_formula_not(p):
-  'formula : NOT formula '
+  'formula : NOT formula'
   print 'Reducing to NOT(' + str(p[2]) + ')'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
@@ -94,21 +73,21 @@ def p_formula_not(p):
 
 #### QUANTIFIER FORMULAS
 def p_quantifier_list(p):
-  'quantifier_list : IDENTIFIER COMMA quantifier_list'
-  p[0] = [p[1]] + p[3]
+  'quantifierList : quantifierList COMMA IDENTIFIER'
+  p[0] = p[1] + [p[3]]
 
 def p_quantifier_single(p):
-  'quantifier_list : IDENTIFIER'
+  'quantifierList : IDENTIFIER'
   p[0] = [p[1]]
 
 def p_formula_forall(p):
-  'formula : FORALL quantifier_list LBRACKET formula RBRACKET'
+  'formula : FORALL quantifierList LBRACKET formula RBRACKET'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.ForAllNode(lineNo, pos, p[2], p[4])
 
 def p_formula_thereexists(p):
-  'formula : THEREEXISTS quantifier_list LBRACKET formula RBRACKET'
+  'formula : THEREEXISTS quantifierList LBRACKET formula RBRACKET'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.ThereExistsNode(lineNo, pos, p[2], p[4])
@@ -120,7 +99,7 @@ def p_formula_thereexists(p):
 #     p[0] = p[2]
 
 def p_atomic_formula_predicate(p):
-  'atomicFormula : IDENTIFIER LBRACKET term_list RBRACKET'
+  'atomicFormula : IDENTIFIER LBRACKET termList RBRACKET'
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.PredicateNode(lineNo, pos, p[1], p[3])
@@ -170,18 +149,14 @@ def p_atomic_formula_neq(p):
 # Term list grammar
 
 def p_term_list(p):
-  'term_list : term COMMA term_list'
-  p[0] = [p[1]] + p[3]
+  'termList : termList COMMA term'
+  p[0] = p[1] + [p[3]]
 
 def p_term_list_single(p):
-  'term_list : term'
+  'termList : term'
   p[0] = [p[1]]
 
 # Term grammar
-
-#def p_term_function(p):
-#  'term : IDENTIFIER LBRACKET term_list RBRACKET'
-#  p[0] = ast.FunctionNode(p[1], p[3])
 
 def p_term_constant(p):
   'term : CONSTANT'
@@ -201,6 +176,18 @@ def p_term_stringlit(p):
   lineNo = p.lexer.lineno
   pos = getPosition(p.lexer)
   p[0] = ast.StringLitNode(lineNo, pos, p[1])
+
+def p_term_true(p):
+  'term : TRUE'
+  lineNo = p.lexer.lineno
+  pos = getPosition(p.lexer)
+  p[0] = ast.BooleanNode(lineNo, pos, True)
+
+def p_term_false(p):
+  'term : FALSE'
+  lineNo = p.lexer.lineno
+  pos = getPosition(p.lexer)
+  p[0] = ast.BooleanNode(lineNo, pos, False)
 
 # Parsing and error functions
 
