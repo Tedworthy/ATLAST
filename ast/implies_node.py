@@ -11,5 +11,6 @@ Child structure:
 from binary_operator_node import BinaryOperatorNode
 
 class ImpliesNode(BinaryOperatorNode):
-  def __init__(self, left, right):
-    BinaryOperatorNode.__init__(self, left, right, BinaryOperatorNode.IMPLIES)
+  def __init__(self, lineNo, position, left, right):
+    super(ImpliesNode, self).__init__(lineNo, position, left, right, \
+                                      BinaryOperatorNode.IMPLIES)

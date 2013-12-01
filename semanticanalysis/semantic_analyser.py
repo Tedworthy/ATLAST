@@ -1,5 +1,6 @@
 import dbbackend.schema as schema
-import semanticanalysis.schema_compliance_visitor as scv
+import semanticanalysis.schema_compliance as sc
+import error.exception_group as eg
 
 '''
 Semantic Analyser
@@ -7,23 +8,19 @@ This class performs semantic analysis on an SQL IR and returns any error
 messages in the case of a semantic failure.
 '''
 
-class SemanticAnalyser():
+class SemanticAnalyser:
   def __init__(self, ast, schema):
     self._ast = ast
     self._schema = schema
-    self._errorLog = "\n--- Semantic Errors Detected! ---"
-    self._success = True
+    self._errors = []
 
   def analyse(self):
     # Compliance with database schema.
-    sc = scv.SchemaComplianceVisitor(self._schema)
-    self._ast.accept(sc)
-    self._success &= sc.getSuccess();
-    self._errorLog += sc.getErrorLog();
+    scVisitor = sc.SchemaCompliance(self._schema)
+    self._ast.accept(scVisitor)
+    self._errors.extend(scVisitor.getErrors())
     # ... more semantic checks here?
 
-    if not self._success:
-      self.raiseErrors()
+    if self._errors:
+      raise eg.ExceptionGroup(self._errors)
 
-  def raiseErrors(self):
-    raise Exception(self._errorLog)

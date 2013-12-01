@@ -1,7 +1,7 @@
 '''
-Generic Logic AST Visitor
-This class implements the visitor pattern over the AST, converting it to a
-generic intermediate representation for code generation.
+IR Generator
+This class implements the visitor pattern over the AST, converting it to an
+intermediate representation for further code generation.
 '''
 
 import visit as v
@@ -10,7 +10,7 @@ from codegen.ir import *
 
 from copy import copy, deepcopy
 
-class GenericLogicASTVisitor():
+class IRGenerator:
 
   def __init__(self, schema):
     # Instance variables go here, if necessary
@@ -18,7 +18,6 @@ class GenericLogicASTVisitor():
     self._IR_stack = []
     self._schema = schema
     self._alias = 1
-
 
   @v.on('node')
   def visit(self, node):
@@ -44,7 +43,7 @@ class GenericLogicASTVisitor():
     right_ir = self.popIR()
     left_ir = self.popIR()
     print '\tLeft IR: ' + str(left_ir)
-    print '\tRigh IR: ' + str(right_ir)
+    print '\tRight IR: ' + str(right_ir)
 
     # Sanity check the objects
     assert left_node
@@ -316,11 +315,11 @@ class GenericLogicASTVisitor():
       }
     self.pushNode(state)
     print '\t' + str(merged_ir)
-    print '*** IR Generator: End PredicateNode ***'    
+    print '*** IR Generator: End PredicateNode ***'
 
   @v.when(ast.BinaryOperatorNode)
   def visit(self, node):
-    print '*** IR Generator: Begin BinaryOperatorNode - Partially Implemented ***'    
+    print '*** IR Generator: Begin BinaryOperatorNode - Partially Implemented ***'
     # Set up state and operator
     op = node.getOp()
     op = self.binOpToConstraintsOp(op)
@@ -337,56 +336,51 @@ class GenericLogicASTVisitor():
 
     # Precompute booleans for clearer conditions later
     both_variables = left_child['type'] == right_child['type'] == 'variable'
-    right_variable_left_string_lit = \
-      right_child['type'] == 'variable' and left_child['type'] == 'string_lit'
-    left_variable_right_string_lit = \
-      right_child['type'] == 'string_lit' and left_child['type'] == 'variable'
-    mixture_variables_string_lits = \
-      left_variable_right_string_lit or right_variable_left_string_lit
+    one_variable_one_not = \
+      left_child['type'] == 'variable' and right_child['type'] != 'variable' or\
+      right_child['type'] == 'variable' and left_child['type'] != 'variable'
 
     # Pre-conjunct the left and right IRs for later use
     self.conjunctIR(left_ir, right_ir)
     prev_constraints = left_ir.getConstraintTree()
 
-    if both_variables:
-      print '\tBoth variables'
-#      print 'left_child: ' + left_child['node'] + '\tright_child: ' + right_child['node']
+    if both_variables and op == Constraint.EQ:
+      print '\tBoth variables in == relationship -> binding'
       # Bind two variables together
-      if op  == Constraint.EQ:
-        self.bind(left_child['node'], right_child['node'], left_ir)
+      self.bind(left_child['node'], right_child['node'], left_ir)
+
+    elif one_variable_one_not or (both_variables and op != Constraint.EQ):
+      var_child = self.getVariableNode(left_child, right_child)
+      other_child = right_child if var_child == left_child else left_child
+
+      constraint_var = var_child['node'].getBoundValue()
+      if other_child['type'] == 'variable':
+        constraint_other = VariableNode(other_child['node'].getIdentifier())
+      elif other_child['type'] == 'string_lit':
+        constraint_other = StringLiteral(other_child['node'].getValue())
+      elif other_child['type'] == 'constant':
+        constraint_other = Constant(other_child['node'].getValue())
+
+      print '\tAdding constraint'
+      if var_child == left_child:
+        constraint = Constraint(op, constraint_var, constraint_other)
       else:
-        print '\tAdd a constraint'
-        print '\tRight Node: '  + right_child['node'].getIdentifier()
-        constraint = Constraint(op, left_child['node'].getBoundValue(), VariableNode(right_child['node'].getIdentifier()))
-        #TODO check if prevconstraints is empty or not
-        left_ir.setConstraintTree(constraint)
-        
-        
+        constraint = Constraint(op, constraint_other, constraint_var)
 
-
-    elif mixture_variables_string_lits:
-      if left_variable_right_string_lit:
-        print '\tLeft variable, right string lit'
-        var_node = left_child['node']
-        lit_node = right_child['node']
-      else:
-        print '\tRight variable, left string lit'
-        var_node = right_child['node']
-        lit_node = left_child['node']
-
-      # Constrain the variable to the string literal
-      constraint = Constraint(op, var_node.getBoundValue(), \
-                              StringLiteral(lit_node.getValue()))
       # Add it to the IR
       if prev_constraints is None:
         left_ir.setConstraintTree(constraint)
       else:
         left_ir.setConstraintTree(AndConstraint(prev_constraints, constraint))
 
+    # TODO handle case of neither child being a variable node - reduce to T/F?
+    else:
+      pass
+
     # Finally, push relevant objects onto the stacks
     self.pushIR(left_ir)
     self.pushNode(state)
-    print '*** IR Generator: End BinaryOperatorNode - Partially Implemented ***'    
+    print '*** IR Generator: End BinaryOperatorNode - Partially Implemented ***'
 
   def binOpToConstraintsOp(self, op):
     return {
@@ -398,10 +392,19 @@ class GenericLogicASTVisitor():
         ast.BinaryOperatorNode.NEQ : Constraint.NEQ
     }[op]
 
-  @v.when(ast.FunctionNode)
+  # Returns the node which is of type 'variable'
+  # If both are of type 'variable' then the first parameter is returned
+  def getVariableNode(self, left, right):
+    if left['type'] == 'variable':
+      return left
+    else:
+      return right
+
+  @v.when(ast.BooleanNode)
   def visit(self, node):
-    print ' *** IR Generator: Begin FunctionNode - Unimplemented ***'   
-    print ' *** IR Generator: End FunctionNode - Unimplemented ***'     
+    # TODO Should be the same as the below nodes
+    print ' *** IR Generator: Begin BooleanNode - Unimplemented ***'   
+    print ' *** IR Generator: End BooleanNode - Unimplemented ***'     
 
   # TODO Refactor replicated code here...
   @v.when(ast.StringLitNode)
@@ -569,5 +572,4 @@ class GenericLogicASTVisitor():
 
   def getIR(self):
     return self._IR_stack[0]
-
 

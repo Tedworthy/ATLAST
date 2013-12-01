@@ -11,8 +11,8 @@ from node import Node
 
 class UnaryOperatorNode(Node):
   # Takes a node representing the RHS of the formula
-  def __init__(self, formula):
-    Node.__init__(self)
+  def __init__(self, lineNo, position, formula):
+    super(UnaryOperatorNode, self).__init__(lineNo, position)
     self.setChild(0, formula)
 
   def __repr__(self):
