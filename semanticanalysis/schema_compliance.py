@@ -1,12 +1,15 @@
 import dbbackend.schema as schema
 import visit as v
+import error.semantic_exceptions as se
 import ast
 
-class SchemaComplianceVisitor:
+class SchemaCompliance:
   def __init__(self, schema):
     self._schema = schema
-    self._errorLog = "\n  -- Schema Compliance --"
-    self._success = True
+    self._errors = []
+
+  def getErrors(self):
+    return self._errors
 
   @v.on('node')
   def visit(self, node):
@@ -20,17 +23,9 @@ class SchemaComplianceVisitor:
     if len(predicate_name) > 1:
       attribute = predicate_name[1]
       if not self._schema.relationAttributeExists(relation, attribute):
-        self._success = False
-        self._errorLog += "\n    Relation '" + relation + "' with attribute '"\
-        + attribute + "' does not exist in schema!"
+        self._errors.append(se.SemanticSchemaAttributeException( \
+            node.getLineNo(), node.getPosition(), relation, attribute))
     elif not self._schema.relationExists(relation):
-      self._success = False
-      self._errorLog += "\n    Relation '" +  relation + \
-          "' does not exist in schema!"
+      self._errors.append(se.SemanticSchemaRelationException( \
+          node.getLineNo(), node.getPosition(), relation))
 
-
-  def getSuccess(self):
-    return self._success
-
-  def getErrorLog(self):
-    return self._errorLog

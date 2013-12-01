@@ -8,8 +8,8 @@ from variable_declaration_node import VariableDeclarationNode
 
 class VariableNode(Node):
   # Takes a name for the variable.
-  def __init__(self, identifier):
-    Node.__init__(self)
+  def __init__(self, lineNo, position, identifier):
+    super(VariableNode, self).__init__(lineNo, position)
     self._identifier = identifier
     self._boundValue = None
 

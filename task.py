@@ -42,6 +42,7 @@ def addToProcessingQueue(logic, schema):
     logicAST.generateSymbolTable(symbolTable)
   except Exception, e:
     # Handle symbol table exception
+    print 'SYMBOLTABLE', str(e)
     return response
 
   # Run a pass of semantic analysis on the logic AST to check for errors
@@ -50,6 +51,7 @@ def addToProcessingQueue(logic, schema):
     semanticAnalyser.analyse()
   except Exception, e:
     # Handle semantic analysis errors
+    print 'SEMANTICANALYSER', str(e)
     return response
 
   # Generate an IR based on the logic AST
@@ -58,6 +60,7 @@ def addToProcessingQueue(logic, schema):
     logicAST.accept(irGeneratorVisitor)
   except Exception, e:
     # Handle ir generation errors
+    print 'IRGENERATOR', str(e)
     return response
 
   # Generate an SQL string based on the above IR
@@ -67,6 +70,7 @@ def addToProcessingQueue(logic, schema):
     sql = sqlGeneratorVisitor.getSQL()
   except Exception, e:
     # Handle SQL generation errors
+    print 'SQLGENERATOR', str(e)
     return response
 
   # TODO - Save the config_data to a session variable and use that instead

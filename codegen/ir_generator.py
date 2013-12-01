@@ -397,10 +397,10 @@ class IRGenerator:
         ast.BinaryOperatorNode.NEQ : Constraint.NEQ
     }[op]
 
-  @v.when(ast.FunctionNode)
-  def visit(self, node):
-    print ' *** IR Generator: Begin FunctionNode - Unimplemented ***'   
-    print ' *** IR Generator: End FunctionNode - Unimplemented ***'     
+  #@v.when(ast.FunctionNode)
+  #def visit(self, node):
+  #  print ' *** IR Generator: Begin FunctionNode - Unimplemented ***'   
+  #  print ' *** IR Generator: End FunctionNode - Unimplemented ***'     
 
   # TODO Refactor replicated code here...
   @v.when(ast.StringLitNode)

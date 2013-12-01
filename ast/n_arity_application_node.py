@@ -8,9 +8,8 @@ or predicate).
 from node import Node
 
 class NArityApplicationNode(Node):
-
-  def __init__(self, identifier):
-    Node.__init__(self)
+  def __init__(self, lineNo, position, identifier):
+    super(NArityApplicationNode, self).__init__(lineNo, position)
     self._identifier = identifier
 
   def generateSymbolTable(self, symtable):

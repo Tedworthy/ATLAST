@@ -2,7 +2,7 @@ from and_node import AndNode
 from binary_operator_node import BinaryOperatorNode
 from constant_node import ConstantNode
 from forall_node import ForAllNode
-from function_node import FunctionNode
+#from function_node import FunctionNode
 from iff_node import IffNode
 from implies_node import ImpliesNode
 from not_node import NotNode

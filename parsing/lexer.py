@@ -100,14 +100,17 @@ def t_newline(t):
   t.lexer.lineno += len(t.value)
 
 def t_error(t):
-  last_newline = t.lexer.lexdata.rfind('\n', 0, t.lexer.lexpos)
-  last_newline = max(0, last_newline + 1)
-  position = t.lexer.lexpos - last_newline + 1
-  t.lexer.errors.append(le.LexerException(t.lexer.lineno, position, \
-        unicode(t.value[0])))
+  t.lexer.errors.append(le.LexerException(t.lexer.lineno, getPosition(t.lexer),\
+                                          unicode(t.value[0])))
   t.lexer.skip(1)
 
 def getLexer():
   lexer = lex.lex()
   lexer.errors = []
   return lexer
+
+def getPosition(lexer):
+  last_newline = lexer.lexdata.rfind('\n', 0, lexer.lexpos) + 1
+  last_newline = max(0, last_newline)
+  position = lexer.lexpos - last_newline + 1
+

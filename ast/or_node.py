@@ -11,5 +11,6 @@ Child structure:
 from binary_operator_node import *
 
 class OrNode(BinaryOperatorNode):
-  def __init__(self, left, right):
-    BinaryOperatorNode.__init__(self, left, right, BinaryOperatorNode.OR)
+  def __init__(self, lineNo, position, left, right):
+    super(OrNode, self).__init__(lineNo, position, left, right, \
+                                 BinaryOperatorNode.OR)
