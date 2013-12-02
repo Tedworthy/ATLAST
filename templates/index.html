@@ -11,13 +11,14 @@ $def with (form,form2)
       m.parentNode.insertBefore(a,m)})(window,document,'script',
       '//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-45800576-1', 'srjallan.com'); ga('send', 'pageview');
-    </script>  
+    </script>
     <title>Logic to SQL</title>
     <script src="static/jquery.tools.min.js"></script>
     <script src="static/main.js"></script>
     <script src="static/noty-2.1.2/js/noty/jquery.noty.js"></script>
     <script src="static/noty-2.1.2/js/noty/layouts/top.js"></script>
     <script src="static/noty-2.1.2/js/noty/themes/default.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -29,21 +30,12 @@ $def with (form,form2)
     -->
     <link rel="stylesheet" type="text/css" href="static/main.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-
-    <!-- Optional theme -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-
-
   </head>
 
   <body>
-  
+
     <div id="main_container">
       <header>
         <nav>
@@ -75,7 +67,7 @@ $def with (form,form2)
      <p> Input a logical statement in the 'Logic box'
       An example statement would be of the form:</p>
 
-            <ul><li> &#8707key(&lttable_name&gt_&ltfield_name&gt(key,value))</li></ul>
+            <ul><li> &#8707;key(&lt;table_name&gt;_&lt;field_name&gt;(key,value))</li></ul>
 
       <p>The above query binds 'key' to be a row in the table_name specified, 
       Any unbound variables in the predicate then act as selectors for the 
@@ -105,7 +97,7 @@ $def with (form,form2)
         <button id="exists_button">&exist;</button>
         <button id="forall_button">&forall;</button>
         <button id="not_button">&not;</button>
-        <form id="logic-form" name="convert_to_sql" action="#" method="post">
+        <form id="logic-form" name="logic-form" action="#" method="post">
           $:form.logic.render()
           <button type="submit" id="convert_button">Convert to SQL</button>
         </form>
