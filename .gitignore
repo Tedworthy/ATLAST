@@ -22,3 +22,10 @@ certs/*
 *.*~
 .DS_Store
 ._*
+
+##
+#latex files
+##
+report/*.aux
+
+report/*.pdf
