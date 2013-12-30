@@ -4,8 +4,21 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
+\usepackage{array,booktabs}
 
-% This is the preamble section where you can include extra packages etc.
+% Stop Latex from repositioning tables like an idiot
+\restylefloat{table}
+
+% Itemised columns
+\makeatletter
+\newcolumntype{i}[1]{%
+    >{\minipage[t]{\linewidth}\let\\\tabularnewline
+      \itemize
+      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
+      \setlength{\itemsep}{-\parsep}}%
+    p{#1}%
+    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
+\makeatother
 
 \begin{document}
 
@@ -47,13 +60,18 @@ From the teaching standpoint
 
 
         What is your Project? What does it do? Why would I want to buy it? etc.
-        No implementation, software engineering details, or project management 
+        No implementation, software engineering details, or project management
 
 \section{Introduction}
 
         Set the scene ... motivation'
         State the problem you are trying to solve ...objective(s)
         Summarise your main achievements 
+
+        -- GOALS - In Chatley coursework 1 --
+        TODO: Discuss goals, they're referenced in the Project Management
+        section. Revisions should not be talked about here though, just the
+        overarching goals of the project.
 
 \section{Design and Implementation}
 
@@ -74,9 +92,97 @@ From the teaching standpoint
 
 \section{Project Management}
 
-        Planning, group organisation, breakdown + task allocation etc. 
+        Planning, group organisation, breakdown + task allocation etc.
+
+\subsection{Planning}
+
+-- TODO Should we discuss here how everything went wrong, and revisions were
+missed entirely? --
+
+As we have learnt from previous projects, inside and outside the department, it
+is critical to thoroughly plan a software engineering exercise of this scale
+before beginning to implement features and write code. As discussed in our
+introduction section, we decomposed our problem of translating first order
+predicate logic to SQL into several key subgoals. This enabled us to outline a
+core feature set which we wished to implement and gave us a much clearer idea
+of how to begin tackling the problem.
+
+Moreover, we initially split the project up in to five major 'revisions'. Each
+revision added a certain amount of functionality to our project, and allowed us
+to continually build upon features already implemented. This incremental method
+of development is one of the key ideas of the Agile development methodology to
+which we adhered to throughout the project. -- TODO citation -- Additionally,
+with each revision having a deadline, it gave the team a clear plan of what was
+to be implemented at what time.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| l | i{0.6\textwidth} | l |}
+    \hline
+    \textbf{Revision} & \multicolumn{1}{p{0.6\textwidth} |}{\textbf{Necessary Steps for
+Completion}} & \textbf{Completion Estimate} \\
+    \hline
+    1 & \item Set up basic web server;
+        \item Set up and create a database;
+        \item Create simple UI \& communicate with server;
+        \item Create 5 sample Logic to SQL translations;
+        \item Set up development environment.
+    & 17/10/13 \\
+    \hline
+    2 & \item UI sends predicate logic to web server;
+        \item Web server parses the logic into an AST;
+        \item Backend translates the AST to SQL for basic “SELECT FROM” queries (i.e.
+              projection only);
+        \item Create 5 more sample Logic to SQL translations.
+    & 25/10/13 \\
+    \hline
+    3 & \item Expand backend parser grammar to include more advanced use of SQL
+              queries (selection \& projection);
+        \item Dynamic table selection in logic - "smart" logic predicates, i.e.
+              updated(x) vs. customer\_updated(x);
+        \item Hook into database.
+    & 1/11/13 \\
+    \hline
+    4 & \item User-defined functions;
+        \item Configurable UI - database settings, and possibly changing the UI depending
+              on the user's ability;
+        \item Extend backend to use SQL joins.
+    & 8/11/13 \\
+    \hline
+    5 & \item Contingency time built in for bug fixes, or additional
+    features/extensions depending on the project status (e.g. Semantic
+    checks of logical statements before translating to SQL). & 15/11/13 \\
+    \hline
+  \end{tabular}
+  \caption{Feature sets for each revision, as defined at the start of the
+project}
+\end{table}
+
+\subsection{Group Organisation}
+
+One of the key ways we kept our group organised was through weekly meetings.
+During each weekly meeting, we discussed what tasks were to be completed that
+week, and spoke in detail about any concerns members had about the tasks that
+had been completed previously. We would also analyse the previous weeks
+performance, and make changes to our plan accordingly. An example of such a
+change is when we realised implementing the parser would take significantly
+longer than originally thought. This lead us to modify our feature set,
+reallocate group roles temporarily, and modify deadlines and revision subgoals.
+
+
+\subsection{Tracking}
+
+-- Agile manifesto, responding to change
+-- Quantitatively and quantitively identify performance
+
+-- Trello
+-- Burndown chart
 
 \section{Bibliography}
+
+-- TODO Agree on referencing practice. The library recommends Harvard. --
+
+https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
 \section{Appendix}
 
