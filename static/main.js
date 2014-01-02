@@ -68,15 +68,15 @@ $(document).ready(function() {
   };
 
   $("#config_submit").click(function()  {
-    user = $("#username_input").val();
-
     $.post(
-      "/login", {
-        username : user,
-        password : $("#password_input").val(),
-        host : $("#host_input").val(),
-        port : $("#port_input").val(),
-        dbname : $("#dbname_input").val() }
+      "/login",
+      {
+        username: $("#username_input").val(),
+        password: $("#password_input").val(),
+        host: $("#host_input").val(),
+        port: $("#port_input").val(),
+        dbname: $("#dbname_input").val()
+      }
     ).done(function(response) {
       if (response.error === 'ok') {
         var n = noty({text: 'Configuration Accepted'})
@@ -87,17 +87,18 @@ $(document).ready(function() {
   });
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
-  $("#convert_button").click(function() {
-    var input_string = $("textarea#logic").val();
-    if(input_string !== "") {   
-      $.ajax({
-        type: "POST",
-        data: {
-          "logic" : input_string
+  $("#logic-form").submit(function(e) {
+    e.preventDefault();
+    var input_string = logicEditor.getValue();
+    if (input_string !== "") {
+      $.post(
+        "/",
+        {
+          logic: input_string
         }
-      }).done(function(response) {
+      ).done(function(response) {
         var sql_result;
-        
+
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
           sql_result = response.sql;
@@ -130,11 +131,11 @@ $(document).ready(function() {
           } else {
             sql_result = response.error;
           }
-        
+
           $("textarea#sql_result").text(sql_result);
           $("#results_table").html("");
         }
-        
+
         var linecount = 0, cols = 100;
         var sql_result_lines = sql_result.split("\n");
         $.each(sql_result_lines, function(i, l) {
@@ -146,20 +147,19 @@ $(document).ready(function() {
       $("textarea#sql_result").text("No input to convert");
       $("textarea#sql_result").css("height", (1 * 16 + 8).toString().concat("px"));
     }
-    return false;
   });
 
   // Convert characters to correct symbols
-  $("textarea#logic").keypress(function(event) {
-    console.log("Key down:" + event.keyCode);
+  $("textarea#logic").keypress(function(e) {
+    console.log("Key down:" + e.keyCode);
 
     // Firefox / Chrome compatibility
-    var k = (typeof event.which === "number") ? event.which : event.keyCode;
+    var k = (typeof e.which === "number") ? e.which : e.keyCode;
 
     var key = keys[k.toString()];
     if (key !== undefined) {
       // Stop the keypress from happening normally
-      event.preventDefault();
+      e.preventDefault();
 
       // Get the relevant formatters for the pressed key
       var matching_formatters = key.formatters.map(function(name) {
@@ -291,5 +291,8 @@ $(document).ready(function() {
         }
       }
   });
+
+  var logicEditor = ace.edit("logic");
+  logicEditor.setTheme("ace/theme/solarized_dark");
 
 });
