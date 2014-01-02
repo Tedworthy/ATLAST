@@ -226,14 +226,15 @@ columns, very few of which are likely needed in a given query.
 
 The solution chosen addresses the issues raised so far.
 
-For a relation R(k, a_{1}, a_{2}, ..., a_{n}) with primary key k and n
+For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k and n
 attributes, n + 1 predicates are generated as follows:
-
-R(k)
-R\_a_{1}(k, a1)
-R\_a_{2}(k, a2)
-...
-R\_a_{n}(k, an)
+\begin{enumerate}
+\item R(k)
+\item R\_$a_{1}$(k, a1)
+\item R\_$a_{2}$(k, a2)
+\\ \vdots
+\item[n + 1.] R\_$a_{n}$(k, an)
+\end{enumerate}
 
 This reduces the number of unncessary attributes in a given query, whilst also
 addressing the representation of a tuple, by relating a tuple to its primary
