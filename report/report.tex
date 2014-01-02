@@ -424,12 +424,15 @@ The overall assessment is the sum of the group project component and the Softwar
 
 \begin{document}
 
-\begin{center} {\huge 3rd Year Group Project Final Report} \\ [0.4cm]
+\begin{center} {\huge Translating First Order Predicate Logic to SQL - Report} \\ [0.4cm]
 {\large Sean Allan, Mitchell Allison, Sam Esgate, Tom Harling, Ted Sales, Max Tottenham} \\ [0.2cm]
 \vspace{0cm} \end{center}
 
-\section{Executive Summary}
+\todo[inline]{TODO: Contents Page?}
 
+\section{Executive Summary}
+\todo[inline]{TODO: Sumarise teaching applications}
+\todo[inline]{TODO: Spelling \& Grammar check}
 Our project at it's heart is a language translator, it translates a restricted
 version of First Order Predicate Logic into the database querying language
 SQL. This allows us to open up new avenues in the realms of teaching, database
@@ -465,6 +468,13 @@ From the teaching standpoint
         No implementation, software engineering details, or project management
 
 \section{Introduction}
+
+Today we have a problem. A brain drain problem. In the 1st world there are 
+far too many logicians, and not enough database administrators. We are here
+to bridge that gap. Introducing ATLAST (Automatic Translation Logic To Augmented SQL Tool), finally we have the solution to all of our problems.
+
+ATLAST! So Agile, Such Logic. Many Translations.
+
 
         Set the scene ... motivation'
         State the problem you are trying to solve ...objective(s)
@@ -513,8 +523,8 @@ designed for managing data held in relational database management system.
 
 \subsection{Planning}
 
--- TODO Should we discuss here how everything went wrong, and revisions were
-missed entirely? --
+\todo[inline]{TODO Should we discuss here how everything went wrong, and revisions were
+missed entirely?}
 
 As we have learnt from previous projects, inside and outside the department, it
 is critical to thoroughly plan a software engineering exercise of this scale
@@ -528,7 +538,7 @@ Moreover, we initially split the project up in to five major 'revisions'. Each
 revision added a certain amount of functionality to our project, and allowed us
 to continually build upon features already implemented. This incremental method
 of development is one of the key ideas of the Agile development methodology to
-which we adhered to throughout the project. -- TODO citation -- Additionally,
+which we adhered to throughout the project. \todo[inline]{TODO citation} Additionally,
 with each revision having a deadline, it gave the team a clear plan of what was
 to be implemented at what time.
 
@@ -555,8 +565,8 @@ Completion}} & \textbf{Completion Estimate} \\
     \hline
     3 & \item Expand backend parser grammar to include more advanced use of SQL
               queries (selection \& projection);
-        \item Dynamic table selection in logic - "smart" logic predicates, i.e.
-              updated(x) vs. customer\_updated(x);
+        \item Dynamic table selection in logic - "smart" logic predicates, e.g.
+          \texttt{updated(x)} vs. \texttt{customer\_updated(x)};
         \item Hook into database.
     & 1/11/13 \\
     \hline
@@ -577,23 +587,82 @@ project}
 
 \subsection{Group Organisation}
 
+At the beginning of the project, as discussed previously, we outlined the goals
+and required features of our project, and split them up in to three rough areas
+- front end (handling interaction between the user and our system), middle end
+(communication between the front end and back end), and then the back end,
+which handles the actual translation and database lookups. We initially split
+our group of six in to three teams, corresponding to each of the subsections of
+our project. Members were allocated to each team depending on their strengths -
+initially Ted and Tom were to complete front end work, Sam and Mitchell to do
+middle end, and Sean and Max on back end. These were just initial roles, and we
+found that throughout the project, roles could be temporarily switched around
+to put extra work in to tasks that took longer than expected.
+
 One of the key ways we kept our group organised was through weekly meetings.
 During each weekly meeting, we discussed what tasks were to be completed that
 week, and spoke in detail about any concerns members had about the tasks that
 had been completed previously. We would also analyse the previous weeks
-performance, and make changes to our plan accordingly. An example of such a
-change is when we realised implementing the parser would take significantly
-longer than originally thought. This lead us to modify our feature set,
-reallocate group roles temporarily, and modify deadlines and revision subgoals.
+performance, and make changes to our plan accordingly. This falls in line with 
+a key principle of Agile development, where a team must be adapatable to
+change. An example of such a change is when we realised implementing the parser
+would take significantly longer than originally thought. This lead us to modify 
+our feature set, reallocate group roles temporarily, and modify deadlines 
+and revision subgoals.
 
+\missingfigure{Group member Sam questioning the back-end architecture of the
+  solution in one of our regular face-to-face meetings. (take pic from Chatley
+cwk 1)}
 
 \subsection{Tracking}
 
--- Agile manifesto, responding to change
--- Quantitatively and quantitively identify performance
+Once an overarching plan was agreed on, we split each major goal of each
+revision in to smaller tasks. For each of these tasks, we then allocated a
+numerical estimate of the time it would take to complete, on a scale of 1 to 5,
+where 1 signified a short task and 5 signified a very time consuming task. The
+estimate of time a task would take was initially based on previous experience
+on other software engineering projects the group participated in, but as the
+project progressed, we applied knowledge of how prior tasks went to more
+accurately assign estimates.
 
--- Trello
+A typical practice in Agile development is for developers to write down their
+tasks on cards, and then place them on a physical board (known as an
+"information radiator") located in sight of all developers on the project. 
+Upon this board are "swim lanes"; columns which cards belong to, and denote 
+their progress (e.g. "to do", "doing" and "done"). Each task has a time 
+estimate (as discussed above), and is assigned to one or more people to complete.
+This allows every developer to know exactly what is happening at what time,
+what has to be done, and what has been completed. For our group, working in 
+DoC labs and at home, this would obviously not be practical however. Therefore,
+we used web-based project management software called Trello. This software
+behaves in the same way as a physical board, but is accessed via a web based
+interface which can be edited by all members of the project. Additionally, each
+card has a hashtag which denotes which revision a task belongs to, or if a
+stricter deadline is required, a date for completion can be manually added.
+Virtual cards are moved between each swim lane as the task progresses. The
+group found this tool indispensible for communication and keeping on track with
+the project.
+
+\todo[inline]{TODO Citations for the above agile stuff}
+
+\missingfigure{Picture of our Trello board here. Do we want a screenshot from
+  the first week, or towards the end? We have several versions as the project
+progressed in our Chatley reports.}
+
+-- Trello, Git integration
+
 -- Burndown chart
+
+\todo[inline]{TODO Talk about how our project adapated based on user feedback, version
+  control (it might seem obvious that Git was used, but we should probably
+  mention it along with a brief reason as to why we didn't use SVN/Mercurial or
+  whatever). Continuous integration could be talked about here, but perhaps
+  that belogs in the software development section? I'll see how the other
+  sections are written first, then I'll put this stuff in; Anandha places
+  importance on the report flowing, and I don't want it to feel disjointed.
+Also, there should be a bit more discussion about Agile, but I don't know
+whether it belongs here or not. Maybe we should include some brief analysis on how
+our group found these techniques useful?}
 
 \section{Bibliography}
 
