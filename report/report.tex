@@ -1,10 +1,38 @@
-\documentclass[a4wide, 11pt]{article} \usepackage{a4, fullpage}
+\documentclass[a4wide, 11pt]{article}
+\usepackage{a4, fullpage}
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
 \usepackage{array,booktabs}
+\usepackage[style=numeric,sorting=debug,backend=biber]{biblatex}
+\usepackage[T1]{fontenc}
+\addbibresource{report.bib}
+\DeclareDatamodelEntrytypes{standard}
+\DeclareDatamodelEntryfields[standard]{type,number}
+\DeclareBibliographyDriver{standard}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \newunit\newblock
+  \printfield{number}%
+  \setunit{\addspace}\newblock
+  \printfield[parens]{type}%
+  \newunit\newblock
+  \usebibmacro{location+date}%
+  \newunit\newblock
+  \iftoggle{bbx:url}
+    {\usebibmacro{url+urldate}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \usebibmacro{related}%
+  \usebibmacro{finentry}}
 
 % Stop Latex from repositioning tables like an idiot
 \restylefloat{table}
@@ -19,6 +47,7 @@
     p{#1}%
     <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
 \makeatother
+
 
 \begin{document}
 
@@ -73,9 +102,99 @@ From the teaching standpoint
         section. Revisions should not be talked about here though, just the
         overarching goals of the project.
 
-\section{Design and Implementation}
+\section{Design}
 
-        Detail your design (why did you do it this way?) - design of your software, possibly including a diagram of the major components
+        Why web interface, why not native?
+        Detail the initial design.
+          - Focus on components, how they make up the system.
+          - How the components are to interact
+        Look at interface design.
+          - Maybe show mockups
+          - Focus on what the user would need rather than what would look
+            visually attractive
+
+\section{Theory}
+
+Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
+programming language designed for managing data held in relational database
+management system. SQL is made up of two different types of language:
+
+\begin{itemize}
+
+    \item
+      Data Definition Language. DDL is used to define the structure of a
+      database (also known as its schema.
+    \item 
+      Data Manipulation Language. DML is primarily used to insert, select,
+      delete and update data within a database.
+
+\end{itemize}
+
+However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations such as
+'SELECT' (without 'INSERT INTO') should not exist as part of the DML; they do
+not manipulate the data, only query it. However, the distinction between
+read-only and read-write is not enforced. Here we will focus only on these
+operations (so called 'SQL-data' operations), with the aim of purely querying
+the RDBMS without altering it.
+
+\subsection{Tuple Relational Calculus}
+
+SQL was originally based on Relational Algebra and Tuple Relational Calculus.
+RA forms the structure and operations that can be performed
+across tuples of data and TRC provides a query language for such a model.
+
+\subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
+
+A query takes the form: \{T | p(T)\}
+
+The answer is the set of all tuples T such that p(T) evaluates to
+true.
+
+A formula F is recursively defined as:
+\begin{itemize}
+\item  An atomic formula - a predicate applied to a tuple of terms.
+\item  $\lnot F'$ where $F'$ is a formula.
+\item  $F' \land F''$ where $F', F''$ are formulae.
+\item  $F' \lor F''$ where $F', F''$ are formulae.
+\item  $\exists t(F)$ where $t$ is a tuple.
+\item  $\forall t(F)$ where $t$ is a tuple.
+\end{itemize}
+
+$\exists t(F)$ is true if, for some tuple $t$ the formula $F$ is true.\\
+$\forall t(F)$ is true if, for all tuples $t$ the formula $F$ is true.
+
+A variable $v$ is bound in $F$ if it is of the form:
+
+$\exists t(F)$ or $\forall t(F)$ and $v \in t$.
+
+Otherwise $v$ can be said to be free. An important restriction exists that the
+variable T in our original query must be the only free variable in $p(T)$.
+
+\subsubsection{Querying Relational Algebra}
+
+Using all of this, it is possible to begin formulating some simple queries. For
+example, suppose it was desirable to query all films from a particular director in
+a database. It would be simple to write:
+
+\{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+
+This would however return all the elements of the tuple. The tuple may contain
+many irrelevant values to the user, and so it would be desirable to only return
+the name of said film. This could be achieved as detailed below:
+
+\{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.name =
+F1.name)\}
+
+We are now able to represent projection and selection. We can also represent
+joins. Let us suppose that we wish to find all films whose director has also
+directed another film.
+
+\{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ Films(Films1.director =
+F2.director $\land$ F1 != F2))\}
+
+
+\section{Implementation}
+
         Summarise key implementation details (how did you do it? what technology was used and why? what other technology was considered, but not used and why?
         Any technical challenges encountered and how addressed?
         Any risks anticipated, and how mitigated 
@@ -180,7 +299,237 @@ reallocate group roles temporarily, and modify deadlines and revision subgoals.
 
 \section{Bibliography}
 
--- TODO Agree on referencing practice. The library recommends Harvard. --
+\printbibliography
+
+--TODO Agree on referencing practice. The library recommends Harvard. --
+
+https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
+
+\section{Appendix}
+
+The appendix is optional, and does not count towards the 35 pages. It may contain thing like: User guide, installation instructions; more extensive design, testing, statistics etc.
+
+\section{Anandha waffle from his site - delete once finished report}
+
+Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
+
+Contents for Final Report: The project report should not be longer than 35 pages (recommended length is around 30 pages), and might be organised according to the following structure: see above sections
+
+Make sure that the final report presents a coherent story. Ask advice from your supervisor. You might also draw inspiration from the instructions about writing up your individual project.
+
+Bear in mind, that most of the project assessors will not have followed the project throughout and will only have a short time to listen to a presentation or see a demonstration. For this reason they will rely heavily on the report to judge the project.
+
+The report should be submitted to SGO in form of a hard copy, as well as electronically through CATE. i.e. report.pdf. 
+
+------------------------
+
+Assessment
+Will be updated soon.
+
+Group project
+The group project assessment is undertaken by each group's supervisor, and moderated by a larger group of assessors, who will attend your presentation, and/or read your final report. The assessment is based on:
+
+    Executive Summary, 5
+    Presentation, 10
+    Group Collaboration and Management, 20
+    Report, 30
+    Technical Achievement, 35
+
+The group project (along with the Software Engineering course) is worth 440 Marks for both the MEng and BEng students.
+Overall assessment
+The overall assessment is the sum of the group project component and the Software Engineering Course in an 80:20 split. 
+
+\end{document}
+% Itemised columns
+\makeatletter
+\newcolumntype{i}[1]{%
+    >{\minipage[t]{\linewidth}\let\\\tabularnewline
+      \itemize
+      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
+      \setlength{\itemsep}{-\parsep}}%
+    p{#1}%
+    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
+\makeatother
+
+
+\begin{document}
+
+\begin{center} {\huge 3rd Year Group Project Final Report} \\ [0.4cm]
+{\large Sean Allan, Mitchell Allison, Sam Esgate, Tom Harling, Ted Sales, Max Tottenham} \\ [0.2cm]
+\vspace{0cm} \end{center}
+
+\section{Executive Summary}
+
+Our project at it's heart is a language translator, it translates a restricted
+version of First Order Predicate Logic into the database querying language
+SQL. This allows us to open up new avenues in the realms of teaching, database
+administration, and computer security.
+
+In the world of computer security, access to data is an important topic. 
+One which has come to public attention through the recent leaks from NSA
+contracter Edward Snowden. Our product provides the bedrock for an information 
+security system. 
+
+Imagine a scenario where your company needs to work with another large organisation, 
+for example a Telecomunicaitons company and the United States Governement. Your company
+is passionate about your customers privacy rights and so you want to give the 
+government as little information as possible about your customers, whilst still alowing
+them to do their job. This could be as secretive as not even allowing the governement 
+to know what kinds of data you hold. What you would like is a system which would allow
+the goverment to ask you a question, and for you to be able to respond with as little 
+information as possible to answer that question without the government konwing what 
+information you hold. 
+
+Our product can provide the bedrock for this. Questions can be formed in predicate 
+logic about whether a particular entity exists and if certain conditions surounding 
+it hold, our project then takes this query and translates it into SQL, so that it is
+ready to be sent to a conventional database.
+
+From the teaching standpoint 
+
+
+        Your elevator pitch
+
+
+        What is your Project? What does it do? Why would I want to buy it? etc.
+        No implementation, software engineering details, or project management
+
+\section{Introduction}
+
+        Set the scene ... motivation'
+        State the problem you are trying to solve ...objective(s)
+        Summarise your main achievements 
+
+        -- GOALS - In Chatley coursework 1 --
+        TODO: Discuss goals, they're referenced in the Project Management
+        section. Revisions should not be talked about here though, just the
+        overarching goals of the project.
+
+\section{Design}
+
+        Why web interface, why not native?
+        Detail the initial design.
+          - Focus on components, how they make up the system.
+          - How the components are to interact
+        Look at interface design.
+          - Maybe show mockups
+          - Focus on what the user would need rather than what would look
+            visually attractive
+
+\section{Theory}
+
+Structured Query Language (SQL) \textcite{SQL14} is a special-purpose programming language
+designed for managing data held in relational database management system.
+
+\section{Implementation}
+
+        Summarise key implementation details (how did you do it? what technology was used and why? what other technology was considered, but not used and why?
+        Any technical challenges encountered and how addressed?
+        Any risks anticipated, and how mitigated 
+
+\section{Evaluation}
+
+        Evaluate your deliverables e.g. performance, usability, etc.
+        Summarise testing procedures + relevant testing results 
+
+\section{Conclusion and Future Extensions}
+
+        What did you learn? What might you have done differently?
+        How would you build on what you have done? 
+
+\section{Project Management}
+
+        Planning, group organisation, breakdown + task allocation etc.
+
+\subsection{Planning}
+
+-- TODO Should we discuss here how everything went wrong, and revisions were
+missed entirely? --
+
+As we have learnt from previous projects, inside and outside the department, it
+is critical to thoroughly plan a software engineering exercise of this scale
+before beginning to implement features and write code. As discussed in our
+introduction section, we decomposed our problem of translating first order
+predicate logic to SQL into several key subgoals. This enabled us to outline a
+core feature set which we wished to implement and gave us a much clearer idea
+of how to begin tackling the problem.
+
+Moreover, we initially split the project up in to five major 'revisions'. Each
+revision added a certain amount of functionality to our project, and allowed us
+to continually build upon features already implemented. This incremental method
+of development is one of the key ideas of the Agile development methodology to
+which we adhered to throughout the project. -- TODO citation -- Additionally,
+with each revision having a deadline, it gave the team a clear plan of what was
+to be implemented at what time.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| l | i{0.6\textwidth} | l |}
+    \hline
+    \textbf{Revision} & \multicolumn{1}{p{0.6\textwidth} |}{\textbf{Necessary Steps for
+Completion}} & \textbf{Completion Estimate} \\
+    \hline
+    1 & \item Set up basic web server;
+        \item Set up and create a database;
+        \item Create simple UI \& communicate with server;
+        \item Create 5 sample Logic to SQL translations;
+        \item Set up development environment.
+    & 17/10/13 \\
+    \hline
+    2 & \item UI sends predicate logic to web server;
+        \item Web server parses the logic into an AST;
+        \item Backend translates the AST to SQL for basic “SELECT FROM” queries (i.e.
+              projection only);
+        \item Create 5 more sample Logic to SQL translations.
+    & 25/10/13 \\
+    \hline
+    3 & \item Expand backend parser grammar to include more advanced use of SQL
+              queries (selection \& projection);
+        \item Dynamic table selection in logic - "smart" logic predicates, i.e.
+              updated(x) vs. customer\_updated(x);
+        \item Hook into database.
+    & 1/11/13 \\
+    \hline
+    4 & \item User-defined functions;
+        \item Configurable UI - database settings, and possibly changing the UI depending
+              on the user's ability;
+        \item Extend backend to use SQL joins.
+    & 8/11/13 \\
+    \hline
+    5 & \item Contingency time built in for bug fixes, or additional
+    features/extensions depending on the project status (e.g. Semantic
+    checks of logical statements before translating to SQL). & 15/11/13 \\
+    \hline
+  \end{tabular}
+  \caption{Feature sets for each revision, as defined at the start of the
+project}
+\end{table}
+
+\subsection{Group Organisation}
+
+One of the key ways we kept our group organised was through weekly meetings.
+During each weekly meeting, we discussed what tasks were to be completed that
+week, and spoke in detail about any concerns members had about the tasks that
+had been completed previously. We would also analyse the previous weeks
+performance, and make changes to our plan accordingly. An example of such a
+change is when we realised implementing the parser would take significantly
+longer than originally thought. This lead us to modify our feature set,
+reallocate group roles temporarily, and modify deadlines and revision subgoals.
+
+
+\subsection{Tracking}
+
+-- Agile manifesto, responding to change
+-- Quantitatively and quantitively identify performance
+
+-- Trello
+-- Burndown chart
+
+\section{Bibliography}
+
+\printbibliography
+
+--TODO Agree on referencing practice. The library recommends Harvard. --
 
 https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
