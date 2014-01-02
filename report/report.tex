@@ -5,6 +5,7 @@
 \usepackage{float}
 \usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
 \usepackage{array,booktabs}
+\usepackage{todonotes}
 
 % Stop Latex from repositioning tables like an idiot
 \restylefloat{table}
@@ -22,9 +23,11 @@
 
 \begin{document}
 
-\begin{center} {\huge 3rd Year Group Project Final Report} \\ [0.4cm]
+\begin{center} {\huge Translating First Order Predicate Logic to SQL - Report} \\ [0.4cm]
 {\large Sean Allan, Mitchell Allison, Sam Esgate, Tom Harling, Ted Sales, Max Tottenham} \\ [0.2cm]
 \vspace{0cm} \end{center}
+
+\todo[inline]{TODO: Contents Page}
 
 \section{Executive Summary}
 
@@ -96,8 +99,8 @@ From the teaching standpoint
 
 \subsection{Planning}
 
--- TODO Should we discuss here how everything went wrong, and revisions were
-missed entirely? --
+\todo[inline]{TODO Should we discuss here how everything went wrong, and revisions were
+missed entirely?}
 
 As we have learnt from previous projects, inside and outside the department, it
 is critical to thoroughly plan a software engineering exercise of this scale
@@ -111,7 +114,7 @@ Moreover, we initially split the project up in to five major 'revisions'. Each
 revision added a certain amount of functionality to our project, and allowed us
 to continually build upon features already implemented. This incremental method
 of development is one of the key ideas of the Agile development methodology to
-which we adhered to throughout the project. -- TODO citation -- Additionally,
+which we adhered to throughout the project. \todo[inline]{TODO citation} Additionally,
 with each revision having a deadline, it gave the team a clear plan of what was
 to be implemented at what time.
 
@@ -138,8 +141,8 @@ Completion}} & \textbf{Completion Estimate} \\
     \hline
     3 & \item Expand backend parser grammar to include more advanced use of SQL
               queries (selection \& projection);
-        \item Dynamic table selection in logic - "smart" logic predicates, i.e.
-              updated(x) vs. customer\_updated(x);
+        \item Dynamic table selection in logic - "smart" logic predicates, e.g.
+          \texttt{updated(x)} vs. \texttt{customer\_updated(x)};
         \item Hook into database.
     & 1/11/13 \\
     \hline
@@ -160,15 +163,28 @@ project}
 
 \subsection{Group Organisation}
 
+At the beginning of the project, as discussed previously, we outlined the goals
+and required features of our project, and split them up in to three rough areas
+- front end (handling interaction between the user and our system), middle end
+(communication between the front end and back end), and then the back end,
+which handles the actual translation and database lookups. We initially split
+our group of six in to three teams, corresponding to each of the subsections of
+our project. Members were allocated to each team depending on their strengths -
+initially Ted and Tom were to complete front end work, Sam and Mitchell to do
+middle end, and Sean and Max on back end. These were just initial roles, and we
+found that throughout the project, roles could be temporarily switched around
+to put extra work in to tasks that took longer than expected.
+
 One of the key ways we kept our group organised was through weekly meetings.
 During each weekly meeting, we discussed what tasks were to be completed that
 week, and spoke in detail about any concerns members had about the tasks that
 had been completed previously. We would also analyse the previous weeks
-performance, and make changes to our plan accordingly. An example of such a
-change is when we realised implementing the parser would take significantly
-longer than originally thought. This lead us to modify our feature set,
-reallocate group roles temporarily, and modify deadlines and revision subgoals.
-
+performance, and make changes to our plan accordingly. This falls in line with 
+a key principle of Agile development, where a team must be adapatable to
+change. An example of such a change is when we realised implementing the parser
+would take significantly longer than originally thought. This lead us to modify 
+our feature set, reallocate group roles temporarily, and modify deadlines 
+and revision subgoals.
 
 \subsection{Tracking}
 
@@ -178,9 +194,12 @@ reallocate group roles temporarily, and modify deadlines and revision subgoals.
 -- Trello
 -- Burndown chart
 
+(Sean will do this)
+
 \section{Bibliography}
 
--- TODO Agree on referencing practice. The library recommends Harvard. --
+\todo[inline]{TODO Agree on referencing practice. The library recommends
+Harvard.}
 
 https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
