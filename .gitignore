@@ -29,3 +29,6 @@ certs/*
 report/*.aux
 
 report/*.pdf
+report/*.bbl
+report/*.bcf
+report/*.blg
