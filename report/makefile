@@ -5,4 +5,4 @@ report:
 	pdflatex report.tex
 
 clean:
-	rm -r *.aux *.pdf *.log *.bcf *.bbl *.bbg
+	rm -rf *.aux *.pdf *.log *.bcf *.bbl *.blg *.bbg *.run.xml
