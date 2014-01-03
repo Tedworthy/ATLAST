@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'DejaVu Sans Mono';
-  src: url('static/DejaVuSansMono.woff');
+  src: url('/static/DejaVuSansMono.woff');
 }
 
 body {
@@ -22,8 +22,9 @@ header {
   position: fixed;
   width: 100%;
   height: 60px;
-  background: rgba(255, 255, 255, 0.95);
   z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 nav {
@@ -33,7 +34,7 @@ nav {
   margin: auto;
 }
 
-nav ul {
+nav > ul {
   width: 100%;
   height: 100%;
   margin: 0px;
@@ -41,20 +42,60 @@ nav ul {
   list-style: none;
 }
 
-nav ul li {
+nav > ul > li {
   width: 33.333333333%;
   height: 100%;
   float: left;
   text-align: center;
+  transition: box-shadow 0.2s ease;
 }
 
-nav ul li span {
+nav > ul > li > a {
+  display: block;
+  width: 100%;
+  height: 100%;
   font-size: 24px;
-  line-height: 60px;
+  text-decoration: none;
+  color: rgb(150, 150, 150);
+  transition: color 0.2s ease;
 }
 
-nav ul li span i {
+nav > ul > li > a > span {
+  display: inline-block;
+  line-height: 60px;
+  vertical-align: middle;
+}
+
+nav > ul > li > a > i {
+  display: inline-block;
+  line-height: 60px;
   margin-right: 15px;
+  vertical-align: middle;
+  font-size: 1.5em;
+}
+
+#query:target {
+  box-shadow: inset 0 0 30px rgba(38, 139, 210, 0.7) !important;
+}
+
+#help:target {
+  box-shadow: inset 0 0 30px rgba(58, 204, 0, 0.7) !important;
+}
+
+#settings:target {
+  box-shadow: inset 0 0 30px rgba(220, 50, 47, 0.7) !important;
+}
+
+nav > ul > li:target a {
+  color: black;
+}
+
+nav > ul > li:hover {
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+nav > ul > li:hover a {
+  color: black;
 }
 
 section {
@@ -63,7 +104,7 @@ section {
 }
 
 #logic {
-  font-family: 'DejaVu Sans Mono', monospace;
+  font-family: 'DejaVu Sans Mono', 'Courier New', monospace;
   font-size: 16px;
   line-height: 16px;
   width: 100%;

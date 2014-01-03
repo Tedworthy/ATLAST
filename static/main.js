@@ -1,4 +1,17 @@
 $(document).ready(function() {
+  $(window).on('hashchange', function() {
+    if (document.location.hash === "#query")
+      ;
+    else if (document.location.hash === "#help")
+      ;
+    else if (document.location.hash === "#settings")
+      ;
+    else
+      document.location.hash = "#query";
+  });
+
+  $(window).trigger('hashchange');
+
   $(".modalInput").overlay({mask: '#999', fixed: false}).bind("onBeforeClose", function(e) {
     $(".error").hide();
   });
