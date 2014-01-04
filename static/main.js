@@ -120,7 +120,7 @@ $(document).ready(function() {
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
           sql_result = response.sql;
-          $("textarea#sql_result").text(sql_result);
+          sqlEditor.setValue(sql_result);
 
           // Create an HTML table
           var table = '<table border="1" align="center"> <tr>';
@@ -312,5 +312,10 @@ $(document).ready(function() {
 
   var logicEditor = ace.edit("logic");
   logicEditor.setTheme("ace/theme/solarized_dark");
+
+  var sqlEditor = ace.edit("sql");
+  sqlEditor.setTheme("ace/theme/solarized_dark");
+  sqlEditor.getSession().setMode("ace/mode/sql");
+  sqlEditor.setReadOnly(true);
 
 });
