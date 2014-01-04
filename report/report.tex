@@ -64,7 +64,7 @@
 
 \section{Executive Summary}
   Our project is, at its heart, a language translator. It translates a
-  restricted version of First Order Predicate Logic into the database querying
+  restricted version of first order predicate logic into the database querying
   language SQL. This allows us to open up new avenues in the realms of
   teaching, database administration, and computer security.
 
@@ -74,15 +74,15 @@
   information security system. 
 
   Imagine a scenario where your company needs to work with another large
-  organisation, for example a Telecomunicaitons company and the United States
-  Governement. Your company is passionate about your customers privacy rights
+  organisation, for example a telecommunications company working with the US
+  Government. Your company is passionate about your customers privacy rights
   and so you want to give the government as little information as possible
-  about your customers, whilst still alowing them to do their job. This could
+  about your customers, whilst still allowing them to do their job. This could
   be as secretive as not even allowing the governement to know what kinds of
   data you hold. What you would like is a system which would allow the
   goverment to ask you a question, and for you to be able to respond with as
   little information as possible to answer that question without the government
-  konwing what information you hold.
+  knowing what information you hold.
 
   Our product can provide the bedrock for this. Questions can be formed in
   predicate logic about whether a particular entity exists and if certain
@@ -153,12 +153,12 @@
 
       A formula F is recursively defined as:
       \begin{itemize}
-        \item An atomic formula - a predicate applied to a tuple of terms.
-        \item $\lnot F'$ where $F'$ is a formula.
+        \item $p(t_1, ..., t_n)$ where predicate $p$ is applied to terms $t_1, ..., t_n$ (atomic formula)
+        \item $\lnot F$ where $F$ is a formula.
         \item $F' \land F''$ where $F', F''$ are formulae.
         \item $F' \lor F''$ where $F', F''$ are formulae.
-        \item $\exists t(F)$ where $t$ is a tuple.
-        \item $\forall t(F)$ where $t$ is a tuple.
+        \item $\exists t(F)$ where $F$ is a formula and $t$ is a tuple of terms.
+        \item $\forall t(F)$ where $F$ is a formula and $t$ is a tuple of terms.
       \end{itemize}
 
       $\exists t(F)$ is true if, for some tuple $t$ the formula $F$ is true. \\
@@ -168,9 +168,9 @@
 
       $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
 
-      Otherwise $v$ can be said to be free. An important restriction exists
-      that the variable T in our original query must be the only free variable
-      in $p(T)$.
+      Otherwise $v$ is said to be free.
+      
+      Note that in query \{T | p(T)\} the variables in T must be the only free variables in p(T).
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
@@ -196,7 +196,7 @@
 
   \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
-    formulate a mapping between TRC and FO predicate logic.
+    formulate a mapping between TRC and first order predicate logic.
 
     \subsubsection{Atoms, Formulae, Predicates}
       Firstly atoms, formulae and predicates remain unchanged. We still wish to
@@ -205,13 +205,13 @@
 
     \subsubsection{Set Membership}
       The first difference is set membership. Whereas before we could simply
-      test the membership of a tuple $t$ in a relation $R$ with $t \in R$, FO
+      test the membership of a tuple $t$ in a relation $R$ with $t \in R$, first order
       predicate logic does not have the notion of set membership. From here
       there are a few different solutions to the problem.
 
       One solution is with an 'In' predicate, where 'InRelation(t, R)' would
       have the same semantic meaning as the previous set membership test. This
-      seems to work, although throughout FO predicate logic, we do not have the
+      seems to work, although throughout first order predicate logic, we do not have the
       notion of a tuple. A disadvantage of this would be that accessing members
       of the tuple would require another predicate, for example 'InTuple(a,
       'attrName', t)' which would have the same semantic meaning as 't.a' in
@@ -345,10 +345,10 @@
   \subsection{Group Organisation}
     At the beginning of the project, as discussed previously, we outlined the
     goals and required features of our project, and split them up in to three
-    rough areas - front end (handling interaction between the user and our
-    system), middle end (communication between the front end and back end), and
-    then the back end, which handles the actual translation and database
-    lookups. We initially split our group of six in to three teams,
+    rough areas - front end (handling user interactions),
+    middle end (communicating between client and server), and
+    then the back end (translation and database access).
+    We initially split our group of six in to three teams,
     corresponding to each of the subsections of our project. Members were
     allocated to each team depending on their strengths - initially Ted and Tom
     were to complete front end work, Sam and Mitchell to do middle end, and
@@ -389,8 +389,8 @@
     estimate (as discussed above), and is assigned to one or more people to
     complete.  This allows every developer to know exactly what is happening at
     what time, what has to be done, and what has been completed. For our group,
-    working in DoC labs and at home, this would obviously not be practical
-    however.  Therefore, we used web-based project management software called
+    working in DoC labs and at home, this would obviously not be practical.
+    Therefore, we used web-based project management software called
     Trello. This software behaves in the same way as a physical board, but is
     accessed via a web based interface which can be edited by all members of
     the project.  Additionally, each card has a hashtag which denotes which
