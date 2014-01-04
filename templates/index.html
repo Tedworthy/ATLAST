@@ -22,19 +22,16 @@ $def with (settingsForm)
       "//www.google-analytics.com/analytics.js","ga");
       ga("create", "UA-45800576-1", "srjallan.com"); ga("send", "pageview");
     </script>
-    <script src="static/jquery.tools.min.js"></script>
-    <script src="static/main.js"></script>
-    <script src="static/noty-2.1.2/js/noty/jquery.noty.js"></script>
-    <script src="static/noty-2.1.2/js/noty/layouts/top.js"></script>
-    <script src="static/noty-2.1.2/js/noty/themes/default.js"></script>
-    <script src="static/ace/src-min-noconflict/ace.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/static/ace/src-min-noconflict/ace.js"></script>
+    <script src="/static/main.js"></script>
     <!-- Not sure we need Bootstrap for the moment
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
     -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="static/main.css">
+    <link rel="stylesheet" href="/static/main.css">
   </head>
 
   <body>
@@ -62,36 +59,32 @@ $def with (settingsForm)
 
     <div id="main_container">
 
-      <section id="logic_section">
-        <button id="and_button">&and;</button>
-        <button id="or_button">&or;</button>
-        <button id="implies_button">&rarr;</button>
-        <button id="iff_button">&harr;</button>
-        <button id="exists_button">&exist;</button>
-        <button id="forall_button">&forall;</button>
-        <button id="not_button">&not;</button>
-        <form id="logic-form" name="logic-form" action="/" method="post">
-          <div id="logic"></div>
-          <button type="submit" id="convert_button">Convert to SQL</button>
-        </form>
-      </section>
+      <div id="query_container" class="hidden">
+        <section id="logic_section">
+          <button id="and_button">&and;</button>
+          <button id="or_button">&or;</button>
+          <button id="implies_button">&rarr;</button>
+          <button id="iff_button">&harr;</button>
+          <button id="exists_button">&exist;</button>
+          <button id="forall_button">&forall;</button>
+          <button id="not_button">&not;</button>
+          <form id="logic-form" name="logic-form" action="/" method="post">
+            <div id="logic"></div>
+            <button type="submit" id="convert_button">Convert to SQL</button>
+          </form>
+        </section>
 
-      <div id="example" align="center">Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
-      <div id="schema" align="center"></div>
-      <div id="schema_table" align="center"></div>
+        <div id="example" align="center">Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
+        <div id="schema" align="center"></div>
+        <div id="schema_table" align="center"></div>
 
-      <section id="results_section">
-        <textarea id="sql_result" placeholder="SQL query produced"></textarea>
-        <div id="results_table" align="center"></div>
-      </section>
-
-      <div class="modal" id="configdialog">
-        <p><b> Configuration Page</b> </p>
-            $:settingsForm.render()
-        <button class="close">Close</button>
+        <section id="results_section">
+          <textarea id="sql_result" placeholder="SQL query produced"></textarea>
+          <div id="results_table" align="center"></div>
+        </section>
       </div>
 
-      <div class="modal" id="helpdialog">
+      <div id="help_container" class="hidden">
         <strong>Instructions</strong>
         <p>
           Input a logical statement in the 'Logic box'
@@ -122,6 +115,11 @@ $def with (settingsForm)
         <button class="close">Close</button>
       </div>
 
+      <div id="settings_container" class="hidden">
+        <p><b> Configuration Page</b> </p>
+            $:settingsForm.render()
+        <button class="close">Close</button>
+      </div>
     </div>
   </body>
 

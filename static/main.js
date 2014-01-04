@@ -1,20 +1,25 @@
 $(document).ready(function() {
+
+  var windows = {
+    "#query": "#query_container",
+    "#help": "#help_container",
+    "#settings": "#settings_container"
+  };
+  var current_window = "";
+
   $(window).on('hashchange', function() {
-    if (document.location.hash === "#query")
-      ;
-    else if (document.location.hash === "#help")
-      ;
-    else if (document.location.hash === "#settings")
-      ;
-    else
+    if (document.location.hash in windows) {
+      $("html, body").animate({ scrollTop: 0 }, "fast");
+      if (current_window !== "")
+        $(windows[current_window]).addClass("hidden");
+      $(windows[document.location.hash]).removeClass("hidden");
+      current_window = document.location.hash;
+    } else {
       document.location.hash = "#query";
+    }
   });
 
   $(window).trigger('hashchange');
-
-  $(".modalInput").overlay({mask: '#999', fixed: false}).bind("onBeforeClose", function(e) {
-    $(".error").hide();
-  });
 
   var schema;
 

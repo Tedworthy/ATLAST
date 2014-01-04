@@ -40,12 +40,13 @@ nav > ul {
   margin: 0px;
   padding: 0px;
   list-style: none;
+  font-size: 0;
 }
 
 nav > ul > li {
+  display: inline-block;
   width: 33.333333333%;
   height: 100%;
-  float: left;
   text-align: center;
   transition: box-shadow 0.2s ease;
 }
@@ -68,7 +69,7 @@ nav > ul > li > a > span {
 
 nav > ul > li > a > i {
   display: inline-block;
-  line-height: 60px;
+  line-height: 60px !important;
   margin-right: 15px;
   vertical-align: middle;
   font-size: 1.5em;
@@ -146,6 +147,9 @@ button {
   -moz-box-sizing: border-box;
 }
 
+.hidden {
+  display: none;
+}
 
 .modal {
     background-color:#fff;
