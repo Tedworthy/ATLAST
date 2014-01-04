@@ -21,8 +21,15 @@ $(document).ready(function() {
 
   $(window).trigger('hashchange');
 
-  var schema;
+  var logicEditor = ace.edit("logic");
+  logicEditor.setTheme("ace/theme/solarized_dark");
 
+  var sqlEditor = ace.edit("sql");
+  sqlEditor.setTheme("ace/theme/solarized_dark");
+  sqlEditor.getSession().setMode("ace/mode/sql");
+  sqlEditor.setReadOnly(true);
+
+  var schema;
   $.ajax({
     type: "GET",
     url: "/schema"
@@ -168,7 +175,8 @@ $(document).ready(function() {
   });
 
   // Convert characters to correct symbols
-  $("textarea#logic").keypress(function(e) {
+  $(logicEditor.container).on('keypress', function(e) {
+    // TODO REMOVE THIS LATER, IT'S DEBUGGING CODE
     console.log("Key down:" + e.keyCode);
 
     // Firefox / Chrome compatibility
@@ -184,9 +192,14 @@ $(document).ready(function() {
         return formatters[name];
       });
 
+      if (!(logicEditor.selection.isEmpty()))
+        logicEditor.session.remove(logicEditor.selection.getRange());
+
       // Get current state
-      var cursor = $(this).getCursorPosition();
-      var logic = $(this).val();
+      var ace_cursor = logicEditor.selection.getCursor();
+      var logic = logicEditor.getValue();
+
+      var cursor = rowColumnToCursor(ace_cursor, logic);
 
       // Augment the existing logic as if the pressed key had been inserted
       logic = logic.substr(0, cursor) + key.char + logic.substr(cursor);
@@ -217,40 +230,72 @@ $(document).ready(function() {
               logic.substr(portionEnd);
       cursor = portionStart + portionCursor;
 
+      ace_cursor = cursorToRowColumn(cursor, logic);
+
       // Update the UI
-      $(this).val(logic);
-      $(this).setCursorPosition(cursor);
+      logicEditor.setValue(logic);
+      logicEditor.selection.clearSelection();
+      logicEditor.selection.moveCursorToPosition(ace_cursor);
     }
   });
 
   // Buttons insert correct symbols
   $("#and_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.and);
+    logicEditor.insert(unicode_chars.and);
   });
 
   $("#or_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.or);
+    logicEditor.insert(unicode_chars.or);
   });
 
   $("#implies_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.implies);
+    logicEditor.insert(unicode_chars.implies);
   });
 
   $("#iff_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.iff);
+    logicEditor.insert(unicode_chars.iff);
   });
 
   $("#exists_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.exists);
+    logicEditor.insert(unicode_chars.exists);
   });
 
   $("#forall_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.forall);
+    logicEditor.insert(unicode_chars.forall);
   });
 
   $("#not_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.not);
+    logicEditor.insert(unicode_chars.not);
   });
+
+  var rowColumnToCursor = function(row_column, text) {
+    var cursor = 0;
+    var row = row_column.row;
+    var match;
+    while (row > 0) {
+      match = text.substr(cursor).search("\n");
+      if (match == -1)
+        break;
+      cursor += match + 1;
+      row--;
+    }
+    cursor += row_column.column;
+    return cursor;
+  };
+
+  var cursorToRowColumn = function(cursor, text) {
+    var considered_text = text.substr(0, cursor);
+    var temp_cursor = 0;
+    var row = 0;
+    while (considered_text.substr(temp_cursor).search("\n") != -1) {
+      temp_cursor += considered_text.substr(temp_cursor).search("\n");
+      row++;
+    }
+    var lastNewline = text.lastIndexOf("\n");
+    lastNewline = (lastNewline = -1) ? 0 : lastNewline;
+    var column = cursor - lastNewline;
+    return { "row": row, "column": column };
+  };
 
   // Insert symbols at cursor position
   $.fn.extend({
@@ -309,13 +354,5 @@ $(document).ready(function() {
         }
       }
   });
-
-  var logicEditor = ace.edit("logic");
-  logicEditor.setTheme("ace/theme/solarized_dark");
-
-  var sqlEditor = ace.edit("sql");
-  sqlEditor.setTheme("ace/theme/solarized_dark");
-  sqlEditor.getSession().setMode("ace/mode/sql");
-  sqlEditor.setReadOnly(true);
 
 });
