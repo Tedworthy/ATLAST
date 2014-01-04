@@ -70,17 +70,19 @@ $def with (settingsForm)
           <button id="not_button">&not;</button>
           <form id="logic-form" name="logic-form" action="/" method="post">
             <div id="logic"></div>
-            <button type="submit" id="convert_button">Convert to SQL</button>
+            <button type="submit" id="translate_button">
+              <i class="fa fa-bolt"></i><span>Translate to SQL</span>
+            </button>
           </form>
         </section>
 
-        <div id="example" align="center">Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
-        <div id="schema" align="center"></div>
-        <div id="schema_table" align="center"></div>
+        <div id="example">Example query: ∃x(films_title(x, y) ∧ films_director(x, z))</div>
+        <div id="schema"></div>
+        <div id="schema_table"></div>
 
         <section id="results_section">
-          <textarea id="sql_result" placeholder="SQL query produced"></textarea>
-          <div id="results_table" align="center"></div>
+          <div id="sql">-- SQL query will appear here</div>
+          <div id="results_table"></div>
         </section>
       </div>
 
