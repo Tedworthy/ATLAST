@@ -23,6 +23,7 @@ $(document).ready(function() {
 
   var logicEditor = ace.edit("logic");
   logicEditor.setTheme("ace/theme/solarized_dark");
+  logicEditor.getSession().setMode("ace/mode/predicatelogic");
 
   var sqlEditor = ace.edit("sql");
   sqlEditor.setTheme("ace/theme/solarized_dark");

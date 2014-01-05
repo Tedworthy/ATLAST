@@ -189,6 +189,10 @@ button {
   display: none;
 }
 
+span.ace_identifier {
+  color: red;
+}
+
 .modal {
     background-color:#fff;
     display:none;
