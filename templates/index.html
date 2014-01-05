@@ -58,16 +58,22 @@ $def with (settingsForm)
     </header>
 
     <div id="main_container">
+      <div id="query_container" class="window hidden">
+        <section id="schema_section">
+          
+        </section>
 
-      <div id="query_container" class="hidden">
         <section id="logic_section">
-          <button id="and_button">&and;</button>
-          <button id="or_button">&or;</button>
-          <button id="implies_button">&rarr;</button>
-          <button id="iff_button">&harr;</button>
-          <button id="exists_button">&exist;</button>
-          <button id="forall_button">&forall;</button>
-          <button id="not_button">&not;</button>
+          <div id="insert_container">
+            <span>Click to insert:</span>
+            <button id="and_button">&and;</button>
+            <button id="or_button">&or;</button>
+            <button id="implies_button">&rarr;</button>
+            <button id="iff_button">&harr;</button>
+            <button id="exists_button">&exist;</button>
+            <button id="forall_button">&forall;</button>
+            <button id="not_button">&not;</button>
+          </div>
           <form id="logic-form" name="logic-form" action="/" method="post">
             <div id="logic"></div>
             <button type="submit" id="translate_button">
@@ -86,7 +92,7 @@ $def with (settingsForm)
         </section>
       </div>
 
-      <div id="help_container" class="hidden">
+      <div id="help_container" class="window hidden">
         <strong>Instructions</strong>
         <p>
           Input a logical statement in the 'Logic box'
@@ -114,13 +120,11 @@ $def with (settingsForm)
           <li>typing '<->' inserts an if and only if symbol, &harr;</li>
           <li>typing '->' inserts an implies symbol, &rarr;</li>
         </ul>
-        <button class="close">Close</button>
       </div>
 
-      <div id="settings_container" class="hidden">
+      <div id="settings_container" class="window hidden">
         <p><b> Configuration Page</b> </p>
             $:settingsForm.render()
-        <button class="close">Close</button>
       </div>
     </div>
   </body>
