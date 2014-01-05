@@ -10,14 +10,6 @@ body {
   font-weight: 100;
 }
 
-#main_container {
-  width: 100%;
-  max-width: 980px;
-  min-width: 300px;
-  margin: 0px auto;
-  padding-top: 60px;
-}
-
 header {
   position: fixed;
   width: 100%;
@@ -99,16 +91,74 @@ nav > ul > li:hover a {
   color: black;
 }
 
+#main_container {
+  width: 100%;
+  max-width: 980px;
+  min-width: 300px;
+  margin: 0px auto;
+  padding-top: 60px;
+}
+
 section {
-  padding: 10px;
+  padding: 0px 10px;
+  margin: 10px 0px;
   text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+section:first-child {
+  border-top-width: 0px;
+}
+
+button {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+  line-height: 16px;
+}
+
+#insert_container {
+  width: 100%;
+  height: 30px;
+  margin: 0px auto;
+  font-size: 0px;
+  text-align: left;
+}
+
+#insert_container > span {
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 14px;
+  color: rgb(150, 150, 150);
+}
+
+#insert_container > button {
+  display: inline-block;
+  width: 32px;
+  height: 100%;
+  line-height: 25px;
+  text-align: center;
+  color: rgb(150, 150, 150);
+  background: white;
+  border: 0;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+#insert_container > button:hover {
+  color: black;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#insert_container > button:active {
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 #logic, #sql {
+  width: 100%;
+  line-height: 16px;
   font-family: 'DejaVu Sans Mono', 'Courier New', monospace;
   font-size: 16px;
-  line-height: 16px;
-  width: 100%;
   text-align: left;
 }
 
@@ -118,13 +168,7 @@ section {
 
 #sql {
   height: 100px;
-}
-
-button {
-  font-family: Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 100;
-  line-height: 16px;
+  margin-top: 10px;
 }
 
 #translate_button {
@@ -165,20 +209,6 @@ button {
               0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-#buttons_container {
-  width: 50%;
-  height: 30px;
-  margin: 0px auto;
-}
-
-#buttons_container div {
-  width: 50%;
-  height: 100%;
-  line-height: 30px;
-  float: left;
-  text-align: center;
-}
-
 .box_sizing {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -189,10 +219,6 @@ button {
   display: none;
 }
 
-span.ace_identifier {
-  color: red;
-}
-
 .modal {
     background-color:#fff;
     display:none;
@@ -200,7 +226,6 @@ span.ace_identifier {
     padding:15px;
     text-align:left;
     border:2px solid #333;
- 
     opacity:0.8;
     -moz-border-radius:6px;
     -webkit-border-radius:6px;
