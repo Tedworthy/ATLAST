@@ -100,6 +100,7 @@ var supportedModes = {
     pgSQL:       ["pgsql"],
     PHP:         ["php|phtml"],
     Powershell:  ["ps1"],
+    PredicateLogic: ["predlog"],
     Prolog:      ["plg|prolog"],
     Properties:  ["properties"],
     Protobuf:    ["proto"],
