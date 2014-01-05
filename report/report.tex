@@ -138,17 +138,6 @@
   section. Revisions should not be talked about here though, just the
   overarching goals of the project.
 
-\section{Design}
-
-  Why web interface, why not native?
-  Detail the initial design.
-    - Focus on components, how they make up the system.
-    - How the components are to interact
-  Look at interface design.
-    - Maybe show mockups
-    - Focus on what the user would need rather than what would look
-      visually attractive
-
 \section{Theory}
 
   Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
@@ -273,11 +262,38 @@
       primary key. This does however add the restriction that a primary key
       must exist on a relation in order to be representable in a query.
 
-\section{Implementation}
+\section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
   used and why? what other technology was considered, but not used and why?
   Any technical challenges encountered and how addressed?  Any risks
   anticipated, and how mitigated
+
+  Why web interface, why not native?
+  Detail the initial design.
+    - Focus on components, how they make up the system.
+    - How the components are to interact
+  Look at interface design.
+    - Maybe show mockups
+    - Focus on what the user would need rather than what would look
+      visually attractive
+
+  \subsection{Front-end site}
+    How the site that the user sees works. Talk about javascript, sending data
+    to/from server and any plugins we used to make it look nice.
+
+  \subsection{Middle/back end implementation details}
+    What server did we use, databases supported (PostgreSQL).
+
+    Maybe talk about continuous integration e.g. TeamCity (although might be
+    too much Chatley rubbish)
+
+  \subsection{Lexing and parsing}
+    How we defined the language and parsed it. Used python.
+
+  \subsection{Parse tree to SQL}
+    How we converted the parse tree to SQL. Lots of scope to talk about each
+    different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and
+    any optimisations we did.
 
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
