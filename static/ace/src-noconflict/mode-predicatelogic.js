@@ -46,7 +46,7 @@ ace.define(
                     regex: /(∃|∀)/,
                     next: "quantifier_identifier"
                 }, {
-                    token: "logop",
+                    token: "keyword",
                     regex: /(→|↔|∧|∨|¬)/
                 }, {
                     token: "bracket",
