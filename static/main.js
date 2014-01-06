@@ -62,6 +62,9 @@ $(document).ready(function() {
         html += "<div class=\"key\">";
         html += "<i class=\"fa fa-key\"></i>";
         html += key;
+        html += "<button>";
+        html += "<i class=\"fa fa-chevron-right\"></i>";
+        html += "</button>";
         html += "</div>";
       });
 
@@ -69,6 +72,9 @@ $(document).ready(function() {
         if (!column.existsIn(table.primary_keys)) {
           html += "<div>";
           html += column;
+          html += "<button>";
+          html += "<i class=\"fa fa-chevron-right\"></i>";
+          html += "</button>";
           html += "</div>";
         }
       });
@@ -79,6 +85,18 @@ $(document).ready(function() {
     html += "</div>";
 
     $("#schema_section").html(html);
+
+    // Schema buttons
+    $("div.schema_table > div > button").on("click", function() {
+      var regex = /(^|>) *([^ <>]+) *(<|$)/;
+      var header = $(this).parent().parent().children("div:first-child");
+      var row = $(this).parent();
+      var table_name = header.html().match(regex)[2];
+      var column_name = row.html().match(regex)[2];
+      logicEditor.insert(table_name + "_" + column_name + "(, )");
+      logicEditor.selection.moveCursorBy(0, -3);
+      logicEditor.focus();
+    });
   });
 
   var unicode_chars = {
@@ -148,7 +166,7 @@ $(document).ready(function() {
           sqlEditor.setValue(sql_result);
 
           // Create an HTML table
-          var table = '<table border="1" align="center"> <tr>';
+          var table = '<table> <tr>';
 
           // Construct the header of the table from the query column names
           $.each(response.query_columns, function(i, column) {
@@ -162,8 +180,9 @@ $(document).ready(function() {
             $.each(row, function(i, dataItem) {
               table += ('<td>' + dataItem + '</td>');
             });
-            table += '</tr>'
+            table += '</tr>';
           });
+          table += '</table>';
 
           // Add the resulting table to the page
           $("#results_table").html(table);
@@ -257,33 +276,40 @@ $(document).ready(function() {
     }
   });
 
-  // Buttons insert correct symbols
+  // Buttons that insert symbols
   $("#and_button").click(function() {
     logicEditor.insert(unicode_chars.and);
+    logicEditor.focus();
   });
 
   $("#or_button").click(function() {
     logicEditor.insert(unicode_chars.or);
+    logicEditor.focus();
   });
 
   $("#implies_button").click(function() {
     logicEditor.insert(unicode_chars.implies);
+    logicEditor.focus();
   });
 
   $("#iff_button").click(function() {
     logicEditor.insert(unicode_chars.iff);
+    logicEditor.focus();
   });
 
   $("#exists_button").click(function() {
     logicEditor.insert(unicode_chars.exists);
+    logicEditor.focus();
   });
 
   $("#forall_button").click(function() {
     logicEditor.insert(unicode_chars.forall);
+    logicEditor.focus();
   });
 
   $("#not_button").click(function() {
     logicEditor.insert(unicode_chars.not);
+    logicEditor.focus();
   });
 
   var rowColumnToCursor = function(row_column, text) {
