@@ -28,6 +28,7 @@ columns_query = \
     SELECT column_name
     FROM information_schema.columns
     WHERE table_name = '%s'
+    ORDER BY ordinal_position
   """
 
 def generate_db_schema(con):

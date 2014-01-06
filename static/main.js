@@ -1,5 +1,10 @@
 $(document).ready(function() {
 
+  // Extend strings to check for their presence in another array
+  String.prototype.existsIn = function(array) {
+    return array.indexOf(this.toString()) != -1;
+  }
+
   var windows = {
     "#query": "#query_container",
     "#help": "#help_container",
@@ -35,33 +40,45 @@ $(document).ready(function() {
     type: "GET",
     url: "/schema"
   }).done(function(schema) {
-    // Print out the name of each table and their primary keys
-    output = '';
+    // Schema header
+    html  = "<div id=\"schema_header\">";
+    html += "<i class=\"icon icon-db\"></i>";
+    // TODO change 'filmdb' to DB name from schema, when it's there...
+    html += "<span>" + "filmdb" + "</span>";
+    html += "</div>";
+
+    // Schema tables
+    html += "<div id=\"schema_tables\">";
 
     // For each table...
-    $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has primary keys: ';
+    $.each(schema, function(table_name, table) {
+      html += "<div class=\"schema_table\">";
+      html += "<div>";
+      html += "<i class=\"fa fa-table\"></i>";
+      html += table_name;
+      html += "</div>";
 
-      // p_keys is the [(primary keys object), (headings objects)]
-      $.each(p_keys, function(text, keys) {
-        // text is either "primaryKey" or "column"
+      $.each(table.primary_keys, function(index, key) {
+        html += "<div class=\"key\">";
+        html += "<i class=\"fa fa-key\"></i>";
+        html += key;
+        html += "</div>";
+      });
 
-        if(text == "primary_keys") {
-          $.each(keys, function(index, key) {
-           output += key + ', ';
-          });
-        } else if (text == "columns") {
-          output += " and has columns ";
-          $.each(keys, function(index, key) {
-            output += key + ', ';
-          });
+      $.each(table.columns, function(index, column) {
+        if (!column.existsIn(table.primary_keys)) {
+          html += "<div>";
+          html += column;
+          html += "</div>";
         }
       });
-      output = output.substring(0, output.length - 2);
-      output += '</p>';
+
+      html += "</div>";
     });
 
-    $("#schema_table").html(output);
+    html += "</div>";
+
+    $("#schema_section").html(html);
   });
 
   var unicode_chars = {
@@ -298,7 +315,7 @@ $(document).ready(function() {
     return { "row": row, "column": column };
   };
 
-  // Insert symbols at cursor position
+  // TODO REMOVE LEGACY CODE - Insert symbols at cursor position
   $.fn.extend({
     insertAtCursor:
       function(text) {
