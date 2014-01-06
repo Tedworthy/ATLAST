@@ -141,6 +141,7 @@ div.schema_table {
   font-size: 14px;
   margin: 0px 10px;
   vertical-align: top;
+  text-align: left;
 }
 
 div.schema_table > div:first-child {
@@ -157,10 +158,41 @@ div.schema_table > div {
   border-bottom: 1px solid;
 }
 
-div.schema_table > div > i {
+div.schema_table > div > i, div.schema_table > div > button {
   position: absolute;
-  left: 0;
   line-height: 20px;
+  vertical-align: middle;
+}
+
+div.schema_table > div > i {
+  left: 0;
+}
+
+div.schema_table > div > button {
+  width: 20px;
+  right: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: rgb(150, 150, 150);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+div.schema_table > div > button:hover {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+div.schema_table > div > button:active {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+div.schema_table > div > button > i {
+  line-height: 20px;
+  font-size: 10px;
+  vertical-align: middle;
 }
 
 button {
@@ -192,7 +224,7 @@ button {
   line-height: 25px;
   text-align: center;
   color: rgb(150, 150, 150);
-  background: white;
+  background: transparent;
   border: 0;
   transition: all 0.1s ease;
   cursor: pointer;
@@ -221,12 +253,12 @@ button {
 
 #sql {
   height: 100px;
-  margin-top: 10px;
+  margin: 10px 0px;
 }
 
 #translate_button {
   width: 35%;
-  margin: 10px;
+  margin-top: 10px;
   padding: 10px;
   font-size: 20px;
   line-height: 20px;
@@ -260,6 +292,36 @@ button {
 #translate_button:active {
   box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.1),
               0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  margin: auto;
+  border: 0;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+tr:first-child {
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+}
+
+tr {
+  border-bottom: 1px solid;
+}
+
+th:first-child, td:first-child {
+  border-left: 0;
+}
+
+th, td {
+  border: 0;
+  padding: 2px 5px;
+}
+
+th {
+  font-weight: bold;
 }
 
 .box_sizing {
