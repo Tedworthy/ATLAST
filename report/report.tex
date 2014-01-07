@@ -283,32 +283,53 @@ work on any database and will provide clear error messages.
   Any technical challenges encountered and how addressed?  Any risks
   anticipated, and how mitigated
 
-  Why web interface, why not native?
-  Detail the initial design.
-    - Focus on components, how they make up the system.
-    - How the components are to interact
-  Look at interface design.
-    - Maybe show mockups
-    - Focus on what the user would need rather than what would look
-      visually attractive
-
   \subsection{Front-end site}
     How the site that the user sees works. Talk about javascript, sending data
     to/from server and any plugins we used to make it look nice.
 
-  \subsection{Middle/back end implementation details}
-    What server did we use, databases supported (PostgreSQL).
+    \subsubsection{webpage plugins}
+      Ted's UI work
+      Why we used a website and not standalone app
+      javascript plugins (jquery, use of json, Ted's UI work)
 
-    Maybe talk about continuous integration e.g. TeamCity (although might be
-    too much Chatley rubbish)
+  \subsection{Middleware plugins}
+    \subsubsection{python web.py server}
+      run code.py (python code.py 55001)
+        runs web server (web.py)
+          render = web.template.render('templates/')
+          render.index(logicF, loginF)
+          (render.hello(..) calls the template hello.html with the given arguments)
+          Handles GET and POST requests
 
-  \subsection{Lexing and parsing}
-    How we defined the language and parsed it. Used python.
+    \subsubsection{Celery and RabbitMQ}
+      Use celery in task.py
+      import task as worker
+      result = worker.addToProcessingQueue.delay(logic, web.schema)
+      response = result.get()
 
-  \subsection{Parse tree to SQL}
-    How we converted the parse tree to SQL. Lots of scope to talk about each
-    different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and
-    any optimisations we did.
+      @celery.task
+      def addToProcessingQueue(logic, schema):
+
+      \subsubsection{Interfacing with the databse}
+        psycopg2, Max's work on supporting multiple databases, running queries
+        on and getting results from the database
+
+  \subsection{Logic to SQL translation}
+    lex.py, yacc.py
+    \subsubsection{Parse the logic into a logic AST}
+      How we defined the language grammar
+
+    \subsubsection{Generate a symbol table based on the logic AST}
+
+    \subsubsection{Run a pass of semantic analysis on the logic AST to check for errors}
+
+    \subsubsection{Generate an IR based on the logic AST}
+
+    \subsubsection{Generate an SQL string based on the above IR}
+      Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
+
+  \subsection{Testing and continuous integration.. may want to move this section}
+    nose tests, TeamCity
 
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
