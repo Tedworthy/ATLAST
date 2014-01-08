@@ -12,6 +12,8 @@
 \usepackage{todonotes}
 \usepackage{paralist}
 \usepackage{listings}
+\usepackage{lmodern}
+\usepackage{minted}
 \usepackage[fleqn]{amsmath}
 \lstset{language=SQL}
 \addbibresource{report.bib}
@@ -326,12 +328,12 @@ work on any database and will provide clear error messages.
     Suppose that we wish to query the database for every film title in the
     database. Below is an example of an SQL query that satisfies this criteria.
 
-    \begin{lstlisting}
+    \begin{minted}{sql}
 
     SELECT title
     FROM films;
 
-    \end{lstlisting}
+    \end{minted}
 
     This is equivalent to the following first-order predicate logic query.
     \begin{gather}
@@ -350,12 +352,12 @@ work on any database and will provide clear error messages.
 
     \todo{I'm certain of this, but again evidence would be useful.}
 
-    \begin{lstlisting}
+    \begin{minted}{sql}
 
     SELECT DISTINCT title
     FROM films;
 
-    \end{lstlisting}
+    \end{minted}
 
     \todo{Is sound the right term?}
 
@@ -367,12 +369,12 @@ work on any database and will provide clear error messages.
     This will return the set of all tuples of the form \{$films.fid,
     films.title$\}, using the following SQL query.
 
-    \begin{lstlisting}
+    \begin{minted}{sql}
 
     SELECT fid, title,
     FROM films;
 
-    \end{lstlisting}
+    \end{minted}
 
     Note that the DISTINCT keyword is no longer needed, as $films.fid$ is a
     primary key.
@@ -392,10 +394,10 @@ work on any database and will provide clear error messages.
     (enforced by the conjunction within the query) our
     answer is equivalent to that returned by the following SQL query.
 
-    \begin{lstlisting}
+    \begin{minted}{sql}
     SELECT name, length
     FROM films;
-    \end{lstlisting}
+    \end{minted}
 
     This can be extended to any number of predicates, although the relation and
     the key must be the same. If this is not the case, the query may represent
@@ -412,13 +414,13 @@ work on any database and will provide clear error messages.
       Identity) within our database. Below is an SQL query that satisfies this
       criteria.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
 
       SELECT title,
       FROM films
       WHERE title = 'The Bourne Identity';
 
-      \end{lstlisting}
+      \end{minted}
 
       We expect to encounter at least one tuple if the film exists in our domain
       of discourse. \todo{Cite this from our AD lectures} This can be represented
@@ -442,11 +444,11 @@ work on any database and will provide clear error messages.
       there exists other films except 'The Bourne Identity'. In SQL, this
       simply translates to the following.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
         SELECT title,
         FROM films
         WHERE title <> 'The Bourne Identity';
-      \end{lstlisting}
+      \end{minted}
 
       The existence of one or more tuples satisfies our query; if no queries
       are returned, it must be the case that there are no other films except
@@ -473,11 +475,11 @@ work on any database and will provide clear error messages.
       Here we query for all the fid of every films with length greater than or
       equal to two hours.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT fid,
       FROM films,
       WHERE length >= '2:00:00';
-      \end{lstlisting}
+      \end{minted}
 
       This can be expressed using the following predicate logic query.
       \begin{gather}
@@ -495,16 +497,16 @@ work on any database and will provide clear error messages.
       two and three hours in length. The relevant SQL query would take one of
       the following forms.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT title
       FROM films
-      WHERE films.length >= \text{'2:00:00'} 
-        AND films.length <= \text{'3:00:00'};
+      WHERE films.length >= '2:00:00'
+        AND films.length <= '3:00:00';
 
       SELECT title
       FROM films
-      WHERE films.length BETWEEN \text{'2:00:00'} AND \text{'3:00:00'};
-      \end{lstlisting}
+      WHERE films.length BETWEEN '2:00:00' AND '3:00:00';
+      \end{minted}
 
       This can simply be represented in first-order predicate logic with the
       following query.
@@ -539,17 +541,17 @@ work on any database and will provide clear error messages.
       film title and actor name in the database. In ANSI-89 SQL, we could use 
       the following query.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT title, name
       FROM films, actors;
-      \end{lstlisting}
+      \end{minted}
 
       Alternatively, in ANSI-92 SQL we can explicitly write:
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT title, name
       FROM films CROSS JOIN actors;
-      \end{lstlisting}
+      \end{minted}
 
       We can think of this query as the conjunction of two disjoint relations;
       the relations do not share a key, or if they do we are not using them as
@@ -575,25 +577,25 @@ work on any database and will provide clear error messages.
       With our knowledge of SQL CROSS JOIN, we can express this as the
       following SQL query.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT name
       FROM films CROSS JOIN actors
       WHERE films.fid = actors.fid AND films.title = 'The Bourne Identity';
-      \end{lstlisting}
+      \end{minted}
 
       So far we have not discussed SQL aliases. Aliases are required if joining
       two instances of the same relation. To demonstrate this, suppose that we
       wish to generate the set of all pairs of actors that have appeared in the
       same film. This is achieved with the following SQL query.
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT a1.name,
              a2.name
       FROM films CROSS JOIN actors AS a1
         CROSS JOIN actors AS a2
       WHERE films.fid = a1.fid AND films.fid = a2.fid 
         AND a1.name != a2.name
-      \end{lstlisting}
+      \end{minted}
 
       Notice that we cannot simply refer to the relation $actors$ anymore, as
       there are two of them; without an alias, the identifier would be
@@ -611,14 +613,14 @@ work on any database and will provide clear error messages.
       the above CROSS JOIN, WHERE combination. The logical query~\ref{largeCROSS}
       can be written using the SQL INNER JOIN syntax as:
 
-      \begin{lstlisting}
+      \begin{minted}{sql}
       SELECT a1.name,
              a2.name
       FROM films CROSS JOIN actors AS a1
         CROSS JOIN actors AS a2
       ON films.fid = a1.fid AND films.fid = a2.fid 
         AND a1.name != a2.name
-      \end{lstlisting}
+      \end{minted}
 
       INNER JOIN is the same as JOIN as of ANSI-92 SQL, and it the existence of
       the ON clause is not necessary (making it a cross join).
@@ -670,6 +672,9 @@ work on any database and will provide clear error messages.
   used and why? what other technology was considered, but not used and why?
   Any technical challenges encountered and how addressed?  Any risks
   anticipated, and how mitigated
+
+  We used Python for virtually everything. I'm sure there's a good
+  reason... easy/lots of libraries.
 
   \subsection{Front-end site}
     How the site that the user sees works. Talk about javascript, sending data
