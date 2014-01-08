@@ -4,7 +4,7 @@
 \usepackage{layout}
 \geometry{includeheadfoot, margin=3.18cm}
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
-
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{array,booktabs}
@@ -446,7 +446,7 @@ work on any database and will provide clear error messages.
       \begin{lstlisting}
         SELECT title,
         FROM films
-        WHERE title != 'The Bourne Identity';
+        WHERE title <> 'The Bourne Identity';
       \end{lstlisting}
 
       The existence of one or more tuples satisfies our query; if no queries
@@ -581,6 +581,48 @@ work on any database and will provide clear error messages.
       FROM films CROSS JOIN actors
       WHERE films.fid = actors.fid AND films.title = 'The Bourne Identity';
       \end{lstlisting}
+
+      So far we have not discussed SQL aliases. Aliases are required if joining
+      two instances of the same relation. To demonstrate this, suppose that we
+      wish to generate the set of all pairs of actors that have appeared in the
+      same film. This is achieved with the following SQL query.
+
+      \begin{lstlisting}
+      SELECT a1.name,
+             a2.name
+      FROM films CROSS JOIN actors AS a1
+        CROSS JOIN actors AS a2
+      WHERE films.fid = a1.fid AND films.fid = a2.fid 
+        AND a1.name != a2.name
+      \end{lstlisting}
+
+      Notice that we cannot simply refer to the relation $actors$ anymore, as
+      there are two of them; without an alias, the identifier would be
+      ambiguous. Below is a representation of the query in logic.
+
+      \begin{multline}
+        \exists fid, a1, a2(films(fid) \land actors\_fid(a1, fid) \land \\
+        actors\_fid(a2, fid) \land actors\_name(a1, name1)\\
+        \land actors\_name(a2, name2) \land name1 != name2) \label{largeCROSS}
+      \end{multline}
+
+    \subsubsection{SQL INNER JOIN}
+
+      Introduced in ANSI-92 SQL, INNER JOIN allows for a more readable version of
+      the above CROSS JOIN, WHERE combination. The logical query~\ref{largeCROSS}
+      can be written using the SQL INNER JOIN syntax as:
+
+      \begin{lstlisting}
+      SELECT a1.name,
+             a2.name
+      FROM films CROSS JOIN actors AS a1
+        CROSS JOIN actors AS a2
+      ON films.fid = a1.fid AND films.fid = a2.fid 
+        AND a1.name != a2.name
+      \end{lstlisting}
+
+      INNER JOIN is the same as JOIN as of ANSI-92 SQL, and it the existence of
+      the ON clause is not necessary (making it a cross join).
 
 \section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
