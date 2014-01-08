@@ -12,6 +12,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{todonotes}
 \usepackage{paralist}
+\usepackage{listings}
+\usepackage[fleqn]{mathtools}
+\lstset{language=SQL}
 \addbibresource{report.bib}
 \DeclareDatamodelEntrytypes{standard}
 \DeclareDatamodelEntryfields[standard]{type,number}
@@ -61,6 +64,9 @@
          Max Tottenham \\ [0.2cm]
   \vspace{0cm}
 \end{center}
+
+\tableofcontents
+\clearpage
 
 \section{Executive Summary}
   Our project is, at its heart, a language translator. It translates a
@@ -181,6 +187,7 @@ work on any database and will provide clear error messages.
     across tuples of data and TRC provides a query language for such a model.
 
     \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
+      \label{sec:formalTRC}
       A query takes the form: \{T | p(T)\}
 
       The answer is the set of all tuples T such that p(T) evaluates to true.
@@ -238,18 +245,18 @@ work on any database and will provide clear error messages.
       true.
 
     \subsubsection{Set Membership}
-      The first difference is set membership. Whereas before we could simply
-      test the membership of a tuple $t$ in a relation $R$ with $t \in R$, first order
-      predicate logic does not have the notion of set membership. From here
-      there are a few different solutions to the problem.
+      Whereas before we could simply test the membership of a tuple $t$ in a
+      relation $R$ with $t \in R$, first order predicate logic does not have
+      the notion of set membership. From here there are a few different
+      solutions to the problem.
 
-      One solution is with an 'In' predicate, where 'InRelation(t, R)' would
-      have the same semantic meaning as the previous set membership test. This
-      seems to work, although throughout first order predicate logic, we do not have the
-      notion of a tuple. A disadvantage of this would be that accessing members
-      of the tuple would require another predicate, for example 'InTuple(a,
-      'attrName', t)' which would have the same semantic meaning as 't.a' in
-      TRC.
+      One solution is with an 'InRelation' predicate, where 'InRelation(t, R)'
+      would have the same semantic meaning as the previous set membership test.
+      This seems to work, although throughout first order predicate logic, we
+      do not have the notion of a tuple; an atom is structurally meaningless. A
+      disadvantage of this would be that accessing members of the tuple would
+      require another predicate, for example 'InTuple(a, 'attrName', t)' which
+      would have the same semantic meaning as 't.a' in TRC.
 
       Another solution, which solves the previous issue, is to generate n-ary
       predicates that represent a tuple. For example, given a relation 'films',
@@ -275,7 +282,113 @@ work on any database and will provide clear error messages.
       This reduces the number of unncessary attributes in a given query, whilst
       also addressing the representation of a tuple, by relating a tuple to its
       primary key. This does however add the restriction that a primary key
-      must exist on a relation in order to be representable in a query.
+      must exist on a relation for it to be represented in a query.
+
+    \subsection{Free and Bound Variables}
+
+      Looking back to Tuple Relational Calculus in
+      section~\ref{sec:formalTRC}, we will use similar semantics for free and
+      bound variables. A variable $v$ is said to be bound if formula $F$ is of
+      the format:
+
+      $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
+
+      However, in TRC, the syntax allowed for a return value, namely $t$ in the
+      query below:
+
+      \{T | p(T)\}
+
+      Without extending predicate logic, we cannot use a similar format.
+      It is important to note that in TRC, the variables that exist
+      within $T$ must be the only free variables in $p(T)$. That is to say that
+      TRC returns the set of all tuples that would result in $p(T) \models
+      \top$ when substituted for the free variables. As $T$ must be the set of
+      free variables $\in p(T)$, our predicate logic semantics for a query will
+      assume that the answer will be the set of substitutions for all free
+      variables in $p(T)$.
+
+  \section{Translation of First-order Predicate Logic to SQL}
+
+    Now that we have a syntactical map between first-order predicate logic and
+    tuple relational calculus, we can begin to define the mapping between logic
+    and SQL. First-order predicate logic
+    \todo[inline]{Back this up. I believe it is true but how can it be proved?}
+    is more expressive than SQL, and so there will not always exist a
+    translation between logic and SQL. For this reason, this section will aim
+    to describe common SQL queries or patterns in terms of their logical
+    equivalence.
+
+    The examples in the section below will make use of the filmdb as used in
+    the project. A description of the SQL schema can be found in the appendix.
+
+    \subsection{SQL SELECT}
+
+    The SELECT statement is used to select data from a database.\cite{w3SELECT}
+    Suppose that we wish to query the database for every film name in the
+    database. Below is an example of an SQL query that satisfies this criteria.
+
+    \begin{lstlisting}
+
+    SELECT films.name,
+    FROM films;
+
+    \end{lstlisting}
+
+    This is equivalent to the following first-order predicate logic query.
+    \[
+      \exists x(films\_name(x, name))
+    \]
+    The query binds $x$ and allows $name$ to remain free, meaning that our
+    answer will be the set of all subtitutions for $name$ that would result in
+    $\exists x(films\_name(x, name)) \models \top$. The '$\exists$' symbol
+    serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
+    it enforces that $name$ only need exist in one tuple, but may exist in
+    more. The predicate $films\_name$ gives the translator the scope of
+    relations to query (in this case, just the $films$ relation).
+
+    Strictly talking, the logic query actually evaluates to the following, due
+    to SQL's relational algebra foundations:
+
+    \todo{I'm certain of this, but again evidence would be useful.}
+
+    \begin{lstlisting}
+
+    SELECT DISTINCT films.name,
+    FROM films;
+
+    \end{lstlisting}
+
+    \todo{Is sound the right term?}
+
+    Note that it is also logically sound to express a query with no bound
+    variables, such as:
+    \[
+      films\_name(x, name)
+    \]
+    This will return the set of all tuples of the form \{$films.fid,
+    films.name$\}, using the following SQL query.
+
+    \begin{lstlisting}
+
+    SELECT films.fid, films.name,
+    FROM films;
+
+    \end{lstlisting}
+
+    Note that the DISTINCT keyword is no longer needed, as $films.fid$ is a
+    primary key.
+
+  \subsection{SQL WHERE}
+
+    The WHERE clause is used to extract only those records that fulfill a
+    specified criterion.~\cite{w3WHERE} Suppose that we wish to check the
+    existence of a film (The Bourne Identity) within our database. Below is an SQL query that
+    satisfies this criteria.
+
+    \begin{lstlisting}
+
+    \end{lstlisting}
+
 
 \section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
@@ -514,6 +627,8 @@ work on any database and will provide clear error messages.
   The appendix is optional, and does not count towards the 35 pages. It may
   contain thing like: User guide, installation instructions; more extensive
   design, testing, statistics etc.
+
+  \todo{Insert the filmdb schema}
 
 \section{Anandha waffle from his site - delete once finished report}
   Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
