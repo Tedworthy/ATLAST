@@ -35,7 +35,7 @@ def addToProcessingQueue(logic, schema):
   except Exception, e:
     print str(e)
     response['status'] = 'parse_error'
-    response['error'] = json.dumps(e.getDict())
+    response['error'] = e.getDict()
     return response
 
   # Generate a symbol table based on the logic AST
