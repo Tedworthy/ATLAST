@@ -222,11 +222,11 @@ work on any database and will provide clear error messages.
 
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
-      to only return the name of said film. This could be achieved as detailed
+      to only return the title of said film. This could be achieved as detailed
       below:
 
-      \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.name =
-      F1.name)\}
+      \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.title =
+      F1.title)\}
 
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all films whose
@@ -260,8 +260,8 @@ work on any database and will provide clear error messages.
 
       Another solution, which solves the previous issue, is to generate n-ary
       predicates that represent a tuple. For example, given a relation 'films',
-      with columns 'name', 'length' and 'date-released', a predicate
-      'films(name, length, date-released)' could be generated, where name,
+      with columns 'title', 'length' and 'date-released', a predicate
+      'films(title, length, date-released)' could be generated, where title,
       length and date-released are all variables. This certainly solves the
       issue the set membership issue, but does add uneccessary bloat to each
       query; relations may have thousands of columns, very few of which are
@@ -324,26 +324,26 @@ work on any database and will provide clear error messages.
     \subsection{SQL SELECT}
 
     The SELECT statement is used to select data from a database.\cite{w3SELECT}
-    Suppose that we wish to query the database for every film name in the
+    Suppose that we wish to query the database for every film title in the
     database. Below is an example of an SQL query that satisfies this criteria.
 
     \begin{lstlisting}
 
-    SELECT name,
+    SELECT title
     FROM films;
 
     \end{lstlisting}
 
     This is equivalent to the following first-order predicate logic query.
     \begin{gather}
-      \exists x(films\_name(x, name)) \label{select1}
+      \exists x(films\_title(x, title)) \label{select1}
     \end{gather}
-    The query binds $x$ and allows $name$ to remain free, meaning that our
-    answer will be the set of all subtitutions for $name$ that would result in
-    $\exists x(films\_name(x, name)) \models \top$. The '$\exists$' symbol
+    The query binds $x$ and allows $title$ to remain free, meaning that our
+    answer will be the set of all subtitutions for $title$ that would result in
+    $\exists x(films\_title(x, title)) \models \top$. The '$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
-    it enforces that $name$ only need exist in one tuple, but may exist in
-    more. The predicate $films\_name$ gives the translator the scope of
+    it enforces that $title$ only need exist in one tuple, but may exist in
+    more. The predicate $films\_title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
     Strictly talking, the logic query actually evaluates to the following, due
@@ -353,7 +353,7 @@ work on any database and will provide clear error messages.
 
     \begin{lstlisting}
 
-    SELECT DISTINCT name,
+    SELECT DISTINCT title
     FROM films;
 
     \end{lstlisting}
@@ -363,20 +363,44 @@ work on any database and will provide clear error messages.
     Note that it is also logically sound to express a query with no bound
     variables, such as:
     \begin{gather}
-      films\_name(x, name) \label{select2}
+      films\_title(x, title) \label{select2}
     \end{gather}
     This will return the set of all tuples of the form \{$films.fid,
-    films.name$\}, using the following SQL query.
+    films.title$\}, using the following SQL query.
 
     \begin{lstlisting}
 
-    SELECT fid, name,
+    SELECT fid, title,
     FROM films;
 
     \end{lstlisting}
 
     Note that the DISTINCT keyword is no longer needed, as $films.fid$ is a
     primary key.
+
+    Now we have demonstrated projecting a primary key, and a single attribute,
+    all that is left is to project multiple attributes from a tuple. This
+    requires the conjunction of multiple predicates, each over the same
+    relation and using the same primary key (that is to say that each predicate
+    relates to a single tuple). Suppose we wish to project
+    every film title, and its corresponding length.
+
+    \begin{gather}
+      \exists x(films\_title(x, y) \land films\_length(x, z)
+    \end{gather}
+
+    As both $y$ and $z$ are from the same unique tuple identified by $x$
+    (enforced by the conjunction within the query) our
+    answer is equivalent to that returned by the following SQL query.
+
+    \begin{lstlisting}
+    SELECT name, length
+    FROM films;
+    \end{lstlisting}
+
+    This can be extended to any number of predicates, although the relation and
+    the key must be the same. If this is not the case, the query may represent
+    a join, later described in section~\ref{sec:joins}.
 
   \subsection{SQL WHERE}
 
@@ -391,9 +415,9 @@ work on any database and will provide clear error messages.
 
       \begin{lstlisting}
 
-      SELECT name,
+      SELECT title,
       FROM films
-      WHERE name = 'The Bourne Identity';
+      WHERE title = 'The Bourne Identity';
 
       \end{lstlisting}
 
@@ -401,9 +425,9 @@ work on any database and will provide clear error messages.
       of discourse. \todo{Cite this from our AD lectures} This can be represented
       in one of two ways in first-order predicate logic.
       \begin{gather}
-        \exists x(films\_name(x, y) \land y = \text{'The Bourne
+        \exists x(films\_title(x, y) \land y = \text{'The Bourne
         Identity'})\label{where1}\\
-        films\_name(x, \text{'The Bourne Identity'})\label{where2}
+        films\_title(x, \text{'The Bourne Identity'})\label{where2}
       \end{gather}
       Both of these queries are valid, however note that they do return different
       tuples. (\ref{where1}) returns the same answer as the SQL query above, although
@@ -420,9 +444,9 @@ work on any database and will provide clear error messages.
       simply translates to the following.
 
       \begin{lstlisting}
-        SELECT name,
+        SELECT title,
         FROM films
-        WHERE name != 'The Bourne Identity';
+        WHERE title != 'The Bourne Identity';
       \end{lstlisting}
 
       The existence of one or more tuples satisfies our query; if no queries
@@ -432,17 +456,17 @@ work on any database and will provide clear error messages.
       As before, there are two ways we can represent the SQL query above in
       logic.
       \begin{gather}
-        \exists x(films\_name(x, y) \land y !=  \text{'The Bourne
+        \exists x(films\_title(x, y) \land y !=  \text{'The Bourne
         Identity'})\label{where3}\\
-        \lnot films\_name(x, \text{'The Bourne Identity'})\label{where4}
+        \lnot films\_title(x, \text{'The Bourne Identity'})\label{where4}
       \end{gather}
       The first query matches the output of our equivalent SQL query, but again
       is more verbose. The second returns the set of singleton tuples
-      \{$films.fid$\} such that the name associated with that particular
+      \{$films.fid$\} such that the title associated with that particular
       primary key is not 'The Bourne Identity'. This is not equivalent to our
       SQL expression however, and may be undesirable to use in this
       circumstance (it is likely that we would like to return all other film
-      names).
+      titles).
 
       \todo{Do we use <= or $\le$}
 
@@ -464,14 +488,99 @@ work on any database and will provide clear error messages.
       Similar queries can be constructed for the other inequalities in a
       similar format.
 
+    \subsubsection{Logical Connectives}
+
+      It is often desirable to project a set of attributes from a statement
+      made up of conditions and logical connectives. For example, suppose we
+      wished to query the database for all film titles where the film is between 
+      two and three hours in length. The relevant SQL query would take one of
+      the following forms.
+
+      \begin{lstlisting}
+      SELECT title
+      FROM films
+      WHERE films.length >= \text{'2:00:00'} 
+        AND films.length <= \text{'3:00:00'};
+
+      SELECT title
+      FROM films
+      WHERE films.length BETWEEN \text{'2:00:00'} AND \text{'3:00:00'};
+      \end{lstlisting}
+
+      This can simply be represented in first-order predicate logic with the
+      following query.
+
+      \begin{gather}
+        \exists x, length(films\_title(x, title) \land films\_length(x,
+        length)\\
+        \land length >= '2:00:00' \land length <= '3:00:00')
+      \end{gather}
+
+      Notice how the last two constraints in the logical query translate
+      with very little effort. The same applies to constraints seperated with
+      an $\lor$ which is equivalent to OR in SQL.
+
     \subsubsection{NULL Values}
 
       \todo[inline]{I imagine here would be a good place to talk about NULLs.
-        Max, we should go over our specification for NULL.
+      Max, we should go over our specification for NULL.}
 
   \subsection{Joins}
+    \label{sec:joins}
 
-    
+    An SQL JOIN clause is used to combine rows from two or more tables, based
+    on a common field between them.~\cite{w3JOINS} Joins can enable incredibly
+    powerful queries, especially in modern database systems where information
+    is normalized (split across many relations) to minimise duplication.
+
+    \subsubsection{SQL CROSS JOIN}
+
+      A cross join is equivalent to the cartesian product of two sets. Suppose
+      that we wished to write a query that returned every possible pair of
+      film title and actor name in the database. In ANSI-89 SQL, we could use 
+      the following query.
+
+      \begin{lstlisting}
+      SELECT title, name
+      FROM films, actors;
+      \end{lstlisting}
+
+      Alternatively, in ANSI-92 SQL we can explicitly write:
+
+      \begin{lstlisting}
+      SELECT title, name
+      FROM films CROSS JOIN actors;
+      \end{lstlisting}
+
+      We can think of this query as the conjunction of two disjoint relations;
+      the relations do not share a key, or if they do we are not using them as
+      part of the join.
+
+      \begin{gather}
+        \exists fid, aid(films\_title(fid, title) \land actors\_name(aid, name))
+      \end{gather}
+
+      The example used is unlikely to be a useful query on the database. Cross
+      joins are rarely used in this format. Instead, they are often combined
+      with a WHERE clause to extract useful information. For example, if we
+      wished to query every actor that acted in the film 'The Bourne Identity',
+      we could could use the following logic query.
+
+      \begin{gather}
+        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \\
+        \land actors\_fid(aid, fid) \land actors\_name(aid, name))
+      \end{gather}
+
+      Which specifies that we only wish to return the set of all singleton
+      tuples \{$name$\} such that the actor starred in 'The Bourne Identity'.
+      With our knowledge of SQL CROSS JOIN, we can express this as the
+      following SQL query.
+
+      \begin{lstlisting}
+      SELECT name
+      FROM films CROSS JOIN actors
+      WHERE films.fid = actors.fid AND films.title = 'The Bourne Identity';
+      \end{lstlisting}
 
 \section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
