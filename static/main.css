@@ -294,6 +294,67 @@ button {
               0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+#errors_section {
+  text-align: left;
+}
+
+#errors_container {
+  margin-top: 10px;
+}
+
+#errors_container > div:first-child {
+  font-weight: bold;
+  color: white;
+  border: 0;
+}
+
+#errors_container > div:first-child > i {
+  color: white;
+}
+
+#errors_container > div {
+  position: relative;
+  height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+  color: rgb(200, 50, 50);
+  padding-left: 30px;
+  border-bottom: 1px solid rgb(200, 50, 50);
+}
+
+#errors_container > div > i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 25px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  color: rgb(245, 0, 0);
+}
+
+#errors_container > div > span {
+  display: inline-block;
+  height: 100%;
+  line-height: 20px;
+}
+
+div.no_errors {
+  background: rgb(50, 200, 50);
+}
+
+div.no_errors > i {
+  background: rgb(0, 225, 0);
+}
+
+div.errors {
+  background: rgb(200, 50, 50);
+}
+
+div.errors > i {
+  background: rgb(245, 0, 0);
+}
+
 table {
   margin: auto;
   border: 0;

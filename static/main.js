@@ -5,6 +5,57 @@ $(document).ready(function() {
     return array.indexOf(this.toString()) != -1;
   }
 
+  var removeErrorLines = function() {
+    var console = $("#errors_container").children("div:first-child");
+    if (console.hasClass("errors")) {
+      console.removeClass("errors");
+      console.addClass("no_errors");
+      console.children("i").removeClass("fa-exclamation-circle");
+      console.children("i").addClass("fa-check-circle");
+    }
+    $("#errors_container").html(console);
+  };
+
+  var addErrorLine = function(message) {
+    var console = $("#errors_container").children("div:first-child");
+    if (console.hasClass("no_errors")) {
+      console.removeClass("no_errors");
+      console.addClass("errors");
+      console.children("i").removeClass("fa-check-circle");
+      console.children("i").addClass("fa-exclamation-circle");
+    }
+    var icon = $("<i>").addClass("fa fa-exclamation");
+    var span = $("<span>").text(message);
+    $("#errors_container").append($("<div>").append(icon).append(span));
+  };
+
+  var handleErrors = function(response) {
+    // TODO
+    switch (response.status) {
+      case "db_error":
+
+        break;
+      case "parse_error":
+        $.each(response.error, function(index, error) {
+          switch (error.type) {
+            case "ParserEOIException":
+              addErrorLine("Logic input finished too soon. Did you perhaps " +
+                           "forget an ending bracket or quote mark?");
+              break;
+            case "ParserTokenException":
+              addErrorLine("Line " + error.lineNo + ", position " +
+                           error.position + ": Unexpected '" + error.token +
+                           "', perhaps check your logic syntax?");
+              break;
+          }
+        });
+        break;
+      default:
+
+        break;
+    }
+  };
+
   var windows = {
     "#query": "#query_container",
     "#help": "#help_container",
@@ -34,6 +85,9 @@ $(document).ready(function() {
   sqlEditor.setTheme("ace/theme/solarized_dark");
   sqlEditor.getSession().setMode("ace/mode/sql");
   sqlEditor.setReadOnly(true);
+  sqlEditor.setOptions({
+    maxLines: 10
+  });
 
   var schema;
   $.ajax({
@@ -106,26 +160,33 @@ $(document).ready(function() {
     "iff": "\u2194",
     "exists": "\u2203",
     "forall": "\u2200",
-    "not": "\u00ac"
+    "not": "\u00ac",
+    "not_equal": "\u2260"
   }
 
   var keys = {
-    "92": { "char": "\\", "formatters": ["and", "or", "exists", "forall"] },
-    "47": { "char": "/", "formatters": ["or", "and"] },
-    "60": { "char": "<", "formatters": ["iff", "implies"] },
-    "45": { "char": "-", "formatters": ["iff", "implies"] },
-    "62": { "char": ">", "formatters": ["iff", "implies"] },
-    "69": { "char": "E", "formatters": ["exists"] },
-    "65": { "char": "A", "formatters": ["forall"] }
+    "92": { char: "\\", formatters: ["and", "or", "exists", "forall"] },
+    "47": { char: "/", formatters: ["or", "and", "not_equal_slash"] },
+    "60": { char: "<", formatters: ["iff", "implies"] },
+    "45": { char: "-", formatters: ["iff", "implies"] },
+    "62": { char: ">", formatters: ["iff", "implies"] },
+    "69": { char: "E", formatters: ["exists"] },
+    "65": { char: "A", formatters: ["forall"] },
+    "33": { char: "!", formatters: ["not_equal_bang"] },
+    "61": { char: "=", formatters: ["not_equal_slash", "not_equal_bang"] },
+    "126": { char: "~", formatters: ["not"] }
   };
 
   var formatters = {
-    "and": { "regex": /\/\\/, "result": unicode_chars.and },
-    "or": { "regex": /\\\//, "result": unicode_chars.or },
-    "implies": { "regex": /->/, "result": unicode_chars.implies },
-    "iff": { "regex": /<->/, "result": unicode_chars.iff },
-    "exists": { "regex": /\\E/, "result": unicode_chars.exists },
-    "forall": { "regex": /\\A/, "result": unicode_chars.forall }
+    "and": { regex: /\/\\/, result: unicode_chars.and },
+    "or": { regex: /\\\//, result: unicode_chars.or },
+    "implies": { regex: /->/, result: unicode_chars.implies },
+    "iff": { regex: /<->/, result: unicode_chars.iff },
+    "exists": { regex: /\\E/, result: unicode_chars.exists },
+    "forall": { regex: /\\A/, result: unicode_chars.forall },
+    "not": { regex: /~/, result: unicode_chars.not },
+    "not_equal_slash": { regex: /\/=/, result: unicode_chars.not_equal },
+    "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal }
   };
 
   $("#config_submit").click(function()  {
@@ -158,13 +219,8 @@ $(document).ready(function() {
           logic: input_string
         }
       ).done(function(response) {
-        var sql_result;
-
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          sql_result = response.sql;
-          sqlEditor.setValue(sql_result);
-
           // Create an HTML table
           var table = '<table> <tr>';
 
@@ -185,29 +241,19 @@ $(document).ready(function() {
           table += '</table>';
 
           // Add the resulting table to the page
+          removeErrorLines();
           $("#results_table").html(table);
+          sqlEditor.setValue(response.sql);
         } else {
           // Something went wrong, so print the error.
-          if(response.sql !== '') {
-            sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
-          } else {
-            sql_result = response.error;
-          }
-
-          $("textarea#sql_result").text(sql_result);
+          removeErrorLines();
+          handleErrors(response);
           $("#results_table").html("");
+          sqlEditor.setValue("-- Something went wrong, see the console above");
         }
-
-        var linecount = 0, cols = 100;
-        var sql_result_lines = sql_result.split("\n");
-        $.each(sql_result_lines, function(i, l) {
-          linecount += Math.ceil(l.length/cols);
-        });
-        $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
     } else {
-      $("textarea#sql_result").text("No input to convert");
-      $("textarea#sql_result").css("height", (1 * 16 + 8).toString().concat("px"));
+      sqlEditor.setValue("-- SQL query will appear here");
     }
   });
 
