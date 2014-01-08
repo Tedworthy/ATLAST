@@ -335,9 +335,9 @@ work on any database and will provide clear error messages.
     \end{lstlisting}
 
     This is equivalent to the following first-order predicate logic query.
-    \[
-      \exists x(films\_name(x, name))
-    \]
+    \begin{gather}
+      \exists x(films\_name(x, name)) \label{select1}
+    \end{gather}
     The query binds $x$ and allows $name$ to remain free, meaning that our
     answer will be the set of all subtitutions for $name$ that would result in
     $\exists x(films\_name(x, name)) \models \top$. The '$\exists$' symbol
@@ -362,9 +362,9 @@ work on any database and will provide clear error messages.
 
     Note that it is also logically sound to express a query with no bound
     variables, such as:
-    \[
-      films\_name(x, name)
-    \]
+    \begin{gather}
+      films\_name(x, name) \label{select2}
+    \end{gather}
     This will return the set of all tuples of the form \{$films.fid,
     films.name$\}, using the following SQL query.
 
@@ -381,33 +381,97 @@ work on any database and will provide clear error messages.
   \subsection{SQL WHERE}
 
     The WHERE clause is used to extract only those records that fulfill a
-    specified criterion.~\cite{w3WHERE} Suppose that we wish to check the
-    existence of a film (The Bourne Identity) within our database. Below is an SQL query that
-    satisfies this criteria.
+    specified criterion.~\cite{w3WHERE} 
 
-    \begin{lstlisting}
+    \subsubsection{Equality}
+
+      Suppose that we wish to check the existence of a film (The Bourne
+      Identity) within our database. Below is an SQL query that satisfies this
+      criteria.
+
+      \begin{lstlisting}
+
       SELECT name,
       FROM films
       WHERE name = 'The Bourne Identity';
-    \end{lstlisting}
 
-    We expect to encounter at least one tuple if the film exists in our domain
-    of discourse. \todo{Cite this from our AD lectures} This can be represented
-    in one of two ways in first-order predicate logic.
+      \end{lstlisting}
 
-    \[
-      \exists x(films\_name(x, y) \land y = 'The Bourne Identity')
-      films\_name(x, 'The Bourne Identity')
-    \]
+      We expect to encounter at least one tuple if the film exists in our domain
+      of discourse. \todo{Cite this from our AD lectures} This can be represented
+      in one of two ways in first-order predicate logic.
+      \begin{gather}
+        \exists x(films\_name(x, y) \land y = \text{'The Bourne
+        Identity'})\label{where1}\\
+        films\_name(x, \text{'The Bourne Identity'})\label{where2}
+      \end{gather}
+      Both of these queries are valid, however note that they do return different
+      tuples. (\ref{where1}) returns the same answer as the SQL query above, although
+      it is verbose. (\ref{where2}) returns the singleton tuple \{$films.fid$\},
+      because under our definition, only free variables are returned. Most of
+      the time this is acceptable, as it is often undesirable to return a
+      constant term in the results, and also has the benefit of being more
+      compact.
 
-    Both of these queries are valid, however note that they do return different
-    tuples. The first returns the same answer as the SQL query above, although
-    it is verbose. The second returns the singleton tuple \{$films.fid$\},
-    because under our definition, only free variables are returned. Most of
-    the time this is acceptable, as it is often undesirable to return a
-    constant term in the results, and also has the benefit of being more
-    compact.
+    \subsubsection{Inequality}
 
+      Suppose that we wish to check the inverse of the previous section, that
+      there exists other films except 'The Bourne Identity'. In SQL, this
+      simply translates to the following.
+
+      \begin{lstlisting}
+        SELECT name,
+        FROM films
+        WHERE name != 'The Bourne Identity';
+      \end{lstlisting}
+
+      The existence of one or more tuples satisfies our query; if no queries
+      are returned, it must be the case that there are no other films except
+      'The Bourne Identity'.
+
+      As before, there are two ways we can represent the SQL query above in
+      logic.
+      \begin{gather}
+        \exists x(films\_name(x, y) \land y !=  \text{'The Bourne
+        Identity'})\label{where3}\\
+        \lnot films\_name(x, \text{'The Bourne Identity'})\label{where4}
+      \end{gather}
+      The first query matches the output of our equivalent SQL query, but again
+      is more verbose. The second returns the set of singleton tuples
+      \{$films.fid$\} such that the name associated with that particular
+      primary key is not 'The Bourne Identity'. This is not equivalent to our
+      SQL expression however, and may be undesirable to use in this
+      circumstance (it is likely that we would like to return all other film
+      names).
+
+      \todo{Do we use <= or $\le$}
+
+      We can also express other inequalities, such as '<', '<=', '>', '>='.
+      Here we query for all the fid of every films with length greater than or
+      equal to two hours.
+
+      \begin{lstlisting}
+      SELECT fid,
+      FROM films,
+      WHERE length >= '2:00:00';
+      \end{lstlisting}
+
+      This can be expressed using the following predicate logic query.
+      \begin{gather}
+        \exists x(films\_length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
+      \end{gather}
+
+      Similar queries can be constructed for the other inequalities in a
+      similar format.
+
+    \subsubsection{NULL Values}
+
+      \todo[inline]{I imagine here would be a good place to talk about NULLs.
+        Max, we should go over our specification for NULL.
+
+  \subsection{Joins}
+
+    
 
 \section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
