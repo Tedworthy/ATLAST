@@ -4,7 +4,6 @@
 \usepackage{layout}
 \geometry{includeheadfoot, margin=3.18cm}
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
-\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{array,booktabs}
@@ -13,7 +12,7 @@
 \usepackage{todonotes}
 \usepackage{paralist}
 \usepackage{listings}
-\usepackage[fleqn]{mathtools}
+\usepackage[fleqn]{amsmath}
 \lstset{language=SQL}
 \addbibresource{report.bib}
 \DeclareDatamodelEntrytypes{standard}
@@ -623,6 +622,48 @@ work on any database and will provide clear error messages.
 
       INNER JOIN is the same as JOIN as of ANSI-92 SQL, and it the existence of
       the ON clause is not necessary (making it a cross join).
+
+    \subsubsection{Translating to the Correct Join}
+
+      Fundamentally, joining two relations often occurs as the result of a
+      conjunction of predicates when translating from first-order predicate
+      logic. However, there are a few different circumstances which affect the
+      type of join that must be used. Figure~\ref{fig:jointranslation} explains
+      the different types of join that can result from a query.
+
+      \begin{figure}
+        \label{fig:jointranslation}
+        \begin{tabular}{ | p{\dimexpr 0.22\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.22\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.15\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.41\linewidth-2\tabcolsep} | } \hline
+        LHS & RHS & Join & Explanation \\
+        \hline
+        $rel\_attr1(k, a)$ & $rel\_attr2(k, b)$ & No Join & 
+        Both keys and relations are equal. This conjunction involves projecting
+        two elements from the same tuple, and so no join is necessary.\\ \hline
+        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, b)$ & CROSS JOIN &
+        The keys are different and the relations may or may not be equal. Here
+        we assume that a != b. As there are no common elements, a cross join
+        must occur.\\ \hline
+        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, a)$ & JOIN ON rel1.attr1 =
+        rel2.attr2 &
+        The keys are different, but the attributes rel1.attr1 and rel2.attr2
+        are equal, thus we must join on these elements. Note that aliases are
+        used to avoid ambiguity between the two sets of attributes if they
+        overlap. Note that this may be combined with the example below to
+        create a more complex join.\\ \hline
+        $rel1\_attr1(k, a)$ & $rel2\_attr2(k, b)$ & JOIN ON rel1.key =
+        rel2.key &
+        The keys are the same and we assume the attributes rel1.attr1 and rel2.attr2
+        are different. We must join on the keys. Note that aliases are
+        used to avoid ambiguity between the two sets of attributes if they
+        overlap. Note that this may be combined with the above example to
+        create a more complex join.\\ \hline
+      \end{tabular}
+        \caption{A table explaining the correct join to use for a logical query
+        conjunction.}
+    \end{figure}
 
 \section{Design and Implementation}
   Summarise key implementation details (how did you do it? what technology was
