@@ -329,7 +329,7 @@ work on any database and will provide clear error messages.
 
     \begin{lstlisting}
 
-    SELECT films.name,
+    SELECT name,
     FROM films;
 
     \end{lstlisting}
@@ -353,7 +353,7 @@ work on any database and will provide clear error messages.
 
     \begin{lstlisting}
 
-    SELECT DISTINCT films.name,
+    SELECT DISTINCT name,
     FROM films;
 
     \end{lstlisting}
@@ -370,7 +370,7 @@ work on any database and will provide clear error messages.
 
     \begin{lstlisting}
 
-    SELECT films.fid, films.name,
+    SELECT fid, name,
     FROM films;
 
     \end{lstlisting}
@@ -386,8 +386,27 @@ work on any database and will provide clear error messages.
     satisfies this criteria.
 
     \begin{lstlisting}
-
+      SELECT name,
+      FROM films
+      WHERE name = 'The Bourne Identity';
     \end{lstlisting}
+
+    We expect to encounter at least one tuple if the film exists in our domain
+    of discourse. \todo{Cite this from our AD lectures} This can be represented
+    in one of two ways in first-order predicate logic.
+
+    \[
+      \exists x(films\_name(x, y) \land y = 'The Bourne Identity')
+      films\_name(x, 'The Bourne Identity')
+    \]
+
+    Both of these queries are valid, however note that they do return different
+    tuples. The first returns the same answer as the SQL query above, although
+    it is verbose. The second returns the singleton tuple \{$films.fid$\},
+    because under our definition, only free variables are returned. Most of
+    the time this is acceptable, as it is often undesirable to return a
+    constant term in the results, and also has the benefit of being more
+    compact.
 
 
 \section{Design and Implementation}
