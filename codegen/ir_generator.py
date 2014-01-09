@@ -343,6 +343,8 @@ class IRGenerator:
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
+        if child_node.getIdentifier() == 'y'
+          print 'COOEY'
         if child_node.isFree():
           print 'Rel attr :' + str(rel_attr) + ' is free'
           ir.addRelationAttributePair(rel_attr)
