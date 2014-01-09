@@ -52,8 +52,8 @@ class IRGenerator:
     # Precompute some booleans to make cases easier to understand
     both_predicates = right_node['type'] == 'predicate' and \
                       left_node['type'] == 'predicate'
-    both_constraints = right_node['type'] == 'constraints' and \
-                      left_node['type'] == 'constraints'
+    both_constraints = right_node['type'] == 'constraint' and \
+                      left_node['type'] == 'constraint'
     mixture_constraints_predicates = left_node['type'] == 'constraint' or \
                                      right_node['type'] == 'constraint'
 
@@ -227,14 +227,21 @@ class IRGenerator:
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
-    print ' *** IR Generator: Begin ForAllNode - Unimplemented ***'    
-    print ' *** IR Generator: End ForAllNode - Unimplemented ***'    
+    print ' *** IR Generator: Begin ForAllNode - Partially Implemented ***'    
+    state = {
+      'type' : 'forall'
+    }
+    self.pushNode(state)
+    print ' *** IR Generator: End ForAllNode - Partially Implemented ***'    
 
   @v.when(ast.ThereExistsNode)
   def visit(self, node):
-    print '*** IR Generator: Begin ThereExistsNode - Unimplemented ***'    
-    print '*** IR Generator: End ThereExistsNode - Unimplemented ***'    
-
+    print '*** IR Generator: Begin ThereExistsNode - Partially Implemented ***'    
+    state = {
+      'type' : 'thereexists'
+    }
+    self.pushNode(state)
+    print '*** IR Generator: End ThereExistsNode - Partially Implemented ***'    
   @v.when(ast.PredicateNode)
   def visit(self, node):
     print '*** IR Generator: Begin PredicateNode ***'    
