@@ -54,8 +54,12 @@ class IRGenerator:
                       left_node['type'] == 'predicate'
     both_constraints = right_node['type'] == 'constraint' and \
                       left_node['type'] == 'constraint'
-    mixture_constraints_predicates = left_node['type'] == 'constraint' or \
-                                     right_node['type'] == 'constraint'
+    mixture_constraints = left_node['type'] == 'constraint' or \
+                      right_node['type'] == 'constraint'
+    mixture_exists = left_node['type'] == 'thereexists' or \
+                      right_node['type'] == 'thereexists'
+    mixture_forall = left_node['type'] == 'forall' or \
+                      right_node['type'] == 'forall'
 
     # Check the left and right nodes are both predicates
     if both_predicates:
@@ -160,7 +164,7 @@ class IRGenerator:
       self.conjunctIR(left_ir, right_ir)
       self.pushIR(left_ir)
       self.pushNode(left_node)
-    elif mixture_constraints_predicates:
+    elif mixture_constraints:
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
         self.conjunctIR(left_ir, right_ir)
@@ -170,7 +174,29 @@ class IRGenerator:
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-
+    elif mixture_exists:
+      if (left_node['type'] == 'exists'):
+        new_constraint = ExistsConstraint(left_ir)
+        prev_constraints = right_ir.getConstraintTree()
+        if (prev_constraints is None):
+          right_ir.setConstraintTree(new_constraint)
+        else:
+          right_ir.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(right_ir)
+        self.pushNode(right_node)
+      else:
+        new_constraint = ExistsConstraint(right_ir)
+        prev_constraints = left_ir.getConstraintTree()
+        if (prev_constraints is None):
+          left.setConstraintTree(new_constraint)
+        else:
+          left.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(left_ir)
+        self.pushNode(left_node)
+    elif mixture_forall:
+      pass
     print right_ir
     
  #     print "\tAnd(",left_node,",",right_node,")"
