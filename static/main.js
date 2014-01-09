@@ -97,8 +97,7 @@ $(document).ready(function() {
     // Schema header
     var header = $("<div>").attr("id", "schema_header");
     var header_i = $("<i>").addClass("icon icon-db");
-    // TODO change 'filmdb' to DB name from schema, when it's there...
-    var header_span = $("<span>").html(schema.dbname);
+    var header_span = $("<span>").text(schema.dbname);
     header.append(header_i).append(header_span);
 
     // Schema tables
@@ -109,33 +108,53 @@ $(document).ready(function() {
       var table_div = $("<div>").addClass("schema_table");
       var table_header = $("<div>");
       var table_header_i = $("<i>").addClass("fa fa-table");
-      var table_header_span = $("<span>").text(table_name);
+      var table_header_span = $("<span>").addClass("table").text(table_name);
       table_header.append(table_header_i).append(table_header_span);
       table_div.append(table_header);
 
       var columns = [];
 
+      // For each column...
       $.each(table.columns, function(column_name, column) {
         var column_div = $("<div>");
-        var column_span = $("<span>").text(column_name);
+        var column_span_name = $("<span>").addClass("column").text(column_name);
+        var type = column.type;
+        switch (column.type) {
+          case "double precision":
+            type = "double";
+          case "character":
+          case "character varying":
+            type = "string";
+            break;
+          default:
+            type = column.type;
+            break;
+        }
+        type = " : " + type;
+        var column_span_type = $("<span>").text(type);
         var column_button = $("<button>");
         var column_button_i = $("<i>").addClass("fa fa-chevron-right");
         column_button.append(column_button_i);
-        column_div.append(column_span).append(column_button);
+        column_div.append(column_span_name).append(column_span_type);
+        column_div.append(column_button);
         columns.push(column_div);
       });
 
+      // Mark the key fields with icons
       $.each(table.primary_keys, function(index, key) {
         $.each(columns, function(index, column) {
-          if (column.children("span").text() === key) {
+          if (column.children("span.column").text() === key) {
+            columns.splice(index, 1);
             column.addClass("key");
             var key_i = $("<i>").addClass("fa fa-key");
             column.prepend(key_i);
+            columns.unshift(column);
             return false;
           }
         });
       });
 
+      // Build up the table
       $.each(columns, function(index, column) {
         table_div.append(column);
       });
@@ -147,11 +166,10 @@ $(document).ready(function() {
 
     // Schema buttons
     $("div.schema_table > div > button").on("click", function() {
-      var regex = /(^|>) *([^ <>]+) *(<|$)/;
       var header = $(this).parent().parent().children("div:first-child");
       var row = $(this).parent();
-      var table_name = header.html().match(regex)[2];
-      var column_name = row.html().match(regex)[2];
+      var table_name = header.children("span.table").text();
+      var column_name = row.children("span.column").text();
       logicEditor.insert(table_name + "_" + column_name + "(, )");
       logicEditor.selection.moveCursorBy(0, -3);
       logicEditor.focus();
