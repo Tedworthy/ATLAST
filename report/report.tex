@@ -696,9 +696,6 @@ work on any database and will provide clear error messages.
       chosen as it was very easy to parse by Javascript running in the user's
       browser and was well documented online due to its wide existing use.
 
-      How the site that the user sees works. Talk about javascript, sending data
-      to/from server and any plugins we used to make it look nice.
-
     \subsubsection{Webpage plugins and libraries}
       The site made heavy use of jQuery, which greatly simplified the handling
       of JSON data sent between the user and the server.  
@@ -709,20 +706,45 @@ work on any database and will provide clear error messages.
 
   \subsection{Middleware plugins}
     \subsubsection{Celery and RabbitMQ}
-      Use celery in task.py
-      import task as worker
-      result = worker.addToProcessingQueue.delay(logic, web.schema)
-      response = result.get()
+      To allow multiple users to access and use the site simultaneously, each
+      logic translation request had to be handled by a separate process, whilst
+      multiple requests had to be queueable.
 
-      @celery.task
-      def addToProcessingQueue(logic, schema):
+      To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
+      task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
+      used. Each logic sentence to translate could be easily packaged into its
+      own task and added to a queue to be translated.
+
+      \begin{verbatim}
+        Awesome example (that could do with syntax highlighting):
+        Use celery in task.py
+        import task as worker
+        result = worker.addToProcessingQueue.delay(logic, web.schema)
+        response = result.get()
+
+        @celery.task
+        def addToProcessingQueue(logic, schema):
+      \end{verbatim}
 
     \subsubsection{Interfacing with the databse}
-      psycopg2, Max's work on supporting multiple databases, running queries
-      on and getting results from the database
+      The psycopg2 (http://initd.org/psycopg/ ) PostgreSQL adapter for Python
+      was used to run queries on the database. It was very simple to open a
+      connection to a database   
+
+      \begin{verbatim}
+        Running generated sql queries was very easy:
+        configData = cp.parse_file('dbbackend/db.cfg')
+        con = pg.connect(configData)
+        queryResult = pg.query(con, sql)
+        con.close()
+      \end{verbatim}
+
+      (Max did you ever fix your multiple database issues? Also I think we're
+      stuck with PostgreSQL databases only?)
 
   \subsection{Logic to SQL translation}
     lex.py, yacc.py
+
     \subsubsection{Parse the logic into a logic AST}
       How we defined the language grammar
 
