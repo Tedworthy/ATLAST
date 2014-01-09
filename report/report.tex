@@ -753,7 +753,27 @@ work on any database and will provide clear error messages.
         def addToProcessingQueue(logic, schema):
       \end{verbatim}
 
-    \subsubsection{Interfacing with the databse}
+
+
+    \subsection{Logic to SQL translation}
+    lex.py, yacc.py
+
+    \subsubsection{Parse the logic into a logic AST}
+      How we defined the language grammar
+
+    \subsubsection{Generate a symbol table based on the logic AST}
+
+    \subsubsection{Run a pass of semantic analysis on the logic AST to check for errors}
+
+    \subsubsection{Generate an IR based on the logic AST}
+
+    \subsubsection{Generate an SQL string based on the above IR}
+      Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
+
+  \subsection{Testing and continuous integration.. may want to move this section}
+    nose tests, TeamCity
+    \subsection{Backend}
+     \subsubsection{Interfacing with the databse}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -817,28 +837,29 @@ work on any database and will provide clear error messages.
         con.close()
       \end{minted}
 
-      
+      \subsubsection{Codifying Database Schema}
+      In an effort to make our project extensible, the web platform that performs 
+      the logic to SQL translation uses an XML representation of the database
+      schema. In this way the translation engine is platform agnostic with
+      regards to which particular SQL implementation the web server is running.
+      Indeed as long as an XML file is provided it is possible to run the
+      translation engine in an 'offline' mode where it is not connected to a
+      database and it does not run the translated query, instead it simply
+      presents the query to the user.
+
+      This XML representation is automatically generated on program startup. 
+      Currently the project only supports PostgreSQL implementations, however it 
+      has been designed so that support for other SQL implementations can be 
+      added modularly. In order to extend support to other platforms all that is  
+      required is to add a \%SQL\%\_backend.py which provides the functions
+      described above, then switch out the import in generate\_schema.py to use
+      the desired implementation. 
+
+
+
+
       (\todo{LOL} Max did you ever fix your multiple database issues?Also I think we're
-      stuck with PostgreSQL databases only?)
-
-    \subsection{Logic to SQL translation}
-    lex.py, yacc.py
-
-    \subsubsection{Parse the logic into a logic AST}
-      How we defined the language grammar
-
-    \subsubsection{Generate a symbol table based on the logic AST}
-
-    \subsubsection{Run a pass of semantic analysis on the logic AST to check for errors}
-
-    \subsubsection{Generate an IR based on the logic AST}
-
-    \subsubsection{Generate an SQL string based on the above IR}
-      Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
-
-  \subsection{Testing and continuous integration.. may want to move this section}
-    nose tests, TeamCity
-
+      stuck with PostgreSQL databases only?) 
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
   Summarise testing procedures + relevant testing results
