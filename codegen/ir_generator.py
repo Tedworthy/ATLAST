@@ -44,8 +44,6 @@ class IRGenerator:
     left_ir = self.popIR()
     print '\tLeft IR: ' + str(left_ir)
     print '\tRight IR: ' + str(right_ir)
-    print '\tLeft node: ' + str(left_node)
-    print '\tRight node: ' + str(right_node)
 
     # Sanity check the objects
     assert left_node
@@ -146,7 +144,9 @@ class IRGenerator:
       if join_constraints is None:
         self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
-        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
+        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN,
+            join_constraints)
+        self.removeDuplicateConstraints(left_ir, join_constraints)
       state = {'type' : 'predicate',
                'keys' : left_keys + right_keys,
               'key_values' : left_keyvals + right_keyvals,
@@ -465,10 +465,6 @@ class IRGenerator:
   def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
       right_keys):
     join_constraints = None
-    print left_keyvals
-    print right_keyvals
-    print left_keys
-    print right_keys
     for i in range(0, len(left_keyvals)):
       for j in range(0, len(right_keyvals)):
         left_key_val  = left_keyvals[i]
@@ -561,6 +557,13 @@ class IRGenerator:
       elif bin_op == ConstraintBinOp.OR:
         left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
+
+  def removeDuplicateConstraints(self, ir, constraints):
+    ir_constraints = ir.getConstraintTree()
+    # NOTE, This is not necessarily always correct. Realistically some sort of
+    # tree pruning should occur to reliably remove duplicates.
+    if (ir_constraints == constraints):
+      ir.setConstraintTree(None)
 
   def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN,
       keys=None):
