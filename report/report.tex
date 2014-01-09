@@ -703,7 +703,7 @@ work on any database and will provide clear error messages.
                  Front End\\
                  ---------\\
                  ACE        - Text Editor\\
-                 Bootstrap  - CSS \\
+                 Bootstrap  - CSS (Ted seems to have got rid of this)\\
 
                  Testing\\
                  -------\\
@@ -728,8 +728,34 @@ work on any database and will provide clear error messages.
       of JSON data sent between the user and the server.  
 
     \subsubsection{Graphical user interface}
-      Ted did some UI magic, burnt some villages and then ended up with awesome
-      syntax highlighting and auto-fill stuff.
+      PUT IN FANCY SCREENSHOTS!
+
+      The interface the the user would see and interact with had to be simple
+      and intuitive to use. In particular, this meant that logic queries had to
+      be easy to input and the resulting SQL and result of running it on the
+      database easy to read and understand.
+
+      The javascript Ace http://ace.c9.io code editor was used for inputting the
+      user's
+      logic query. The editor was both extremely powerful and very easy to
+      implement. The editor provided an almost identical interface to desktop
+      applications such as Vim or Emacs. This ensured that the user 
+
+      Logic symbols could be input both with key shortcuts and with dedicated
+      buttons. (Easy for new users to start using, and allows experienced users
+      faster input).
+
+      (and name of database)!
+      Database tables shown at the top for quick reference, with the ability to
+      click to insert text for queries based on table attributes (easy to use!)
+
+      Result returned as JSON and displayed in simple table at bottom.
+
+      Picked nice colours and text styles.
+
+      Simple layout with few pages; help gives extra details, settings allows
+      you to use your own database.
+ 
 
   \subsection{Middleware plugins}
     \subsubsection{Celery and RabbitMQ}
