@@ -733,25 +733,40 @@ work on any database and will provide clear error messages.
 
   \subsection{Middleware plugins}
     \subsubsection{Celery and RabbitMQ}
-      To allow multiple users to access and use the site simultaneously, each
-      logic translation request had to be handled by a separate process, whilst
-      multiple requests had to be queueable.
+      By default web.py is multithreaded, meaning that each users request is
+      handled in a separate thread, this allows multiple users to sent http
+      requests to the server at once. Because of this, it would indeed be
+      possible to run the translation code in the same thread that services 
+      a users web-request. However in an effort to make our project scalable we
+      decided to use a 3 tiered architecture. The web server dispatches a job to
+      RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a
+      new job arrives, it processes it and posts the result back to RabbitMQ.
+      Here RabbitMQ is acting as a message broker for the server to communicate
+      to the Celery worker. Currently our implementation assumes that all three
+      services are running on the same machine, however it is very easy to edit
+      the configuration to scale to an arbitrary number of separate workers on
+      different pysical devices.
+
+      
+
+      \missingfigure{Insert diagram of architecture here.}
+
 
       To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
       task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
       used. Each logic sentence to translate could be easily packaged into its
       own task and added to a queue to be translated.
 
-      \begin{verbatim}
-        Awesome example (that could do with syntax highlighting):
-        Use celery in task.py
+      Below is an example of how these services are used in our project: 
+      \begin{minted}{python}
+        #code.py
         import task as worker
         result = worker.addToProcessingQueue.delay(logic, web.schema)
         response = result.get()
-
+        #worker.py
         @celery.task
         def addToProcessingQueue(logic, schema):
-      \end{verbatim}
+      \end{minted}
 
 
 
@@ -759,7 +774,45 @@ work on any database and will provide clear error messages.
     lex.py, yacc.py
 
     \subsubsection{Parse the logic into a logic AST}
-      How we defined the language grammar
+      We used the PLY library, which is an implementation of GNU's LEX and YACC
+      in python, in order to generate a parser and lexer for our projec.
+
+      In order to generate the lexer, it was a simple case of specifying a list
+      of regular expressions which map to 'Tokens' in our grammar. This can be
+      seen in lexer.py. PLY automatically identifies something as a token if it
+      has the following format: 
+        t\_TOKENNAMEHERE
+      It can either be a constant, or for more complex tokens such as
+      identifiers it can be a function. To generate the lexer, you simply need to
+      call ply.lex.lex(). This lexer can then be used to facilitate
+      automatically generating a parser for a specified grammar. The grammar is
+      described in parser.py. PLY's implementation of YACC requires you to
+      define your rules as following:
+      \begin{minted}{python}
+        def p_formula_bracketed(p):
+          'formula : LBRACKET formula RBRACKET'
+          p[0] = p[2]
+      \end{minted}
+      The p\_NAME tells the parser to interpret the following function as a
+      grammar rule, where the rule is specified by the functions docstring,
+      results from the rules are returned through the parameter 'p' where p[i]
+      refers to the tokens that make up the right hand side of the grammar rule
+      and p[0] is the result.
+
+      The following more complex example shows how you can build up an abstract
+      syntax tree:
+
+      \begin{minted}{python}
+        ### A /\ B ###
+        def p_formula_and(p):
+          'formula : formula AND formula'
+          lineNo = p.lexer.lineno
+          pos = getPosition(p.lexer)
+          p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
+       \end{minted}
+
+       We defined our grammar in this manner using the constructs from section 4.
+
 
     \subsubsection{Generate a symbol table based on the logic AST}
 
