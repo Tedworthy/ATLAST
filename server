@@ -8,6 +8,7 @@ then
 fi
 
 if [[ "$1" == "start" ]]; then
+  bash remove_pyc
   # START
   if [[ -e rabbitmq.pid ]]; then
     echo "[SERVER] RabbitMQ appears to be running."
@@ -55,6 +56,7 @@ elif [[ "$1" == "stop" ]]; then
   fi
 else
   # REFRESH
+  bash remove_pyc
   if [[ -e rabbitmq.pid ]]; then
     echo "[SERVER] Refreshing Celery"
     if [[ -e celery.pid ]]; then
