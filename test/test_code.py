@@ -8,5 +8,5 @@ class TestCode():
     testApp = TestApp(web.app.wsgifunc(*middleware))
     r = testApp.get('/')
     assert_equal(r.status, 200)
-    r.mustcontain('Convert to SQL')
+    r.mustcontain('Translate to SQL')
 
