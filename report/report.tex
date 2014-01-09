@@ -76,7 +76,6 @@
   language SQL. This allows us to open up new avenues in the realms of
   teaching, database administration, and computer security.
 
-  \subsection*{Security}
   In the world of computer security, access to data is an important topic. One
   which has come to public attention through the recent leaks from NSA
   contracter Edward Snowden. Our product provides the bedrock for an
@@ -87,26 +86,28 @@
   Government. Your company is passionate about your customers privacy rights
   and so you want to give the government as little information as possible
   about your customers, whilst still allowing them to do their job. This could
-  be as secretive as not even allowing the governement to know what kinds of
+  be as secretive as not even allowing the government to know what kinds of
   data you hold. What you would like is a system which would allow the
-  goverment to ask you a question, and for you to be able to respond with as
+  government to ask you a question, and for you to be able to respond with as
   little information as possible to answer that question without the government
   knowing what information you hold.
 
   Our product can provide the bedrock for this. Questions can be formed in
   predicate logic about whether a particular entity exists and if certain
-  conditions surounding it hold, our project then takes this query and
+  conditions surrounding it hold, our project then takes this query and
   translates it into SQL, so that it is ready to be sent to a conventional
   database.
 
-  \subsection*{Teaching}
 
-  A compelling use for our project is for teaching, ideally suited for use 
-  by students studying both logic and databases. To reinforce their 
-  understanding of logic, queries can be written and tested against a suitably
-  populated database of facts. The generated SQL can be used either to 
-  highlight issues with the logic or, if correct, to explain the formulation
-  of correct SQL.
+  Another compelling use for our project would be to provide a teaching tool, 
+  suitable for use by students studying both logic and databases, topics which
+  many universities deem to be mandatory for all computing students.To reinforce 
+  their understanding of logic, queries can be written and tested against a suitably
+  populated database of facts. The result of these queries can then be used to
+  see if the student has understood the course material. 
+  
+  The generated SQL can be used as a reference for the student, either to  highlight 
+  issues with the logic or, to  explain the formulation of correct SQL.
 
   It also lends itself well to creating problem sheets for these subjects.
   For example, given a statement in english, like "What are the names of
@@ -157,12 +158,14 @@ a simple way to construct and edit these queries, one that can be changed to
 work on any database and will provide clear error messages.
 
   -- GOALS - In Chatley coursework 1 --
+  Unfortunately there aren't any goals in the chatley coursework one.
+  Just a bunch of questions, turns out we forgot to add them. WHOPS LOOL
   TODO: Discuss goals, they're referenced in the Project Management
   section. Revisions should not be talked about here though, just the
   overarching goals of the project.
 
-\section{Theory}
-
+\section{Background Research}
+\subsection{SQL}
   Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
   programming language designed for managing data held in relational database
   management system. SQL is made up of two different types of language:
@@ -183,20 +186,20 @@ work on any database and will provide clear error messages.
   these operations (so called 'SQL-data' operations), with the aim of purely
   querying the RDBMS without altering it.
 
-  \subsection{Tuple Relational Calculus}
-    SQL was originally based on Relational Algebra and Tuple Relational
-    Calculus. RA forms the structure and operations that can be performed
-    across tuples of data and TRC provides a query language for such a model.
+\subsection{Tuple Relational Calculus}
+  SQL was originally based on Relational Algebra and Tuple Relational
+  Calculus. RA forms the structure and operations that can be performed
+  across tuples of data and TRC provides a query language for such a model.
 
-    \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
-      \label{sec:formalTRC}
-      A query takes the form: \{T | p(T)\}
+  \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
+    \label{sec:formalTRC}
+    A query takes the form: \{T | p(T)\}
 
-      The answer is the set of all tuples T such that p(T) evaluates to true.
+    The answer is the set of all tuples T such that p(T) evaluates to true.
 
-      A formula F is recursively defined as:
-      \begin{itemize}
-        \item $p(t_1, ..., t_n)$ where predicate $p$ is applied to terms $t_1, ..., t_n$ (atomic formula)
+    A formula F is recursively defined as:
+    \begin{itemize}
+      \item $p(t_1, ..., t_n)$ where predicate $p$ is applied to terms $t_1, ..., t_n$ (atomic formula)
         \item $\lnot F$ where $F$ is a formula.
         \item $F' \land F''$ where $F', F''$ are formulae.
         \item $F' \lor F''$ where $F', F''$ are formulae.
@@ -237,7 +240,7 @@ work on any database and will provide clear error messages.
       \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ Films(Films1.director =
       F2.director $\land$ F1 != F2))\}
 
-  \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
+\subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
     formulate a mapping between TRC and first order predicate logic.
 
