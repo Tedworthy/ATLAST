@@ -175,28 +175,38 @@ class IRGenerator:
         self.pushIR(right_ir)
         self.pushNode(right_node)
     elif mixture_exists:
+      left_keys = left_node['keys']
+      right_keys = right_node['keys']
+      left_tables = set([x.getRelation() for x in left_keys])
+      right_tables = set([x.getRelation() for x in right_keys])
+      for table in left_tables:
+        if (not table.hasAlias()):
+          table.setAlias(table.getName() + self.getGlobalAliasNumber())
+      for table in right_tables:
+        if (not table.hasAlias()):
+          table.setAlias(table.getName() + self.getGlobalAliasNumber())
+
       if (left_node['type'] == 'exists'):
-        new_constraint = ExistsConstraint(left_ir)
-        prev_constraints = right_ir.getConstraintTree()
-        if (prev_constraints is None):
-          right_ir.setConstraintTree(new_constraint)
-        else:
-          right_ir.setConstraintTree(AndConstraint(new_constraint,
-            prev_constraints))
-          right_ir.addRelationAttributePairs(left_ir.getRelationAttributePairs)
-        self.pushIR(right_ir)
-        self.pushNode(right_node)
+        outer_ir = right_ir
+        inner_ir = left_ir
+        result_node = right_node
       else:
-        new_constraint = ExistsConstraint(right_ir)
-        prev_constraints = left_ir.getConstraintTree()
-        if (prev_constraints is None):
-          left_ir.setConstraintTree(new_constraint)
-        else:
-          left_ir.setConstraintTree(AndConstraint(new_constraint,
-            prev_constraints))
-          left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs)
-        self.pushIR(left_ir)
-        self.pushNode(left_node)
+        outer_ir = left_ir
+        inner_ir = right_ir
+        result_node = left_node
+
+      new_constraint = ExistsConstraint(inner_ir)
+      prev_constraints = outer_ir.getConstraintTree()
+      if (prev_constraints is None):
+        outer_ir.setConstraintTree(new_constraint)
+      else:
+        outer_ir.setConstraintTree(AndConstraint(new_constraint,
+          prev_constraints))
+      rel_attr_pairs = inner_ir.getRelationAttributePairs()
+      if (rel_attr_pairs is not None):
+        outer_ir.addRelationAttributePairs(rel_attr_pairs)
+      self.pushIR(outer_ir)
+      self.pushNode(result_node)
     elif mixture_forall:
       pass
     print right_ir
@@ -256,20 +266,19 @@ class IRGenerator:
   @v.when(ast.ForAllNode)
   def visit(self, node):
     print ' *** IR Generator: Begin ForAllNode - Partially Implemented ***'    
-    state = {
-      'type' : 'forall'
-    }
+    state = self.popNode()
+    state['type'] = 'forall'
     self.pushNode(state)
     print ' *** IR Generator: End ForAllNode - Partially Implemented ***'    
 
   @v.when(ast.ThereExistsNode)
   def visit(self, node):
     print '*** IR Generator: Begin ThereExistsNode - Partially Implemented ***'    
-    state = {
-      'type' : 'thereexists'
-    }
+    state = self.popNode()
+    state['type'] = 'thereexists'
     self.pushNode(state)
     print '*** IR Generator: End ThereExistsNode - Partially Implemented ***'    
+
   @v.when(ast.PredicateNode)
   def visit(self, node):
     print '*** IR Generator: Begin PredicateNode ***'    
