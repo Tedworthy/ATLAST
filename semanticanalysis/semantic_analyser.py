@@ -1,5 +1,5 @@
 import dbbackend.schema as schema
-import semanticanalysis.schema_compliance as sc
+import semanticanalysis.semantic_visitor as sv
 import error.exception_group as eg
 
 '''
@@ -15,11 +15,9 @@ class SemanticAnalyser:
     self._errors = []
 
   def analyse(self):
-    # Compliance with database schema.
-    scVisitor = sc.SchemaCompliance(self._schema)
+    scVisitor = sv.SemanticVisitor(self._schema)
     self._ast.accept(scVisitor)
     self._errors.extend(scVisitor.getErrors())
-    # ... more semantic checks here?
 
     if self._errors:
       raise eg.ExceptionGroup(self._errors)
