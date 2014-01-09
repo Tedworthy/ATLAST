@@ -176,10 +176,13 @@ class IRGenerator:
         self.pushNode(right_node)
     else:
       left_keys = left_node['keys']
-      print right_node
       right_keys = right_node['keys']
-      left_tables = set([x.getRelation() for x in left_keys])
-      right_tables = set([x.getRelation() for x in right_keys])
+      left_attrs = left_node['keys']
+      right_attrs = right_node['keys']
+      print left_node
+      print right_node
+      left_tables = set([x.getRelation() for x in left_keys + left_attrs])
+      right_tables = set([x.getRelation() for x in right_keys + right_attrs])
       for table in left_tables:
         if (not table.hasAlias()):
           table.setAlias(table.getName() + self.getGlobalAliasNumber())
@@ -227,7 +230,7 @@ class IRGenerator:
             prev_constraints))
         self.pushIR(outer_ir)
         self.pushNode(result_node)
-    print right_ir
+        print outer_ir
  #     print "\tAnd(",left_node,",",right_node,")"
     print "*** IR Generator:  End AndNode ***"
 
@@ -244,7 +247,7 @@ class IRGenerator:
     #### Simply insert a NOT node into the constraint tree
     if child['type'] == 'constraint':
       print '\tEvaluating NOT(Constraint)' 
-     
+
       ## Quick and dirty hack
       ## NOT(rest_of_tree) -> (rest_of_tree)
       if isinstance(constraint_tree,UnaryConstraint):
@@ -253,7 +256,7 @@ class IRGenerator:
       else:
         print '\tAdding NOT(constraints) to tree'
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
-  
+
 
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
@@ -261,7 +264,7 @@ class IRGenerator:
       print '\tEvaluating Predicate Negation'
       # Case 2a: something of the form ~\Ez(foo_bar(x,z)) 
       # in which case we need to add the constraint that x has no bar
-      if constraint_tree == None:
+      if constraint_tree is None:
         print '\tSet constraint that z IS NULL'
         self.bind(child_node.getChildren()[1],NullNode(),ir)
         print '\tZ Now bound'
@@ -269,7 +272,7 @@ class IRGenerator:
       else:
         print '\tCurrent constraint tree: ' 
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
-      
+
     self.pushIR(ir)
     state = {
       'type' : 'constraint',
@@ -427,6 +430,7 @@ class IRGenerator:
       var_child = self.getVariableNode(left_child, right_child)
       other_child = right_child if var_child == left_child else left_child
 
+      print '\t\t\t' + str(var_child['node'].getBoundValue().__class__)
       constraint_var = var_child['node'].getBoundValue()
       if other_child['type'] == 'variable':
         constraint_other = VariableNode(other_child['node'].getIdentifier())
@@ -586,8 +590,27 @@ class IRGenerator:
   def extendRelationAttributePairs(self, left_ir, right_ir):
     """
     Concatenates together two sets of relation attribute pairs, updating the
-    left IR. This is primarily used when merging together IRs
+    left IR. This is primarily used when merging together IRs. It is first 
+    necessary to iterate through and resolve any aliases that
+    have been set.
     """
+    print 'EXTENDING RELATION ATTRIBUTES'
+    left_pairs = left_ir.getRelationAttributePairs()
+    right_pairs = right_ir.getRelationAttributePairs()
+    print left_pairs
+    print right_pairs
+    for l in left_pairs:
+      for r in right_pairs:
+        if (l.getRelation().getAlias() == r.getRelation().getAlias() \
+            and l.getRelation() != r.getRelation()):
+          r.setRelation(l.getRelation())
+        if (l.getRelation().getAlias() == r.getRelation().getAlias() \
+            and l.getRelation() != r.getRelation()):
+          r.setRelation(l.getRelation())
+        print '*****************'
+        print l
+        print r
+        print '*****************'
     left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs())
 
   def combineRelations(self, left_ir, right_ir, join_type, keys=None):
