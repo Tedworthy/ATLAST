@@ -346,10 +346,16 @@ class IRGenerator:
     self.conjunctIR(left_ir, right_ir)
     prev_constraints = left_ir.getConstraintTree()
 
-    if both_variables and op == Constraint.EQ:
+    if both_variables:
       print '\tBoth variables in == relationship -> binding'
-      # Bind two variables together
-      self.bind(left_child['node'], right_child['node'], left_ir)
+      new_constraint = Constraint(op,
+          left_child['node'].getBoundValue(),
+          right_child['node'].getBoundValue())
+      if (prev_constraints is None):
+        left_ir.setConstraintTree(new_constraint)
+      else:
+        left_ir.setConstraintTree(AndConstraint(new_constraint,
+          prev_constraints))
 
     elif one_variable_one_not or (both_variables and op != Constraint.EQ):
       var_child = self.getVariableNode(left_child, right_child)
