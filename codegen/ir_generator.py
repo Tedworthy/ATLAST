@@ -202,9 +202,6 @@ class IRGenerator:
       else:
         outer_ir.setConstraintTree(AndConstraint(new_constraint,
           prev_constraints))
-      rel_attr_pairs = inner_ir.getRelationAttributePairs()
-      if (rel_attr_pairs is not None):
-        outer_ir.addRelationAttributePairs(rel_attr_pairs)
       self.pushIR(outer_ir)
       self.pushNode(result_node)
     elif mixture_forall:
@@ -320,6 +317,7 @@ class IRGenerator:
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
+          print 'Rel attr :' + str(rel_attr) + ' is free'
           ir.addRelationAttributePair(rel_attr)
         self.bind(child_node, rel_attr, ir)
         print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()

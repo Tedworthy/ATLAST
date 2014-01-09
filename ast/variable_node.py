@@ -67,12 +67,9 @@ class VariableNode(Node):
 
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
-    # A value is free if, when looking in the symbol table, we find a global
-    # variable with no parent (i.e it is at the top level symbol table) or the
-    # case in which there is only a symbol table with depth 1. In the latter
-    # case, we need to check that the node found is the current node, as in
-    # this case the variable must be free (it has not been found quanitified
-    # anywhere else).
-    return val._symTable.hasParent() or self == val
+    # The variable is free if we could not find another declaration in the
+    # symbol table
+    return self == val
+
   def __repr__(self):
     return self.getIdentifier()
