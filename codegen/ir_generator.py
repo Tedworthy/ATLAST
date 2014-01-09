@@ -108,10 +108,10 @@ class IRGenerator:
             self.pushIR(left_ir)
             state = {
                 'type' : 'predicate',
-                'key_values' : left_keyvals,
-                'keys' : left_keys,
-                'attrs' : left_attrs,
-                'attr_values' : left_attr_vals
+                'key_values' : left_keyvals + right_keyvals,
+                'keys' : left_keys + right_keys,
+                'attrs' : left_attrs + right_attrs,
+                'attr_values' : left_attr_vals + right_attr_vals
               }
             self.pushNode(state)
             print 'Generated IR : ' + str(left_ir)
@@ -144,7 +144,9 @@ class IRGenerator:
       if join_constraints is None:
         self.conjunctIR(left_ir, right_ir, JoinTypes.CROSS_JOIN)
       else:
-        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN, join_constraints)
+        self.conjunctIR(left_ir, right_ir, JoinTypes.EQUI_JOIN,
+            join_constraints)
+        self.removeDuplicateConstraints(left_ir, join_constraints)
       state = {'type' : 'predicate',
                'keys' : left_keys + right_keys,
               'key_values' : left_keyvals + right_keyvals,
@@ -344,10 +346,16 @@ class IRGenerator:
     self.conjunctIR(left_ir, right_ir)
     prev_constraints = left_ir.getConstraintTree()
 
-    if both_variables and op == Constraint.EQ:
+    if both_variables:
       print '\tBoth variables in == relationship -> binding'
-      # Bind two variables together
-      self.bind(left_child['node'], right_child['node'], left_ir)
+      new_constraint = Constraint(op,
+          left_child['node'].getBoundValue(),
+          right_child['node'].getBoundValue())
+      if (prev_constraints is None):
+        left_ir.setConstraintTree(new_constraint)
+      else:
+        left_ir.setConstraintTree(AndConstraint(new_constraint,
+          prev_constraints))
 
     elif one_variable_one_not or (both_variables and op != Constraint.EQ):
       var_child = self.getVariableNode(left_child, right_child)
@@ -484,6 +492,7 @@ class IRGenerator:
         else:
           print """\ta mixture of variables and constants found, add some
           constraints"""
+    print '\t\t\tJoin constraints: ' + str(join_constraints)
     return join_constraints
 
 # Bindings
@@ -554,6 +563,26 @@ class IRGenerator:
       elif bin_op == ConstraintBinOp.OR:
         left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
+
+  def removeDuplicateConstraints(self, ir, constraints):
+    ir_constraints = ir.getConstraintTree()
+    ir.setConstraintTree(self.constraintTreeWithoutDuplicates(ir_constraints,
+      constraints))
+
+  def constraintTreeWithoutDuplicates(self, c1, c2):
+    if (c1 == c2):
+      return None
+    if (isinstance(c1, ConstraintBinOp)):
+      left = self.constraintTreeWithoutDuplicates(c1._left,
+        c2)
+      right = self.constraintTreeWithoutDuplicates(c1._right, c2)
+      if (ir._left is None):
+        return ir._right
+      elif (ir._right is None):
+        return ir._left
+      c1._left = left
+      c1._right = right
+    return c1
 
   def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN,
       keys=None):

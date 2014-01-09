@@ -32,9 +32,11 @@ class Schema():
     return values
 
   def gatherColumns(self, table):
-    values = []
-    for column in table.iter('columnName'):
-      values.append(column.text)
+    values = {}
+    for column in table.iter('column'):
+      column_vals = {}
+      column_vals['type'] = column.find('type').text
+      values[column.attrib.get('name')] = column_vals
     return values
 
   def getPrimaryKeys(self, table_name):
@@ -51,7 +53,28 @@ class Schema():
       print 'Error: table', table_name, 'not in schema!'
       return None
 
-    return table_data.get('columns')
+    columns = table_data.get('columns') or {}
+    result = []
+
+    for column_name in columns.keys():
+      result.append(column_name)
+
+    return result
+
+  def getColumnType(self, table_name, column_name):
+    table_data = self._data.get(table_name)
+    if table_data is None:
+      print 'Error: table', table_name, 'not in schema!'
+      return None
+
+    columns = table_data.get('columns') or {}
+    column = columns.get('column_name')
+
+    if column is None:
+      print 'Error: table', table_name, 'has no column', column_name
+      return None
+
+    return column.get('type')
 
   def getAllData(self):
     return self._data

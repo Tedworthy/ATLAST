@@ -25,7 +25,7 @@ primary_key_query = \
 
 columns_query = \
   """
-    SELECT column_name
+    SELECT column_name, data_type
     FROM information_schema.columns
     WHERE table_name = '%s'
     ORDER BY ordinal_position
@@ -48,9 +48,11 @@ def generate_db_schema(con):
 
     # Fetch all the columns and update the XML accordingly
     columns = pg.query(con, columns_query % table)['rows']
-    for column in (column[0] for column in columns):
-      xml_primary_key = etree.SubElement(xmltable, "columnName")
-      xml_primary_key.text = column
+    for column in columns:
+      xml_column = etree.SubElement(xmltable, "column")
+      xml_column.set("name", column[0])
+      xml_column_type = etree.SubElement(xml_column, "type")
+      xml_column_type.text = column[1]
 
   # Write the xml to a file
   tree = ET.ElementTree(root)

@@ -222,9 +222,20 @@ class TestCodeGen():
     sql = "SELECT films1.title, films2.director, films3.length FROM films AS films1 CROSS JOIN films AS films2 CROSS JOIN films as films3"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  @with_setup(setup_func, teardown_func)
+  def test_single_table_cross_join_eq(self):
+    logic = "∃x,y(films_title(x, a) ∧ films_title(y, b) ∧ a = b)".decode('utf-8')
+    sql = "SELECT films1.title, films2.title FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title = films2.title"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  @with_setup(setup_func, teardown_func)
+  def test_single_table_cross_join_neq(self):
+    logic = "∃x,y(films_title(x, a) ∧ films_title(y, b) ∧ a != b)".decode('utf-8')
+    sql = "SELECT films1.title, films2.title FROM films AS films1 CROSS JOIN films AS films2 WHERE films1.title <> films2.title"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
   ''' MULTIPLE TABLE JOINS '''
 
-  #MixTutnem
   @with_setup(setup_func, teardown_func)
   def test_join_two_tables(self):
     logic = "∃x(films(x) ∧ casting_fid(y,x))".decode('utf8')
@@ -271,6 +282,7 @@ class TestCodeGen():
   def test_three_table_join_select_two_rearranged(self):
     logic = "∃a,c,f(casting_aid(c, a) ∧ actors_name(a, aname) ∧ casting_fid(c, f) ∧ films_title(f, fname))".decode('utf8')
     sql = "SELECT actors.name, films.title FROM casting JOIN actors ON casting.aid = actors.aid JOIN films ON casting.fid = films.fid"
+    self.translates_to(logic, sql)
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   ''' NEGATIONS '''

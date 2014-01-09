@@ -101,7 +101,8 @@ def p_formula_thereexists(p):
 def p_atomic_formula_predicate(p):
   'atomicFormula : IDENTIFIER LBRACKET termList RBRACKET'
   lineNo = p.lexer.lineno
-  pos = getPosition(p.lexer)
+#TODO FIXME pos currently gets set to None here; default to -1 bodge
+  pos = getPosition(p.lexer) or -1
   p[0] = ast.PredicateNode(lineNo, pos, p[1], p[3])
 
 def p_atomic_formula_eq(p):
