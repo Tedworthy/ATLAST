@@ -176,6 +176,7 @@ class IRGenerator:
         self.pushNode(right_node)
     else:
       left_keys = left_node['keys']
+      print right_node
       right_keys = right_node['keys']
       left_tables = set([x.getRelation() for x in left_keys])
       right_tables = set([x.getRelation() for x in right_keys])
@@ -217,7 +218,7 @@ class IRGenerator:
           result_node = left_node
 
         new_constraint = ExistsConstraint(inner_ir)
-        new_constraint = UnaryConstraint(UnaryConstraint.NOT, new_constraint)
+        new_constraint = UnaryConstraint(Constraint.NOT, new_constraint)
         prev_constraints = outer_ir.getConstraintTree()
         if (prev_constraints is None):
           outer_ir.setConstraintTree(new_constraint)
@@ -271,9 +272,13 @@ class IRGenerator:
       
     self.pushIR(ir)
     state = {
-       'type' : 'constraint',
-       'notNode' : 'true',
-       'node' : node 
+      'type' : 'constraint',
+      'key_values': child['key_values'],
+      'keys': child['keys'],
+      'attr_values': child['attr_values'],
+      'attrs': child['attrs'],
+      'notNode' : 'true',
+      'node' : node 
     }
     self.pushNode(state)
     print '\tIR Generated: ' + str(ir)

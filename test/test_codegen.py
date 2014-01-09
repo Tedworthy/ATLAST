@@ -365,7 +365,7 @@ class TestCodeGen():
   @with_setup(setup_func, teardown_func)
   # "Get me directors where all their films are greater than 100 minutes long."
   def test_fariba_three(self):
-    logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) → (film_length(y, len) ∧ len >'100')))".decode('utf8')
+    logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) → (films_length(y, len) ∧ len >'100')))".decode('utf8')
     sql = "SELECT films.director FROM films WHERE films.director NOT IN (SELECT films.director FROM films WHERE length <= '100')"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
