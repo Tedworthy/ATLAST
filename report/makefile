@@ -1,3 +1,6 @@
+
+.PHONY: clean
+
 report:
 	pdflatex -shell-escape report.tex
 	biber report
@@ -5,4 +8,12 @@ report:
 	pdflatex -shell-escape report.tex
 
 clean:
-	rm -rf *.aux *.pdf *.log *.bcf *.bbl *.blg *.bbg *.run.xml *.toc
+	-rm -rf *.aux 
+	-rm -rf *.pdf 
+	-rm -rf *.log 
+	-rm -rf *.bcf 
+	-rm -rf *.bbl 
+	-rm -rf *.blg 
+	-rm -rf *.bbg 
+	-rm -rf *.run.xml 
+	-rm -rf *.toc
