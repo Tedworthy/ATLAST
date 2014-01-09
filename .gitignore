@@ -22,7 +22,7 @@ certs/*
 *.*~
 .DS_Store
 ._*
-
+*.nfs*
 ##
 #latex files
 ##
