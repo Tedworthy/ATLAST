@@ -271,6 +271,7 @@ class TestCodeGen():
   def test_three_table_join_select_two_rearranged(self):
     logic = "∃a,c,f(casting_aid(c, a) ∧ actors_name(a, aname) ∧ casting_fid(c, f) ∧ films_title(f, fname))".decode('utf8')
     sql = "SELECT actors.name, films.title FROM casting JOIN actors ON casting.aid = actors.aid JOIN films ON casting.fid = films.fid"
+    self.translates_to(logic, sql)
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   ''' NEGATIONS '''

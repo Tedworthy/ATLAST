@@ -44,6 +44,8 @@ class IRGenerator:
     left_ir = self.popIR()
     print '\tLeft IR: ' + str(left_ir)
     print '\tRight IR: ' + str(right_ir)
+    print '\tLeft node: ' + str(left_node)
+    print '\tRight node: ' + str(right_node)
 
     # Sanity check the objects
     assert left_node
@@ -108,10 +110,10 @@ class IRGenerator:
             self.pushIR(left_ir)
             state = {
                 'type' : 'predicate',
-                'key_values' : left_keyvals,
-                'keys' : left_keys,
-                'attrs' : left_attrs,
-                'attr_values' : left_attr_vals
+                'key_values' : left_keyvals + right_keyvals,
+                'keys' : left_keys + right_keys,
+                'attrs' : left_attrs + right_attrs,
+                'attr_values' : left_attr_vals + right_attr_vals
               }
             self.pushNode(state)
             print 'Generated IR : ' + str(left_ir)
@@ -463,6 +465,10 @@ class IRGenerator:
   def getJoinConstraints(self, left_keyvals, right_keyvals, left_keys,
       right_keys):
     join_constraints = None
+    print left_keyvals
+    print right_keyvals
+    print left_keys
+    print right_keys
     for i in range(0, len(left_keyvals)):
       for j in range(0, len(right_keyvals)):
         left_key_val  = left_keyvals[i]
@@ -484,6 +490,7 @@ class IRGenerator:
         else:
           print """\ta mixture of variables and constants found, add some
           constraints"""
+    print '\t\t\tJoin constraints: ' + str(join_constraints)
     return join_constraints
 
 # Bindings
