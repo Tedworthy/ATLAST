@@ -10,8 +10,8 @@ Child structure:
 from unary_operator_node import UnaryOperatorNode
 
 class NotNode(UnaryOperatorNode):
-  def __init__(self, node):
-    UnaryOperatorNode.__init__(self, node)
+  def __init__(self, lineNo, position, node):
+    super(NotNode, self).__init__(lineNo, position, node)
 
   def __repr__(self):
     return 'NOT(' + str(self.getChild(0)) + ')'

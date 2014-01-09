@@ -6,12 +6,20 @@ tree for our first order logic grammar.
 
 from codegen.symtable import SymTable
 
-class Node():
+class Node(object):
 
-  def __init__(self):
+  def __init__(self, lineNo, position):
+    self._lineNo = lineNo
+    self._position = position
     self._children = []
     self._numChildren = 0
     self._symTable = None
+
+  def getLineNo(self):
+    return self._lineNo
+
+  def getPosition(self):
+    return self._position
 
   def getChild(self, num):
     if num >= self._numChildren:
@@ -27,9 +35,6 @@ class Node():
 
   def setChildren(self, children):
     self._children = children
-
-  def check():
-    raise NotImplementedError("Node.check not implemented!")
 
   def setSymbolTable(self, symbolTable):
     self._symTable = symbolTable

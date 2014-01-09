@@ -8,8 +8,8 @@ from node import *
 from variable_declaration_node import VariableDeclarationNode
 
 class QuantifierNode(Node):
-  def __init__(self, identifiers, formula):
-    Node.__init__(self)
+  def __init__(self, lineNo, position, identifiers, formula):
+    super(QuantifierNode, self).__init__(lineNo, position)
     self.setChild(0, formula)
     self._identifiers = identifiers
     self._boundValue = None
@@ -26,7 +26,7 @@ class QuantifierNode(Node):
   def generateSymbolTable(self, symTable):
     self._symTable = symTable
     for identifier in self.getIdentifiers():
-      dec = VariableDeclarationNode(symTable)
+      dec = VariableDeclarationNode(0, 0, symTable)
       symTable.addItem(identifier, dec)
     childSymbolTable = SymTable(symTable)
 
