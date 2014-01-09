@@ -1,26 +1,39 @@
 #!/bin/bash
 
-if [[ $# != 1 || ( "$1" != "start" && "$1" != "stop" ) ]]; then
+if [[ $# != 1 || ( "$1" != "start" && "$1" != "stop" && "$1" != "refresh" ) ]];
+then
   echo "Usage:"
   echo "  $0 (start|stop)"
   exit 1
 fi
 
 if [[ "$1" == "start" ]]; then
-  echo "[SERVER] Starting RabbitMQ..."
-  rabbitmq-server &
-  echo $! > rabbitmq.pid
-  sleep 3
+  # START
+  if [[ -e rabbitmq.pid ]]; then
+    echo "[SERVER] RabbitMQ appears to be running."
+    echo "[SERVER] Remove rabbitmq.pid & run this script again to force start."
+  else
+    echo "[SERVER] Starting RabbitMQ..."
+    rabbitmq-server &
+    echo $! > rabbitmq.pid
+    sleep 3
+  fi
 
   rabbitmqctl start_app
-  sleep 3
+  sleep 2
 
-  echo "[SERVER] Starting Celery..."
-  celery --app=parsing.task worker -l info &
-  echo $! > celery.pid
-  sleep 3
-else
-  if [ -e celery.pid ]; then
+  if [[ -e celery.pid ]]; then
+    echo "[SERVER] Celery appears to be running."
+    echo "[SERVER] Remove celery.pid & run this script again to force start."
+  else
+    echo "[SERVER] Starting Celery..."
+    celery --app=task worker -l info &
+    echo $! > celery.pid
+    sleep 2
+  fi
+elif [[ "$1" == "stop" ]]; then
+  # STOP
+  if [[ -e celery.pid ]]; then
     echo "[SERVER] Stopping Celery..."
     kill $(cat celery.pid)
     rm celery.pid
@@ -32,12 +45,28 @@ else
   rabbitmqctl stop_app
   sleep 1
 
-  if [ -e rabbitmq.pid ]; then
+  if [[ -e rabbitmq.pid ]]; then
     echo "[SERVER] Stopping RabbitMQ..."
     kill $(cat rabbitmq.pid)
     rm rabbitmq.pid
     sleep 1
   else
     echo "[SERVER] RabbitMQ doesn't appear to be running."
+  fi
+else
+  # REFRESH
+  if [[ -e rabbitmq.pid ]]; then
+    echo "[SERVER] Refreshing Celery"
+    if [[ -e celery.pid ]]; then
+      kill $(cat celery.pid)
+      rm celery.pid
+      sleep 1
+    fi
+    celery --app=task worker -l info &
+    echo $! > celery.pid
+    sleep 2
+  else
+    echo "[SERVER] RabbitMQ doesn't appear to be running."
+    echo "[SERVER] To refresh Celery, run \`$0 start'."
   fi
 fi

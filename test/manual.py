@@ -2,7 +2,7 @@ import sys
 import os
 import parsing
 from codegen.symtable import SymTable
-from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
+from codegen.ir_generator import IRGenerator
 from codegen.sql_generator import SQLGenerator
 import dbbackend.schema as schema
 
@@ -33,7 +33,7 @@ print_prefix(result)
 
 # Set up a symbol table and code generation visitor
 symbolTable = SymTable()
-codegenVisitor = GenericLogicASTVisitor(schema.Schema())
+codegenVisitor = IRGenerator(schema.Schema())
 sqlGeneratorVisitor = SQLGenerator()
 
 # Generate the symbol table

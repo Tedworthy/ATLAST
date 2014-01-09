@@ -11,5 +11,6 @@ Child structure:
 from binary_operator_node import BinaryOperatorNode
 
 class AndNode(BinaryOperatorNode):
-  def __init__(self, left, right):
-    BinaryOperatorNode.__init__(self, left, right, BinaryOperatorNode.AND)
+  def __init__(self, lineNo, position, left, right):
+    super(AndNode, self).__init__(lineNo, position, left, right, \
+                                  BinaryOperatorNode.AND)

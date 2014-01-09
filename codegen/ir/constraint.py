@@ -38,6 +38,5 @@ class Constraint(IRNode):
   def getRightTerm(self):
     return self._right
 
-
   def __repr__(self):
     return self.constraint_map[self.getOp()] + '(' + str(self.getLeftTerm()) + ',' + str(self.getRightTerm()) + ')'

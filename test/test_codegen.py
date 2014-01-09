@@ -5,14 +5,15 @@ This file contains tests for the translation from the parse tree to sql.
 
 NOTE: It assumes that the parser works correctly.
 '''
-import parsing
-from codegen.symtable import SymTable
-from codegen.generic_logic_ast_visitor import GenericLogicASTVisitor
-from codegen.sql_generator import SQLGenerator
-from semanticanalysis.semantic_analyser import SemanticAnalyser
+import parsing as p
+import codegen.symtable as st
+import codegen.ir_generator as irg
+import codegen.sql_generator as sg
+import semanticanalysis.semantic_analyser as sa
 import dbbackend.schema as schema
 import dbbackend.postgres.postgres_backend as pg
 import dbbackend.config_parser as cp
+
 from paste.fixture import TestApp
 from nose.tools import *
 
@@ -27,27 +28,27 @@ class TestCodeGen():
   def translates_to(self, logic, expectedSQL):
     print 'Logic Recieved: ' + logic
     # Create a Logic Tree from the Logic
-    logicTree = parsing.parse_input(logic)
+    logicTree = p.parse_input(logic)
 
     # Run dat semantic analysis bro
-    db_schema = schema.Schema()
-    semantic_analyser = SemanticAnalyser(logicTree, db_schema)
-    semantic_analyser.analyse()
+    dbSchema = schema.Schema()
+    semanticAnalyser = sa.SemanticAnalyser(logicTree, dbSchema)
+    semanticAnalyser.analyse()
 
     # Generate the Symbol Table from the Logic Tree
-    symbolTable = SymTable()
+    symbolTable = st.SymTable()
     logicTree.generateSymbolTable(symbolTable)
 
     # Generate an IR from the Logic Tree (uses Symbol Table)
-    irGenerator = GenericLogicASTVisitor(db_schema)
+    irGenerator = irg.IRGenerator(dbSchema)
     logicTree.accept(irGenerator)
 
     # Pull out the SQL IR
-    sqlIR = irGenerator.getIR()
+    ir = irGenerator.getIR()
 
     # Translate the IR to an SQL string
-    sqlGenerator = SQLGenerator()
-    sqlIR.accept(sqlGenerator)
+    sqlGenerator = sg.SQLGenerator()
+    ir.accept(sqlGenerator)
     translatedSQL = sqlGenerator.getSQL()
 
     # If the query result does not match the expectation, let the user know.
@@ -62,8 +63,8 @@ class TestCodeGen():
 
     # Run translated and expected SQL queries and compare results.
     # Force decode to ASCII as unicode SQL throws a massive wobbly.
-    config_data = cp.parse_file('dbbackend/db.cfg')
-    con = pg.connect(config_data)
+    configData = cp.parse_file('dbbackend/db.cfg')
+    con = pg.connect(configData)
     translatedResult = pg.query(con, translatedSQL.decode('ascii', 'ignore'))
     expectedResult = pg.query(con, expectedSQL)
     con.close()
@@ -98,7 +99,7 @@ class TestCodeGen():
     logic = "films(x)".decode('utf-8')
     sql = "SELECT fid FROM films"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_select_key_from_one_condition_on_key(self):
     logic = "films(x) ∧ x <= 3".decode('utf-8')
@@ -247,7 +248,7 @@ class TestCodeGen():
     logic = "∃x(actors_name(x, 'Matt Damon') ∧ casting_aid(y, x))".decode('utf8')
     sql = "SELECT casting.cid FROM actors JOIN casting ON actors.aid = casting.aid WHERE actors.name = 'Matt Damon'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_two_table_join_on_field_select_three(self):
     logic = "∃x(actors_name(x, z) ∧ casting_aid(y, x) ∧ casting_fid(y, a))".decode('utf8')
@@ -259,13 +260,13 @@ class TestCodeGen():
     logic = "∃x(casting_fid(y, a) ∧ actors_name(x, z) ∧ casting_aid(y, x))".decode('utf8')
     sql = "SELECT casting.cid, casting.fid, actors.name FROM actors JOIN casting ON actors.aid = casting.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_three_table_join_select_two(self):
     logic = "∃a,c,f(casting_aid(c, a) ∧ casting_fid(c, f) ∧ actors_name(a, aname) ∧ films_title(f, fname))".decode('utf8')
     sql = "SELECT actors.name, films.title FROM casting JOIN actors ON casting.aid = actors.aid JOIN films ON casting.fid = films.fid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_three_table_join_select_two_rearranged(self):
     logic = "∃a,c,f(casting_aid(c, a) ∧ actors_name(a, aname) ∧ casting_fid(c, f) ∧ films_title(f, fname))".decode('utf8')
@@ -285,7 +286,7 @@ class TestCodeGen():
     logic = "∃x(actors_name(x, y) ∧ ¬actors_name(x, 'Matt Damon'))".decode('utf8')
     sql = "SELECT actors.name FROM actors WHERE actors.name != 'Matt Damon'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_negate_two_conditions(self):
     logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧  ¬(director = 'Doug Liman') ∧  ¬(title = 'The Bourne Ultimatum') )".decode('utf8')
@@ -293,7 +294,7 @@ class TestCodeGen():
     sql = "SELECT films.title, films.director FROM films WHERE NOT(films.director = 'Doug Liman') AND NOT(films.title = 'The Bourne Ultimatum') "
 
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_negate_two_conditions_in_predicate(self):
     logic = "∃x(films_title(x, title) ∧ films_director(x, director) ∧ ¬(films_director(x, 'Doug Liman')) ∧ ¬(films_title(x, 'The Bourne Ultimatum')) ∧ x <= 3)".decode('utf8')
@@ -311,37 +312,37 @@ class TestCodeGen():
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
   def test_implies_simple(self):
-    logic_implies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
-    logic_or      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
-    logic_and     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
+    logicImplies = "∃x(¬(films_title(x, y) →  films_director(x, 'Ted Sales')))".decode('utf8')
+    logicOr      = "∃x(¬(¬films_title(x, y) ∨ films_director(x, 'Ted Sales')))".decode('utf8')
+    logicAnd     = "∃x(films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))".decode('utf8')
 
     sql = "SELECT films.title FROM films WHERE NOT(films.director = 'Ted Sales')"
-    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logicImplies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
 #    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
 #    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
 
   # Query tested in implies form, in or form and conjunctive normal form.
   @with_setup(setup_func, teardown_func)
   def test_iff_simple(self):
-    logic_implies = "∃x(¬(films_title(x, y) ↔  films_director(x, 'Ted Sales')))".decode('utf8')
-    logic_or      = "∃x(¬((films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∨ (¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))))".decode('utf8')
-    logic_and     = "∃x(¬(films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∧ ¬(¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales')))".decode('utf8')
-    
+    logicImplies = "∃x(¬(films_title(x, y) ↔  films_director(x, 'Ted Sales')))".decode('utf8')
+    logicOr      = "∃x(¬((films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∨ (¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales'))))".decode('utf8')
+    logicAnd     = "∃x(¬(films_title(x, y) ∧ films_director(x, 'Ted Sales')) ∧ ¬(¬films_title(x, y) ∧ ¬films_director(x, 'Ted Sales')))".decode('utf8')
+
     sql = "SELECT films.title FROM films WHERE films.director = 'Ted Sales'"
-    assert self.translates_to(logic_implies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
+    assert self.translates_to(logicImplies, sql), "1) Error, Logic with IMPLIES gives unexpected output."
 #    assert self.translates_to(logic_or, sql), "2) Error, Logic using OR gives unexpected output."
 #    assert self.translates_to(logic_and, sql), "3) Error, Logic using neither OR nor IMPLIES gives unexpected output."
 
   ''' Fariba Tests '''
   # These tests come directly from what Fariba got us to type. They are not in any particular order and may be covered by previous tests.
-  
+
   @with_setup(setup_func, teardown_func)
   def test_fariba_one(self):
     # "Get me all film titles with origin either 'France' or 'Australia'"
     logic = "∃x(films_title(x, y) ∧ (films_origin(x, 'France') ∨ films_origin(x, 'Australia')))".decode('utf8')
     sql = "SELECT films.title FROM films WHERE origin = 'France' OR origin = 'Australia'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
-  
+
   @with_setup(setup_func, teardown_func)
   def test_fariba_two(self):
     # "Get me directors with films greater than 100 minutes long."

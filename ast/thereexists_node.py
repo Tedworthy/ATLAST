@@ -7,6 +7,5 @@ formula or another quantifier node.
 from quantifier_node import QuantifierNode
 
 class ThereExistsNode(QuantifierNode):
-
-  def __init__(self, identifier, formula):
-    QuantifierNode.__init__(self, identifier, formula)
+  def __init__(self, lineNo, position, identifier, formula):
+    super(ThereExistsNode, self).__init__(lineNo, position, identifier, formula)
