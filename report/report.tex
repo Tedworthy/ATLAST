@@ -15,6 +15,7 @@
 \usepackage{lmodern}
 \usepackage{minted}
 \usepackage[fleqn]{amsmath}
+\usemintedstyle{autumn}
 \lstset{language=SQL}
 \addbibresource{report.bib}
 \DeclareDatamodelEntrytypes{standard}
@@ -684,6 +685,32 @@ work on any database and will provide clear error messages.
   and not on their own machines. (add more reasons if you can think of them...
   was making the GUI nice easier?)
 
+
+  \todo[inline]{ List of Packages Used:\\
+
+                 Backend\\
+                 -------\\
+                 Psycogp2   - Database Connection\\
+                 PLY        - Parser Generator\\
+                 Config Parser - parsing configuration files\\
+
+                 Middleware\\
+                 ----------\\
+                 Rabbitmq   - Message Broker (Acts as a task Q)\\
+                 Celery     - Sets up a worker to pull jobs off task Q\\
+                 Web.py     - Web Server\\
+
+                 Front End\\
+                 ---------\\
+                 ACE        - Text Editor\\
+                 Bootstrap  - CSS \\
+
+                 Testing\\
+                 -------\\
+                 nose       - Testing Framework\\
+                 paste      - Test utilities for generating web requests\\}
+                 
+
   \subsection{Front-end site}
     \subsubsection{Web server}
       The web.py framework (link to http://webpy.org/ ) was chosen to host the
@@ -727,22 +754,74 @@ work on any database and will provide clear error messages.
       \end{verbatim}
 
     \subsubsection{Interfacing with the databse}
-      The psycopg2 (http://initd.org/psycopg/ ) PostgreSQL adapter for Python
-      was used to run queries on the database. It was very simple to open a
-      connection to a database   
 
-      \begin{verbatim}
-        Running generated sql queries was very easy:
+      We used several publicly available Python libraries in order to make 
+      it very easy to query SQL databases. In particular we prioritised
+      producing modular code so that our team members who were working on the
+      other parts of the project could concentrate on their task, without having
+      to worry about how the backend querying worked.
+
+      In order to run an SQL query you have to run through the following steps:
+
+      1. Grab some configuration (username password etc)
+      2. Open a connection
+      3. Run a query
+      4. Close the connection.
+
+      Just using psycopg2, the PostgreSQL adapter for Python, it would take
+      several function calls to achieve each step. For example in order to run a
+      query and return the results just using psycopg2 (assuming you already
+      have a connection object setup) you would need to do the following:
+      
+     
+      \begin{minted}{python}
+      def query(con, query):
+        result = {}
+        try:
+          cur = con.cursor()
+          cur.execute(query)
+
+          # Convert all rows to string representation
+          result['rows'] = []
+          for row in cur.fetchall():
+            result_row = []
+            for val in row:
+              result_row.append(str(val))
+            result['rows'].append(result_row)
+
+          result['columns'] = [desc[0] for desc in cur.description]
+          result['status'] = 'ok'
+        except psycopg2.DatabaseError, e:
+          result['error'] = str(e)
+          result['status'] = 'db_error'
+        finally:
+          return result
+      \end{minted}
+
+      we decided to come up with the following architecture: 
+      1. Creation of a configuration data structure. (either from a file or user
+         entry)
+      2. using that configuration data structure to create a connection object
+      3. query the database by passing a function a connection object and a
+      string containing the SQL query.
+      4. close the connection object when all queries are finished
+
+      This way, details about the database configuration and connection 
+      can be passed around in an opaque manner. The final code for all four
+      steps now looks like the following: 
+
+      \begin{minted}{python}
         configData = cp.parse_file('dbbackend/db.cfg')
         con = pg.connect(configData)
         queryResult = pg.query(con, sql)
         con.close()
-      \end{verbatim}
+      \end{minted}
 
-      (Max did you ever fix your multiple database issues? Also I think we're
+      
+      (\todo{LOL} Max did you ever fix your multiple database issues?Also I think we're
       stuck with PostgreSQL databases only?)
 
-  \subsection{Logic to SQL translation}
+    \subsection{Logic to SQL translation}
     lex.py, yacc.py
 
     \subsubsection{Parse the logic into a logic AST}
