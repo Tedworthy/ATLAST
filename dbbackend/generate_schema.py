@@ -4,6 +4,11 @@ import psycopg2
 import dbbackend.postgres.postgres_backend as pg
 import dbbackend.config_parser as cp
 
+dbname_query = \
+    """
+    SELECT current_database() AS dbname
+    """
+
 table_query = \
     """
     SELECT table_name
@@ -34,7 +39,11 @@ columns_query = \
 def generate_db_schema(con):
   # Create schema entries for each table
   tables = pg.query(con, table_query)['rows']
+  dbname = pg.query(con, dbname_query)['rows'][0][0]
   root = etree.Element("root")
+  dbname_node = etree.SubElement(root, "dbname")
+  dbname_node.text = dbname
+
   for table in (table[0] for table in tables):
     # Create a structure with the name of the table
     xmltable = etree.SubElement(root, "table")
