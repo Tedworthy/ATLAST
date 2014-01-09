@@ -668,32 +668,46 @@ work on any database and will provide clear error messages.
     \end{figure}
 
 \section{Design and Implementation}
-  Summarise key implementation details (how did you do it? what technology was
+  Anandha: Summarise key implementation details (how did you do it? what technology was
   used and why? what other technology was considered, but not used and why?
   Any technical challenges encountered and how addressed?  Any risks
   anticipated, and how mitigated
 
-  We used Python for virtually everything. I'm sure there's a good
-  reason... easy/lots of libraries.
+  It was decided that the project would be written in Python. This was due to
+  the large number of plugins and frameworks available. Also since Python is
+  interpreted there would be no large compile time which would speed up the rate
+  of work.
+
+  The decision was taken to create a website and not a standalone application.
+  Doing so would ensure that users would always be using the most up to date
+  code, since all of the logic to SQL conversion would be handled on the server
+  and not on their own machines. (add more reasons if you can think of them...
+  was making the GUI nice easier?)
 
   \subsection{Front-end site}
-    How the site that the user sees works. Talk about javascript, sending data
-    to/from server and any plugins we used to make it look nice.
+    \subsubsection{Web server}
+      The web.py framework (link to http://webpy.org/ ) was chosen to host the
+      user facing site. Doing so allowed us to quickly set up a functioning site
+      and concentrate on developing useful features, instead of spending a large
+      amount of time setting up a more complicated web server.
 
-    \subsubsection{webpage plugins}
-      Ted's UI work
-      Why we used a website and not standalone app
-      javascript plugins (jquery, use of json, Ted's UI work)
+      The JSON data format was used to transfer the logic input by the user to the
+      server and the translated SQL to the user from the server. The format was
+      chosen as it was very easy to parse by Javascript running in the user's
+      browser and was well documented online due to its wide existing use.
+
+      How the site that the user sees works. Talk about javascript, sending data
+      to/from server and any plugins we used to make it look nice.
+
+    \subsubsection{Webpage plugins and libraries}
+      The site made heavy use of jQuery, which greatly simplified the handling
+      of JSON data sent between the user and the server.  
+
+    \subsubsection{Graphical user interface}
+      Ted did some UI magic, burnt some villages and then ended up with awesome
+      syntax highlighting and auto-fill stuff.
 
   \subsection{Middleware plugins}
-    \subsubsection{python web.py server}
-      run code.py (python code.py 55001)
-        runs web server (web.py)
-          render = web.template.render('templates/')
-          render.index(logicF, loginF)
-          (render.hello(..) calls the template hello.html with the given arguments)
-          Handles GET and POST requests
-
     \subsubsection{Celery and RabbitMQ}
       Use celery in task.py
       import task as worker
@@ -703,9 +717,9 @@ work on any database and will provide clear error messages.
       @celery.task
       def addToProcessingQueue(logic, schema):
 
-      \subsubsection{Interfacing with the databse}
-        psycopg2, Max's work on supporting multiple databases, running queries
-        on and getting results from the database
+    \subsubsection{Interfacing with the databse}
+      psycopg2, Max's work on supporting multiple databases, running queries
+      on and getting results from the database
 
   \subsection{Logic to SQL translation}
     lex.py, yacc.py
