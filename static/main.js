@@ -95,50 +95,55 @@ $(document).ready(function() {
     url: "/schema"
   }).done(function(schema) {
     // Schema header
-    html  = "<div id=\"schema_header\">";
-    html += "<i class=\"icon icon-db\"></i>";
+    var header = $("<div>").attr("id", "schema_header");
+    var header_i = $("<i>").addClass("icon icon-db");
     // TODO change 'filmdb' to DB name from schema, when it's there...
-    html += "<span>" + "filmdb" + "</span>";
-    html += "</div>";
+    var header_span = $("<span>").html("filmdb");
+    header.append(header_i).append(header_span);
 
     // Schema tables
-    html += "<div id=\"schema_tables\">";
+    var tables = $("<div>").attr("id", "schema_tables");
 
     // For each table...
     $.each(schema, function(table_name, table) {
-      html += "<div class=\"schema_table\">";
-      html += "<div>";
-      html += "<i class=\"fa fa-table\"></i>";
-      html += table_name;
-      html += "</div>";
+      var table_div = $("<div>").addClass("schema_table");
+      var table_header = $("<div>");
+      var table_header_i = $("<i>").addClass("fa fa-table");
+      var table_header_span = $("<span>").text(table_name);
+      table_header.append(table_header_i).append(table_header_span);
+      table_div.append(table_header);
+
+      var columns = [];
+
+      $.each(table.columns, function(column_name, column) {
+        var column_div = $("<div>");
+        var column_span = $("<span>").text(column_name);
+        var column_button = $("<button>");
+        var column_button_i = $("<i>").addClass("fa fa-chevron-right");
+        column_button.append(column_button_i);
+        column_div.append(column_span).append(column_button);
+        columns.push(column_div);
+      });
 
       $.each(table.primary_keys, function(index, key) {
-        html += "<div class=\"key\">";
-        html += "<i class=\"fa fa-key\"></i>";
-        html += key;
-        html += "<button>";
-        html += "<i class=\"fa fa-chevron-right\"></i>";
-        html += "</button>";
-        html += "</div>";
+        $.each(columns, function(index, column) {
+          if (column.children("span").text() === key) {
+            column.addClass("key");
+            var key_i = $("<i>").addClass("fa fa-key");
+            column.prepend(key_i);
+            return false;
+          }
+        });
       });
 
-      $.each(table.columns, function(index, column) {
-        if (!column.existsIn(table.primary_keys)) {
-          html += "<div>";
-          html += column;
-          html += "<button>";
-          html += "<i class=\"fa fa-chevron-right\"></i>";
-          html += "</button>";
-          html += "</div>";
-        }
+      $.each(columns, function(index, column) {
+        table_div.append(column);
       });
 
-      html += "</div>";
+      tables.append(table_div);
     });
 
-    html += "</div>";
-
-    $("#schema_section").html(html);
+    $("#schema_section").append(header).append(tables);
 
     // Schema buttons
     $("div.schema_table > div > button").on("click", function() {
