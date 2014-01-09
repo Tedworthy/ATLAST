@@ -98,14 +98,14 @@ $(document).ready(function() {
     var header = $("<div>").attr("id", "schema_header");
     var header_i = $("<i>").addClass("icon icon-db");
     // TODO change 'filmdb' to DB name from schema, when it's there...
-    var header_span = $("<span>").html("filmdb");
+    var header_span = $("<span>").html(schema.dbname);
     header.append(header_i).append(header_span);
 
     // Schema tables
     var tables = $("<div>").attr("id", "schema_tables");
 
     // For each table...
-    $.each(schema, function(table_name, table) {
+    $.each(schema.tables, function(table_name, table) {
       var table_div = $("<div>").addClass("schema_table");
       var table_header = $("<div>");
       var table_header_i = $("<i>").addClass("fa fa-table");
