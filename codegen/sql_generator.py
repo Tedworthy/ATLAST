@@ -34,6 +34,18 @@ class SQLGenerator():
       self._sql += "\nWHERE "
       self._sql += self._sql_where_stack[0]
 
+  @v.when(ir.ExistsConstraint)
+  def visit(self, node):
+    print 'Visiting exists node'
+    innerSQLGenerator = SQLGenerator()
+    print node.getIR()
+    node.getIR().accept(innerSQLGenerator)
+    translatedSQL = innerSQLGenerator.getSQL()
+    result = 'EXISTS (\n'
+    result += translatedSQL
+    result += ')'
+    self._sql_where_stack.append(result)
+
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
     print '*** SQL Generator: Begin RelationAttributePair ***'
