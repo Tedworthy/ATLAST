@@ -51,7 +51,8 @@ def addToProcessingQueue(logic, schema):
     semanticAnalyser.analyse()
   except Exception, e:
     # Handle semantic analysis errors
-    print 'SEMANTICANALYSER', str(e)
+    response['status'] = 'semantic_error'
+    response['error'] = json.dumps(e.getDict())
     return response
 
   # Generate an IR based on the logic AST
