@@ -183,16 +183,18 @@ class IRGenerator:
         else:
           right_ir.setConstraintTree(AndConstraint(new_constraint,
             prev_constraints))
+          right_ir.addRelationAttributePairs(left_ir.getRelationAttributePairs)
         self.pushIR(right_ir)
         self.pushNode(right_node)
       else:
         new_constraint = ExistsConstraint(right_ir)
         prev_constraints = left_ir.getConstraintTree()
         if (prev_constraints is None):
-          left.setConstraintTree(new_constraint)
+          left_ir.setConstraintTree(new_constraint)
         else:
-          left.setConstraintTree(AndConstraint(new_constraint,
+          left_ir.setConstraintTree(AndConstraint(new_constraint,
             prev_constraints))
+          left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs)
         self.pushIR(left_ir)
         self.pushNode(left_node)
     elif mixture_forall:

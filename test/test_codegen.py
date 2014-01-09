@@ -376,3 +376,11 @@ class TestCodeGen():
     sql = "SELECT casting.part, actors.name FROM casting JOIN actors ON casting.aid = actors.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  ''' THERE EXISTS TESTS '''
+
+  @with_setup(setup_func, teardown_func)
+  # "Get me all the films such that another film exists, and return that too!."
+  def test_there_exists_inner(self):
+    logic = "∃x(films_title(x, title1) ∧ ∃y(films_title(y, title2) ∧ title1 != title2))".decode('utf8')
+    sql = "SELECT films1.title, films2.title2 FROM films1 WHERE EXISTS (SELECT films2.title FROM films2 WHERE films1.title != films2.title)"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
