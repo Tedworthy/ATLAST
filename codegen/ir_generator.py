@@ -560,10 +560,23 @@ class IRGenerator:
 
   def removeDuplicateConstraints(self, ir, constraints):
     ir_constraints = ir.getConstraintTree()
-    # NOTE, This is not necessarily always correct. Realistically some sort of
-    # tree pruning should occur to reliably remove duplicates.
-    if (ir_constraints == constraints):
-      ir.setConstraintTree(None)
+    ir.setConstraintTree(self.constraintTreeWithoutDuplicates(ir_constraints,
+      constraints))
+
+  def constraintTreeWithoutDuplicates(self, c1, c2):
+    if (c1 == c2):
+      return None
+    if (isinstance(c1, ConstraintBinOp)):
+      left = self.constraintTreeWithoutDuplicates(c1._left,
+        c2)
+      right = self.constraintTreeWithoutDuplicates(c1._right, c2)
+      if (ir._left is None):
+        return ir._right
+      elif (ir._right is None):
+        return ir._left
+      c1._left = left
+      c1._right = right
+    return c1
 
   def conjunctIR(self, left_ir, right_ir, join_classifier=JoinTypes.NO_JOIN,
       keys=None):
