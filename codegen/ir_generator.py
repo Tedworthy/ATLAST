@@ -174,7 +174,7 @@ class IRGenerator:
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
-    elif mixture_exists:
+    else:
       left_keys = left_node['keys']
       right_keys = right_node['keys']
       left_tables = set([x.getRelation() for x in left_keys])
@@ -186,28 +186,47 @@ class IRGenerator:
         if (not table.hasAlias()):
           table.setAlias(table.getName() + self.getGlobalAliasNumber())
 
-      if (left_node['type'] == 'exists'):
-        outer_ir = right_ir
-        inner_ir = left_ir
-        result_node = right_node
-      else:
-        outer_ir = left_ir
-        inner_ir = right_ir
-        result_node = left_node
+      if mixture_exists:
+        if (left_node['type'] == 'exists'):
+          outer_ir = right_ir
+          inner_ir = left_ir
+          result_node = right_node
+        else:
+          outer_ir = left_ir
+          inner_ir = right_ir
+          result_node = left_node
 
-      new_constraint = ExistsConstraint(inner_ir)
-      prev_constraints = outer_ir.getConstraintTree()
-      if (prev_constraints is None):
-        outer_ir.setConstraintTree(new_constraint)
-      else:
-        outer_ir.setConstraintTree(AndConstraint(new_constraint,
-          prev_constraints))
-      self.pushIR(outer_ir)
-      self.pushNode(result_node)
-    elif mixture_forall:
-      pass
+        new_constraint = ExistsConstraint(inner_ir)
+        prev_constraints = outer_ir.getConstraintTree()
+        if (prev_constraints is None):
+          outer_ir.setConstraintTree(new_constraint)
+        else:
+          outer_ir.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(outer_ir)
+        self.pushNode(result_node)
+
+      elif mixture_forall:
+        if (left_node['type'] == 'forall'):
+          outer_ir = right_ir
+          inner_ir = left_ir
+          result_node = right_node
+        else:
+          outer_ir = left_ir
+          inner_ir = right_ir
+          result_node = left_node
+
+        new_constraint = ExistsConstraint(inner_ir)
+        new_constraint = UnaryConstraint(UnaryConstraint.NOT, new_constraint)
+        prev_constraints = outer_ir.getConstraintTree()
+        if (prev_constraints is None):
+          outer_ir.setConstraintTree(new_constraint)
+        else:
+          outer_ir.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(outer_ir)
+        self.pushNode(result_node)
     print right_ir
-    
  #     print "\tAnd(",left_node,",",right_node,")"
     print "*** IR Generator:  End AndNode ***"
 
