@@ -356,18 +356,17 @@ work on any database and will provide clear error messages.
     \begin{gather}
       \exists x(films\_title(x, title)) \label{select1}
     \end{gather}
-    The query binds $x$ and allows $title$ to remain free, meaning that our
-    answer will be the set of all subtitutions for $title$ that would result in
+    The query binds $x$ and leaves $title$ free, meaning that our
+    answer will be the set of all subtitutions for $title$ such that
     $\exists x(films\_title(x, title)) \models \top$. The '$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
-    it enforces that $title$ only need exist in one tuple, but may exist in
-    more. The predicate $films\_title$ gives the translator the scope of
+    it enforces that the substituted $title$ exists in at least one tuple.
+    The predicate $films\_title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
-    Strictly talking, the logic query actually evaluates to the following, due
-    to SQL's relational algebra foundations:
-
-    \todo{I'm certain of this, but again evidence would be useful.}
+    Strictly speaking since tuple relational calculus is based on set
+    operators, like relational algebra, and SQL implcitly uses bag operators
+    this actually evaluates to the following:
 
     \begin{minted}{sql}
 
@@ -376,10 +375,8 @@ work on any database and will provide clear error messages.
 
     \end{minted}
 
-    \todo{Is sound the right term?}
-
-    Note that it is also logically sound to express a query with no bound
-    variables, such as:
+    Note that it is perfectly valid to create a query with no bound variables,
+    such as:
     \begin{gather}
       films\_title(x, title) \label{select2}
     \end{gather}
@@ -503,8 +500,8 @@ work on any database and will provide clear error messages.
         \exists x(films\_length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
       \end{gather}
 
-      Similar queries can be constructed for the other inequalities in a
-      similar format.
+      Queries can be constructed for the other inequalities in a
+      similar manner.
 
     \subsubsection{Logical Connectives}
 
@@ -548,7 +545,7 @@ work on any database and will provide clear error messages.
 
     An SQL JOIN clause is used to combine rows from two or more tables, based
     on a common field between them.~\cite{w3JOINS} Joins can enable incredibly
-    powerful queries, especially in modern database systems where information
+    powerful queries, especially where information
     is normalized (split across many relations) to minimise duplication.
 
     \subsubsection{SQL CROSS JOIN}
@@ -585,7 +582,7 @@ work on any database and will provide clear error messages.
       we could could use the following logic query.
 
       \begin{gather}
-        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \\
+        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \nonumber\\
         \land actors\_fid(aid, fid) \land actors\_name(aid, name))
       \end{gather}
 
@@ -618,11 +615,17 @@ work on any database and will provide clear error messages.
       there are two of them; without an alias, the identifier would be
       ambiguous. Below is a representation of the query in logic.
 
-      \begin{multline}
-        \exists fid, a1, a2(films(fid) \land actors\_fid(a1, fid) \land \\
-        actors\_fid(a2, fid) \land actors\_name(a1, name1)\\
-        \land actors\_name(a2, name2) \land name1 != name2) \label{largeCROSS}
-      \end{multline}
+      \begin{align}
+          \exists fid, & a1, a2(  \nonumber\\
+                       & films(fid) \land \nonumber\\
+                       & actors\_fid(a1, fid) \land actors\_fid(a2, fid) \land \nonumber\\
+                       & actors\_name(a1, name1) \land actors\_name(a2, name2) \land \nonumber\\
+                       & name1 != name2 \nonumber\\
+        ) \hspace{6mm} &  % Ignore horrendous bodge...
+        \label{largeCROSS}
+      \end{align}
+
+      \todo{Actor doesn't have an fid field. Did we do this so we wouldn't have to mess about with casting?}
 
     \subsubsection{SQL INNER JOIN}
 
