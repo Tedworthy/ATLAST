@@ -5,7 +5,6 @@ another quantifier node.
 '''
 
 from node import *
-from variable_declaration_node import VariableDeclarationNode
 
 class QuantifierNode(Node):
   def __init__(self, lineNo, position, identifiers, formula):
@@ -22,15 +21,4 @@ class QuantifierNode(Node):
 
   def getIdentifiers(self):
     return self._identifiers
-
-  def generateSymbolTable(self, symTable):
-    self._symTable = symTable
-    for identifier in self.getIdentifiers():
-      dec = VariableDeclarationNode(0, 0, symTable)
-      symTable.addItem(identifier, dec)
-    childSymbolTable = SymTable(symTable)
-
-    for child in self.getChildren():
-      child.generateSymbolTable(childSymbolTable)
-
 

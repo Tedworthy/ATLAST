@@ -30,10 +30,12 @@ def addToProcessingQueue(logic, schema):
 
   # Parse the logic into a logic AST
   try:
+    print "TRYING TO PARSE logic '%s'" % logic
     logicAST = p.parse_input(logic)
   except Exception, e:
+    print str(e)
     response['status'] = 'parse_error'
-    response['error'] = json.dumps(e.getDict())
+    response['error'] = e.getDict()
     return response
 
   # Generate a symbol table based on the logic AST

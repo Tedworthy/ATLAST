@@ -25,33 +25,29 @@ urls = (
   '/tables', 'Tables'
 )
 
-logicForm = web.form.Form(
-    web.form.Textarea('logic', class_="box_sizing")
-)
+#logicForm = web.form.Form(
+#    web.form.Textarea('logic')
+#)
 
-loginForm = web.form.Form(
-    web.form.Textbox('host', class_='textfield',id='host_input'),
-    web.form.Textbox('port',class_='textfield',id='port_input'),
-    web.form.Textbox('username',class_='textfield',id='username_input'),
-    web.form.Password('password',class_='textfield',id='password_input'),
-    web.form.Textbox('dbname',class_='textfield',id='dbname_input'),
+settingsForm = web.form.Form(
+    web.form.Textbox('host', class_='textfield', id='host_input'),
+    web.form.Textbox('port', class_='textfield', id='port_input'),
+    web.form.Textbox('username', class_='textfield', id='username_input'),
+    web.form.Password('password', class_='textfield', id='password_input'),
+    web.form.Textbox('dbname', class_='textfield', id='dbname_input'),
     web.form.Button('Connect', id='config_submit')
 )
 
 class Index:
   def GET(self):
-    web.header('Content-Type','text/html; charset=utf-8', unique = True)
-    logicF = logicForm()
-    loginF = loginForm()
-    return render.index(logicF, loginF)
+    web.header('Content-Type', 'text/html; charset=utf-8', unique = True)
+    #logic = logicForm()
+    settings = settingsForm()
+    return render.index(settings)
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
-    # Validates the Form
-    logicF = logicForm()
-    logicF.validates()
-
-    logic = logicF.logic.get_value()
+    logic = web.input().logic
 
     # Create worker thread and start
     result = worker.addToProcessingQueue.delay(logic, web.schema)
@@ -92,8 +88,8 @@ class Login:
         'Content-Type': 'text/plain'
       }
     try:
-      loginF = loginForm()
-      loginF.validates()
+      settings = settingsForm()
+      settings.validates()
 
       configData = web.input()
       print configData

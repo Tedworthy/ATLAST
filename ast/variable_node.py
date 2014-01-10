@@ -26,7 +26,8 @@ class VariableNode(Node):
     '''
     candidate_node = symTable.lookup(self.getIdentifier())
     if candidate_node is None:
-        symTable.addGlobal(self._identifier, self)
+      print 'Adding global ' + self._identifier
+      symTable.addGlobal(self._identifier, self)
 
   #sets self.boundValue to variable and returns True on success
   #if already bound returns false
@@ -37,24 +38,13 @@ class VariableNode(Node):
     print '\tVariable is a VariableNode? ' +  str(isinstance(variable,VariableNode)) 
     print '\tResolved_Variable_Node is a VariableNode? ' +  str(isinstance(resolved_variable_node,VariableNode))    
     print '\t' + str(resolved_variable_node)
-    
 
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
-
-    #TODO remove this case... its fucked
-    elif isinstance(variable,VariableNode) and isinstance(resolved_variable_node, VariableDeclarationNode):
-      print 'Dun Bingung de wariable node to de wariable node'
-      print '\tValue of variable: ' + variable.getIdentifier()
-      print '\tValue of resolved_variable_node: ' + str(resolved_variable_node.getBoundValue().getAttribute())
-
-      resolved_variable_node.setBoundValue(variable)
-
-      
     else:
-      boundValue = resolved_variable_node._boundValue
+      boundValue = resolved_variable_node.getBoundValue()
       attr_eq = boundValue.getAttribute() == variable.getAttribute()
-      rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
+      rel_eq = boundValue.getRelation() == variable.getRelation()
 
     return attr_eq and rel_eq
 
@@ -67,12 +57,9 @@ class VariableNode(Node):
 
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
-    # A value is free if, when looking in the symbol table, we find a global
-    # variable with no parent (i.e it is at the top level symbol table) or the
-    # case in which there is only a symbol table with depth 1. In the latter
-    # case, we need to check that the node found is the current node, as in
-    # this case the variable must be free (it has not been found quanitified
-    # anywhere else).
+    # The variable is free if we could not find another declaration in the
+    # symbol table, or if we did but it was not at global level
     return val._symTable.hasParent() or self == val
+
   def __repr__(self):
     return self.getIdentifier()

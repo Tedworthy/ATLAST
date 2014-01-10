@@ -14,3 +14,6 @@ class PredicateNode(NArityApplicationNode):
   def __init__(self, lineNo, position, identifier, terms):
     super(PredicateNode, self).__init__(lineNo, position, identifier)
     self.setChildren(terms)
+
+  def __repr__(self):
+      return str(self.getIdentifier()) + "("  + str(self.getChildren()) +  ")"

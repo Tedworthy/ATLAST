@@ -1,41 +1,179 @@
 $(document).ready(function() {
-  $(".modalInput").overlay({mask: '#999', fixed: false}).bind("onBeforeClose", function(e) {
-    $(".error").hide();
+
+  // Extend strings to check for their presence in another array
+  String.prototype.existsIn = function(array) {
+    return array.indexOf(this.toString()) != -1;
+  }
+
+  var removeErrorLines = function() {
+    var console = $("#errors_container").children("div:first-child");
+    if (console.hasClass("errors")) {
+      console.removeClass("errors");
+      console.addClass("no_errors");
+      console.children("i").removeClass("fa-exclamation-circle");
+      console.children("i").addClass("fa-check-circle");
+    }
+    $("#errors_container").html(console);
+  };
+
+  var addErrorLine = function(message) {
+    var console = $("#errors_container").children("div:first-child");
+    if (console.hasClass("no_errors")) {
+      console.removeClass("no_errors");
+      console.addClass("errors");
+      console.children("i").removeClass("fa-check-circle");
+      console.children("i").addClass("fa-exclamation-circle");
+    }
+    var icon = $("<i>").addClass("fa fa-exclamation");
+    var span = $("<span>").text(message);
+    $("#errors_container").append($("<div>").append(icon).append(span));
+  };
+
+  var handleErrors = function(response) {
+    // TODO
+    switch (response.status) {
+      case "db_error":
+
+        break;
+      case "parse_error":
+        $.each(response.error, function(index, error) {
+          switch (error.type) {
+            case "ParserEOIException":
+              addErrorLine("Logic input finished too soon. Did you perhaps " +
+                           "forget an ending bracket or quote mark?");
+              break;
+            case "ParserTokenException":
+              addErrorLine("Line " + error.lineNo + ", position " +
+                           error.position + ": Unexpected '" + error.token +
+                           "', perhaps check your logic syntax?");
+              break;
+          }
+        });
+        break;
+      default:
+
+        break;
+    }
+  };
+
+  var windows = {
+    "#query": "#query_container",
+    "#help": "#help_container",
+    "#settings": "#settings_container"
+  };
+  var current_window = "";
+
+  $(window).on('hashchange', function() {
+    if (document.location.hash in windows) {
+      $("html, body").animate({ scrollTop: 0 }, "fast");
+      if (current_window !== "")
+        $(windows[current_window]).addClass("hidden");
+      $(windows[document.location.hash]).removeClass("hidden");
+      current_window = document.location.hash;
+    } else {
+      document.location.hash = "#query";
+    }
+  });
+
+  $(window).trigger('hashchange');
+
+  var logicEditor = ace.edit("logic");
+  logicEditor.setTheme("ace/theme/solarized_dark");
+  logicEditor.getSession().setMode("ace/mode/predicatelogic");
+
+  var sqlEditor = ace.edit("sql");
+  sqlEditor.setTheme("ace/theme/solarized_dark");
+  sqlEditor.getSession().setMode("ace/mode/sql");
+  sqlEditor.setReadOnly(true);
+  sqlEditor.setOptions({
+    maxLines: 10
   });
 
   var schema;
-
   $.ajax({
     type: "GET",
     url: "/schema"
   }).done(function(schema) {
-    // Print out the name of each table and their primary keys
-    output = '';
+    // Schema header
+    var header = $("<div>").attr("id", "schema_header");
+    var header_i = $("<i>").addClass("icon icon-db");
+    var header_span = $("<span>").text(schema.dbname);
+    header.append(header_i).append(header_span);
+
+    // Schema tables
+    var tables = $("<div>").attr("id", "schema_tables");
 
     // For each table...
-    $.each(schema, function(table, p_keys) {
-      output += '<p>Table ' + table + ' has primary keys: ';
+    $.each(schema.tables, function(table_name, table) {
+      var table_div = $("<div>").addClass("schema_table");
+      var table_header = $("<div>");
+      var table_header_i = $("<i>").addClass("fa fa-table");
+      var table_header_span = $("<span>").addClass("table").text(table_name);
+      table_header.append(table_header_i).append(table_header_span);
+      table_div.append(table_header);
 
-      // p_keys is the [(primary keys object), (headings objects)]
-      $.each(p_keys, function(text, keys) {
-        // text is either "primaryKey" or "column"
+      var columns = [];
 
-        if(text == "primary_keys") {
-          $.each(keys, function(index, key) {
-           output += key + ', ';
-          });
-        } else if (text == "columns") {
-          output += " and has columns ";
-          $.each(keys, function(index, key) {
-            output += key + ', ';
-          });
+      // For each column...
+      $.each(table.columns, function(column_name, column) {
+        var column_div = $("<div>");
+        var column_span_name = $("<span>").addClass("column").text(column_name);
+        var type = column.type;
+        switch (column.type) {
+          case "double precision":
+            type = "double";
+          case "character":
+          case "character varying":
+            type = "string";
+            break;
+          default:
+            type = column.type;
+            break;
         }
+        type = " : " + type;
+        var column_span_type = $("<span>").text(type);
+        var column_button = $("<button>");
+        var column_button_i = $("<i>").addClass("fa fa-chevron-right");
+        column_button.append(column_button_i);
+        column_div.append(column_span_name).append(column_span_type);
+        column_div.append(column_button);
+        columns.push(column_div);
       });
-      output = output.substring(0, output.length - 2);
-      output += '</p>';
+
+      // Mark the key fields with icons
+      $.each(table.primary_keys, function(index, key) {
+        $.each(columns, function(index, column) {
+          if (column.children("span.column").text() === key) {
+            columns.splice(index, 1);
+            column.addClass("key");
+            var key_i = $("<i>").addClass("fa fa-key");
+            column.prepend(key_i);
+            columns.unshift(column);
+            return false;
+          }
+        });
+      });
+
+      // Build up the table
+      $.each(columns, function(index, column) {
+        table_div.append(column);
+      });
+
+      tables.append(table_div);
     });
 
-    $("#schema_table").html(output);
+    $("#schema_section").append(header).append(tables);
+
+    // Schema buttons
+    $("div.schema_table > div > button").on("click", function() {
+      var header = $(this).parent().parent().children("div:first-child");
+      var row = $(this).parent();
+      var table_name = header.children("span.table").text();
+      var column_name = row.children("span.column").text();
+      logicEditor.insert(table_name + "_" + column_name + "(, )");
+      logicEditor.selection.moveCursorBy(0, -3);
+      logicEditor.focus();
+    });
   });
 
   var unicode_chars = {
@@ -45,38 +183,45 @@ $(document).ready(function() {
     "iff": "\u2194",
     "exists": "\u2203",
     "forall": "\u2200",
-    "not": "\u00ac"
+    "not": "\u00ac",
+    "not_equal": "\u2260"
   }
 
   var keys = {
-    "92": { "char": "\\", "formatters": ["and", "or", "exists", "forall"] },
-    "47": { "char": "/", "formatters": ["or", "and"] },
-    "60": { "char": "<", "formatters": ["iff", "implies"] },
-    "45": { "char": "-", "formatters": ["iff", "implies"] },
-    "62": { "char": ">", "formatters": ["iff", "implies"] },
-    "69": { "char": "E", "formatters": ["exists"] },
-    "65": { "char": "A", "formatters": ["forall"] }
+    "92": { char: "\\", formatters: ["and", "or", "exists", "forall"] },
+    "47": { char: "/", formatters: ["or", "and", "not_equal_slash"] },
+    "60": { char: "<", formatters: ["iff", "implies"] },
+    "45": { char: "-", formatters: ["iff", "implies"] },
+    "62": { char: ">", formatters: ["iff", "implies"] },
+    "69": { char: "E", formatters: ["exists"] },
+    "65": { char: "A", formatters: ["forall"] },
+    "33": { char: "!", formatters: ["not_equal_bang"] },
+    "61": { char: "=", formatters: ["not_equal_slash", "not_equal_bang"] },
+    "126": { char: "~", formatters: ["not"] }
   };
 
   var formatters = {
-    "and": { "regex": /\/\\/, "result": unicode_chars.and },
-    "or": { "regex": /\\\//, "result": unicode_chars.or },
-    "implies": { "regex": /->/, "result": unicode_chars.implies },
-    "iff": { "regex": /<->/, "result": unicode_chars.iff },
-    "exists": { "regex": /\\E/, "result": unicode_chars.exists },
-    "forall": { "regex": /\\A/, "result": unicode_chars.forall }
+    "and": { regex: /\/\\/, result: unicode_chars.and },
+    "or": { regex: /\\\//, result: unicode_chars.or },
+    "implies": { regex: /->/, result: unicode_chars.implies },
+    "iff": { regex: /<->/, result: unicode_chars.iff },
+    "exists": { regex: /\\E/, result: unicode_chars.exists },
+    "forall": { regex: /\\A/, result: unicode_chars.forall },
+    "not": { regex: /~/, result: unicode_chars.not },
+    "not_equal_slash": { regex: /\/=/, result: unicode_chars.not_equal },
+    "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal }
   };
 
   $("#config_submit").click(function()  {
-    user = $("#username_input").val();
-
     $.post(
-      "/login", {
-        username : user,
-        password : $("#password_input").val(),
-        host : $("#host_input").val(),
-        port : $("#port_input").val(),
-        dbname : $("#dbname_input").val() }
+      "/login",
+      {
+        username: $("#username_input").val(),
+        password: $("#password_input").val(),
+        host: $("#host_input").val(),
+        port: $("#port_input").val(),
+        dbname: $("#dbname_input").val()
+      }
     ).done(function(response) {
       if (response.error === 'ok') {
         var n = noty({text: 'Configuration Accepted'})
@@ -87,24 +232,20 @@ $(document).ready(function() {
   });
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
-  $("#convert_button").click(function() {
-    var input_string = $("textarea#logic").val();
-    if(input_string !== "") {   
-      $.ajax({
-        type: "POST",
-        data: {
-          "logic" : input_string
+  $("#logic-form").submit(function(e) {
+    e.preventDefault();
+    var input_string = logicEditor.getValue();
+    if (input_string !== "") {
+      $.post(
+        "/",
+        {
+          logic: input_string
         }
-      }).done(function(response) {
-        var sql_result;
-        
+      ).done(function(response) {
         // Check the result of the translation and act appropriately
         if (response.status === 'ok') {
-          sql_result = response.sql;
-          $("textarea#sql_result").text(sql_result);
-
           // Create an HTML table
-          var table = '<table border="1" align="center"> <tr>';
+          var table = '<table> <tr>';
 
           // Construct the header of the table from the query column names
           $.each(response.query_columns, function(i, column) {
@@ -118,57 +259,53 @@ $(document).ready(function() {
             $.each(row, function(i, dataItem) {
               table += ('<td>' + dataItem + '</td>');
             });
-            table += '</tr>'
+            table += '</tr>';
           });
+          table += '</table>';
 
           // Add the resulting table to the page
+          removeErrorLines();
           $("#results_table").html(table);
+          sqlEditor.setValue(response.sql);
         } else {
           // Something went wrong, so print the error.
-          if(response.sql !== '') {
-            sql_result = response.sql.concat("\n\n\nDatabase error message:\n", response.error);
-          } else {
-            sql_result = response.error;
-          }
-        
-          $("textarea#sql_result").text(sql_result);
+          removeErrorLines();
+          handleErrors(response);
           $("#results_table").html("");
+          sqlEditor.setValue("-- Something went wrong, see the console above");
         }
-        
-        var linecount = 0, cols = 100;
-        var sql_result_lines = sql_result.split("\n");
-        $.each(sql_result_lines, function(i, l) {
-          linecount += Math.ceil(l.length/cols);
-        });
-        $("textarea#sql_result").css("height", (linecount * 16 + 8).toString().concat("px"));
       });
     } else {
-      $("textarea#sql_result").text("No input to convert");
-      $("textarea#sql_result").css("height", (1 * 16 + 8).toString().concat("px"));
+      sqlEditor.setValue("-- SQL query will appear here");
     }
-    return false;
   });
 
   // Convert characters to correct symbols
-  $("textarea#logic").keypress(function(event) {
-    console.log("Key down:" + event.keyCode);
+  $(logicEditor.container).on('keypress', function(e) {
+    // TODO REMOVE THIS LATER, IT'S DEBUGGING CODE
+    console.log("Key down:" + e.keyCode);
 
     // Firefox / Chrome compatibility
-    var k = (typeof event.which === "number") ? event.which : event.keyCode;
+    var k = (typeof e.which === "number") ? e.which : e.keyCode;
 
     var key = keys[k.toString()];
     if (key !== undefined) {
       // Stop the keypress from happening normally
-      event.preventDefault();
+      e.preventDefault();
 
       // Get the relevant formatters for the pressed key
       var matching_formatters = key.formatters.map(function(name) {
         return formatters[name];
       });
 
+      if (!(logicEditor.selection.isEmpty()))
+        logicEditor.session.remove(logicEditor.selection.getRange());
+
       // Get current state
-      var cursor = $(this).getCursorPosition();
-      var logic = $(this).val();
+      var ace_cursor = logicEditor.selection.getCursor();
+      var logic = logicEditor.getValue();
+
+      var cursor = rowColumnToCursor(ace_cursor, logic);
 
       // Augment the existing logic as if the pressed key had been inserted
       logic = logic.substr(0, cursor) + key.char + logic.substr(cursor);
@@ -199,42 +336,81 @@ $(document).ready(function() {
               logic.substr(portionEnd);
       cursor = portionStart + portionCursor;
 
+      ace_cursor = cursorToRowColumn(cursor, logic);
+
       // Update the UI
-      $(this).val(logic);
-      $(this).setCursorPosition(cursor);
+      logicEditor.setValue(logic);
+      logicEditor.selection.clearSelection();
+      logicEditor.selection.moveCursorToPosition(ace_cursor);
     }
   });
 
-  // Buttons insert correct symbols
+  // Buttons that insert symbols
   $("#and_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.and);
+    logicEditor.insert(unicode_chars.and);
+    logicEditor.focus();
   });
 
   $("#or_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.or);
+    logicEditor.insert(unicode_chars.or);
+    logicEditor.focus();
   });
 
   $("#implies_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.implies);
+    logicEditor.insert(unicode_chars.implies);
+    logicEditor.focus();
   });
 
   $("#iff_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.iff);
+    logicEditor.insert(unicode_chars.iff);
+    logicEditor.focus();
   });
 
   $("#exists_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.exists);
+    logicEditor.insert(unicode_chars.exists);
+    logicEditor.focus();
   });
 
   $("#forall_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.forall);
+    logicEditor.insert(unicode_chars.forall);
+    logicEditor.focus();
   });
 
   $("#not_button").click(function() {
-    $("#logic").insertAtCursor(unicode_chars.not);
+    logicEditor.insert(unicode_chars.not);
+    logicEditor.focus();
   });
 
-  // Insert symbols at cursor position
+  var rowColumnToCursor = function(row_column, text) {
+    var cursor = 0;
+    var row = row_column.row;
+    var match;
+    while (row > 0) {
+      match = text.substr(cursor).search("\n");
+      if (match == -1)
+        break;
+      cursor += match + 1;
+      row--;
+    }
+    cursor += row_column.column;
+    return cursor;
+  };
+
+  var cursorToRowColumn = function(cursor, text) {
+    var considered_text = text.substr(0, cursor);
+    var temp_cursor = 0;
+    var row = 0;
+    while (considered_text.substr(temp_cursor).search("\n") != -1) {
+      temp_cursor += considered_text.substr(temp_cursor).search("\n");
+      row++;
+    }
+    var lastNewline = text.lastIndexOf("\n");
+    lastNewline = (lastNewline = -1) ? 0 : lastNewline;
+    var column = cursor - lastNewline;
+    return { "row": row, "column": column };
+  };
+
+  // TODO REMOVE LEGACY CODE - Insert symbols at cursor position
   $.fn.extend({
     insertAtCursor:
       function(text) {

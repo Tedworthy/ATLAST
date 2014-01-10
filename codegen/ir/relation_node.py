@@ -21,4 +21,4 @@ class RelationNode(IRNode):
     return self._alias is not None;
 
   def __repr__(self):
-    return self.getAlias()
+    return self.getAlias() + str(id(self))

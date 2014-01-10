@@ -34,6 +34,32 @@ class SQLGenerator():
       self._sql += "\nWHERE "
       self._sql += self._sql_where_stack[0]
 
+  @v.when(ir.DifferenceConstraint)
+  def visit(self, node):
+    print "DIFFERENCE"
+    innerSQLGenerator = SQLGenerator()
+    node.getIR().accept(innerSQLGenerator)
+    translatedSelect = innerSQLGenerator._sql_select_list
+    translatedSQL = "SELECT "
+    translatedSQL += ", ".join(translatedSelect) + '\n'
+    translatedSQL += "FROM "
+    translatedFrom = innerSQLGenerator._sql_from_stack[0]
+    translatedSQL += translatedFrom + '\n'
+    translatedSQL += 'EXCEPT\n'
+    constraints = node.getSQLNode()
+    constraints.accept(self)
+    sqlNodeTranslation = self._sql_where_stack.pop()
+    translatedSQL += sqlNodeTranslation
+    self._sql_where_stack.append(translatedSQL)
+
+  @v.when(ir.SQLWhereNode)
+  def visit(self, node):
+    innerSQLGenerator = SQLGenerator()
+    print node.getIR()
+    node.getIR().accept(innerSQLGenerator)
+    translatedSQL = innerSQLGenerator.getSQL()
+    self._sql_where_stack.append(translatedSQL)
+
   @v.when(ir.RelationAttributePair)
   def visit(self, node):
     print '*** SQL Generator: Begin RelationAttributePair ***'

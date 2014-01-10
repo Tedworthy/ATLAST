@@ -1,3 +1,5 @@
+from and_constraint import AndConstraint
+
 class IR():
 
   def __init__(self):
@@ -6,6 +8,7 @@ class IR():
     # A tree containing the table names and fields to join on.
     self._relation_tree = None
     self._constraint_tree = None
+    self._bind_constraint_tree = None
 
   def getRelationAttributePairs(self):
     return self._relation_attribute_pairs
@@ -36,11 +39,22 @@ class IR():
   def setConstraintTree(self, constraintTree):
     self._constraint_tree = constraintTree
 
+  def setBindConstraintTree(self, bindConstraintTree):
+    self._bind_constraint_tree = bindConstraintTree
+
+  def getBindConstraintTree(self):
+    return self._bind_constraint_tree
+
   def accept(self, visitor):
     for relAttrPair in self._relation_attribute_pairs:
       relAttrPair.accept(visitor)
     self._relation_tree.accept(visitor)
+    if self._constraint_tree is None:
+      self._constraint_tree = self._bind_constraint_tree
     if self._constraint_tree is not None:
+      if self._bind_constraint_tree is not None:
+        self._constraint_tree = AndConstraint(self._constraint_tree,
+            self._bind_constraint_tree)
       self._constraint_tree.accept(visitor)
     visitor.visit(self)
 
@@ -54,6 +68,9 @@ class IR():
     string += "\t\n"
     string += "\t  Constraint Tree: "
     string += str(self._constraint_tree)
+    string += "\t\n"
+    string += "\t  Bind Constraint Tree: "
+    string += str(self._bind_constraint_tree)
     string += "\n"
     string += "\t}"
     return string

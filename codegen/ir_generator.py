@@ -52,10 +52,14 @@ class IRGenerator:
     # Precompute some booleans to make cases easier to understand
     both_predicates = right_node['type'] == 'predicate' and \
                       left_node['type'] == 'predicate'
-    both_constraints = right_node['type'] == 'constraints' and \
-                      left_node['type'] == 'constraints'
-    mixture_constraints_predicates = left_node['type'] == 'constraint' or \
-                                     right_node['type'] == 'constraint'
+    both_constraints = right_node['type'] == 'constraint' and \
+                      left_node['type'] == 'constraint'
+    mixture_constraints = left_node['type'] == 'constraint' or \
+                      right_node['type'] == 'constraint'
+    mixture_exists = left_node['type'] == 'thereexists' or \
+                      right_node['type'] == 'thereexists'
+    mixture_forall = left_node['type'] == 'forall' or \
+                      right_node['type'] == 'forall'
 
     # Check the left and right nodes are both predicates
     if both_predicates:
@@ -160,7 +164,7 @@ class IRGenerator:
       self.conjunctIR(left_ir, right_ir)
       self.pushIR(left_ir)
       self.pushNode(left_node)
-    elif mixture_constraints_predicates:
+    elif mixture_constraints:
       left_is_predicate = left_node['type'] == 'predicate'
       if left_is_predicate:
         self.conjunctIR(left_ir, right_ir)
@@ -170,9 +174,66 @@ class IRGenerator:
         self.conjunctIR(right_ir, left_ir)
         self.pushIR(right_ir)
         self.pushNode(right_node)
+    else:
+      left_keys = left_node['keys']
+      right_keys = right_node['keys']
+      left_attrs = left_node['keys']
+      right_attrs = right_node['keys']
+      print left_node
+      print right_node
+      left_tables = set([x.getRelation() for x in left_keys + left_attrs])
+      right_tables = set([x.getRelation() for x in right_keys + right_attrs])
+      for table in left_tables:
+        if (not table.hasAlias()):
+          table.setAlias(table.getName() + self.getGlobalAliasNumber())
+      for table in right_tables:
+        if (not table.hasAlias()):
+          table.setAlias(table.getName() + self.getGlobalAliasNumber())
 
-    print right_ir
-    
+      if mixture_exists:
+        if (left_node['type'] == 'exists'):
+          outer_ir = right_ir
+          inner_ir = left_ir
+          result_node = right_node
+        else:
+          outer_ir = left_ir
+          inner_ir = right_ir
+          result_node = left_node
+
+        new_constraint = SQLWhereNode(inner_ir)
+        new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
+        prev_constraints = outer_ir.getConstraintTree()
+        if (prev_constraints is None):
+          outer_ir.setConstraintTree(new_constraint)
+        else:
+          outer_ir.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(outer_ir)
+        self.pushNode(result_node)
+
+      elif mixture_forall:
+        if (left_node['type'] == 'forall'):
+          outer_ir = right_ir
+          inner_ir = left_ir
+          result_node = right_node
+        else:
+          outer_ir = left_ir
+          inner_ir = right_ir
+          result_node = left_node
+
+        sql_node = SQLWhereNode(inner_ir)
+        new_constraint = DifferenceConstraint(inner_ir, sql_node)
+        new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
+        new_constraint = UnaryConstraint(Constraint.NOT, new_constraint)
+        prev_constraints = outer_ir.getConstraintTree()
+        if (prev_constraints is None):
+          outer_ir.setConstraintTree(new_constraint)
+        else:
+          outer_ir.setConstraintTree(AndConstraint(new_constraint,
+            prev_constraints))
+        self.pushIR(outer_ir)
+        self.pushNode(result_node)
+        print outer_ir
  #     print "\tAnd(",left_node,",",right_node,")"
     print "*** IR Generator:  End AndNode ***"
 
@@ -182,23 +243,22 @@ class IRGenerator:
     ir = self.popIR()
     child_node = child['node']
     constraint_tree = ir.getConstraintTree()
-
     print '*** IR Generator: Begin NotNode ***'    
     print '\tCurrent IR: ' + ir.__repr__()
+
+    # Removing redundant NOT
+    if isinstance(constraint_tree, UnaryConstraint) \
+      and constraint_tree.getOp() == Constraint.NOT:
+      print '\tRemoving redundant NOT'
+      ir.setConstraintTree(constraint_tree.getConstraint())
+
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
-    if child['type'] == 'constraint':
-      print '\tEvaluating NOT(Constraint)' 
-     
-      ## Quick and dirty hack
-      ## NOT(rest_of_tree) -> (rest_of_tree)
-      if isinstance(constraint_tree,UnaryConstraint):
-        print '\tRemoving redundant NOT'
-        ir.setConstraintTree(constraint_tree.getConstraint())
-      else:
-        print '\tAdding NOT(constraints) to tree'
-        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
-  
+    elif child['type'] == 'constraint':
+      print '\tEvaluating NOT(Constraint)'
+      print '\tAdding NOT(constraints) to tree'
+      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+
 
     ### Case 2: ~Predicate(x,y)
     #### Compute the set difference
@@ -206,7 +266,7 @@ class IRGenerator:
       print '\tEvaluating Predicate Negation'
       # Case 2a: something of the form ~\Ez(foo_bar(x,z)) 
       # in which case we need to add the constraint that x has no bar
-      if constraint_tree == None:
+      if constraint_tree is None:
         print '\tSet constraint that z IS NULL'
         self.bind(child_node.getChildren()[1],NullNode(),ir)
         print '\tZ Now bound'
@@ -214,26 +274,44 @@ class IRGenerator:
       else:
         print '\tCurrent constraint tree: ' 
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
-      
+
     self.pushIR(ir)
-    state = {
-       'type' : 'constraint',
-       'notNode' : 'true',
-       'node' : node 
-    }
+    state = None
+    if 'key_values' in child.keys():
+      state = {
+        'type' : 'constraint',
+        'key_values': child['key_values'],
+        'keys': child['keys'],
+        'attr_values': child['attr_values'],
+        'attrs': child['attrs'],
+        'notNode' : 'true',
+        'node' : node
+      }
+    else:
+      state = {
+        'type' : 'constraint',
+        'notNode' : 'true',
+        'node' : node
+      }
     self.pushNode(state)
     print '\tIR Generated: ' + str(ir)
     print '*** IR Generator: End NotNode ***'    
 
   @v.when(ast.ForAllNode)
   def visit(self, node):
-    print ' *** IR Generator: Begin ForAllNode - Unimplemented ***'    
-    print ' *** IR Generator: End ForAllNode - Unimplemented ***'    
+    print ' *** IR Generator: Begin ForAllNode - Partially Implemented ***'    
+    state = self.popNode()
+    state['type'] = 'forall'
+    self.pushNode(state)
+    print ' *** IR Generator: End ForAllNode - Partially Implemented ***'    
 
   @v.when(ast.ThereExistsNode)
   def visit(self, node):
-    print '*** IR Generator: Begin ThereExistsNode - Unimplemented ***'    
-    print '*** IR Generator: End ThereExistsNode - Unimplemented ***'    
+    print '*** IR Generator: Begin ThereExistsNode - Partially Implemented ***'    
+    state = self.popNode()
+    state['type'] = 'thereexists'
+    self.pushNode(state)
+    print '*** IR Generator: End ThereExistsNode - Partially Implemented ***'    
 
   @v.when(ast.PredicateNode)
   def visit(self, node):
@@ -268,17 +346,27 @@ class IRGenerator:
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
+      bind = True
       if i < key_count:
         child['key'] = True
+        child_binding = child_node.getBoundValue()
+        if (child_binding and child_binding.getRelation().getName() \
+            == relation.getName()):
+          # Do not bind if the relation found is one that has been used before.
+          # I.E if we have found casting_aid(x, y) and have already encountered
+          # casting_fid(x, z), do not bind a new instance of x.
+          bind = False
       elements[i] = rel_attr
       key_values.insert(0, child)
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
         if child_node.isFree():
+          print 'Rel attr :' + str(rel_attr) + ' is free'
           ir.addRelationAttributePair(rel_attr)
-        self.bind(child_node, rel_attr, ir)
-        print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
+        if bind:
+          self.bind(child_node, rel_attr, ir)
+          print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         #if (i < key_count):
         #  key_values.append(child)
       elif child_type == 'string_lit':
@@ -361,6 +449,7 @@ class IRGenerator:
       var_child = self.getVariableNode(left_child, right_child)
       other_child = right_child if var_child == left_child else left_child
 
+      print '\t\t\t' + str(var_child['node'].getBoundValue().__class__)
       constraint_var = var_child['node'].getBoundValue()
       if other_child['type'] == 'variable':
         constraint_other = VariableNode(other_child['node'].getIdentifier())
@@ -503,25 +592,44 @@ class IRGenerator:
       previous_binding = node.getBoundValue()
       assert previous_binding is not None
       # Add to the constraints
-      prev_constraints = ir.getConstraintTree()
+      prev_constraints = ir.getBindConstraintTree()
       print '\t#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
       new_constraint = Constraint(Constraint.EQ, rel_attr, previous_binding)
       merged_constraint = None;
       if prev_constraints is None:
-        ir.setConstraintTree(new_constraint)
+        ir.setBindConstraintTree(new_constraint)
       elif new_constraint is None:
-        ir.setConstraintTree(prev_constraints)
+        ir.setBindConstraintTree(prev_constraints)
       else:
         merged_constraint = AndConstraint(prev_constraints, new_constraint)
-        ir.setConstraintTree(merged_constraint)
+        ir.setBindConstraintTree(merged_constraint)
 
 # Combining IRs
 
   def extendRelationAttributePairs(self, left_ir, right_ir):
     """
     Concatenates together two sets of relation attribute pairs, updating the
-    left IR. This is primarily used when merging together IRs
+    left IR. This is primarily used when merging together IRs. It is first 
+    necessary to iterate through and resolve any aliases that
+    have been set.
     """
+    print 'EXTENDING RELATION ATTRIBUTES'
+    left_pairs = left_ir.getRelationAttributePairs()
+    right_pairs = right_ir.getRelationAttributePairs()
+    print left_pairs
+    print right_pairs
+    for l in left_pairs:
+      for r in right_pairs:
+        if (l.getRelation().getAlias() == r.getRelation().getAlias() \
+            and l.getRelation() != r.getRelation()):
+          r.setRelation(l.getRelation())
+        if (l.getRelation().getAlias() == r.getRelation().getAlias() \
+            and l.getRelation() != r.getRelation()):
+          r.setRelation(l.getRelation())
+        print '*****************'
+        print l
+        print r
+        print '*****************'
     left_ir.addRelationAttributePairs(right_ir.getRelationAttributePairs())
 
   def combineRelations(self, left_ir, right_ir, join_type, keys=None):
@@ -563,6 +671,25 @@ class IRGenerator:
       elif bin_op == ConstraintBinOp.OR:
         left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
+  
+  def combineBindConstraints(self, left_ir, right_ir, bin_op):
+    """
+    Combines two sets of constraints from seperate IRs, leaving the result in
+    the left IR. This is primarily used when merging together IRs. The bin_op
+    passed in should be a flag as defined in the ConstraintBinOp class.
+    """
+    left_constraints = left_ir.getBindConstraintTree()
+    right_constraints = right_ir.getBindConstraintTree()
+    if left_constraints is None:
+      left_ir.setBindConstraintTree(right_constraints)
+    elif right_constraints is None:
+      left_ir.setBindConstraintTree(left_constraints)
+    else:
+      if bin_op == ConstraintBinOp.AND:
+        left_constraints = AndConstraint(left_constraints, right_constraints)
+      elif bin_op == ConstraintBinOp.OR:
+        left_constraints = OrConstraint(left_constraints, right_constraints)
+      left_ir.setBindConstraintTree(left_constraints)
 
   def removeDuplicateConstraints(self, ir, constraints):
     ir_constraints = ir.getConstraintTree()
@@ -588,6 +715,7 @@ class IRGenerator:
       keys=None):
     self.extendRelationAttributePairs(left_ir, right_ir)
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.AND)
+    self.combineBindConstraints(left_ir, right_ir, ConstraintBinOp.AND)
     self.combineRelations(left_ir, right_ir, join_classifier, keys)
 
     return left_ir
@@ -595,6 +723,7 @@ class IRGenerator:
   def disjunctIR(self, left_ir, right_ir):
     self.extendRelationAttributePairs(left_ir, right_ir)
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.OR)
+    self.combineBindConstraints(left_ir, right_ir, ConstraintBinOp.AND)
     self.combineRelations(left_ir, right_ir, JoinTypes.NO_JOIN)
 
     return left_ir

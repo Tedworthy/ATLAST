@@ -29,7 +29,8 @@ class TestCodeGen():
     print 'Logic Recieved: ' + logic
     # Create a Logic Tree from the Logic
     logicTree = p.parse_input(logic)
-
+    print "|*** LOGIC AST ***|\n"
+    print str(logicTree)
     # Run dat semantic analysis bro
     dbSchema = schema.Schema()
     semanticAnalyser = sa.SemanticAnalyser(logicTree, dbSchema)
@@ -362,12 +363,15 @@ class TestCodeGen():
     sql = "SELECT films.director FROM films WHERE films.length > '100'"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
-  #@with_setup(setup_func, teardown_func)
-  ## "Get me directors where all their films are greater than 100 minutes long."
-  #def test_fariba_three(self):
-  #  logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) →  (film_length(y, len) ∧ len >'100')))".decode('utf8')
-  #  sql = "SELECT films.director FROM films WHERE films.director NOT IN (SELECT films.director FROM films WHERE length <= '100')"
-  #  assert self.translates_to(logic, sql), "Error, expected answers not equal"
+  @with_setup(setup_func, teardown_func)
+  # "Get me directors where all their films are greater than 100 minutes long."
+  def test_fariba_three(self):
+    logic = "∃x(films_director(x, dir) ∧ ∀y(films_director(y, dir) → (films_length(y, len) ∧ len >'100')))".decode('utf8')
+    sql = "SELECT films1.director FROM films AS films1 WHERE NOT EXISTS "
+    sql += "(SELECT films2.director FROM films AS films2 EXCEPT "
+    sql += "SELECT films2.director FROM films AS films2 WHERE length > '100'"
+    sql +=" AND films1.director = films2.director)"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   @with_setup(setup_func, teardown_func)
   # "Get me all actors and the roles they've played."
@@ -376,3 +380,13 @@ class TestCodeGen():
     sql = "SELECT casting.part, actors.name FROM casting JOIN actors ON casting.aid = actors.aid"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
+  ''' THERE EXISTS TESTS '''
+
+  @with_setup(setup_func, teardown_func)
+  # "Get me all the films such that another film exists, and return that too!."
+  def test_there_exists_inner(self):
+    logic = "∃x(films_title(x, title1) ∧ ∃y(films_title(y, title2) ∧ title1 != title2))".decode('utf8')
+    sql = "SELECT films1.title FROM films AS films1 WHERE EXISTS"
+    sql += " (SELECT films2.title FROM films AS films2 WHERE films1.title <> "
+    sql += "films2.title)"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"

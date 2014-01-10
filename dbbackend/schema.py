@@ -8,7 +8,9 @@ class Schema():
 
   def gatherTableData(self):
     # Dictionary for each table.
-    big_data = {}
+    schema_dict = {}
+    schema_dict["tables"] = {}
+    schema_dict["dbname"] = self._root.find("dbname").text
 
     # For every <table> tag...
     for table in self._root.iter('table'):
@@ -20,10 +22,9 @@ class Schema():
         break
       table_data['primary_keys'] = self.gatherPrimaryKeys(table)
       table_data['columns'] = self.gatherColumns(table)
-      #table_data[foreign_keys] = getForeignKeys(table) etc...
-      big_data[table_name] = table_data
+      schema_dict["tables"][table_name] = table_data
 
-    return big_data
+    return schema_dict
 
   def gatherPrimaryKeys(self, table):
     values = []
@@ -40,7 +41,7 @@ class Schema():
     return values
 
   def getPrimaryKeys(self, table_name):
-    table_data = self._data.get(table_name)
+    table_data = self._data["tables"].get(table_name)
     if table_data is None:
       print 'Error: table', table_name, 'not in schema!'
       return None
@@ -48,7 +49,7 @@ class Schema():
     return table_data.get('primary_keys')
 
   def getColumns(self, table_name):
-    table_data = self._data.get(table_name)
+    table_data = self._data["tables"].get(table_name)
     if table_data is None:
       print 'Error: table', table_name, 'not in schema!'
       return None
@@ -62,7 +63,7 @@ class Schema():
     return result
 
   def getColumnType(self, table_name, column_name):
-    table_data = self._data.get(table_name)
+    table_data = self._data["tables"].get(table_name)
     if table_data is None:
       print 'Error: table', table_name, 'not in schema!'
       return None
@@ -80,7 +81,7 @@ class Schema():
     return self._data
 
   def relationAttributeExists(self, relation, attribute):
-    table_data = self._data.get(relation)
+    table_data = self._data["tables"].get(relation)
     if table_data is None:
       return False
 
@@ -91,5 +92,5 @@ class Schema():
     return False
 
   def relationExists(self, relation):
-    table_data = self._data.get(relation)
+    table_data = self._data["tables"].get(relation)
     return table_data is not None
