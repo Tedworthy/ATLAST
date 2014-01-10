@@ -592,17 +592,17 @@ class IRGenerator:
       previous_binding = node.getBoundValue()
       assert previous_binding is not None
       # Add to the constraints
-      prev_constraints = ir.getConstraintTree()
+      prev_constraints = ir.getBindConstraintTree()
       print '\t#####',rel_attr.getAttribute(),"=",previous_binding.getAttribute(),node.getIdentifier()
       new_constraint = Constraint(Constraint.EQ, rel_attr, previous_binding)
       merged_constraint = None;
       if prev_constraints is None:
-        ir.setConstraintTree(new_constraint)
+        ir.setBindConstraintTree(new_constraint)
       elif new_constraint is None:
-        ir.setConstraintTree(prev_constraints)
+        ir.setBindConstraintTree(prev_constraints)
       else:
         merged_constraint = AndConstraint(prev_constraints, new_constraint)
-        ir.setConstraintTree(merged_constraint)
+        ir.setBindConstraintTree(merged_constraint)
 
 # Combining IRs
 
@@ -671,6 +671,25 @@ class IRGenerator:
       elif bin_op == ConstraintBinOp.OR:
         left_constraints = OrConstraint(left_constraints, right_ir.getConstraintTree())
       left_ir.setConstraintTree(left_constraints)
+  
+  def combineBindConstraints(self, left_ir, right_ir, bin_op):
+    """
+    Combines two sets of constraints from seperate IRs, leaving the result in
+    the left IR. This is primarily used when merging together IRs. The bin_op
+    passed in should be a flag as defined in the ConstraintBinOp class.
+    """
+    left_constraints = left_ir.getBindConstraintTree()
+    right_constraints = right_ir.getBindConstraintTree()
+    if left_constraints is None:
+      left_ir.setBindConstraintTree(right_constraints)
+    elif right_constraints is None:
+      left_ir.setBindConstraintTree(left_constraints)
+    else:
+      if bin_op == ConstraintBinOp.AND:
+        left_constraints = AndConstraint(left_constraints, right_constraints)
+      elif bin_op == ConstraintBinOp.OR:
+        left_constraints = OrConstraint(left_constraints, right_constraints)
+      left_ir.setBindConstraintTree(left_constraints)
 
   def removeDuplicateConstraints(self, ir, constraints):
     ir_constraints = ir.getConstraintTree()
@@ -696,6 +715,7 @@ class IRGenerator:
       keys=None):
     self.extendRelationAttributePairs(left_ir, right_ir)
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.AND)
+    self.combineBindConstraints(left_ir, right_ir, ConstraintBinOp.AND)
     self.combineRelations(left_ir, right_ir, join_classifier, keys)
 
     return left_ir
@@ -703,6 +723,7 @@ class IRGenerator:
   def disjunctIR(self, left_ir, right_ir):
     self.extendRelationAttributePairs(left_ir, right_ir)
     self.combineConstraints(left_ir, right_ir, ConstraintBinOp.OR)
+    self.combineBindConstraints(left_ir, right_ir, ConstraintBinOp.AND)
     self.combineRelations(left_ir, right_ir, JoinTypes.NO_JOIN)
 
     return left_ir
