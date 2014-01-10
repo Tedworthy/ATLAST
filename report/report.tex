@@ -774,16 +774,47 @@ work on any database and will provide clear error messages.
     that aims to return all directors such that every film that they have
     directed is longer than one hour.
     \begin{multline}
-      \exists x(film\_director(x, director) \land \forall y(film\_director(y,
-      director) \land film\_length(y, length) \land length > '1:00:00'))
+      \exists x(films\_director(x, director) \land \forall y(films\_director(y,
+      director) \land films\_length(y, length) \land length > '1:00:00'))
     \end{multline}
-    We can think of this equivalently as the following SQL query.
+    We can think of this equivalently as following.
+    \begin{multline}
+      \exists x(films\_director(x, director) \land \lnot \exists y(\lnot(films\_director(y,
+      director) \land films\_length(y, length) \land length > '1:00:00')))
+    \end{multline}
 
+    \todo{Add an SQL EXCEPT section and factor this out}
+
+    Most of this is trivial, and is covered in the previous sections. However,
+    we do face an issue with the negation of the subquery. So far we have not
+    handled negation. Using De Morgan's laws, we can infer the following
+    equivalence.
+    \begin{multline}
+      \label{eqn:demorganequiv}
+      \lnot(films\_director(y, director) \land films\_length(y, length) 
+      \land length > '1:00:00') \equiv (films\_director(y,
+      director) \lor films\_length(y, length) \lor length > '1:00:00')
+    \end{multline}
+    Equation~\ref{eqn:demorganequiv} however does not offer much progress, as
+    we have not yet specified how to evaluate disjunction.
+
+    Instead we must look to the query's semantic meaning. We require the return
+    of the set of all tuples that do not satisfy the equation. This can be
+    achieved using the SQL EXCEPT operator, which mirrors the functionality of
+    the difference operator in relational algebra.
+
+    Our logical query now can be translated to the following SQL query.
     \begin{minted}{sql}
-
+    SELECT film1.director
+    FROM films AS films1
+    WHERE NOT EXISTS (
+      SELECT films2.director
+      FROM films AS films2
+      EXCEPT
+      SELECT films2.director
+      FROM films AS films2
+      WHERE films2.length > '1:00:00' AND films2.director = films1.director);
     \end{minted}
-
-
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
