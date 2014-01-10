@@ -34,3 +34,4 @@ report/*.bcf
 report/*.blg
 report/*.run.xml
 report/*.toc
+report/*.out
