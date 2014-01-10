@@ -12,9 +12,5 @@ class DifferenceConstraint(UnaryConstraint):
   def getSQLNode(self):
     return self._sql_node
 
-  def accept(self, visitor):
-    visitor.visit(self._sql_node)
-    visitor.visit(self)
-
   def __repr__(self):
     return str(self._ir)

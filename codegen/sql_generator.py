@@ -36,6 +36,7 @@ class SQLGenerator():
 
   @v.when(ir.DifferenceConstraint)
   def visit(self, node):
+    print "DIFFERENCE"
     innerSQLGenerator = SQLGenerator()
     node.getIR().accept(innerSQLGenerator)
     translatedSelect = innerSQLGenerator._sql_select_list
@@ -45,10 +46,15 @@ class SQLGenerator():
     translatedFrom = innerSQLGenerator._sql_from_stack[0]
     translatedSQL += translatedFrom + '\n'
     translatedSQL += 'EXCEPT\n'
+    constraints = node.getSQLNode()
+    constraints.accept(self)
+    sqlNodeTranslation = self._sql_where_stack.pop()
+    translatedSQL += sqlNodeTranslation
     self._sql_where_stack.append(translatedSQL)
 
   @v.when(ir.ExistsConstraint)
   def visit(self, node):
+    print "EXISTS"
     result = 'EXISTS (\n'
     result += self._sql_where_stack.pop()
     result += ')'

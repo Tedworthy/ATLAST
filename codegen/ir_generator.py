@@ -243,22 +243,21 @@ class IRGenerator:
     ir = self.popIR()
     child_node = child['node']
     constraint_tree = ir.getConstraintTree()
-
     print '*** IR Generator: Begin NotNode ***'    
     print '\tCurrent IR: ' + ir.__repr__()
+
+    # Removing redundant NOT
+    if isinstance(constraint_tree, UnaryConstraint) \
+      and constraint_tree.getOp() == Constraint.NOT:
+      print '\tRemoving redundant NOT'
+      ir.setConstraintTree(constraint_tree.getConstraint())
+
     ### CASE 1: ~Constraint
     #### Simply insert a NOT node into the constraint tree
-    if child['type'] == 'constraint':
-      print '\tEvaluating NOT(Constraint)' 
-
-      ## Quick and dirty hack
-      ## NOT(rest_of_tree) -> (rest_of_tree)
-      if isinstance(constraint_tree,UnaryConstraint):
-        print '\tRemoving redundant NOT'
-        ir.setConstraintTree(constraint_tree.getConstraint())
-      else:
-        print '\tAdding NOT(constraints) to tree'
-        ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
+    elif child['type'] == 'constraint':
+      print '\tEvaluating NOT(Constraint)'
+      print '\tAdding NOT(constraints) to tree'
+      ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))
 
 
     ### Case 2: ~Predicate(x,y)
