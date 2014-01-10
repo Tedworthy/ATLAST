@@ -52,14 +52,6 @@ class SQLGenerator():
     translatedSQL += sqlNodeTranslation
     self._sql_where_stack.append(translatedSQL)
 
-  @v.when(ir.ExistsConstraint)
-  def visit(self, node):
-    print "EXISTS"
-    result = 'EXISTS (\n'
-    result += self._sql_where_stack.pop()
-    result += ')'
-    self._sql_where_stack.append(result)
-
   @v.when(ir.SQLWhereNode)
   def visit(self, node):
     innerSQLGenerator = SQLGenerator()
