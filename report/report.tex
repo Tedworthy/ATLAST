@@ -3,7 +3,6 @@
 \usepackage{geometry}
 \usepackage{layout}
 \geometry{includeheadfoot, margin=3.18cm}
-\setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{array,booktabs}
@@ -15,6 +14,14 @@
 \usepackage{lmodern}
 \usepackage{minted}
 \usepackage[fleqn]{amsmath}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=black
+}
 \usemintedstyle{autumn}
 \lstset{language=SQL}
 \addbibresource{report.bib}
@@ -46,29 +53,55 @@
 % Stop Latex from repositioning tables like an idiot
 \restylefloat{table}
 
-% Itemised columns
-\makeatletter
-\newcolumntype{i}[1]{%
-    >{\minipage[t]{\linewidth}\let\\\tabularnewline
-      \itemize
-      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
-      \setlength{\itemsep}{-\parsep}}%
-    p{#1}%
-    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
-\makeatother
-
-
 \begin{document}
 
-\begin{center}
-  \huge 3rd Year Group Project Final Report \\ [0.4cm]
-  \large Sean Allan, Mitchell Allison, Sam Esgate, Tom Harling, Ted Sales,
-         Max Tottenham \\ [0.2cm]
-  \vspace{0cm}
-\end{center}
+\begin{titlepage}
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the
+% horizontal lines, change thickness here
+
+\center
+
+\textsc{\LARGE Imperial College London}\\[1.5cm]
+\textsc{\Large Department of Computing}\\[0.5cm]
+\textsc{\large 3rd Year Group Project Report}\\[0.5cm]
+
+\HRule \\[0.4cm]
+{\huge \bfseries Translation of}\\[0.4cm]
+{\huge \bfseries First Order Predicate Logic to SQL}\\[0.4cm]% Title of your document
+\HRule \\[1.5cm]
+
+\begin{minipage}[t]{0.4\textwidth}
+  \begin{flushleft} \large
+    \emph{Authors:}\\
+    Sean \textsc{Allan}\\
+    Mitchell \textsc{Allison}\\
+    Sam \textsc{Esgate}\\
+    Thomas \textsc{Harling}\\
+    Ted \textsc{Sales}\\
+    Max \textsc{Tottenham}
+  \end{flushleft}
+\end{minipage}%
+%
+\begin{minipage}[t]{0.4\textwidth}
+  \begin{flushright} \large
+    \emph{Supervisor:} \\
+    Dr. Fariba \textsc{Sadri}  % Supervisor's Name
+  \end{flushright}
+\end{minipage}%
+\\[4cm]
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\renewcommand{\contentsname}{\huge Contents \vspace{1cm}}
 \tableofcontents
 \clearpage
+
+\setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
 \section{Executive Summary}
   At its heart our project is a language translator, taking as input a
@@ -1267,6 +1300,7 @@ work on any database and will provide clear error messages.
 
   https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
+\appendix
 \section{Appendix}
   The appendix is optional, and does not count towards the 35 pages. It may
   contain thing like: User guide, installation instructions; more extensive
