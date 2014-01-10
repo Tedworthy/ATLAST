@@ -714,6 +714,7 @@ work on any database and will provide clear error messages.
     is consistent across both languages. 
 
     \subsubsection{Existentially Quantifier Variables}
+    \label{sec:existential}
     Often in a logical query, it will be common to existentially quantify a
     variable in an inner subquery. For example, the following subquery checks
     the existence of any films within our database with the same name, but that
@@ -732,8 +733,8 @@ work on any database and will provide clear error messages.
       WHERE EXISTS (
         SELECT films2.title
         FROM films
-        WHERE films1.fid != films2.fid );
-    \end{minted}{sql}
+        WHERE films1.fid <> films2.fid );
+    \end{minted}
 
     There are two things to note with this approach, both relating to scope.
     The first is that the tables should be aliased. SQL requests that aliases
@@ -743,6 +744,46 @@ work on any database and will provide clear error messages.
     SELECT is not in the same scope as the inner SELECT, and so we must create
     an exception to the free and bound variable rules that we specify in
     section~\ref{sec:freebound}.
+
+    We could also repesent the previous query in a simpler form.
+    \begin{multline}
+      \exists x,y(films\_title(x, title) \land films\_title(y, title)
+        \land x != y)
+    \end{multline}
+    Which would translate to the following SQL query.
+
+    \begin{minted}{sql}
+    SELECT films1.title
+    FROM films as films1 JOIN films as films2 ON films1.title = films2.title
+    WHERE films1.fid <> films2.fid;
+    \end{minted}
+
+    Each of these forms are equivalent, and will return the same result.
+    However, it is useful to be able to represent nested quantifiers, as it
+    will not always be equivalent to combine them.\cite{washEQUIV}
+
+    \subsubsection{Universally Quantified Variables}
+    Using our knowledge from section~\ref{sec:existential}, we can now
+    formulate a translation for universally quantified variables. In
+    first-order predicate logic, the following equivalence holds:
+    \begin{multline}
+      \forall x(P(x)) \equiv \lnot \exists x(\lnot P(x))
+    \end{multline}
+    We can use this equivalence to simply encounter universally quantified
+    variables as existentially quantified. Below is an example query in logic
+    that aims to return all directors such that every film that they have
+    directed is longer than one hour.
+    \begin{multline}
+      \exists x(film\_director(x, director) \land \forall y(film\_director(y,
+      director) \land film\_length(y, length) \land length > '1:00:00'))
+    \end{multline}
+    We can think of this equivalently as the following SQL query.
+
+    \begin{minted}{sql}
+
+    \end{minted}
+
+
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
