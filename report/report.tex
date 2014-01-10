@@ -75,9 +75,9 @@
   restricted version of first-order predicate logic, and producing as output
   the corresponding SQL, for a given domain. This allows any SQL relational
   database to be queried using only first-order predicate logic, without the
-  user needing to know any SQL. The implications of this open up new avenues in
-  the realms of teaching and computer security, or alternatively integration
-  as a component of a larger system.
+  user needing to know any SQL. The implications of this open up an expansive
+  cornucopia of new avenues in the realms of teaching and computer security, or
+  alternatively integration as a component of a larger system.
 
   The predominant use-case for our project would be as a teaching tool,
   suitable for use by students studying both logic and databases, topics which
@@ -96,6 +96,8 @@
   ``what are the names of dragons that are happy?'' requiring the student to
   give both the predicate logic and the SQL yielding the answer to that
   question. Our project could then be used to easily check the student's work.
+
+  \todo{Too much stuff on the security... A wild Farfetch'd appears!}
 
   Conversely, in the world of computer security access to data is an important
   topic, and one which has come to public attention through the recent leaks
@@ -824,7 +826,8 @@ work on any database and will provide clear error messages.
 
     \subsubsection{Generate a symbol table based on the logic AST}
 
-    \subsubsection{Run a pass of semantic analysis on the logic AST to check for errors}
+    \todo{We don't need to talk about semantic analysis here, we do it in the
+    error checking section of backend instead.}
 
     \subsubsection{Generate an IR based on the logic AST}
 
@@ -914,13 +917,34 @@ work on any database and will provide clear error messages.
       added modularly. In order to extend support to other platforms all that is  
       required is to add a \%SQL\%\_backend.py which provides the functions
       described above, then switch out the import in generate\_schema.py to use
-      the desired implementation. 
+      the desired implementation.
 
-
-
+      \todo[inline]{Talk about how the schema is stored (Python dict), accessed
+        via the Schema class, and how it can be returned as JSON for the UI via
+      a GET request to /schema}
 
       (\todo{LOL} Max did you ever fix your multiple database issues?Also I think we're
       stuck with PostgreSQL databases only?) 
+
+      \subsubsection{Error Checking}
+
+      \todo{talk about other forms of error checking, not just semantic
+        analysis. talk about our exceptions classes, errors returned as JSON to
+      the UI, how that is handled etc}
+
+      One of the most important error checking methods we employ is semantic
+      analysis - this is looking at the SQL query, combining its syntax with
+      the meaning (semantics) derived from our database schema, and identifying
+      inconsistencies and errors. In this initial version of our logic to SQL
+      translator, we check the predicates of our SQL query against the known
+      relations and attributes present in our schema. If a relation, attribute,
+      or relation attribute pair doesn't exist, an exception is raised which is
+      caught and an error message is displayed to the user. This error would
+      allow the user to quickly identify any typos or invalid predicates.
+
+      \missingfigure{A user makes a typo in their logic query raising a
+      schema compliance semantic error. TED: The UI needs to do this!}
+
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
   Summarise testing procedures + relevant testing results
@@ -928,6 +952,11 @@ work on any database and will provide clear error messages.
 \section{Conclusion and Future Extensions}
   What did you learn? What might you have done differently?
   How would you build on what you have done?
+
+  \subsection{Future Extensions}
+
+    \subsubsection{Further Semantic Analysis}
+    \todo[inline]{Can anyone think of anything beyond type checking?}
 
 \section{Project Management}
   Planning, group organisation, breakdown + task allocation etc.
