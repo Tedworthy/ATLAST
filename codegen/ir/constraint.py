@@ -11,6 +11,7 @@ class Constraint(IRNode):
   ISNOT = 'IS NOT'
   NULL = 'NULL'
   NOT = 'NOT'
+  EXISTS = 'EXISTS'
 
   constraint_map = {  '='       :     'EQ',  
                       '<>'      :    'NEQ', 

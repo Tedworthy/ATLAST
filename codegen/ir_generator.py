@@ -200,7 +200,8 @@ class IRGenerator:
           inner_ir = right_ir
           result_node = left_node
 
-        new_constraint = ExistsConstraint(inner_ir)
+        sql_node = SQLWhereNode(inner_ir)
+        new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
         prev_constraints = outer_ir.getConstraintTree()
         if (prev_constraints is None):
           outer_ir.setConstraintTree(new_constraint)
@@ -220,7 +221,9 @@ class IRGenerator:
           inner_ir = right_ir
           result_node = left_node
 
-        new_constraint = ExistsConstraint(inner_ir)
+        sql_node = SQLWhereNode(inner_ir)
+        new_constraint = DifferenceConstraint(inner_ir, sql_node)
+        new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
         new_constraint = UnaryConstraint(Constraint.NOT, new_constraint)
         prev_constraints = outer_ir.getConstraintTree()
         if (prev_constraints is None):
@@ -343,8 +346,6 @@ class IRGenerator:
       # Check if a variable.
       if child_type == 'variable':
         # If a child is not quantified, add to the projection list
-        if child_node.getIdentifier() == 'y'
-          print 'COOEY'
         if child_node.isFree():
           print 'Rel attr :' + str(rel_attr) + ' is free'
           ir.addRelationAttributePair(rel_attr)

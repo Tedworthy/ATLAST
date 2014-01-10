@@ -5,7 +5,6 @@ another quantifier node.
 '''
 
 from node import *
-from variable_declaration_node import VariableDeclarationNode
 
 class QuantifierNode(Node):
   def __init__(self, lineNo, position, identifiers, formula):

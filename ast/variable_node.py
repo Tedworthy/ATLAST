@@ -68,8 +68,8 @@ class VariableNode(Node):
   def isFree(self):
     val = self._symTable.lookup(self.getIdentifier())
     # The variable is free if we could not find another declaration in the
-    # symbol table
-    return self == val
+    # symbol table, or if we did but it was not at global level
+    return val._symTable.hasParent() or self == val
 
   def __repr__(self):
     return self.getIdentifier()

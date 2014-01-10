@@ -5,6 +5,8 @@ from binop_constraint import BinOpConstraint
 from null_node import NullNode
 from unary_constraint import UnaryConstraint
 from exists_constraint import ExistsConstraint
+from sql_where_node import SQLWhereNode
+from difference_constraint import DifferenceConstraint
 from relation_attribute_pair import RelationAttributePair
 
 from equijoin_node import EquiJoinNode
