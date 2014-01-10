@@ -200,7 +200,7 @@ class IRGenerator:
           inner_ir = right_ir
           result_node = left_node
 
-        sql_node = SQLWhereNode(inner_ir)
+        new_constraint = SQLWhereNode(inner_ir)
         new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
         prev_constraints = outer_ir.getConstraintTree()
         if (prev_constraints is None):
@@ -278,13 +278,15 @@ class IRGenerator:
     self.pushIR(ir)
     state = {
       'type' : 'constraint',
-      'key_values': child['key_values'],
-      'keys': child['keys'],
-      'attr_values': child['attr_values'],
-      'attrs': child['attrs'],
       'notNode' : 'true',
       'node' : node
     }
+    if 'key_values' in child.keys():
+      # The rest of these should occur as they are all added at the same time
+      state['key_values'] = child['key_values'],
+      state['keys'] = child['keys'],
+      state['attr_values'] = child['attr_values'],
+      state['attrs'] = child['attrs'],
     self.pushNode(state)
     print '\tIR Generated: ' + str(ir)
     print '*** IR Generator: End NotNode ***'    
