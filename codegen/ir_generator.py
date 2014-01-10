@@ -283,7 +283,7 @@ class IRGenerator:
       'attr_values': child['attr_values'],
       'attrs': child['attrs'],
       'notNode' : 'true',
-      'node' : node 
+      'node' : node
     }
     self.pushNode(state)
     print '\tIR Generated: ' + str(ir)
