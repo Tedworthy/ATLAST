@@ -298,6 +298,7 @@ work on any database and will provide clear error messages.
       must exist on a relation for it to be represented in a query.
 
     \subsubsection{Free and Bound Variables}
+    \label{sec:freebound}
 
       Looking back to Tuple Relational Calculus in
       section~\ref{sec:formalTRC}, we will use similar semantics for free and
@@ -734,7 +735,14 @@ work on any database and will provide clear error messages.
         WHERE films1.fid != films2.fid );
     \end{minted}{sql}
 
-    There are two 
+    There are two things to note with this approach, both relating to scope.
+    The first is that the tables should be aliased. SQL requests that aliases
+    for inner subqueries must not have been used previously; the outer scope is
+    available to the inner subquery. The second is that, although we have not
+    specified that films2.fid is not to be returned, it cannot be. The outer
+    SELECT is not in the same scope as the inner SELECT, and so we must create
+    an exception to the free and bound variable rules that we specify in
+    section~\ref{sec:freebound}.
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
