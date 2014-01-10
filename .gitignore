@@ -22,3 +22,6 @@ certs/*
 *.*~
 .DS_Store
 ._*
+
+# This is only for codegen
+report/report.tex
