@@ -71,48 +71,53 @@
 \clearpage
 
 \section{Executive Summary}
-  Our project is, at its heart, a language translator. It translates a
-  restricted version of first order predicate logic into the database querying
-  language SQL. This allows us to open up new avenues in the realms of
-  teaching, database administration, and computer security.
+  At its heart our project is a language translator, taking as input a
+  restricted version of first-order predicate logic, and producing as output
+  the corresponding SQL, for a given domain. This allows any SQL relational
+  database to be queried using only first-order predicate logic, without the
+  user needing to know any SQL. The implications of this open up new avenues in
+  the realms of teaching and computer security, or alternatively integration
+  as a component of a larger system.
 
-  In the world of computer security, access to data is an important topic. One
-  which has come to public attention through the recent leaks from NSA
-  contracter Edward Snowden. Our product provides the bedrock for an
-  information security system. 
-
-  Imagine a scenario where your company needs to work with another large
-  organisation, for example a telecommunications company working with the US
-  Government. Your company is passionate about your customers privacy rights
-  and so you want to give the government as little information as possible
-  about your customers, whilst still allowing them to do their job. This could
-  be as secretive as not even allowing the government to know what kinds of
-  data you hold. What you would like is a system which would allow the
-  government to ask you a question, and for you to be able to respond with as
-  little information as possible to answer that question without the government
-  knowing what information you hold.
-
-  Our product can provide the bedrock for this. Questions can be formed in
-  predicate logic about whether a particular entity exists and if certain
-  conditions surrounding it hold, our project then takes this query and
-  translates it into SQL, so that it is ready to be sent to a conventional
-  database.
-
-
-  Another compelling use for our project would be to provide a teaching tool, 
+  The predominant use-case for our project would be as a teaching tool,
   suitable for use by students studying both logic and databases, topics which
-  many universities deem to be mandatory for all computing students.To reinforce 
-  their understanding of logic, queries can be written and tested against a suitably
-  populated database of facts. The result of these queries can then be used to
-  see if the student has understood the course material. 
-  
-  The generated SQL can be used as a reference for the student, either to  highlight 
-  issues with the logic or, to  explain the formulation of correct SQL.
+  many universities deem to be mandatory for all computing students. To
+  reinforce their understanding of logic, queries can be written and tested
+  against a suitably populated database of facts. The result of these queries
+  can then be used to determine how well the student has understood the course
+  material.
 
-  It also lends itself well to creating problem sheets for these subjects.
-  For example, given a statement in english, like "What are the names of
-  dragons that are happy?" what would be the logical expression and equivalent
-  SQL query.
+  The generated SQL could be used as a reference for the student, either to
+  highlight issues with their logic or to explain the formulation of correct
+  SQL, providing them with extensive revision notes.
+
+  The project also lends itself to creating problem sheets for these subjects.
+  For example, a teacher could create a list of questions in english, like
+  ``what are the names of dragons that are happy?'' requiring the student to
+  give both the predicate logic and the SQL yielding the answer to that
+  question. Our project could then be used to easily check the student's work.
+
+  Conversely, in the world of computer security access to data is an important
+  topic, and one which has come to public attention through the recent leaks
+  from former NSA employee Edward Snowden.
+
+  Imagine a scenario where a company needs to work with another large
+  organisation, for example a telecoms firm working with the US Government. The
+  company respects customer privacy rights, and so wants to give the government
+  as little customer information as possible, whilst still allowing them to do
+  their job. This is known as the principle of least privilege.
+
+  Our project provides the bedrock for an information security system, which
+  abstracts away from any database where customer data is stored, allowing
+  questions to be asked (in predicate logic) by the government and answered in
+  the most desirable manner with respect to the company's privacy policy.
+
+  Finally, there is scope for integrating this project with a larger system
+  whose goal is, for example, to create business analytics using only an
+  English description of the required information. If such a system had a
+  method of converting English into predicate logic, it would be trivial to
+  give this to our project to allow the larger system to give actual database
+  analytics answers for the English description.
 
   \subsection*{Elevator Pitch (quite a hard sell)}
   \emph{>> What we have...}
