@@ -82,9 +82,9 @@
   The predominant use-case for our project would be as a teaching tool,
   suitable for use by students studying both logic and databases, topics which
   many universities deem to be mandatory for all computing students. To
-  reinforce their understanding of logic, queries can be written and tested
+  reinforce a students understanding of logic, queries can be written and tested
   against a suitably populated database of facts. The result of these queries
-  can then be used to determine how well the student has understood the course
+  can then be used to determine how well they have understood the course
   material.
 
   The generated SQL could be used as a reference for the student, either to
@@ -109,7 +109,7 @@
   as little customer information as possible, whilst still allowing them to do
   their job. This is known as the principle of least privilege.
 
-  Our project provides the bedrock for an information security system, which
+  Our project provides the bedrock for such a security system, which
   abstracts away from any database where customer data is stored, allowing
   questions to be asked (in predicate logic) by the government and answered in
   the most desirable manner with respect to the company's privacy policy.
@@ -122,23 +122,12 @@
   analytics answers for the English description.
 
   \subsection*{Elevator Pitch (quite a hard sell)}
-  \emph{>> What we have...}
-  
-  We can create SQL queries from logic statements.
-  
-  \emph{>> Why you want it...}
-
-   It can be used to:
-   \begin{itemize}
-     \item query a database, without knowledge of SQL
-     \item teach the basics of logic and SQL
-   \end{itemize}
-
-   \emph{>> Why is it useful...}
-   \begin{itemize}
-     \item It brings some of the power of logic to regular database queries,
-     without the need to migrate to datalog.
-    \end{itemize}
+  In summary, we have created a system that creates SQL queries from logic 
+  statements. This allows you to query a database without knowing anything
+  about SQL and importantly to ignore which variant of SQL you
+  are using and get on with extracting data. It provides the basis for a
+  unique teaching tool for both SQL and logic and it brings some power
+  of logic to regular databases, without the need to migrate to datalog.
 
   What is your Project? What does it do? Why would I want to buy it? etc.
   No implementation, software engineering details, or project management
@@ -180,7 +169,7 @@ work on any database and will provide clear error messages.
   \begin{itemize}
       \item
         Data Definition Language. DDL is used to define the structure of a
-        database (also known as its schema.
+        database (also known as its schema).
       \item
         Data Manipulation Language. DML is primarily used to insert, select,
         delete and update data within a database.
@@ -188,10 +177,9 @@ work on any database and will provide clear error messages.
 
   However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations
   such as 'SELECT' (without 'INSERT INTO') should not exist as part of the DML;
-  they do not manipulate the data, only query it. However, the distinction
-  between read-only and read-write is not enforced. Here we will focus only on
-  these operations (so called 'SQL-data' operations), with the aim of purely
-  querying the RDBMS without altering it.
+  they do not manipulate the data, only query it. This distinction between
+  read-only and read-write operations is not enforced, but here we will focus
+  only on read-only operations (so called 'SQL-data' operations).
 
 \subsection{Tuple Relational Calculus}
   SQL was originally based on Relational Algebra and Tuple Relational
@@ -223,29 +211,39 @@ work on any database and will provide clear error messages.
 
       Otherwise $v$ is said to be free.
       
-      Note that in query \{T | p(T)\} the variables in T must be the only free variables in p(T).
+      Note that in query \{T | p(T)\} the variables in T must be the only
+      free variables in p(T).
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
       queries. For example, suppose it was desirable to query all films from a
       particular director in a database. It would be simple to write:
 
-      \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \begin{center}
+        \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \end{center}
 
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
 
-      \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.title =
-      F1.title)\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ 
+          F.title = F1.title)\}
+      
+        \emph{NOTE: F becomes a tuple with one element called title.}
+      \end{center}
 
       We are now able to represent projection and selection. We can also
-      represent joins. Let us suppose that we wish to find all films whose
-      director has also directed another film.
+      represent joins. Let us suppose that we wish to find all titles of films
+      whose director has also directed another film.
 
-      \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ Films(Films1.director =
-      F2.director $\land$ F1 != F2))\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ 
+        Films(F1.director = F2.director $\land$ F1 != F2)
+        \\ $\land$ F.title = F1.title)\}
+      \end{center}
 
 \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
@@ -282,19 +280,17 @@ work on any database and will provide clear error messages.
       The solution chosen addresses the issues raised so far.
 
       For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
-      and n attributes, n + 1 predicates are generated as follows:
-      \begin{enumerate}
-        \item R(k)
-        \item R\_$a_{1}$(k, a1)
-        \item R\_$a_{2}$(k, a2)
-        \\ \vdots
-        \item[n + 1.] R\_$a_{n}$(k, an)
-      \end{enumerate}
+      and n attributes we generate n + 1 predicates:
+      \begin{align*}
+        \text{1:  }     & R(k)            \\
+        \text{2:  }     & R\_a_1(k, a1)   \\
+        \text{3:  }     & R\_a_2(k, a2)   \\
+                        & \vdots          \\
+        \text{n + 1:  }  & R\_a_n(k, an)
+      \end{align*}
 
-      This reduces the number of unncessary attributes in a given query, whilst
-      also addressing the representation of a tuple, by relating a tuple to its
-      primary key. This does however add the restriction that a primary key
-      must exist on a relation for it to be represented in a query.
+      Relating a tuple to its primary key gives a concise way to address it,
+      adding the slight restriction that each relation must have a primary key.
 
     \subsection{Free and Bound Variables}
 
