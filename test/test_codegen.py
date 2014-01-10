@@ -390,3 +390,10 @@ class TestCodeGen():
     sql += " (SELECT films2.title FROM films AS films2 WHERE films1.title <> "
     sql += "films2.title)"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
+
+  def test_there_exists_unification(self):
+    logic = "∃x(films_title(x, title1) ∧ ∃y(films_title(y, title) ∧ x != y))".decode('utf8')
+    sql = "SELECT films1.title FROM films AS films1 WHERE EXISTS (\n"
+    sql += "SELECT films2.title FROM films AS films2 WHERE films1.fid != films2.fid"
+    sql += ")"
+    assert self.translates_to(logic, sql), "Error, expected answers not equal"
