@@ -15,6 +15,7 @@
 \usepackage{minted}
 \usepackage[fleqn]{amsmath}
 \usepackage{hyperref}
+\usepackage[center]{caption}
 \hypersetup{
   colorlinks,
   citecolor=black,
@@ -108,8 +109,8 @@
   restricted version of first-order predicate logic, and producing as output
   the corresponding SQL, for a given domain. This allows any SQL relational
   database to be queried using only first-order predicate logic, without the
-  user needing to know any SQL. The implications of this open up an expansive
-  cornucopia of new avenues in the realms of teaching and computer security, or
+  user needing to know any SQL. The implications of this open up
+  new avenues in the realms of teaching and computer security, or
   alternatively integration as a component of a larger system.
 
   The predominant use-case for our project would be as a teaching tool,
@@ -706,7 +707,7 @@ work on any database and will provide clear error messages.
       type of join that must be used. Figure~\ref{fig:jointranslation} explains
       the different types of join that can result from a query.
 
-      \begin{figure}
+      \begin{table}
         \label{fig:jointranslation}
         \begin{tabular}{ | p{\dimexpr 0.22\linewidth-2\tabcolsep} |
           p{\dimexpr 0.22\linewidth-2\tabcolsep} |
@@ -738,7 +739,7 @@ work on any database and will provide clear error messages.
       \end{tabular}
         \caption{A table explaining the correct join to use for a logical query
         conjunction.}
-    \end{figure}
+    \end{table}
 
   \subsection{SQL EXISTS}
     The SQL EXISTS condition is used in a SQL query and is considered "to be
@@ -1005,8 +1006,6 @@ work on any database and will provide clear error messages.
     \subsubsection{Generate an SQL string based on the above IR}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
-  \subsection{Testing and continuous integration.. may want to move this section}
-    nose tests, TeamCity
     \subsection{Backend}
      \subsubsection{Interfacing with the databse}
 
@@ -1099,7 +1098,7 @@ work on any database and will provide clear error messages.
 
       \subsubsection{Error Checking}
 
-      \todo{talk about other forms of error checking, not just semantic
+      \todo[inline]{talk about other forms of error checking, not just semantic
         analysis. talk about our exceptions classes, errors returned as JSON to
       the UI, how that is handled etc}
 
@@ -1113,12 +1112,18 @@ work on any database and will provide clear error messages.
       caught and an error message is displayed to the user. This error would
       allow the user to quickly identify any typos or invalid predicates.
 
-      \missingfigure{A user makes a typo in their logic query raising a
-      schema compliance semantic error. TED: The UI needs to do this!}
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[width=1.0\textwidth]{images/error.png}
+        \caption{A user being informed of a semantic error: the relation
+          'cornucopia' does not exist in the schema.}
+      \end{figure}
 
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
   Summarise testing procedures + relevant testing results
+
+  - talk about how our plan changed, how things went wrong
 
 \section{Conclusion and Future Extensions}
   What did you learn? What might you have done differently?
@@ -1129,7 +1134,7 @@ work on any database and will provide clear error messages.
     \subsubsection{Further Semantic Analysis}
     \todo[inline]{Can anyone think of anything beyond type checking?}
 
-\section{Project Management}
+\section{Project Management - MOVE ABOVE EVALUATION}
   Planning, group organisation, breakdown + task allocation etc.
 
   \subsection{Planning}
@@ -1239,10 +1244,6 @@ work on any database and will provide clear error messages.
     originally thought. This lead us to modify our feature set, reallocate
     group roles temporarily, and modify deadlines and revision subgoals.
 
-    \missingfigure{Group member Sam questioning the back-end architecture of
-      the solution in one of our regular face-to-face meetings. (take pic from
-      Chatley cwk 1)}
-
   \subsection{Tracking}
     Once an overarching plan was agreed on, we split each major goal of each
     revision in to smaller tasks. For each of these tasks, we then allocated a
@@ -1273,25 +1274,22 @@ work on any database and will provide clear error messages.
 
     \todo[inline]{TODO Citations for the above agile stuff}
 
-    \missingfigure{Picture of our Trello board here. Do we want a screenshot
-      from the first week, or towards the end? We have several versions as the
-      project progressed in our Chatley reports.}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.9\textwidth]{images/trello.png}
+      \caption{A screenshot of our Trello board toward the end of our project.}
+    \end{figure}
+
+  \subsection{Version Control and Automated Testing}
+  -- "You shall not pass" commit msg. Definitely needs the picture.
 
     -- Trello, Git integration
 
     -- Burndown chart
 
-    \todo[inline]{TODO Talk about how our project adapated based on user
-      feedback, version control (it might seem obvious that Git was used, but
-      we should probably mention it along with a brief reason as to why we
-      didn't use SVN/Mercurial or whatever). Continuous integration could be
-      talked about here, but perhaps that belogs in the software development
-      section? I'll see how the other sections are written first, then I'll put
-      this stuff in; Anandha places importance on the report flowing, and I
-      don't want it to feel disjointed.  Also, there should be a bit more
-      discussion about Agile, but I don't know whether it belongs here or not.
-      Maybe we should include some brief analysis on how our group found these
-      techniques useful?}
+    -- nosetests
+
+    -- CI server
 
 \section{Bibliography}
   \printbibliography
@@ -1306,7 +1304,29 @@ work on any database and will provide clear error messages.
   contain thing like: User guide, installation instructions; more extensive
   design, testing, statistics etc.
 
-  \todo{Insert the filmdb schema}
+  \subsection{Installation Guide}
+
+  - Sean will do this (I have a list of dependencies ready)
+
+  - need to mention not posibul 2 instal the earlangs on the gentoo pls
+
+  \subsection{UML Diagram}
+
+  - Look online to see if this can be generated by any tools.
+
+  - Or make a reduced one, just showing main components of the project e.g.
+  parser, sql generator, semantic analyser, etc
+
+  \subsection{'filmdb' Schema}
+
+  \subsection{Design Diagrams}
+
+  - things like sean's bullshit rough drawings from Chatley reports
+
+  \subsection{Statistics}
+
+  - This is just the performance metric, profiling etc diagrams from 
+  Chatley coursework 4.
 
 %\section{Anandha waffle from his site - delete once finished report}
 %  Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
