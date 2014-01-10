@@ -706,6 +706,36 @@ work on any database and will provide clear error messages.
         conjunction.}
     \end{figure}
 
+  \subsection{SQL EXISTS}
+    The SQL EXISTS condition is used in a SQL query and is considered "to be
+    met" if the subquery returns at least one row.\cite{technetEXISTS} The
+    condition is useful in translating predicate logic to SQL, as it's meaning
+    is consistent across both languages. 
+
+    \subsubsection{Existentially Quantifier Variables}
+    Often in a logical query, it will be common to existentially quantify a
+    variable in an inner subquery. For example, the following subquery checks
+    the existence of any films within our database with the same name, but that
+    are not the same film, and returns the name of said film.
+    \begin{multline}
+      \exists title(films\_title(x, title) \land \exists title(films\_title(y,
+      title) \land x != y))
+    \end{multline}
+    With a query of this format, we can simply translate the subquery, wrap it
+    in an SQL EXISTS condition and conjunct this onto the WHERE clause of the
+    outer query's query.
+
+    \begin{minted}{sql}
+      SELECT films1.title
+      FROM films AS films1
+      WHERE EXISTS (
+        SELECT films2.title
+        FROM films
+        WHERE films1.fid != films2.fid );
+    \end{minted}{sql}
+
+    There are two 
+
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
   used and why? what other technology was considered, but not used and why?
