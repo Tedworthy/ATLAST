@@ -296,32 +296,42 @@ work on any database and will provide clear error messages.
 
       Looking back to Tuple Relational Calculus in
       section~\ref{sec:formalTRC}, we will use similar semantics for free and
-      bound variables. A variable $v$ is said to be bound if formula $F$ is of
-      the format:
-
-      $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
-
-      However, in TRC, the syntax allowed for a return value, namely $t$ in the
+      bound variables. Recall the syntax for the return value in TRC, $T$ in the
       query below:
 
       \{T | p(T)\}
 
-      Without extending predicate logic, we cannot use a similar format.
-      It is important to note that in TRC, the variables that exist
-      within $T$ must be the only free variables in $p(T)$. That is to say that
-      TRC returns the set of all tuples that would result in $p(T) \models
-      \top$ when substituted for the free variables. As $T$ must be the set of
-      free variables $\in p(T)$, our predicate logic semantics for a query will
-      assume that the answer will be the set of substitutions for all free
-      variables in $p(T)$.
+      That is to say that TRC returns the set of all tuples $T$, such that 
+      $p(T) \models \top$. Without extending predicate logic, we cannot use 
+      a similar format for specifying what is returned. However, all 
+      variables that are free in $p(T)$ must be in $T$ and so we assume 
+      that all unbound variables in the query are to be returned.
 
   \section{Translation of First-order Predicate Logic to SQL}
 
     Now that we have a syntactical map between first-order predicate logic and
     tuple relational calculus, we can begin to define the mapping between logic
-    and SQL. First-order predicate logic
+    and SQL. First-order predicate logic is more expressive than SQL,
     \todo[inline]{Back this up. I believe it is true but how can it be proved?}
-    is more expressive than SQL, and so there will not always exist a
+    \todo[inline]{
+      Sam. I'm not sure this is true.
+    
+      Codd's Theorem: Relational Calculus is as expressive as Relational Algebra.
+
+      Word on the Street: Relational Calculus is equivalent to First-Order Logic.
+    
+      Therefore First-Order Logic is as expressive as Relational Algebra.
+
+      SQL is built on Relational Algebra (adds grouping, aggregation, arithmetic). 
+      
+      Therefore it makes sense that SQL is at least as expressive as First-Order Logic, if not more?
+
+      Slightly out of my depth here, but intuitively it kind of makes sense - can you get the size of a set in logic? No. Can you in SQL? Yes.
+
+      There were SQL features that we had no idea how to represent in pure logic, we found ourselves wanting to create special syntax for them (because logic cannot describe count, sum etc.)
+    }
+
+    and so there will not always exist a
     translation between logic and SQL. For this reason, this section will aim
     to describe common SQL queries or patterns in terms of their logical
     equivalence.
