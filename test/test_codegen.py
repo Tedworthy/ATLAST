@@ -29,7 +29,8 @@ class TestCodeGen():
     print 'Logic Recieved: ' + logic
     # Create a Logic Tree from the Logic
     logicTree = p.parse_input(logic)
-
+    print "|*** LOGIC AST ***|\n"
+    print str(logicTree)
     # Run dat semantic analysis bro
     dbSchema = schema.Schema()
     semanticAnalyser = sa.SemanticAnalyser(logicTree, dbSchema)

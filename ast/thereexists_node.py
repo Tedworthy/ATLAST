@@ -21,3 +21,5 @@ class ThereExistsNode(QuantifierNode):
 
     for child in self.getChildren():
       child.generateSymbolTable(childSymbolTable)
+  def   __repr__(self):
+      return "\E" + str(self.getIdentifiers()) + "(" + str(self.getChild(0)) +  ")"
