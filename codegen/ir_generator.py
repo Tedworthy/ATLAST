@@ -346,8 +346,16 @@ class IRGenerator:
       child_type = child['type']
       child_node = child['node']
       rel_attr = RelationAttributePair(relation, attr)
+      bind = True
       if i < key_count:
         child['key'] = True
+        child_binding = child_node.getBoundValue()
+        if (child_binding and child_binding.getRelation().getName() \
+            == relation.getName()):
+          # Do not bind if the relation found is one that has been used before.
+          # I.E if we have found casting_aid(x, y) and have already encountered
+          # casting_fid(x, z), do not bind a new instance of x.
+          bind = False
       elements[i] = rel_attr
       key_values.insert(0, child)
       # Check if a variable.
@@ -356,8 +364,9 @@ class IRGenerator:
         if child_node.isFree():
           print 'Rel attr :' + str(rel_attr) + ' is free'
           ir.addRelationAttributePair(rel_attr)
-        self.bind(child_node, rel_attr, ir)
-        print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
+        if bind:
+          self.bind(child_node, rel_attr, ir)
+          print '\tBinding',child_node.getIdentifier(),'to',rel_attr.getAttribute()
         #if (i < key_count):
         #  key_values.append(child)
       elif child_type == 'string_lit':

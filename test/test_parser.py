@@ -10,7 +10,7 @@ import codegen.ir_generator as ir
 class TestParser():
   def test_io(self):
     f = open('test/input_file.txt', 'r')
-    assert_equals(f.read(), '∀x(p(x) ∧ q(x))\n')
+    assert_equals(f.read(), '∃x(p(x) ∧ q(x))\n')
 
   def test_symboltable_generation(self):
     f = open('test/input_file.txt', 'r')

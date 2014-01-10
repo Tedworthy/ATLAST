@@ -26,7 +26,8 @@ class VariableNode(Node):
     '''
     candidate_node = symTable.lookup(self.getIdentifier())
     if candidate_node is None:
-        symTable.addGlobal(self._identifier, self)
+      print 'Adding global ' + self._identifier
+      symTable.addGlobal(self._identifier, self)
 
   #sets self.boundValue to variable and returns True on success
   #if already bound returns false
@@ -37,24 +38,13 @@ class VariableNode(Node):
     print '\tVariable is a VariableNode? ' +  str(isinstance(variable,VariableNode)) 
     print '\tResolved_Variable_Node is a VariableNode? ' +  str(isinstance(resolved_variable_node,VariableNode))    
     print '\t' + str(resolved_variable_node)
-    
 
     if resolved_variable_node.getBoundValue() is None:
       resolved_variable_node.setBoundValue(variable)
-
-    #TODO remove this case... its fucked
-    elif isinstance(variable,VariableNode) and isinstance(resolved_variable_node, VariableDeclarationNode):
-      print 'Dun Bingung de wariable node to de wariable node'
-      print '\tValue of variable: ' + variable.getIdentifier()
-      print '\tValue of resolved_variable_node: ' + str(resolved_variable_node.getBoundValue().getAttribute())
-
-      resolved_variable_node.setBoundValue(variable)
-
-      
     else:
-      boundValue = resolved_variable_node._boundValue
+      boundValue = resolved_variable_node.getBoundValue()
       attr_eq = boundValue.getAttribute() == variable.getAttribute()
-      rel_eq = boundValue.getRelation().getAlias() == variable.getRelation().getAlias()
+      rel_eq = boundValue.getRelation() == variable.getRelation()
 
     return attr_eq and rel_eq
 
