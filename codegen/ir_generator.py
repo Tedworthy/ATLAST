@@ -275,6 +275,20 @@ class IRGenerator:
         print '\tCurrent constraint tree: ' 
         ir.setConstraintTree(UnaryConstraint(Constraint.NOT,constraint_tree))   
 
+    elif child['type'] == 'thereexists':
+      sql_node = SQLWhereNode(ir)
+      new_constraint = UnaryConstraint(Constraint.EXISTS, sql_node)
+      new_constraint = UnaryConstraint(Constraint.NOT, new_constraint)
+      ir = IR()
+      ir.setConstraintTree(new_constraint)
+    elif child['type'] == 'forall':
+      sql_node = SQLWhereNode(ir)
+      new_constraint = DifferenceConstraint(ir, sql_node)
+      new_constraint = UnaryConstraint(Constraint.EXISTS, new_constraint)
+      ir = IR()
+      ir.setConstraintTree(new_constraint)
+
+
     self.pushIR(ir)
     state = None
     if 'key_values' in child.keys():
