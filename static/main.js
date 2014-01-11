@@ -141,7 +141,7 @@ $(document).ready(function() {
         table_header.append(table_header_i).append(table_header_span);
         table_div.append(table_header);
 
-        var columns = [];
+        var columns = [table.columns.length];
 
         // For each column...
         $.each(table.columns, function(column_name, column) {
@@ -167,18 +167,16 @@ $(document).ready(function() {
           column_button.append(column_button_i);
           column_div.append(column_span_name).append(column_span_type);
           column_div.append(column_button);
-          columns.push(column_div);
+          columns[column.ordinal - 1] = column_div;
         });
 
         // Mark the key fields with icons
         $.each(table.primary_keys, function(index, key) {
           $.each(columns, function(index, column) {
             if (column.children("span.column").text() === key) {
-              columns.splice(index, 1);
               column.addClass("key");
               var key_i = $("<i>").addClass("fa fa-key");
               column.prepend(key_i);
-              columns.unshift(column);
               return false;
             }
           });
