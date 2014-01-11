@@ -116,9 +116,9 @@
   The predominant use-case for our project would be as a teaching tool,
   suitable for use by students studying both logic and databases, topics which
   many universities deem to be mandatory for all computing students. To
-  reinforce their understanding of logic, queries can be written and tested
+  reinforce a students understanding of logic, queries can be written and tested
   against a suitably populated database of facts. The result of these queries
-  can then be used to determine how well the student has understood the course
+  can then be used to determine how well they have understood the course
   material.
 
   The generated SQL could be used as a reference for the student, either to
@@ -143,7 +143,7 @@
   as little customer information as possible, whilst still allowing them to do
   their job. This is known as the principle of least privilege.
 
-  Our project provides the bedrock for an information security system, which
+  Our project provides the bedrock for such a security system, which
   abstracts away from any database where customer data is stored, allowing
   questions to be asked (in predicate logic) by the government and answered in
   the most desirable manner with respect to the company's privacy policy.
@@ -156,23 +156,12 @@
   analytics answers for the English description.
 
   \subsection*{Elevator Pitch (quite a hard sell)}
-  \emph{>> What we have...}
-  
-  We can create SQL queries from logic statements.
-  
-  \emph{>> Why you want it...}
-
-   It can be used to:
-   \begin{itemize}
-     \item query a database, without knowledge of SQL
-     \item teach the basics of logic and SQL
-   \end{itemize}
-
-   \emph{>> Why is it useful...}
-   \begin{itemize}
-     \item It brings some of the power of logic to regular database queries,
-     without the need to migrate to datalog.
-    \end{itemize}
+  In summary, we have created a system that creates SQL queries from logic 
+  statements. This allows you to query a database without knowing anything
+  about SQL and importantly to ignore which variant of SQL you
+  are using and get on with extracting data. It provides the basis for a
+  unique teaching tool for both SQL and logic and it brings some power
+  of logic to regular databases, without the need to migrate to datalog.
 
   What is your Project? What does it do? Why would I want to buy it? etc.
   No implementation, software engineering details, or project management
@@ -215,7 +204,7 @@ work on any database and will provide clear error messages.
   \begin{itemize}
       \item
         Data Definition Language. DDL is used to define the structure of a
-        database (also known as its schema.
+        database (also known as its schema).
       \item
         Data Manipulation Language. DML is primarily used to insert, select,
         delete and update data within a database.
@@ -223,10 +212,9 @@ work on any database and will provide clear error messages.
 
   However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations
   such as 'SELECT' (without 'INSERT INTO') should not exist as part of the DML;
-  they do not manipulate the data, only query it. However, the distinction
-  between read-only and read-write is not enforced. Here we will focus only on
-  these operations (so called 'SQL-data' operations), with the aim of purely
-  querying the RDBMS without altering it.
+  they do not manipulate the data, only query it. This distinction between
+  read-only and read-write operations is not enforced, but here we will focus
+  only on read-only operations (so called 'SQL-data' operations).
 
 \subsection{Tuple Relational Calculus}
   SQL was originally based on Relational Algebra and Tuple Relational
@@ -258,29 +246,39 @@ work on any database and will provide clear error messages.
 
       Otherwise $v$ is said to be free.
       
-      Note that in query \{T | p(T)\} the variables in T must be the only free variables in p(T).
+      Note that in query \{T | p(T)\} the variables in T must be the only
+      free variables in p(T).
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
       queries. For example, suppose it was desirable to query all films from a
       particular director in a database. It would be simple to write:
 
-      \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \begin{center}
+        \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \end{center}
 
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
 
-      \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.title =
-      F1.title)\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ 
+          F.title = F1.title)\}
+      
+        \emph{NOTE: F becomes a tuple with one element called title.}
+      \end{center}
 
       We are now able to represent projection and selection. We can also
-      represent joins. Let us suppose that we wish to find all films whose
-      director has also directed another film.
+      represent joins. Let us suppose that we wish to find all titles of films
+      whose director has also directed another film.
 
-      \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ Films(Films1.director =
-      F2.director $\land$ F1 != F2))\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ 
+        Films(F1.director = F2.director $\land$ F1 != F2)
+        \\ $\land$ F.title = F1.title)\}
+      \end{center}
 
 \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
@@ -317,52 +315,60 @@ work on any database and will provide clear error messages.
       The solution chosen addresses the issues raised so far.
 
       For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
-      and n attributes, n + 1 predicates are generated as follows:
-      \begin{enumerate}
-        \item R(k)
-        \item R\_$a_{1}$(k, a1)
-        \item R\_$a_{2}$(k, a2)
-        \\ \vdots
-        \item[n + 1.] R\_$a_{n}$(k, an)
-      \end{enumerate}
+      and n attributes we generate n + 1 predicates:
+      \begin{align*}
+        \text{1:  }     & R(k)            \\
+        \text{2:  }     & R\_a_1(k, a1)   \\
+        \text{3:  }     & R\_a_2(k, a2)   \\
+                        & \vdots          \\
+        \text{n + 1:  }  & R\_a_n(k, an)
+      \end{align*}
 
-      This reduces the number of unncessary attributes in a given query, whilst
-      also addressing the representation of a tuple, by relating a tuple to its
-      primary key. This does however add the restriction that a primary key
-      must exist on a relation for it to be represented in a query.
+      Relating a tuple to its primary key gives a concise way to address it,
+      adding the slight restriction that each relation must have a primary key.
 
     \subsubsection{Free and Bound Variables}
     \label{sec:freebound}
 
       Looking back to Tuple Relational Calculus in
       section~\ref{sec:formalTRC}, we will use similar semantics for free and
-      bound variables. A variable $v$ is said to be bound if formula $F$ is of
-      the format:
-
-      $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
-
-      However, in TRC, the syntax allowed for a return value, namely $t$ in the
-      query below:
+      bound variables. Recall the syntax for the return value in TRC, $T$ in the
+      query below
 
       \{T | p(T)\}
 
-      Without extending predicate logic, we cannot use a similar format.
-      It is important to note that in TRC, the variables that exist
-      within $T$ must be the only free variables in $p(T)$. That is to say that
-      TRC returns the set of all tuples that would result in $p(T) \models
-      \top$ when substituted for the free variables. As $T$ must be the set of
-      free variables $\in p(T)$, our predicate logic semantics for a query will
-      assume that the answer will be the set of substitutions for all free
-      variables in $p(T)$.
+      That is to say that TRC returns the set of all tuples $T$, such that 
+      $p(T) \models \top$. Without extending predicate logic, we cannot use 
+      a similar format for specifying what is returned. However, all 
+      variables that are free in $p(T)$ must be in $T$ and so we assume 
+      that all unbound variables in the query are to be returned.
 
   \section{Translation of First-order Predicate Logic to SQL}
 
     Section~\ref{sec:background} provides a rough translation between
     first-order predicate logic and tuple relational calculus, and from this
     grounding we can begin to define the mapping between logic and SQL.
-    First-order predicate logic
+    First-order predicate logic is more expressive than SQL,
     \todo[inline]{Back this up. I believe it is true but how can it be proved?}
-    is more expressive than SQL, and so there will not always exist a
+    \todo[inline]{
+      Sam. I'm not sure this is true.
+    
+      Codd's Theorem: Relational Calculus is as expressive as Relational Algebra.
+
+      Word on the Street: Relational Calculus is equivalent to First-Order Logic.
+    
+      Therefore First-Order Logic is as expressive as Relational Algebra.
+
+      SQL is built on Relational Algebra (adds grouping, aggregation, arithmetic). 
+      
+      Therefore it makes sense that SQL is at least as expressive as First-Order Logic, if not more?
+
+      Slightly out of my depth here, but intuitively it kind of makes sense - can you get the size of a set in logic? No. Can you in SQL? Yes.
+
+      There were SQL features that we had no idea how to represent in pure logic, we found ourselves wanting to create special syntax for them (because logic cannot describe count, sum etc.)
+    }
+
+    and so there will not always exist a
     translation between logic and SQL. For this reason, this section will aim
     to describe common SQL queries or patterns in terms of their logical
     equivalence.
@@ -387,18 +393,17 @@ work on any database and will provide clear error messages.
     \begin{gather}
       \exists x(films\_title(x, title)) \label{select1}
     \end{gather}
-    The query binds $x$ and allows $title$ to remain free, meaning that our
-    answer will be the set of all subtitutions for $title$ that would result in
+    The query binds $x$ and leaves $title$ free, meaning that our
+    answer will be the set of all subtitutions for $title$ such that
     $\exists x(films\_title(x, title)) \models \top$. The '$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
-    it enforces that $title$ only need exist in one tuple, but may exist in
-    more. The predicate $films\_title$ gives the translator the scope of
+    it enforces that the substituted $title$ exists in at least one tuple.
+    The predicate $films\_title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
-    Strictly talking, the logic query actually evaluates to the following, due
-    to SQL's relational algebra foundations:
-
-    \todo{I'm certain of this, but again evidence would be useful.}
+    Strictly speaking since tuple relational calculus is based on set
+    operators, like relational algebra, and SQL implcitly uses bag operators
+    this actually evaluates to the following:
 
     \begin{minted}{sql}
 
@@ -407,10 +412,8 @@ work on any database and will provide clear error messages.
 
     \end{minted}
 
-    \todo{Is sound the right term?}
-
-    Note that it is also logically sound to express a query with no bound
-    variables, such as:
+    Note that it is perfectly valid to create a query with no bound variables,
+    such as:
     \begin{gather}
       films\_title(x, title) \label{select2}
     \end{gather}
@@ -560,8 +563,8 @@ work on any database and will provide clear error messages.
         \exists x(films\_length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
       \end{gather}
 
-      Similar queries can be constructed for the other inequalities in a
-      similar format.
+      Queries can be constructed for the other inequalities in a
+      similar manner.
 
     \subsubsection{Logical Connectives}
 
@@ -605,7 +608,7 @@ work on any database and will provide clear error messages.
 
     An SQL JOIN clause is used to combine rows from two or more tables, based
     on a common field between them.~\cite{w3JOINS} Joins can enable incredibly
-    powerful queries, especially in modern database systems where information
+    powerful queries, especially where information
     is normalized (split across many relations) to minimise duplication.
 
     \subsubsection{SQL CROSS JOIN}
@@ -642,7 +645,7 @@ work on any database and will provide clear error messages.
       we could could use the following logic query.
 
       \begin{gather}
-        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \\
+        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \nonumber\\
         \land actors\_fid(aid, fid) \land actors\_name(aid, name))
       \end{gather}
 
@@ -675,11 +678,17 @@ work on any database and will provide clear error messages.
       there are two of them; without an alias, the identifier would be
       ambiguous. Below is a representation of the query in logic.
 
-      \begin{multline}
-        \exists fid, a1, a2(films(fid) \land actors\_fid(a1, fid) \land \\
-        actors\_fid(a2, fid) \land actors\_name(a1, name1)\\
-        \land actors\_name(a2, name2) \land name1 != name2) \label{largeCROSS}
-      \end{multline}
+      \begin{align}
+          \exists fid, & a1, a2(  \nonumber\\
+                       & films(fid) \land \nonumber\\
+                       & actors\_fid(a1, fid) \land actors\_fid(a2, fid) \land \nonumber\\
+                       & actors\_name(a1, name1) \land actors\_name(a2, name2) \land \nonumber\\
+                       & name1 != name2 \nonumber\\
+        ) \hspace{6mm} &  % Ignore horrendous bodge...
+        \label{largeCROSS}
+      \end{align}
+
+      \todo{Actor doesn't have an fid field. Did we do this so we wouldn't have to mess about with casting?}
 
     \subsubsection{SQL INNER JOIN}
 
@@ -885,7 +894,7 @@ work on any database and will provide clear error messages.
                  Front End\\
                  ---------\\
                  ACE        - Text Editor\\
-                 Bootstrap  - CSS \\
+                 Bootstrap  - CSS (Ted seems to have got rid of this)\\
 
                  Testing\\
                  -------\\
@@ -910,8 +919,45 @@ work on any database and will provide clear error messages.
       of JSON data sent between the user and the server.  
 
     \subsubsection{Graphical user interface}
-      Ted did some UI magic, burnt some villages and then ended up with awesome
-      syntax highlighting and auto-fill stuff.
+      \begin{figure}[h!]
+        \includegraphics[width=\textwidth]{images/Site.png}
+        \caption{Web App Main Page}
+      \end{figure}
+
+      The interface the the user would see and interact with had to be simple
+      and intuitive to use. In particular, this meant that logic queries had to
+      be easy to input and the resulting SQL and result of running it on the
+      database easy to read and understand.
+
+      The javascript Ace http://ace.c9.io code editor was used for inputting the
+      user's
+      logic query. The editor was both extremely powerful and very easy to
+      implement. The editor provided an almost identical interface to desktop
+      applications such as Vim or Emacs. This ensured that the user 
+
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[]{images/LogicSymbols.png}
+        \caption{Buttons to insert logic symbols}
+      \end{figure}
+
+      Syntax highlighting. Type highlighting (dates, integers etc.)
+
+      Logic symbols could be input both with key shortcuts and with dedicated
+      buttons. (Easy for new users to start using, and allows experienced users
+      faster input).
+
+      (and name of database)!
+      Database tables shown at the top for quick reference, with the ability to
+      click to insert text for queries based on table attributes (easy to use!)
+
+      Result returned as JSON and displayed in simple table at bottom.
+
+      Picked nice colours and text styles.
+
+      Simple layout with few pages; help gives extra details, settings allows
+      you to use your own database.
+ 
 
   \subsection{Middleware plugins}
     \subsubsection{Celery and RabbitMQ}
