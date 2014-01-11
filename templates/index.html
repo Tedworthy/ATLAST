@@ -73,7 +73,7 @@ $def with (settingsForm)
             <button id="forall_button">&forall;</button>
             <button id="not_button">&not;</button>
           </div>
-          <form id="logic-form" name="logic-form" action="/" method="post">
+          <form id="logic_form" name="logic_form" action="/" method="post">
             <div id="logic">∃x(films.title(x, y) ∧ films.director(x, z))</div>
             <button type="submit" id="translate_button">
               <i class="fa fa-bolt"></i><span>Translate to SQL</span>
@@ -127,8 +127,33 @@ $def with (settingsForm)
       </div>
 
       <div id="settings_container" class="window hidden">
-        <p><b> Configuration Page</b> </p>
-            $:settingsForm.render()
+        <section id="settings_section">
+          <form id="settings_form" action="/settings" method="post">
+            <div>
+              <span>Server Address:</span>
+              <input type="text" id="settings_server">
+            </div>
+            <div>
+              <span>Server Port:</span>
+              <input type="text" id="settings_port" value="5432">
+            </div>
+            <div>
+              <span>DB Username:</span>
+              <input type="text" id="settings_username">
+            </div>
+            <div>
+              <span>DB Password:</span>
+              <input type="password" id="settings_password">
+            </div>
+            <div>
+              <span>DB Name:</span>
+              <input type="text" id="settings_dbname">
+            </div>
+            <button type="submit" id="connect_button">
+              Connect to DB
+            </button>
+          </form>
+        </section>
       </div>
     </div>
   </body>

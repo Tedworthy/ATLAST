@@ -115,92 +115,99 @@ $(document).ready(function() {
     maxLines: 10
   });
 
-  var schema;
-  $.ajax({
-    type: "GET",
-    url: "/schema"
-  }).done(function(schema) {
-    // Schema header
-    var header = $("<div>").attr("id", "schema_header");
-    var header_i = $("<i>").addClass("icon icon-db");
-    var header_span = $("<span>").text(schema.dbname);
-    header.append(header_i).append(header_span);
+  var refresh_schema = function() {
+    $.ajax({
+      type: "GET",
+      url: "/schema"
+    }).done(function(schema) {
+      $("#schema_section").html("");
 
-    // Schema tables
-    var tables = $("<div>").attr("id", "schema_tables");
+      // Schema header
+      var header = $("<div>").attr("id", "schema_header");
+      var header_i = $("<i>").addClass("icon icon-db");
+      var header_span = $("<span>").text(schema.dbname);
+      header.append(header_i).append(header_span);
 
-    // For each table...
-    $.each(schema.tables, function(table_name, table) {
-      var table_div = $("<div>").addClass("schema_table");
-      var table_header = $("<div>");
-      var table_header_i = $("<i>").addClass("fa fa-table");
-      var table_header_span = $("<span>").addClass("table").text(table_name);
-      table_header.append(table_header_i).append(table_header_span);
-      table_div.append(table_header);
+      // Schema tables
+      var tables = $("<div>").attr("id", "schema_tables");
 
-      var columns = [];
+      // For each table...
+      $.each(schema.tables, function(table_name, table) {
+        var table_div = $("<div>").addClass("schema_table");
+        var table_header = $("<div>");
+        var table_header_i = $("<i>").addClass("fa fa-table");
+        var table_header_span = $("<span>").addClass("table").text(table_name);
+        table_header.append(table_header_i).append(table_header_span);
+        table_div.append(table_header);
 
-      // For each column...
-      $.each(table.columns, function(column_name, column) {
-        var column_div = $("<div>");
-        var column_span_name = $("<span>").addClass("column").text(column_name);
-        var type = column.type;
-        switch (column.type) {
-          case "double precision":
-            type = "double";
-          case "character":
-          case "character varying":
-            type = "string";
-            break;
-          default:
-            type = column.type;
-            break;
-        }
-        type = " : " + type;
-        var column_span_type = $("<span>").text(type);
-        var column_button = $("<button>");
-        var column_button_i = $("<i>").addClass("fa fa-chevron-right");
-        column_button.append(column_button_i);
-        column_div.append(column_span_name).append(column_span_type);
-        column_div.append(column_button);
-        columns.push(column_div);
-      });
+        var columns = [];
 
-      // Mark the key fields with icons
-      $.each(table.primary_keys, function(index, key) {
-        $.each(columns, function(index, column) {
-          if (column.children("span.column").text() === key) {
-            columns.splice(index, 1);
-            column.addClass("key");
-            var key_i = $("<i>").addClass("fa fa-key");
-            column.prepend(key_i);
-            columns.unshift(column);
-            return false;
+        // For each column...
+        $.each(table.columns, function(column_name, column) {
+          var column_div = $("<div>");
+          var column_span_name = $("<span>").text(column_name);
+          column_span_name.addClass("column");
+          var type = column.type;
+          switch (column.type) {
+            case "double precision":
+              type = "double";
+            case "character":
+            case "character varying":
+              type = "string";
+              break;
+            default:
+              type = column.type;
+              break;
           }
+          type = " : " + type;
+          var column_span_type = $("<span>").text(type);
+          var column_button = $("<button>");
+          var column_button_i = $("<i>").addClass("fa fa-chevron-right");
+          column_button.append(column_button_i);
+          column_div.append(column_span_name).append(column_span_type);
+          column_div.append(column_button);
+          columns.push(column_div);
         });
+
+        // Mark the key fields with icons
+        $.each(table.primary_keys, function(index, key) {
+          $.each(columns, function(index, column) {
+            if (column.children("span.column").text() === key) {
+              columns.splice(index, 1);
+              column.addClass("key");
+              var key_i = $("<i>").addClass("fa fa-key");
+              column.prepend(key_i);
+              columns.unshift(column);
+              return false;
+            }
+          });
+        });
+
+        // Build up the table
+        $.each(columns, function(index, column) {
+          table_div.append(column);
+        });
+
+        tables.append(table_div);
       });
 
-      // Build up the table
-      $.each(columns, function(index, column) {
-        table_div.append(column);
+      $("#schema_section").append(header).append(tables);
+
+      // Schema buttons
+      $("div.schema_table > div > button").on("click", function() {
+        var header = $(this).parent().parent().children("div:first-child");
+        var row = $(this).parent();
+        var table_name = header.children("span.table").text();
+        var column_name = row.children("span.column").text();
+        logicEditor.insert(table_name + "." + column_name + "(, )");
+        logicEditor.selection.moveCursorBy(0, -3);
+        logicEditor.focus();
       });
-
-      tables.append(table_div);
     });
+  };
 
-    $("#schema_section").append(header).append(tables);
-
-    // Schema buttons
-    $("div.schema_table > div > button").on("click", function() {
-      var header = $(this).parent().parent().children("div:first-child");
-      var row = $(this).parent();
-      var table_name = header.children("span.table").text();
-      var column_name = row.children("span.column").text();
-      logicEditor.insert(table_name + "." + column_name + "(, )");
-      logicEditor.selection.moveCursorBy(0, -3);
-      logicEditor.focus();
-    });
-  });
+  // Call refresh_schema when the page loads
+  refresh_schema();
 
   var unicode_chars = {
     "and": "\u2227",
@@ -238,27 +245,25 @@ $(document).ready(function() {
     "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal }
   };
 
-  $("#config_submit").click(function()  {
+  $("#settings_form").click(function() {
     $.post(
       "/login",
       {
-        username: $("#username_input").val(),
-        password: $("#password_input").val(),
-        host: $("#host_input").val(),
-        port: $("#port_input").val(),
-        dbname: $("#dbname_input").val()
+        username: $("#settings_username").val(),
+        password: $("#settings_password").val(),
+        host: $("#settings_server").val(),
+        port: $("#settings_port").val(),
+        dbname: $("#settings_dbname").val()
       }
     ).done(function(response) {
       if (response.error === 'ok') {
-        var n = noty({text: 'Configuration Accepted'})
-        $(".close").trigger("click")
-        n.fadeOut('slow')
+        
       }
     });
   });
 
   /* When 'Convert to SQL' button is clicked fire off an AJAX request */
-  $("#logic-form").submit(function(e) {
+  $("#logic_form").submit(function(e) {
     e.preventDefault();
     var input_string = logicEditor.getValue();
     if (input_string !== "") {
@@ -427,7 +432,7 @@ $(document).ready(function() {
     var temp_cursor = 0;
     var row = 0;
     while (considered_text.substr(temp_cursor).search("\n") != -1) {
-      temp_cursor += considered_text.substr(temp_cursor).search("\n");
+      temp_cursor += considered_text.substr(temp_cursor).search("\n") + 1;
       row++;
     }
     var lastNewline = text.lastIndexOf("\n");
