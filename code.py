@@ -118,10 +118,12 @@ def isTest():
 
 # TODO: Get global vars, create shared global instance of SQLSchema class.
 # http://stackoverflow.com/questions/7512681/how-to-keep-a-variable-value-across-requests-in-web-py
-web.schema = schema.Schema()
+
 web.app = web.application(urls, globals())
 
 if (not isTest()) and  __name__ == "__main__":
   gs.generate_db_schema(pg.connect(cp.parse_file('dbbackend/db.cfg')))
   web.app.run()
 
+web.schema = schema.Schema()
+web.config = cp.parse_file('dbbackend/db.cfg')
