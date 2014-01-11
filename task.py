@@ -17,7 +17,7 @@ import semanticanalysis.semantic_analyser as sa
 celery = Celery('task', backend='amqp://guest@localhost:5672', broker='amqp://guest@localhost')
 
 @celery.task
-def addToProcessingQueue(logic, schema):
+def addToProcessingQueue(logic, schema, configData):
   # Set up a response dictionary
   response = {
       'status': '',
@@ -83,7 +83,7 @@ def addToProcessingQueue(logic, schema):
   # TODO - Check for database connection issues
   # Parse the database config file, open a connection to the database, and
   # finally run the SQL query
-  configData = cp.parse_file('dbbackend/db.cfg')
+  # configData = cp.parse_file('dbbackend/db.cfg')
   con = pg.connect(configData)
   queryResult = pg.query(con, sql)
   con.close()

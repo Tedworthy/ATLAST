@@ -51,7 +51,7 @@ class Index:
     print logic
 
     # Create worker thread and start
-    result = worker.addToProcessingQueue.delay(logic, web.schema)
+    result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
 
     # Wait for worker thread to finish processing
     while not result.ready():
@@ -100,7 +100,7 @@ class Login:
       gs.generate_db_schema(pg.connect(configData))
       # TODO: store in session variable not global variable
       web.schema = schema.Schema()
-
+      web.config = configData
       response['error'] = 'ok'
     except Exception, e:
       print 'Login failed'
