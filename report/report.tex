@@ -885,9 +885,26 @@ work on any database and will provide clear error messages.
     \end{minted}
 
   \subsection{NULL Values}
+    The SQL language implements three-valued logic. A condition can either
+    translate to TRUE, FALSE or UNKNOWN.
 
-      \todo[inline]{I imagine here would be a good place to talk about NULLs.
-      Max, we should go over our specification for NULL.}
+    Often in relations, it will be common to come across a NULL value. A NULL
+    value can represent any of the following\cite{pmbNULL}:
+
+    \begin{itemize}
+      \item NULL represents a something that is not present in the UoD
+      \item NULL represents something that might be present in the UoD, but
+        we do not know its value at present
+      \item NULL represents something that is present in the UoD, but we do
+        not know its value at present
+    \end{itemize}
+
+    In our implementation, we will take NULL to be the second representation.
+    It is common for SQL queries to check if a value is NULL, as the user may
+    wish to exclude these values, or perform a special case if they are
+    encountered.
+
+
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
