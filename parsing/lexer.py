@@ -83,7 +83,7 @@ reserved = {
 }
 
 def t_IDENTIFIER(t):
-  r'[_A-Za-z][0-9_A-Za-z]*'
+  r'[_A-Za-z][0-9_\.A-Za-z]*'
   if t.value in reserved:
     t.type = reserved[t.value]
   return t
