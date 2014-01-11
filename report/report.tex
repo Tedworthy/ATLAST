@@ -16,7 +16,11 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{hyperref}
 \usepackage[center]{caption}
+\usepackage{multirow}
 \usepackage{pbox}
+\usepackage{arydshln}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
 \hypersetup{
   colorlinks,
   citecolor=black,
@@ -916,38 +920,62 @@ work on any database and will provide clear error messages.
 
   \todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
-  We wanted a system that worked regardless of operating system and was easy to set up. The first decision we came to was whether to have a stand-alone client or a web application.
+  We wanted a system that was easy to set up and worked on any operating system. The first point of discussion was whether a desktop client or a web application would be better suited.
 
-  \begin{tabular}{ l | l }
-      Desktop Client & Web Based \\
-      \hline
-      + Local processing reduces latency & - Network traffic increases latency \\
-      + Native look and feel & + Universal feel \\
-      - Developing for many platforms difficult & + Multi-platform \\
-      - Installation Required & + No set up needed \\
-      - Manual Updates        & + Automatic Updates \\
-      \hline
-  \end{tabular}
+  \begin{center}
+    \renewcommand{\arraystretch}{1.5}%
+    \begin{tabular}{ r | l | l }
+      \multicolumn{1}{c |}{\textbf{Feature}} &\multicolumn{1}{c |}{\textbf{Desktop Client}} & \multicolumn{1}{c}{\textbf{Web Based}} \\
+        \hline
+        \emph{Processing}      & \ding{51} Local (Low Latency)   & \ding{55} Remote (High Latency) \\
+        \emph{Interface}       & \ding{51} Native                & \ding{51} Universal \\
+        \emph{Multi-Platform}  & \ding{55} Difficult             & \ding{51} Easy \\
+        \emph{Installation}    & \ding{55} Required              & \ding{51} None \\
+        \emph{Updates}         & \ding{55} Manual                & \ding{51} Automatic \\
+    \end{tabular}
+  \end{center}
 
-  We considered developing using C++ and Qt. Qt is a development framework that allows you to develop for Windows, Mac OS X and Linux simultaneously. This was appealing because we didn't want to limit ourselves to one platform but didn't have the time to develop three separate versions. There are a number of reasons we didn't choose this route; firstly Qt isn't free, but more importantly it adds an extra setup step for the user: downloading and installing a binary, when they could just navigate to a webpage.
+  It is worth noting that using C++ and Qt would have mitigated some of the
+  problems with desktop clients. Qt is a development framework that allows
+  you to develop for Windows, Mac OS X and Linux simultaneously. This was
+  appealing because we didn't want to limit ourselves to one platform but at
+  the same time didn't have the time to develop three separate versions. Even
+  taking all of this into account we felt that a web based system made more 
+  sense.
 
-  Web based systems also have the advantage that users do not need to constantly update to the latest version.
-
-  It was decided that the bulk of the project would be written in Python. This was due to
-  the large number of plugins and frameworks available. Also since Python is
-  interpreted there would be no large compile time which would speed up the rate
-  of work.
-
-  \todo{What else did we consider? C, Qt, Django (be a burden)}
-
-  The decision was taken to create a website and not a standalone application.
-  Doing so would ensure that users would always be using the most up to date
-  code, since all of the logic to SQL conversion would be handled on the server
-  and not on their own machines.
+  We'd clearly need to develop a front-end, using the traditional combination
+  of HTML, CSS and JavaScript, but what to choose for the backend? We didn't
+  want anything complicated, just a simple web server to accept requests and
+  a way of sending these requests on for processing. Using something like C
+  for this was overkill, we wanted to be able to quickly prototype and 
+  experiment - given this, three languages came to mind.
   
-  (add more reasons if you can think of them...
-  was making the GUI nice easier?)
+  \begin{center}
+    \renewcommand{\arraystretch}{1.5}%
+    \begin{tabular}{r | l | l | l}
+      \multicolumn{1}{c |}{\textbf{Feature}} & \multicolumn{1}{c |}{\textbf{Python}} & \multicolumn{1}{c |}{\textbf{Java}} & \multicolumn{1}{c}{\textbf{Ruby}}\\
+        \hline
+        \emph{Complexity of Language} & \ding{51} Simple      & \ding{55} Average   & \ding{51} Simple \\
+        \emph{Previous Experience}    & \ding{55} None        & \ding{51} Lots      & \textbf{-} Some \\
+        \emph{Plugin Support}         & \ding{51} Good        & \ding{51} Good      & \ding{51} Good \\
+        \emph{Compilation (Speed)}    & \ding{51} Interpreted & \ding{55} Compiled  & \ding{51} Interpreted \\
+    \end{tabular}
+  \end{center}
 
+  Java was the first to be eliminated, even though all group members had
+  experience using it, mainly because development takes longer when compared 
+  with the others. Though it's much easier to write than say C, it lacks 
+  features like dynamic typing which make rapid prototyping that much easier.
+
+  There was litle to choose between Python and Ruby, both are garbage
+  collected, dynamically typed and concise languages. We had used Ruby
+  in our previous work and it was decided, simply out of curiosity,
+  that we would try Python.
+  
+  Having decided on using Python, we considered using Django and web.py as 
+  our web servers. We settled with web.py because it was simpler, Django had 
+  many features and options, none of which we would ever use and so we chose 
+  to keep it simple.
 
   \todo[inline]{ List of Packages Used:\\
 
