@@ -82,7 +82,7 @@ $def with (settingsForm)
         </section>
 
         <section id="errors_section">
-          <div id="errors_container">
+          <div id="errors_container" class="status">
             <div class="no_errors">
               <i class="fa fa-check-circle"></i>
               <span>Console</span>
@@ -150,9 +150,17 @@ $def with (settingsForm)
               <input type="text" id="settings_dbname">
             </div>
             <button type="submit" id="connect_button">
-              Connect to DB
+              <i class="icon icon-db"></i><span>Connect to DB</span>
             </button>
           </form>
+        </section>
+        <section id="settings_result_section" class="hidden">
+          <div id="settings_result_container" class="status">
+            <div class="no_errors">
+              <i class="fa fa-check-circle"></i>
+              <span id="settings_result_message"></span>
+            </div>
+          </div>
         </section>
       </div>
     </div>
