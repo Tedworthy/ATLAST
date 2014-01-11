@@ -458,8 +458,8 @@ $(document).ready(function() {
       temp_cursor += considered_text.substr(temp_cursor).search("\n") + 1;
       row++;
     }
-    var lastNewline = text.lastIndexOf("\n");
-    lastNewline = (lastNewline = -1) ? 0 : lastNewline;
+    var lastNewline = text.lastIndexOf("\n") + 1;
+    lastNewline = (lastNewline == -1) ? 0 : lastNewline;
     var column = cursor - lastNewline;
     return { "row": row, "column": column };
   };
