@@ -399,7 +399,7 @@ class TestCodeGen():
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
 
   def test_there_exists_inner_negation(self):
-    logic = "∃x(films_title(x, title1) ∧ ¬∃y(films_title(y, title2) ∧ title1 != title2))".decode('utf8')
+    logic = "∃x(films.title(x, title1) ∧ ¬∃y(films.title(y, title2) ∧ title1 != title2))".decode('utf8')
     sql = "SELECT films1.title FROM films AS films1 WHERE EXISTS"
     sql += " (SELECT films2.title FROM films AS films2 WHERE films1.title <> "
     sql += "films2.title)"
