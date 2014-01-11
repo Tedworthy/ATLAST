@@ -913,7 +913,24 @@ work on any database and will provide clear error messages.
 
   \todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
-  It was decided that the project would be written in Python. This was due to
+  We wanted a system that worked regardless of operating system and was easy to set up. The first decision we came to was whether to have a stand-alone client or a web application.
+
+  \begin{tabular}{ l | l }
+      Desktop Client & Web Based \\
+      \hline
+      + Local processing reduces latency & - Network traffic increases latency \\
+      + Native look and feel & + Universal feel \\
+      - Developing for many platforms difficult & + Multi-platform \\
+      - Installation Required & + No set up needed \\
+      - Manual Updates        & + Automatic Updates \\
+      \hline
+  \end{tabular}
+
+  We considered developing using C++ and Qt. Qt is a development framework that allows you to develop for Windows, Mac OS X and Linux simultaneously. This was appealing because we didn't want to limit ourselves to one platform but didn't have the time to develop three separate versions. There are a number of reasons we didn't choose this route; firstly Qt isn't free, but more importantly it adds an extra setup step for the user: downloading and installing a binary, when they could just navigate to a webpage.
+
+  Web based systems also have the advantage that users do not need to constantly update to the latest version.
+
+  It was decided that the bulk of the project would be written in Python. This was due to
   the large number of plugins and frameworks available. Also since Python is
   interpreted there would be no large compile time which would speed up the rate
   of work.
