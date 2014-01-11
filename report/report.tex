@@ -109,9 +109,6 @@
 
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
-\todo[inline]{IMPORTANT: Update ALL IMAGES to reflect new predicate dot syntax,
-  i.e. films.title(x, y) rather than films\_title(x, y)}
-
 \section{Executive Summary}
   At its heart our project is a language translator, taking as input a
   restricted version of first-order predicate logic, and producing as output
@@ -862,7 +859,7 @@ work on any database and will provide clear error messages.
 
     \subsubsection{Difference}
 
-    It may be the case that we need to negate a set of predicates.By example,
+    It may be the case that we need to negate a set of predicates. By example,
     we will refer to the subquery within
     equation~\ref{eqn:except}:
     \begin{multline}
@@ -923,7 +920,7 @@ work on any database and will provide clear error messages.
 
   %\todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
-  %\subsection{Application Type}
+  \subsection{Application Type}
   We wanted a system that was easy to set up and worked on any operating system. The first point of discussion was whether a desktop client or a web application would be better suited.
 
   \begin{center}
@@ -947,7 +944,7 @@ work on any database and will provide clear error messages.
   taking all of this into account we felt that a web based system made more 
   sense.
 
-  %\subsection{Language Choice}
+  \subsection{Language Choice}
   We'd clearly need to develop a front-end, using the traditional combination
   of HTML, CSS and JavaScript, but what to choose for the backend? We didn't
   want anything complicated, just a simple web server to accept requests and
@@ -977,53 +974,7 @@ work on any database and will provide clear error messages.
   in our previous work and it was decided, simply out of curiosity,
   that we would try Python.
   
-%  \subsection{Back End} 
-
-%  \todo[inline]{
-                 Backend\\
-                 -------\\
-                 psycopg2   - Database Connection\\
-                 PLY        - Parser Generator\\
-                 Config Parser - parsing configuration files\\
-% }
-
-%  \subsection{Middleware}
-  
- % \todo[inline]{
-                 Middleware\\
-                 ----------\\
-                 RabbitMQ   - Message Broker (acts as a task queue)\\
-                 Celery     - Sets up a worker to pull jobs off task Q\\
-                 DONE - Web.py     - Web Server\\
-  %}
-
-  REDUNDANT - Having decided on using Python, we considered using Django and web.py as 
-  our web servers. We settled with web.py because it was simpler, Django had 
-  many features and options, none of which we would ever use and so we chose 
-  to keep it simple.
-
- % \subsection{Front End}
-  
-  %\todo[inline]{
-                 Front End\\
-                 ---------\\
-                 ACE        - Text Editor\\
-                 jQuery     - ubiquitous JS library\\
-  %}
-  
- % \subsection{Testing}
-  
-  %\todo[inline]{
-                 Testing\\
-                 -------\\
-                 nose       - Testing Framework\\
-                 paste      - Test utilities for generating web requests\\
-   %            }
-
-  
-
-
-  \subsection{Front-end site}
+  \subsection{Front End}
     \subsubsection{Web server}
       The web.py framework~\cite{webpy} was chosen to host the
       user facing site. Doing so allowed us to quickly set up a functioning site
@@ -1044,7 +995,7 @@ work on any database and will provide clear error messages.
     \subsubsection{Graphical user interface}
       \begin{figure}[h!]
         \includegraphics[width=\textwidth]{images/site_query.png}
-        \caption{Web App Main Page}
+        \caption{Main `Query' page}
       \end{figure}
 
       The interface that the user would see and interact with had to be simple
@@ -1052,8 +1003,12 @@ work on any database and will provide clear error messages.
       be easy to input and the resulting SQL and the result of running it on the
       database had to be easy to read and understand.
 
+<<<<<<< HEAD
       The javascript Ace~\cite{aceEditor} code editor was used for inputting the
 
+=======
+      The javascript Ace http://ace.c9.io code editor was used for inputting the
+>>>>>>> f6d86c7e86ed707a398aa90c5d3917f3712e47a1
       user's logic query. The editor was both extremely powerful and very easy
       to implement. The editor provided a familiar interface when compared with
       desktop applications such as Vim or Gedit.
@@ -1068,8 +1023,8 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/LogicSymbols.png}
-        \caption{Buttons to insert logic symbols}
+        \includegraphics[width=0.5\textwidth]{images/site_click_to_insert.png}
+        \caption{`Click to insert' buttons for easily entering logic symbols}
       \end{figure}
 
       Logic symbols could be input both with key shortcuts and with dedicated
@@ -1081,8 +1036,8 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/Schema.png}
-        \caption{Database name, tables and table schemas displayed}
+        \includegraphics[width=\textwidth]{images/site_schema.png}
+        \caption{Database name, tables and table schema representation}
       \end{figure}
 
       Information about the database schema was prominently displayed at the top
@@ -1094,8 +1049,15 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/InsertLogic.png}
-        \caption{The arrow next to 'director' inserts the relevant logic}
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[]{images/site_schema_insert.png}
+        \end{minipage}%
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{images/site_schema_inserted.png}
+        \end{minipage}
+        \caption{Before and after screenshots of predicate insertion}
       \end{figure}
 
       To further simplify and increase the speed of writing logic queries,
@@ -1120,7 +1082,7 @@ work on any database and will provide clear error messages.
  
       Picked nice colours and text styles.
 
-  \subsection{Middleware plugins}
+  \subsection{Middleware}
     \subsubsection{Celery and RabbitMQ}
       By default web.py is multi-threaded, meaning that each users request is
       handled in a separate thread, this allows multiple users to send HTTP
@@ -1141,12 +1103,21 @@ work on any database and will provide clear error messages.
 
       In addition, each users settings are stored in a session variable,
       allowing for multiple users to use the site, to connect to multiple
+<<<<<<< HEAD
       databases.     
 
       \missingfigure{Insert diagram of architecture here.}
 
       To achieve this, the Celery~\cite{celery} asynchronous
       task queue and RabbitMQ~\cite{rabbitmq} message broker were
+=======
+      databases.
+
+      \missingfigure{Insert diagram of architecture here.}
+
+      To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
+      task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
+>>>>>>> f6d86c7e86ed707a398aa90c5d3917f3712e47a1
       used. Each logic sentence to translate could be easily packaged into its
       own task and added to a queue to be translated.
 
@@ -1163,7 +1134,7 @@ work on any database and will provide clear error messages.
 
     \subsection{Logic to SQL translation}
 
-    \subsubsection{Tokenising the logic}
+    \subsubsection{Tokenising}
       We used the PLY library, which is an implementation of GNU's LEX and YACC
       written in Python, in order to generate a parser and lexer for our
       project.
@@ -1208,19 +1179,26 @@ work on any database and will provide clear error messages.
 
        We defined our grammar in this manner using the constructs from section 4.
 
-    \subsubsection{Generate a symbol table based on the logic AST}
+    \subsubsection{Generating a Symbol Table}
 
     \todo{We don't need to talk about semantic analysis here, we do it in the
     error checking section of backend instead.}
 
-    \subsubsection{Generate an IR based on the logic AST}
+    \subsubsection{Generating an IR}
 
-    \subsubsection{Generate an SQL string based on the above IR}
+    \subsubsection{Generating SQL}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
       JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
-    \subsection{Backend}
-     \subsubsection{Interfacing with the databse}
+    \subsection{Back End}
+
+     \todo[inline]{
+       Backend\\
+       -------\\
+       Config Parser - parsing configuration files\\
+     }
+
+     \subsubsection{Interfacing with the database}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -1240,7 +1218,6 @@ work on any database and will provide clear error messages.
       query and return the results just using psycopg2 (assuming you already
       have a connection object setup) you would need to do the following:
       
-     
       \begin{minted}{python}
       def query(con, query):
         result = {}
@@ -1332,6 +1309,19 @@ work on any database and will provide clear error messages.
           'cornucopia' does not exist in the schema.}
       \end{figure}
 
+
+  \subsection{Testing}
+  To ensure the reliability of our software we needed a testing framework that
+  we could run easily. We chose to write standard Python unittest tests and on
+  top of these used the nose testing framework to call and profile the runs.
+  Using nose gave us a clear indication of how many of our tests have passed
+  and gave us an idea of how our system was performing.
+
+  We also used paste, which is a set of libraries that allow you to autoate
+  tests which interact with a web page. This gave us the ability to test
+  sending requests from our interface, simulating user interactions in a
+  repeatable and fast manner.
+ 
 \section{Project Management}
   \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
 
