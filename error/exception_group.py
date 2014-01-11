@@ -12,7 +12,13 @@ class ExceptionGroup(Exception):
   def getDict(self):
     return map(lambda x: x.getDict(), self._exceptionList)
 
-  def __str__(self):
-    strings = map(lambda x: '  ' + str(x), self._exceptionList)
-    return self.__class__.__name__ + ': [\n' + ',\n'.join(strings) + '\n]'
+  def map_exception_msg(self, x):
+    try:
+      msg = ' ' + str(x)
+    except Exception, e:
+      msg = "<unprintable exception", type(e).__name__ + ">"
+    return msg
 
+  def __str__(self):
+    strings = map(lambda x: self.map_exception_msg(x), self._exceptionList)
+    return self.__class__.__name__ + ': [\n' + ',\n'.join(strings) + '\n]'
