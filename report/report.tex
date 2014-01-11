@@ -918,8 +918,9 @@ work on any database and will provide clear error messages.
   Anandha: Summarise key implementation details (how did you do it? what technology was
   used
 
-  \todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
+  %\todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
+  %\subsection{Application Type}
   We wanted a system that was easy to set up and worked on any operating system. The first point of discussion was whether a desktop client or a web application would be better suited.
 
   \begin{center}
@@ -943,6 +944,7 @@ work on any database and will provide clear error messages.
   taking all of this into account we felt that a web based system made more 
   sense.
 
+  %\subsection{Language Choice}
   We'd clearly need to develop a front-end, using the traditional combination
   of HTML, CSS and JavaScript, but what to choose for the backend? We didn't
   want anything complicated, just a simple web server to accept requests and
@@ -972,34 +974,51 @@ work on any database and will provide clear error messages.
   in our previous work and it was decided, simply out of curiosity,
   that we would try Python.
   
-  Having decided on using Python, we considered using Django and web.py as 
-  our web servers. We settled with web.py because it was simpler, Django had 
-  many features and options, none of which we would ever use and so we chose 
-  to keep it simple.
+%  \subsection{Back End} 
 
-  \todo[inline]{ List of Packages Used:\\
-
+%  \todo[inline]{
                  Backend\\
                  -------\\
                  psycopg2   - Database Connection\\
                  PLY        - Parser Generator\\
                  Config Parser - parsing configuration files\\
+% }
 
+%  \subsection{Middleware}
+  
+ % \todo[inline]{
                  Middleware\\
                  ----------\\
                  RabbitMQ   - Message Broker (acts as a task queue)\\
                  Celery     - Sets up a worker to pull jobs off task Q\\
-                 Web.py     - Web Server\\
+                 DONE - Web.py     - Web Server\\
+  %}
 
+  REDUNDANT - Having decided on using Python, we considered using Django and web.py as 
+  our web servers. We settled with web.py because it was simpler, Django had 
+  many features and options, none of which we would ever use and so we chose 
+  to keep it simple.
+
+ % \subsection{Front End}
+  
+  %\todo[inline]{
                  Front End\\
                  ---------\\
                  ACE        - Text Editor\\
                  jQuery     - ubiquitous JS library\\
-
+  %}
+  
+ % \subsection{Testing}
+  
+  %\todo[inline]{
                  Testing\\
                  -------\\
                  nose       - Testing Framework\\
-                 paste      - Test utilities for generating web requests\\}
+                 paste      - Test utilities for generating web requests\\
+   %            }
+
+  
+
 
   \subsection{Front-end site}
     \subsubsection{Web server}
