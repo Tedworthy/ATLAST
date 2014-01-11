@@ -318,10 +318,10 @@ work on any database and will provide clear error messages.
       and n attributes we generate n + 1 predicates:
       \begin{align*}
         \text{1:  }     & R(k)            \\
-        \text{2:  }     & R\_a_1(k, a1)   \\
-        \text{3:  }     & R\_a_2(k, a2)   \\
+        \text{2:  }     & R.a_1(k, a1)   \\
+        \text{3:  }     & R.a_2(k, a2)   \\
                         & \vdots          \\
-        \text{n + 1:  }  & R\_a_n(k, an)
+        \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
 
       Relating a tuple to its primary key gives a concise way to address it,
@@ -391,14 +391,14 @@ work on any database and will provide clear error messages.
 
     This is equivalent to the following first-order predicate logic query.
     \begin{gather}
-      \exists x(films\_title(x, title)) \label{select1}
+      \exists x(films.title(x, title)) \label{select1}
     \end{gather}
     The query binds $x$ and leaves $title$ free, meaning that our
     answer will be the set of all subtitutions for $title$ such that
-    $\exists x(films\_title(x, title)) \models \top$. The '$\exists$' symbol
+    $\exists x(films.title(x, title)) \models \top$. The '$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
     it enforces that the substituted $title$ exists in at least one tuple.
-    The predicate $films\_title$ gives the translator the scope of
+    The predicate $films.title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
     Strictly speaking since tuple relational calculus is based on set
@@ -415,7 +415,7 @@ work on any database and will provide clear error messages.
     Note that it is perfectly valid to create a query with no bound variables,
     such as:
     \begin{gather}
-      films\_title(x, title) \label{select2}
+      films.title(x, title) \label{select2}
     \end{gather}
     This will return the set of all tuples of the form \{$films.fid,
     films.title$\}, using the following SQL query.
@@ -438,7 +438,7 @@ work on any database and will provide clear error messages.
     every film title, and its corresponding length.
 
     \begin{gather}
-      \exists x(films\_title(x, y) \land films\_length(x, z)
+      \exists x(films.title(x, y) \land films.length(x, z)
     \end{gather}
 
     As both $y$ and $z$ are from the same unique tuple identified by $x$
@@ -477,9 +477,9 @@ work on any database and will provide clear error messages.
       of discourse. \todo{Cite this from our AD lectures} This can be represented
       in one of two ways in first-order predicate logic.
       \begin{gather}
-        \exists x(films\_title(x, y) \land y = \text{'The Bourne
+        \exists x(films.title(x, y) \land y = \text{'The Bourne
         Identity'})\label{where1}\\
-        films\_title(x, \text{'The Bourne Identity'})\label{where2}
+        films.title(x, \text{'The Bourne Identity'})\label{where2}
       \end{gather}
       Both of these queries are valid, however note that they do return different
       tuples. (\ref{where1}) returns the same answer as the SQL query above, although
@@ -493,7 +493,7 @@ work on any database and will provide clear error messages.
       ground terms. We can also use equality to ensure that two variables have
       the same value. For example, consider the following logical query.
       \begin{gather}
-        \exists a,b,y(actor\_name(a, x) \land film\_director(b, y) \land x = b)
+        \exists a,b,y(actor.name(a, x) \land film.director(b, y) \land x = b)
       \end{gather}
       The query returns names of all of the actors who have also directed a
       film. This translates to the following SQL query. For now, do not dwell
@@ -509,7 +509,7 @@ work on any database and will provide clear error messages.
       Note, that it is also possible to write the logic query in a more succint
       manner, as follows.
       \begin{gather}
-        \exists a,b(actor\_name(a, name) \land film\_director(b, name))
+        \exists a,b(actor.name(a, name) \land film.director(b, name))
       \end{gather}
       Here we have removed the equality constraint, instead unifying both
       predicates to the same variable. This is often a more desirable way to
@@ -534,9 +534,9 @@ work on any database and will provide clear error messages.
       As before, there are two ways we can represent the SQL query above in
       logic.
       \begin{gather}
-        \exists x(films\_title(x, y) \land y !=  \text{'The Bourne
+        \exists x(films.title(x, y) \land y !=  \text{'The Bourne
         Identity'})\label{where3}\\
-        \lnot films\_title(x, \text{'The Bourne Identity'})\label{where4}
+        \lnot films.title(x, \text{'The Bourne Identity'})\label{where4}
       \end{gather}
       The first query matches the output of our equivalent SQL query, but again
       is more verbose. The second returns the set of singleton tuples
@@ -560,7 +560,7 @@ work on any database and will provide clear error messages.
 
       This can be expressed using the following predicate logic query.
       \begin{gather}
-        \exists x(films\_length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
+        \exists x(films.length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
       \end{gather}
 
       Queries can be constructed for the other inequalities in a
@@ -589,7 +589,7 @@ work on any database and will provide clear error messages.
       following query.
 
       \begin{gather}
-        \exists x, length(films\_title(x, title) \land films\_length(x,
+        \exists x, length(films.title(x, title) \land films.length(x,
         length)\\
         \land length >= '2:00:00' \land length <= '3:00:00')
       \end{gather}
@@ -630,7 +630,7 @@ work on any database and will provide clear error messages.
       part of the join.
 
       \begin{gather}
-        \exists fid, aid(films\_title(fid, title) \land actors\_name(aid, name))
+        \exists fid, aid(films.title(fid, title) \land actors.name(aid, name))
       \end{gather}
 
       The example used is unlikely to be a useful query on the database. Cross
@@ -640,8 +640,8 @@ work on any database and will provide clear error messages.
       we could could use the following logic query.
 
       \begin{gather}
-        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \nonumber\\
-        \land actors\_fid(aid, fid) \land actors\_name(aid, name))
+        \exists fid(films.title(fid, \text{'The Bourne Identity'}) \nonumber\\
+        \land actors.fid(aid, fid) \land actors.name(aid, name))
       \end{gather}
 
       Which specifies that we only wish to return the set of all singleton
@@ -676,8 +676,8 @@ work on any database and will provide clear error messages.
       \begin{align}
           \exists fid, & a1, a2(  \nonumber\\
                        & films(fid) \land \nonumber\\
-                       & actors\_fid(a1, fid) \land actors\_fid(a2, fid) \land \nonumber\\
-                       & actors\_name(a1, name1) \land actors\_name(a2, name2) \land \nonumber\\
+                       & actors.fid(a1, fid) \land actors.fid(a2, fid) \land \nonumber\\
+                       & actors.name(a1, name1) \land actors.name(a2, name2) \land \nonumber\\
                        & name1 != name2 \nonumber\\
         ) \hspace{6mm} &  % Ignore horrendous bodge...
         \label{largeCROSS}
@@ -719,21 +719,21 @@ work on any database and will provide clear error messages.
           p{\dimexpr 0.41\linewidth-2\tabcolsep} | } \hline
         LHS & RHS & Join & Explanation \\
         \hline
-        $rel\_attr1(k, a)$ & $rel\_attr2(k, b)$ & No Join & 
+        $rel.attr1(k, a)$ & $rel.attr2(k, b)$ & No Join & 
         Both keys and relations are equal. This conjunction involves projecting
         two elements from the same tuple, and so no join is necessary.\\ \hline
-        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, b)$ & CROSS JOIN &
+        $rel1.attr1(k1, a)$ & $rel2.attr2(k2, b)$ & CROSS JOIN &
         The keys are different and the relations may or may not be equal. Here
         we assume that a != b. As there are no common elements, a cross join
         must occur.\\ \hline
-        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, a)$ & JOIN ON rel1.attr1 =
+        $rel1.attr1(k1, a)$ & $rel2.attr2(k2, a)$ & JOIN ON rel1.attr1 =
         rel2.attr2 &
         The keys are different, but the attributes rel1.attr1 and rel2.attr2
         are equal, thus we must join on these elements. Note that aliases are
         used to avoid ambiguity between the two sets of attributes if they
         overlap. Note that this may be combined with the example below to
         create a more complex join.\\ \hline
-        $rel1\_attr1(k, a)$ & $rel2\_attr2(k, b)$ & JOIN ON rel1.key =
+        $rel1.attr1(k, a)$ & $rel2.attr2(k, b)$ & JOIN ON rel1.key =
         rel2.key &
         The keys are the same and we assume the attributes rel1.attr1 and rel2.attr2
         are different. We must join on the keys. Note that aliases are
@@ -759,7 +759,7 @@ work on any database and will provide clear error messages.
     the existence of any films within our database with the same name, but that
     are not the same film, and returns the name of said film.
     \begin{multline}
-      \exists title(films\_title(x, title) \land \exists title(films\_title(y,
+      \exists title(films.title(x, title) \land \exists title(films.title(y,
       title) \land x != y))
     \end{multline}
     With a query of this format, we can simply translate the subquery, wrap it
@@ -786,7 +786,7 @@ work on any database and will provide clear error messages.
 
     We could also repesent the previous query in a simpler form.
     \begin{multline}
-      \exists x,y(films\_title(x, title) \land films\_title(y, title)
+      \exists x,y(films.title(x, title) \land films.title(y, title)
         \land x != y)
     \end{multline}
     Which would translate to the following SQL query.
@@ -813,23 +813,23 @@ work on any database and will provide clear error messages.
     that aims to return all directors such that every film that they have
     directed is longer than one hour.
     \begin{multline}
-      \exists x(films\_director(x, director) \land \forall y(films\_director(y,
-      director) \land films\_length(y, length) \land length > '1:00:00'))
+      \exists x(films.director(x, director) \land \forall y(films.director(y,
+      director) \land films.length(y, length) \land length > '1:00:00'))
     \end{multline}
     We can think of this equivalently as following.
     \begin{multline}
       \label{eqn:except}
-      \exists x(films\_director(x, director) \land \lnot \exists y,length(\lnot(films\_director(y,
-      director) \land films\_length(y, length) \land length > '1:00:00')))
+      \exists x(films.director(x, director) \land \lnot \exists y,length(\lnot(films.director(y,
+      director) \land films.length(y, length) \land length > '1:00:00')))
     \end{multline}
 
     Using De Morgan's laws, we can infer the following
     equivalence.
     \begin{multline}
       \label{eqn:demorganequiv}
-      \lnot(films\_director(y, director) \land films\_length(y, length) 
-      \land length > '1:00:00') \equiv (films\_director(y,
-      director) \lor films\_length(y, length) \lor length > '1:00:00')
+      \lnot(films.director(y, director) \land films.length(y, length) 
+      \land length > '1:00:00') \equiv (films.director(y,
+      director) \lor films.length(y, length) \lor length > '1:00:00')
     \end{multline}
     Equation~\ref{eqn:demorganequiv} however does not offer much progress, as
     we have not yet specified how to evaluate disjunction.
@@ -859,8 +859,8 @@ work on any database and will provide clear error messages.
     a set of predicates.By example, we will refer to the subquery within
     equation~\ref{eqn:except}:
     \begin{multline}
-    \exists y(\lnot(films\_director(y,
-      director) \land films\_length(y, length) \land length > '1:00:00'))
+    \exists y(\lnot(films.director(y,
+      director) \land films.length(y, length) \land length > '1:00:00'))
     \end{multline}
     Semantically, we wish to prove that a y exists, such that y is the films
     fid, and the length of that film is above one hour. We could formulate the
@@ -1298,7 +1298,7 @@ work on any database and will provide clear error messages.
             \item Expand backend parser grammar to include more advanced use of
               SQL queries (selection \& projection);
             \item Dynamic table selection in logic - "smart" logic predicates,
-              e.g. \texttt{updated(x)} vs. \texttt{customer\_updated(x)};
+              e.g. \texttt{updated(x)} vs. \texttt{customer.updated(x)};
             \item Hook into database.
           \end{compactitem}
           & 1/11/13 \\
