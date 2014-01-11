@@ -3,7 +3,6 @@
 \usepackage{geometry}
 \usepackage{layout}
 \geometry{includeheadfoot, margin=3.18cm}
-\setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{array,booktabs}
@@ -15,6 +14,15 @@
 \usepackage{lmodern}
 \usepackage{minted}
 \usepackage[fleqn]{amsmath}
+\usepackage{hyperref}
+\usepackage[center]{caption}
+\hypersetup{
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=black
+}
 \usemintedstyle{autumn}
 \lstset{language=SQL}
 \addbibresource{report.bib}
@@ -46,45 +54,71 @@
 % Stop Latex from repositioning tables like an idiot
 \restylefloat{table}
 
-% Itemised columns
-\makeatletter
-\newcolumntype{i}[1]{%
-    >{\minipage[t]{\linewidth}\let\\\tabularnewline
-      \itemize
-      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
-      \setlength{\itemsep}{-\parsep}}%
-    p{#1}%
-    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
-\makeatother
-
-
 \begin{document}
 
-\begin{center}
-  \huge 3rd Year Group Project Final Report \\ [0.4cm]
-  \large Sean Allan, Mitchell Allison, Sam Esgate, Tom Harling, Ted Sales,
-         Max Tottenham \\ [0.2cm]
-  \vspace{0cm}
-\end{center}
+\begin{titlepage}
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the
+% horizontal lines, change thickness here
+
+\center
+
+\textsc{\LARGE Imperial College London}\\[1.5cm]
+\textsc{\Large Department of Computing}\\[0.5cm]
+\textsc{\large 3rd Year Group Project Report}\\[0.5cm]
+
+\HRule \\[0.4cm]
+{\huge \bfseries Translation of}\\[0.4cm]
+{\huge \bfseries First Order Predicate Logic to SQL}\\[0.4cm]% Title of your document
+\HRule \\[1.5cm]
+
+\begin{minipage}[t]{0.4\textwidth}
+  \begin{flushleft} \large
+    \emph{Authors:}\\
+    Sean \textsc{Allan}\\
+    Mitchell \textsc{Allison}\\
+    Sam \textsc{Esgate}\\
+    Thomas \textsc{Harling}\\
+    Ted \textsc{Sales}\\
+    Max \textsc{Tottenham}
+  \end{flushleft}
+\end{minipage}%
+%
+\begin{minipage}[t]{0.4\textwidth}
+  \begin{flushright} \large
+    \emph{Supervisor:} \\
+    Dr. Fariba \textsc{Sadri}  % Supervisor's Name
+  \end{flushright}
+\end{minipage}%
+\\[4cm]
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\renewcommand{\contentsname}{\huge Contents \vspace{1cm}}
 \tableofcontents
 \clearpage
+
+\setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
 \section{Executive Summary}
   At its heart our project is a language translator, taking as input a
   restricted version of first-order predicate logic, and producing as output
   the corresponding SQL, for a given domain. This allows any SQL relational
   database to be queried using only first-order predicate logic, without the
-  user needing to know any SQL. The implications of this open up an expansive
-  cornucopia of new avenues in the realms of teaching and computer security, or
+  user needing to know any SQL. The implications of this open up
+  new avenues in the realms of teaching and computer security, or
   alternatively integration as a component of a larger system.
 
   The predominant use-case for our project would be as a teaching tool,
   suitable for use by students studying both logic and databases, topics which
   many universities deem to be mandatory for all computing students. To
-  reinforce their understanding of logic, queries can be written and tested
+  reinforce a students understanding of logic, queries can be written and tested
   against a suitably populated database of facts. The result of these queries
-  can then be used to determine how well the student has understood the course
+  can then be used to determine how well they have understood the course
   material.
 
   The generated SQL could be used as a reference for the student, either to
@@ -109,7 +143,7 @@
   as little customer information as possible, whilst still allowing them to do
   their job. This is known as the principle of least privilege.
 
-  Our project provides the bedrock for an information security system, which
+  Our project provides the bedrock for such a security system, which
   abstracts away from any database where customer data is stored, allowing
   questions to be asked (in predicate logic) by the government and answered in
   the most desirable manner with respect to the company's privacy policy.
@@ -122,23 +156,12 @@
   analytics answers for the English description.
 
   \subsection*{Elevator Pitch (quite a hard sell)}
-  \emph{>> What we have...}
-  
-  We can create SQL queries from logic statements.
-  
-  \emph{>> Why you want it...}
-
-   It can be used to:
-   \begin{itemize}
-     \item query a database, without knowledge of SQL
-     \item teach the basics of logic and SQL
-   \end{itemize}
-
-   \emph{>> Why is it useful...}
-   \begin{itemize}
-     \item It brings some of the power of logic to regular database queries,
-     without the need to migrate to datalog.
-    \end{itemize}
+  In summary, we have created a system that creates SQL queries from logic 
+  statements. This allows you to query a database without knowing anything
+  about SQL and importantly to ignore which variant of SQL you
+  are using and get on with extracting data. It provides the basis for a
+  unique teaching tool for both SQL and logic and it brings some power
+  of logic to regular databases, without the need to migrate to datalog.
 
   What is your Project? What does it do? Why would I want to buy it? etc.
   No implementation, software engineering details, or project management
@@ -172,6 +195,7 @@ work on any database and will provide clear error messages.
   overarching goals of the project.
 
 \section{Background Research}
+\label{sec:background}
 \subsection{SQL}
   Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
   programming language designed for managing data held in relational database
@@ -180,7 +204,7 @@ work on any database and will provide clear error messages.
   \begin{itemize}
       \item
         Data Definition Language. DDL is used to define the structure of a
-        database (also known as its schema.
+        database (also known as its schema).
       \item
         Data Manipulation Language. DML is primarily used to insert, select,
         delete and update data within a database.
@@ -188,10 +212,9 @@ work on any database and will provide clear error messages.
 
   However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations
   such as 'SELECT' (without 'INSERT INTO') should not exist as part of the DML;
-  they do not manipulate the data, only query it. However, the distinction
-  between read-only and read-write is not enforced. Here we will focus only on
-  these operations (so called 'SQL-data' operations), with the aim of purely
-  querying the RDBMS without altering it.
+  they do not manipulate the data, only query it. This distinction between
+  read-only and read-write operations is not enforced, but here we will focus
+  only on read-only operations (so called 'SQL-data' operations).
 
 \subsection{Tuple Relational Calculus}
   SQL was originally based on Relational Algebra and Tuple Relational
@@ -223,29 +246,39 @@ work on any database and will provide clear error messages.
 
       Otherwise $v$ is said to be free.
       
-      Note that in query \{T | p(T)\} the variables in T must be the only free variables in p(T).
+      Note that in query \{T | p(T)\} the variables in T must be the only
+      free variables in p(T).
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
       queries. For example, suppose it was desirable to query all films from a
       particular director in a database. It would be simple to write:
 
-      \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \begin{center}
+        \{F | F $\in$ Films $\land$ F.director = "Matt Damon"\}
+      \end{center}
 
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
 
-      \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ F.title =
-      F1.title)\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films(F1.director = "Matt Damon" $\land$ 
+          F.title = F1.title)\}
+      
+        \emph{NOTE: F becomes a tuple with one element called title.}
+      \end{center}
 
       We are now able to represent projection and selection. We can also
-      represent joins. Let us suppose that we wish to find all films whose
-      director has also directed another film.
+      represent joins. Let us suppose that we wish to find all titles of films
+      whose director has also directed another film.
 
-      \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ Films(Films1.director =
-      F2.director $\land$ F1 != F2))\}
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$ 
+        Films(F1.director = F2.director $\land$ F1 != F2)
+        \\ $\land$ F.title = F1.title)\}
+      \end{center}
 
 \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
@@ -282,50 +315,59 @@ work on any database and will provide clear error messages.
       The solution chosen addresses the issues raised so far.
 
       For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
-      and n attributes, n + 1 predicates are generated as follows:
-      \begin{enumerate}
-        \item R(k)
-        \item R\_$a_{1}$(k, a1)
-        \item R\_$a_{2}$(k, a2)
-        \\ \vdots
-        \item[n + 1.] R\_$a_{n}$(k, an)
-      \end{enumerate}
+      and n attributes we generate n + 1 predicates:
+      \begin{align*}
+        \text{1:  }     & R(k)            \\
+        \text{2:  }     & R\_a_1(k, a1)   \\
+        \text{3:  }     & R\_a_2(k, a2)   \\
+                        & \vdots          \\
+        \text{n + 1:  }  & R\_a_n(k, an)
+      \end{align*}
 
-      This reduces the number of unncessary attributes in a given query, whilst
-      also addressing the representation of a tuple, by relating a tuple to its
-      primary key. This does however add the restriction that a primary key
-      must exist on a relation for it to be represented in a query.
+      Relating a tuple to its primary key gives a concise way to address it,
+      adding the slight restriction that each relation must have a primary key.
 
-    \subsection{Free and Bound Variables}
+    \subsubsection{Free and Bound Variables}
 
       Looking back to Tuple Relational Calculus in
       section~\ref{sec:formalTRC}, we will use similar semantics for free and
-      bound variables. A variable $v$ is said to be bound if formula $F$ is of
-      the format:
-
-      $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
-
-      However, in TRC, the syntax allowed for a return value, namely $t$ in the
+      bound variables. Recall the syntax for the return value in TRC, $T$ in the
       query below:
 
       \{T | p(T)\}
 
-      Without extending predicate logic, we cannot use a similar format.
-      It is important to note that in TRC, the variables that exist
-      within $T$ must be the only free variables in $p(T)$. That is to say that
-      TRC returns the set of all tuples that would result in $p(T) \models
-      \top$ when substituted for the free variables. As $T$ must be the set of
-      free variables $\in p(T)$, our predicate logic semantics for a query will
-      assume that the answer will be the set of substitutions for all free
-      variables in $p(T)$.
+      That is to say that TRC returns the set of all tuples $T$, such that 
+      $p(T) \models \top$. Without extending predicate logic, we cannot use 
+      a similar format for specifying what is returned. However, all 
+      variables that are free in $p(T)$ must be in $T$ and so we assume 
+      that all unbound variables in the query are to be returned.
 
   \section{Translation of First-order Predicate Logic to SQL}
 
-    Now that we have a syntactical map between first-order predicate logic and
-    tuple relational calculus, we can begin to define the mapping between logic
-    and SQL. First-order predicate logic
+    Section~\ref{sec:background} provides a rough translation between
+    first-order predicate logic and tuple relational calculus, and from this
+    grounding we can begin to define the mapping between logic and SQL.
+    First-order predicate logic is more expressive than SQL,
     \todo[inline]{Back this up. I believe it is true but how can it be proved?}
-    is more expressive than SQL, and so there will not always exist a
+    \todo[inline]{
+      Sam. I'm not sure this is true.
+    
+      Codd's Theorem: Relational Calculus is as expressive as Relational Algebra.
+
+      Word on the Street: Relational Calculus is equivalent to First-Order Logic.
+    
+      Therefore First-Order Logic is as expressive as Relational Algebra.
+
+      SQL is built on Relational Algebra (adds grouping, aggregation, arithmetic). 
+      
+      Therefore it makes sense that SQL is at least as expressive as First-Order Logic, if not more?
+
+      Slightly out of my depth here, but intuitively it kind of makes sense - can you get the size of a set in logic? No. Can you in SQL? Yes.
+
+      There were SQL features that we had no idea how to represent in pure logic, we found ourselves wanting to create special syntax for them (because logic cannot describe count, sum etc.)
+    }
+
+    and so there will not always exist a
     translation between logic and SQL. For this reason, this section will aim
     to describe common SQL queries or patterns in terms of their logical
     equivalence.
@@ -350,18 +392,17 @@ work on any database and will provide clear error messages.
     \begin{gather}
       \exists x(films\_title(x, title)) \label{select1}
     \end{gather}
-    The query binds $x$ and allows $title$ to remain free, meaning that our
-    answer will be the set of all subtitutions for $title$ that would result in
+    The query binds $x$ and leaves $title$ free, meaning that our
+    answer will be the set of all subtitutions for $title$ such that
     $\exists x(films\_title(x, title)) \models \top$. The '$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
-    it enforces that $title$ only need exist in one tuple, but may exist in
-    more. The predicate $films\_title$ gives the translator the scope of
+    it enforces that the substituted $title$ exists in at least one tuple.
+    The predicate $films\_title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
-    Strictly talking, the logic query actually evaluates to the following, due
-    to SQL's relational algebra foundations:
-
-    \todo{I'm certain of this, but again evidence would be useful.}
+    Strictly speaking since tuple relational calculus is based on set
+    operators, like relational algebra, and SQL implcitly uses bag operators
+    this actually evaluates to the following:
 
     \begin{minted}{sql}
 
@@ -370,10 +411,8 @@ work on any database and will provide clear error messages.
 
     \end{minted}
 
-    \todo{Is sound the right term?}
-
-    Note that it is also logically sound to express a query with no bound
-    variables, such as:
+    Note that it is perfectly valid to create a query with no bound variables,
+    such as:
     \begin{gather}
       films\_title(x, title) \label{select2}
     \end{gather}
@@ -449,6 +488,32 @@ work on any database and will provide clear error messages.
       constant term in the results, and also has the benefit of being more
       compact.
 
+      So far we have used the notion of equality to bind variables to specific
+      ground terms. We can also use equality to ensure that two variables have
+      the same value. For example, consider the following logical query.
+      \begin{gather}
+        \exists a,b,y(actor\_name(a, x) \land film\_director(b, y) \land x = b)
+      \end{gather}
+      The query returns names of all of the actors who have also directed a
+      film. This translates to the following SQL query. For now, do not dwell
+      on the cross join, as this will be explained in further detail in
+      section~\ref{sec:joins}.
+
+      \begin{minted}{sql}
+      SELECT name
+      FROM actors CROSS JOIN film
+      WHERE name = director;
+      \end{minted}
+
+      Note, that it is also possible to write the logic query in a more succint
+      manner, as follows.
+      \begin{gather}
+        \exists a,b(actor\_name(a, name) \land film\_director(b, name))
+      \end{gather}
+      Here we have removed the equality constraint, instead unifying both
+      predicates to the same variable. This is often a more desirable way to
+      specify logical queries.
+
     \subsubsection{Inequality}
 
       Suppose that we wish to check the inverse of the previous section, that
@@ -497,8 +562,8 @@ work on any database and will provide clear error messages.
         \exists x(films\_length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
       \end{gather}
 
-      Similar queries can be constructed for the other inequalities in a
-      similar format.
+      Queries can be constructed for the other inequalities in a
+      similar manner.
 
     \subsubsection{Logical Connectives}
 
@@ -542,7 +607,7 @@ work on any database and will provide clear error messages.
 
     An SQL JOIN clause is used to combine rows from two or more tables, based
     on a common field between them.~\cite{w3JOINS} Joins can enable incredibly
-    powerful queries, especially in modern database systems where information
+    powerful queries, especially where information
     is normalized (split across many relations) to minimise duplication.
 
     \subsubsection{SQL CROSS JOIN}
@@ -579,7 +644,7 @@ work on any database and will provide clear error messages.
       we could could use the following logic query.
 
       \begin{gather}
-        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \\
+        \exists fid(films\_title(fid, \text{'The Bourne Identity'}) \nonumber\\
         \land actors\_fid(aid, fid) \land actors\_name(aid, name))
       \end{gather}
 
@@ -612,11 +677,17 @@ work on any database and will provide clear error messages.
       there are two of them; without an alias, the identifier would be
       ambiguous. Below is a representation of the query in logic.
 
-      \begin{multline}
-        \exists fid, a1, a2(films(fid) \land actors\_fid(a1, fid) \land \\
-        actors\_fid(a2, fid) \land actors\_name(a1, name1)\\
-        \land actors\_name(a2, name2) \land name1 != name2) \label{largeCROSS}
-      \end{multline}
+      \begin{align}
+          \exists fid, & a1, a2(  \nonumber\\
+                       & films(fid) \land \nonumber\\
+                       & actors\_fid(a1, fid) \land actors\_fid(a2, fid) \land \nonumber\\
+                       & actors\_name(a1, name1) \land actors\_name(a2, name2) \land \nonumber\\
+                       & name1 != name2 \nonumber\\
+        ) \hspace{6mm} &  % Ignore horrendous bodge...
+        \label{largeCROSS}
+      \end{align}
+
+      \todo{Actor doesn't have an fid field. Did we do this so we wouldn't have to mess about with casting?}
 
     \subsubsection{SQL INNER JOIN}
 
@@ -644,7 +715,7 @@ work on any database and will provide clear error messages.
       type of join that must be used. Figure~\ref{fig:jointranslation} explains
       the different types of join that can result from a query.
 
-      \begin{figure}
+      \begin{table}
         \label{fig:jointranslation}
         \begin{tabular}{ | p{\dimexpr 0.22\linewidth-2\tabcolsep} |
           p{\dimexpr 0.22\linewidth-2\tabcolsep} |
@@ -676,7 +747,7 @@ work on any database and will provide clear error messages.
       \end{tabular}
         \caption{A table explaining the correct join to use for a logical query
         conjunction.}
-    \end{figure}
+    \end{table}
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
@@ -871,8 +942,6 @@ work on any database and will provide clear error messages.
     \subsubsection{Generate an SQL string based on the above IR}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
-  \subsection{Testing and continuous integration.. may want to move this section}
-    nose tests, TeamCity
     \subsection{Backend}
      \subsubsection{Interfacing with the databse}
 
@@ -965,7 +1034,7 @@ work on any database and will provide clear error messages.
 
       \subsubsection{Error Checking}
 
-      \todo{talk about other forms of error checking, not just semantic
+      \todo[inline]{talk about other forms of error checking, not just semantic
         analysis. talk about our exceptions classes, errors returned as JSON to
       the UI, how that is handled etc}
 
@@ -979,12 +1048,18 @@ work on any database and will provide clear error messages.
       caught and an error message is displayed to the user. This error would
       allow the user to quickly identify any typos or invalid predicates.
 
-      \missingfigure{A user makes a typo in their logic query raising a
-      schema compliance semantic error. TED: The UI needs to do this!}
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[width=1.0\textwidth]{images/error.png}
+        \caption{A user being informed of a semantic error: the relation
+          'cornucopia' does not exist in the schema.}
+      \end{figure}
 
 \section{Evaluation}
   Evaluate your deliverables e.g. performance, usability, etc.
   Summarise testing procedures + relevant testing results
+
+  - talk about how our plan changed, how things went wrong
 
 \section{Conclusion and Future Extensions}
   What did you learn? What might you have done differently?
@@ -995,7 +1070,7 @@ work on any database and will provide clear error messages.
     \subsubsection{Further Semantic Analysis}
     \todo[inline]{Can anyone think of anything beyond type checking?}
 
-\section{Project Management}
+\section{Project Management - MOVE ABOVE EVALUATION}
   Planning, group organisation, breakdown + task allocation etc.
 
   \subsection{Planning}
@@ -1105,10 +1180,6 @@ work on any database and will provide clear error messages.
     originally thought. This lead us to modify our feature set, reallocate
     group roles temporarily, and modify deadlines and revision subgoals.
 
-    \missingfigure{Group member Sam questioning the back-end architecture of
-      the solution in one of our regular face-to-face meetings. (take pic from
-      Chatley cwk 1)}
-
   \subsection{Tracking}
     Once an overarching plan was agreed on, we split each major goal of each
     revision in to smaller tasks. For each of these tasks, we then allocated a
@@ -1139,25 +1210,22 @@ work on any database and will provide clear error messages.
 
     \todo[inline]{TODO Citations for the above agile stuff}
 
-    \missingfigure{Picture of our Trello board here. Do we want a screenshot
-      from the first week, or towards the end? We have several versions as the
-      project progressed in our Chatley reports.}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=0.9\textwidth]{images/trello.png}
+      \caption{A screenshot of our Trello board toward the end of our project.}
+    \end{figure}
+
+  \subsection{Version Control and Automated Testing}
+  -- "You shall not pass" commit msg. Definitely needs the picture.
 
     -- Trello, Git integration
 
     -- Burndown chart
 
-    \todo[inline]{TODO Talk about how our project adapated based on user
-      feedback, version control (it might seem obvious that Git was used, but
-      we should probably mention it along with a brief reason as to why we
-      didn't use SVN/Mercurial or whatever). Continuous integration could be
-      talked about here, but perhaps that belogs in the software development
-      section? I'll see how the other sections are written first, then I'll put
-      this stuff in; Anandha places importance on the report flowing, and I
-      don't want it to feel disjointed.  Also, there should be a bit more
-      discussion about Agile, but I don't know whether it belongs here or not.
-      Maybe we should include some brief analysis on how our group found these
-      techniques useful?}
+    -- nosetests
+
+    -- CI server
 
 \section{Bibliography}
   \printbibliography
@@ -1166,12 +1234,35 @@ work on any database and will provide clear error messages.
 
   https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
+\appendix
 \section{Appendix}
   The appendix is optional, and does not count towards the 35 pages. It may
   contain thing like: User guide, installation instructions; more extensive
   design, testing, statistics etc.
 
-  \todo{Insert the filmdb schema}
+  \subsection{Installation Guide}
+
+  - Sean will do this (I have a list of dependencies ready)
+
+  - need to mention not posibul 2 instal the earlangs on the gentoo pls
+
+  \subsection{UML Diagram}
+
+  - Look online to see if this can be generated by any tools.
+
+  - Or make a reduced one, just showing main components of the project e.g.
+  parser, sql generator, semantic analyser, etc
+
+  \subsection{'filmdb' Schema}
+
+  \subsection{Design Diagrams}
+
+  - things like sean's bullshit rough drawings from Chatley reports
+
+  \subsection{Statistics}
+
+  - This is just the performance metric, profiling etc diagrams from 
+  Chatley coursework 4.
 
 %\section{Anandha waffle from his site - delete once finished report}
 %  Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
