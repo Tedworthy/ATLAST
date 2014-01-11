@@ -30,7 +30,7 @@ primary_key_query = \
 
 columns_query = \
   """
-    SELECT column_name, data_type
+    SELECT column_name, data_type, ordinal_position
     FROM information_schema.columns
     WHERE table_name = '%s'
     ORDER BY ordinal_position
@@ -67,6 +67,8 @@ def generate_db_schema(con):
       xml_column.set("name", column[0])
       xml_column_type = etree.SubElement(xml_column, "type")
       xml_column_type.text = column[1]
+      xml_column_ordinal = etree.SubElement(xml_column, "ordinal")
+      xml_column_ordinal.text = column[2]
 
   # Write the xml to a file
   tree = ET.ElementTree(root)
