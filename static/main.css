@@ -288,7 +288,7 @@ button {
   transition: all 0.1s linear;
 }
 
-#translate_button > i {
+#translate_button > i, #connect_button > i {
   margin-right: 10px;
 }
 
@@ -305,21 +305,21 @@ button {
   text-align: left;
 }
 
-#errors_container {
+.status {
   margin-top: 10px;
 }
 
-#errors_container > div:first-child {
+.status > div:first-child {
   font-weight: bold;
   color: white;
   border: 0;
 }
 
-#errors_container > div:first-child > i {
+.status > div:first-child > i {
   color: white;
 }
 
-#errors_container > div {
+.status > div {
   position: relative;
   height: 20px;
   line-height: 20px;
@@ -329,7 +329,7 @@ button {
   border-bottom: 1px solid rgb(200, 50, 50);
 }
 
-#errors_container > div > i {
+.status > div > i {
   position: absolute;
   left: 0;
   top: 0;
@@ -340,7 +340,7 @@ button {
   color: rgb(245, 0, 0);
 }
 
-#errors_container > div > span {
+.status > div > span {
   display: inline-block;
   height: 100%;
   line-height: 20px;

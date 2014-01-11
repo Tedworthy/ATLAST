@@ -245,7 +245,8 @@ $(document).ready(function() {
     "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal }
   };
 
-  $("#settings_form").click(function() {
+  $("#settings_form").submit(function(e) {
+    e.preventDefault();
     $.post(
       "/login",
       {
@@ -297,7 +298,7 @@ $(document).ready(function() {
           // Add the resulting table to the page
           removeErrorLines();
           $("#results_table").html(table);
-          sqlEditor.setValue(response.sql);
+          sqlEditor.setValue(response.sql + "\n");
         } else {
           // Something went wrong, so print the error.
           removeErrorLines();
