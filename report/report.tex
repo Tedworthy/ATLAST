@@ -131,7 +131,7 @@
   give both the predicate logic and the SQL yielding the answer to that
   question. Our project could then be used to easily check the student's work.
 
-  \todo{Too much stuff on the security... A wild Farfetch'd appears!}
+  \todo[inline]{Too much stuff on the security... A wild Farfetch'd appears!}
 
   Conversely, in the world of computer security access to data is an important
   topic, and one which has come to public attention through the recent leaks
@@ -156,6 +156,7 @@
   analytics answers for the English description.
 
   \subsection*{Elevator Pitch (quite a hard sell)}
+  \todo[inline]{I swear this is the same thing as the executive summary?}
   In summary, we have created a system that creates SQL queries from logic 
   statements. This allows you to query a database without knowing anything
   about SQL and importantly to ignore which variant of SQL you
@@ -771,26 +772,25 @@ work on any database and will provide clear error messages.
 
                  Backend\\
                  -------\\
-                 Psycogp2   - Database Connection\\
+                 psycopg2   - Database Connection\\
                  PLY        - Parser Generator\\
                  Config Parser - parsing configuration files\\
 
                  Middleware\\
                  ----------\\
-                 Rabbitmq   - Message Broker (Acts as a task Q)\\
+                 RabbitMQ   - Message Broker (acts as a task queue)\\
                  Celery     - Sets up a worker to pull jobs off task Q\\
                  Web.py     - Web Server\\
 
                  Front End\\
                  ---------\\
                  ACE        - Text Editor\\
-                 Bootstrap  - CSS (Ted seems to have got rid of this)\\
+                 jQuery     - ubiquitous JS library\\
 
                  Testing\\
                  -------\\
                  nose       - Testing Framework\\
                  paste      - Test utilities for generating web requests\\}
-                 
 
   \subsection{Front-end site}
     \subsubsection{Web server}
@@ -806,7 +806,7 @@ work on any database and will provide clear error messages.
 
     \subsubsection{Webpage plugins and libraries}
       The site made heavy use of jQuery, which greatly simplified the handling
-      of JSON data sent between the user and the server.  
+      of JSON data sent between the user and the server.
 
     \subsubsection{Graphical user interface}
       \begin{figure}[h!]
