@@ -44,6 +44,7 @@ def addToProcessingQueue(logic, schema):
     logicAST.generateSymbolTable(symbolTable)
   except Exception, e:
     # Handle symbol table exception
+    response['status'] = 'symtab_error'
     print 'SYMBOLTABLE', str(e)
     return response
 
@@ -63,6 +64,7 @@ def addToProcessingQueue(logic, schema):
     logicAST.accept(irGeneratorVisitor)
   except Exception, e:
     # Handle ir generation errors
+    response['status'] = 'irgen_error'
     print 'IRGENERATOR', str(e)
     return response
 
@@ -73,6 +75,7 @@ def addToProcessingQueue(logic, schema):
     sql = sqlGeneratorVisitor.getSQL()
   except Exception, e:
     # Handle SQL generation errors
+    response['status'] = 'sqlgen_error'
     print 'SQLGENERATOR', str(e)
     return response
 

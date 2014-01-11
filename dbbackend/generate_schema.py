@@ -38,7 +38,12 @@ columns_query = \
 
 def generate_db_schema(con):
   # Create schema entries for each table
-  tables = pg.query(con, table_query)['rows']
+  tables = pg.query(con, table_query).get('rows')
+  if tables is None:
+    msg = "ERROR: Tables query returned no data in generate_db_schema."
+    print msg
+    raise Exception(msg)
+
   dbname = pg.query(con, dbname_query)['rows'][0][0]
   root = etree.Element("root")
   dbname_node = etree.SubElement(root, "dbname")
