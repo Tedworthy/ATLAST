@@ -1928,6 +1928,32 @@ Application component runtime profiling
   are notoriously difficult to install on Gentoo, as confirmed by a visit to
   the Erlang IRC channel.
 
+  \subsection{Schemas}
+
+    \subsubsection{Films Database - filmdb}
+
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{images/site_schema.png}
+        \caption{Basic 'filmdb' schema, containing information about films,
+        their actors, directors etc.}
+      \end{figure}
+
+      The films database is based upon the example database used in teaching
+      the first year databases course.
+
+    \subsubsection{Shakespeare Database - shakespeare}
+
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{images/site_schema_shakespeare.png}
+        \caption{More advanced 'shakespeare' schema, containing information
+        about his literary works.}
+      \end{figure}
+
+      The Shakespeare database is taken from \\
+      \url{https://github.com/catherinedevlin/opensourceshakespeare}, which
+      itself is based on the Open Shakespeare Project, \\
+      \url{http://www.opensourceshakespeare.org/}.
+
   \subsection{Example Queries}
 
   The following queries make use of the \texttt{filmdb} and
@@ -2030,14 +2056,6 @@ Application component runtime profiling
 
   - Or make a reduced one, just showing main components of the project e.g.
   parser, sql generator, semantic analyser, etc
-
-  \subsection{Schemas}
-
-  \todo[inline]{Just put screenshots of the schemas from our UI here.}
-
-    \subsubsection{filmdb}
-
-    \subsubsection{shakespeare}
 
   \subsection{Design Diagrams}
 
