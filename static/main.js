@@ -33,7 +33,7 @@ $(document).ready(function() {
     // TODO
     switch (response.status) {
       case "db_error":
-
+        addErrorLine("Database error: " + response.error);
         break;
       case "parse_error":
         $.each(response.error, function(index, error) {
@@ -196,7 +196,7 @@ $(document).ready(function() {
       var row = $(this).parent();
       var table_name = header.children("span.table").text();
       var column_name = row.children("span.column").text();
-      logicEditor.insert(table_name + "_" + column_name + "(, )");
+      logicEditor.insert(table_name + "." + column_name + "(, )");
       logicEditor.selection.moveCursorBy(0, -3);
       logicEditor.focus();
     });
