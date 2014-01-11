@@ -598,11 +598,6 @@ work on any database and will provide clear error messages.
       with very little effort. The same applies to constraints seperated with
       an $\lor$ which is equivalent to OR in SQL.
 
-    \subsubsection{NULL Values}
-
-      \todo[inline]{I imagine here would be a good place to talk about NULLs.
-      Max, we should go over our specification for NULL.}
-
   \subsection{Joins}
     \label{sec:joins}
 
@@ -750,6 +745,7 @@ work on any database and will provide clear error messages.
         conjunction.}
     \end{table}
 
+
   \subsection{SQL EXISTS}
     The SQL EXISTS condition is used in a SQL query and is considered "to be
     met" if the subquery returns at least one row.\cite{technetEXISTS} The
@@ -822,15 +818,12 @@ work on any database and will provide clear error messages.
     \end{multline}
     We can think of this equivalently as following.
     \begin{multline}
-      \exists x(films\_director(x, director) \land \lnot \exists y(\lnot(films\_director(y,
+      \label{eqn:except}
+      \exists x(films\_director(x, director) \land \lnot \exists y,length(\lnot(films\_director(y,
       director) \land films\_length(y, length) \land length > '1:00:00')))
     \end{multline}
 
-    \todo{Add an SQL EXCEPT section and factor this out}
-
-    Most of this is trivial, and is covered in the previous sections. However,
-    we do face an issue with the negation of the subquery. So far we have not
-    handled negation. Using De Morgan's laws, we can infer the following
+    Using De Morgan's laws, we can infer the following
     equivalence.
     \begin{multline}
       \label{eqn:demorganequiv}
@@ -841,10 +834,9 @@ work on any database and will provide clear error messages.
     Equation~\ref{eqn:demorganequiv} however does not offer much progress, as
     we have not yet specified how to evaluate disjunction.
 
-    Instead we must look to the query's semantic meaning. We require the return
-    of the set of all tuples that do not satisfy the equation. This can be
-    achieved using the SQL EXCEPT operator, which mirrors the functionality of
-    the difference operator in relational algebra.
+    Instead we must look to the query's semantic meaning. Referring to
+    section~\ref{sec:except}, it can be seen that we need to make use of the
+    SQL EXCEPT operator.
 
     Our logical query now can be translated to the following SQL query.
     \begin{minted}{sql}
@@ -858,6 +850,44 @@ work on any database and will provide clear error messages.
       FROM films AS films2
       WHERE films2.length > '1:00:00' AND films2.director = films1.director);
     \end{minted}
+
+  \subsection{SQL EXCEPT}
+    The SQL EXCEPT operator takes the distinct rows of one query and returns
+    the rows that do not appear in a second result set.\cite{wiki:EXCEPT}
+
+    As seen in the previous example, it may be the case that we need to negate
+    a set of predicates.By example, we will refer to the subquery within
+    equation~\ref{eqn:except}:
+    \begin{multline}
+    \exists y(\lnot(films\_director(y,
+      director) \land films\_length(y, length) \land length > '1:00:00'))
+    \end{multline}
+    Semantically, we wish to prove that a y exists, such that y is the films
+    fid, and the length of that film is above one hour. We could formulate the
+    translation as below:
+    \begin{minted}{sql}
+    SELECT films.director
+    FROM films
+    WHERE length <= '1:00:00';
+    \end{minted}
+    So the answer is simply achieved by negating the condition. However, if
+    there are other constraints in the query that create a join, we do not wish
+    to negate these; we only wish to negate the conditions that restrict the
+    data after a join. The simplest method here to solve this problem is to use
+    the EXCEPT operator. The above SQL query is equivalent to the following.
+    \begin{minted}{sql}
+    SELECT films.director
+    FROM films
+    EXCEPT
+    SELECT films.director
+    FROM films
+    WHERE length > '1:00:00';
+    \end{minted}
+
+  \subsection{NULL Values}
+
+      \todo[inline]{I imagine here would be a good place to talk about NULLs.
+      Max, we should go over our specification for NULL.}
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
