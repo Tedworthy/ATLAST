@@ -797,7 +797,9 @@ work on any database and will provide clear error messages.
       The web.py framework (link to http://webpy.org/ ) was chosen to host the
       user facing site. Doing so allowed us to quickly set up a functioning site
       and concentrate on developing useful features, instead of spending a large
-      amount of time setting up a more complicated web server.
+      amount of time setting up a more complicated web server some other
+      alternatives we considered (Django) appeared to have a more complex
+      configuration.
 
       The JSON data format was used to transfer the logic input by the user to the
       server and the translated SQL to the user from the server. The format was
@@ -814,16 +816,15 @@ work on any database and will provide clear error messages.
         \caption{Web App Main Page}
       \end{figure}
 
-      The interface the the user would see and interact with had to be simple
+      The interface the user would see and interact with had to be simple
       and intuitive to use. In particular, this meant that logic queries had to
       be easy to input and the resulting SQL and result of running it on the
       database easy to read and understand.
 
       The javascript Ace http://ace.c9.io code editor was used for inputting the
-      user's
-      logic query. The editor was both extremely powerful and very easy to
+      user's logic query. The editor was both extremely powerful and very easy to
       implement. The editor provided an almost identical interface to desktop
-      applications such as Vim or Emacs. This ensured that the user 
+      applications such as Vim or Emacs. This ensured that  
 
       \begin{figure}[h!]
         \centering
@@ -834,8 +835,8 @@ work on any database and will provide clear error messages.
       Syntax highlighting. Type highlighting (dates, integers etc.)
 
       Logic symbols could be input both with key shortcuts and with dedicated
-      buttons. (Easy for new users to start using, and allows experienced users
-      faster input).
+      buttons.  This makes it easy for new users to use, and allows experienced users
+      faster input.
 
       (and name of database)!
       Database tables shown at the top for quick reference, with the ability to
@@ -851,19 +852,26 @@ work on any database and will provide clear error messages.
 
   \subsection{Middleware plugins}
     \subsubsection{Celery and RabbitMQ}
-      By default web.py is multithreaded, meaning that each users request is
-      handled in a separate thread, this allows multiple users to sent http
-      requests to the server at once. Because of this, it would indeed be
-      possible to run the translation code in the same thread that services 
-      a users web-request. However in an effort to make our project scalable we
-      decided to use a 3 tiered architecture. The web server dispatches a job to
-      RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a
-      new job arrives, it processes it and posts the result back to RabbitMQ.
-      Here RabbitMQ is acting as a message broker for the server to communicate
-      to the Celery worker. Currently our implementation assumes that all three
-      services are running on the same machine, however it is very easy to edit
-      the configuration to scale to an arbitrary number of separate workers on
-      different pysical devices.
+      By default web.py is multi-threaded, meaning that each users request is
+      handled in a separate thread, this allows multiple users to send HTTP
+      requests to the server at once. 
+      
+      Because of this, it would indeed be possible to run the translation code 
+      in the same thread that services a users web-request. However in an effort 
+      to make our project scalable we decided to use a 3 tiered architecture. 
+      
+      A User Makes a request to the web server, the web server dispatches a job 
+      to RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a 
+      new job arrives, it pulls it off the task queue, processes it and posts the 
+      result back to RabbitMQ. Here RabbitMQ is acting as a message broker for the
+      server to communicate to the Celery worker. Currently our implementation 
+      assumes that all three services are running on the same machine, however it
+      is very easy to edit the configuration so that the platform can scale to an 
+      arbitrary number of separate workers on different physical devices.
+
+      In addition, each users settings are stored in a session variable,
+      allowing for multiple users to use the site, to connect to multiple
+      databases.
 
       
 
@@ -940,7 +948,8 @@ work on any database and will provide clear error messages.
     \subsubsection{Generate an IR based on the logic AST}
 
     \subsubsection{Generate an SQL string based on the above IR}
-      Lots of scope to talk about each different construct (SELECT, SELECT FROM, JOIN, NATURAL JOIN etc.) and any optimisations we did.
+      Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
+      JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
     \subsection{Backend}
      \subsubsection{Interfacing with the databse}
@@ -1054,21 +1063,6 @@ work on any database and will provide clear error messages.
         \caption{A user being informed of a semantic error: the relation
           'cornucopia' does not exist in the schema.}
       \end{figure}
-
-\section{Evaluation}
-  Evaluate your deliverables e.g. performance, usability, etc.
-  Summarise testing procedures + relevant testing results
-
-  - talk about how our plan changed, how things went wrong
-
-\section{Conclusion and Future Extensions}
-  What did you learn? What might you have done differently?
-  How would you build on what you have done?
-
-  \subsection{Future Extensions}
-
-    \subsubsection{Further Semantic Analysis}
-    \todo[inline]{Can anyone think of anything beyond type checking?}
 
 \section{Project Management - MOVE ABOVE EVALUATION}
   Planning, group organisation, breakdown + task allocation etc.
@@ -1215,7 +1209,29 @@ work on any database and will provide clear error messages.
       \includegraphics[width=0.9\textwidth]{images/trello.png}
       \caption{A screenshot of our Trello board toward the end of our project.}
     \end{figure}
-
+ \subsection{Team Metrics and Analysis}
+Throughout the project, the team actively gathered data regarding the performance of the group. This data was analysed and helped the group to track and measure group activity week on week, enabling early detection of any pitfalls or areas where the group may be struggling. Quantitative data was key for analysing group performance as it allowed us to quickly get a sense of the status of the team. This data was brought up in our weekly meetings, and was used to ensure we stayed on track and allowing us to set and modify goals for the week ahead.
+\subsubsection{ Trello and Team Velocity}
+Our group made extensive use of Trello, which mostly provides qualitative data; however, we took some of this data in isolation and converted it into a quantitative form. 
+Each Trello card is marked with a revision number, contained within a hashtag.
+We can filter by this hashtag (e.g. \#rev1) and quickly see which tasks are marked as "to do", "in progress" and "done" for a given revision. In addition to looking at this during the implementation of a revision to get an idea on progress, we can look at it at the end of an iteration to see how much work was completed and how well we met our goals. Combining this with the difficulty of each completed task, we can derive the velocity of our work - a quantitative measurement of our work speed. 
+Week on week, we also analysed our average velocity and planned future iterations, taking in to account the amount of work completed in previous iterations. As part of quantitative analysis, we plotted this average velocity on a graph. On the whole, our velocity remained constant throughout the majority of the project, with the notable exception of small bumps at the start. The conclusions we drew from this are summarised in '3.1 - Decision Making', in which we recall using two methods of measuring progress (velocity and burndown) to influence the performance of the team.
+\subsubsection{ Lines of Code}
+One metric that some development teams use to evaluate their productivity and state of their project is to count the number of lines of code written in a given agile sprint or time frame. Each group member can also be analysed on their individual code contribution. Such statistics can be gathered from our version control logs and plotted on a simple graph.
+However, we do not believe that analysing lines of code is an accurate metric of evaluating the status of the project - good code should be brief, and such a metric encourages "copy-paste syndrome". Moreover, certain aspects of our project (e.g. the parser) are complex and whilst the code for this may not be as long as other sections, it requires a lot more thinking per line. Library imports also have the potential to inflate lines of code added, which can distort these figures.
+\subsubsection{ Test Coverage and Successful Builds}
+We found far more useful development metric to be looking at the number of test cases we pass in each iteration. As discussed in previous reports, we make use of an expansive cornucopia of tests and employ the test driven development (TDD) methodology (in addition to Agile). These test cases act as an informal specification, and along with our Trello cards, show us how many features we have implemented (passed tests), and how many we have yet to implement (failed tests). Through the use of TeamCity, our continuous integration server, feedback is given frequently on a push to the testing branch on Git, so we can continually evaluate our product. The group looked at which tests were failing to inform what features or problems should be addressed in future agile sprints.
+\subsubsection{ Other Methods}
+Two other methods we considered are lead time and cycle time. Lead time is an evaluative measurement borrowed from manufacturing - it's the amount of time between the identification of a requirement and its implementation. Cycle time is similar, except rather than being the time until the user or customer sees the feature implemented, it's the time until the developer sees it implemented. Our group decided that this was not an informative evaluative technique - not all problems are equal, and some will naturally take longer than others. We therefore preferred to measure task completion via velocity, as discussed previously.
+\subsubsection{ Continuous Evaluation}
+When we evaluated our progress on the whole we saw that the burndown graph and velocity metrics recorded were consistent. However, the issue was raised that whilst front end development was going as planned we had a significant lack of progress with the backend parser and SQL generator.
+We concluded that by joining all the tasks together the good progress in the front-end was masking the lack of progress with the backend development, this was also partly due to us underestimating the time it would take us to build an extensible infrastructure. The same issue also plagues the velocity graphs, we maintained a reasonably constant velocity throughout the project but found the ratio between the front and back end development varying.
+*
+*
+A burndown graph for the whole project. The top line represents the total cumulative number of hours remaining, with the middle and bottom lines representing the number of hours remaining for the subtasks of back-end and front-end development.
+A 'velocity' graph, displaying the total number of hours of work completed by the team on a weekly basis. The graph hits a peak on the week beginning 28/10/13, where the team cut scope, thus artificially increasing the amount of work 'completed'. The dip following this coincides with group members other commitments (coursework deadlines from other courses).
+With future iterations, we decided to give a more reliable estimate (or even over-estimate) to tasks, and to break bigger tasks into smaller chunks. After this, we noticed that the data collected was much more representative of our actual progress. We extrapolated our burndown graph for each subsection, and found that those working on front-end development were scheduled to finish prior to the final week, even before contingency time, whereas backend development was not scheduled to finish until February 2014! We drew two conclusions from this information; we needed to move one person from front-end to back-end, and we needed to reduce the subset of logical queries that we planned on translating and instead focus on ease of use, reliability and the quality of error messages returned to the user. 
+The ability to alter the specification of a project dynamically is a testament to the agile methodology that we adopted, which values, '... changing requirements, even late in development.' 
   \subsection{Version Control and Automated Testing}
   -- "You shall not pass" commit msg. Definitely needs the picture.
 
@@ -1226,6 +1242,51 @@ work on any database and will provide clear error messages.
     -- nosetests
 
     -- CI server
+ 
+\section{Evaluation}
+  Evaluate your deliverables e.g. performance, usability, etc.
+  Summarise testing procedures + relevant testing results
+
+
+
+
+  \subsection{Evaluation Using Data}
+  \subsubsection{User Interface}
+Ease of use was a key requirement of our project. As such we collected metrics of user data in order to quantify each user's interaction with the site. To measure the ease of inputting queries and to gain a picture of the learning curve of the site, we recorded the average length of inputted queries over time per user, and whether these queries were valid (shown by whether they were able to be parsed).
+Profiling code to record query length versus time taken for the user to enter it
+\subsubsection{Application Performance Analysis}
+Because the response time per query would be a large factor in a user's experience of the site, we were very interested in recording the performance of each component of our site. Thus we were able to quantify the final performance of our product at the end of the project, by calculating the average time to process each query.
+The python testing framework Nose was used with the '--with-profile' flag. This allowed us to see how long functions and pieces of code were taking to execute per query. Towards the end of the project, we had reduced each query to run in less than 1.5 seconds, which we believed was an acceptable time for a user to wait, and was also in line with other online services.
+Aside from empirical data analysis, another important factor of application performance was the perceived performance by the user. Talking to users and gathering survey data using the online SurveyMonkey platform left the team with a more meaningful representation of the relative speed of the application with respect to the users expectation, with 71.4% of users answering that the were "happy with speed of query processing", and 28.6% happy.
+\subsubsection{Verification of Logic to SQL Translation}
+By constantly adding new tests based on queries that were either produced within our group, or suggested by our supervisor and others, we quickly built up a large set of test cases. These test cases provided the assurance that our application was able to successfully handle all syntactically valid queries that a user could enter. The expected results of each test case, the SQL queries that were to be produced, were built up through conversations with users about their views of the semantic meaning of each logic query they tried. By the end of week 7, we had over  60 test cases which all successfully passed.
+
+\subsection{Use of Data for Making Decisions and Reaching Conclusions}
+
+\subsubsection{Site Usability Improvements}
+Another insight we gained from our survey was that users wanted a tutorial or information page on the site to help them learn how to use the application. This was clear to see as over 70% of users wanted such a system. In response we produced an information dialogue box which explained the key features and elements of the application.
+Survey results and information page implementation
+\subsubsection{Targeting Performance Increases}
+By using the Python nosetests profiling throughout the project, we were able to target improvements at the pieces of code which had the highest performance cost; maximising improvements per time spent writing code.
+After profiling our code we found that queries to our database took a large percentage of time to run compared to the rest of the code (1.822s/2.307s = 79%) we worked to reduce its execution time, as this would yield the largest performance benefit for time spent working. We modified our query() function so that it only read the connection parameters for the database once, whereas it had previously been reloading the parameters each time query() was called.
+Application component runtime profiling
+
+
+
+
+
+
+  - talk about how our plan changed, how things went wrong
+
+\section{Conclusion and Future Extensions}
+  What did you learn? What might you have done differently?
+  How would you build on what you have done?
+
+  \subsection{Future Extensions}
+
+    \subsubsection{Further Semantic Analysis}
+    \todo[inline]{Can anyone think of anything beyond type checking?}
+    \subsubsection{Support more database backends} 
 
 \section{Bibliography}
   \printbibliography
