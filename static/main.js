@@ -76,7 +76,7 @@ $(document).ready(function() {
         });
         break;
       default:
-
+        addErrorLine("Something very strange happened, and we're not sure what. Please let us know your logic!");
         break;
     }
   };
