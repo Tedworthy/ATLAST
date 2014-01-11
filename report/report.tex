@@ -16,6 +16,7 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{hyperref}
 \usepackage[center]{caption}
+\usepackage{pbox}
 \hypersetup{
   colorlinks,
   citecolor=black,
@@ -667,8 +668,8 @@ work on any database and will provide clear error messages.
       \begin{minted}{sql}
       SELECT a1.name,
              a2.name
-      FROM films CROSS JOIN actors AS a1
-        CROSS JOIN actors AS a2
+      FROM films JOIN actors AS a1
+        JOIN actors AS a2
       WHERE films.fid = a1.fid AND films.fid = a2.fid 
         AND a1.name != a2.name
       \end{minted}
@@ -678,13 +679,13 @@ work on any database and will provide clear error messages.
       ambiguous. Below is a representation of the query in logic.
 
       \begin{align}
+        \label{largeCROSS}
           \exists fid, & a1, a2(  \nonumber\\
                        & films(fid) \land \nonumber\\
                        & actors\_fid(a1, fid) \land actors\_fid(a2, fid) \land \nonumber\\
                        & actors\_name(a1, name1) \land actors\_name(a2, name2) \land \nonumber\\
                        & name1 != name2 \nonumber\\
         ) \hspace{6mm} &  % Ignore horrendous bodge...
-        \label{largeCROSS}
       \end{align}
 
       \todo{Actor doesn't have an fid field. Did we do this so we wouldn't have to mess about with casting?}
@@ -712,41 +713,57 @@ work on any database and will provide clear error messages.
       Fundamentally, joining two relations often occurs as the result of a
       conjunction of predicates when translating from first-order predicate
       logic. However, there are a few different circumstances which affect the
-      type of join that must be used. Figure~\ref{fig:jointranslation} explains
+      type of join that must be used. Figure~\ref{table:jointranslation} explains
       the different types of join that can result from a query.
 
+      \newcommand*{\tabbox}[2][t]{%
+            \centering\vspace{0pt}\parbox[#1][3.7\baselineskip]{6.5cm}{\strut#2\strut}}
+
       \begin{table}
-        \label{fig:jointranslation}
-        \begin{tabular}{ | p{\dimexpr 0.22\linewidth-2\tabcolsep} |
-          p{\dimexpr 0.22\linewidth-2\tabcolsep} |
-          p{\dimexpr 0.15\linewidth-2\tabcolsep} |
-          p{\dimexpr 0.41\linewidth-2\tabcolsep} | } \hline
-        LHS & RHS & Join & Explanation \\
+        \label{table:jointranslation}
+        \begin{tabular}{ | 
+          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
+        }
+        
         \hline
-        $rel\_attr1(k, a)$ & $rel\_attr2(k, b)$ & No Join & 
+        Dilemma & Explanation \\
+        \hline
+
+        \tabbox{\centering $rel\_attr1(k, a) \land rel\_attr2(k, b)$ \\ becomes \\  No Join} 
+        & 
         Both keys and relations are equal. This conjunction involves projecting
-        two elements from the same tuple, and so no join is necessary.\\ \hline
-        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, b)$ & CROSS JOIN &
-        The keys are different and the relations may or may not be equal. Here
-        we assume that a != b. As there are no common elements, a cross join
-        must occur.\\ \hline
-        $rel1\_attr1(k1, a)$ & $rel2\_attr2(k2, a)$ & JOIN ON rel1.attr1 =
-        rel2.attr2 &
+        two elements from the same tuple, and so no join is necessary.
+        \\\hline
+        
+        \tabbox{\centering $rel1\_attr1(k1, a) \land rel2\_attr2(k2, b)$ \\ becomes \\ CROSS JOIN} 
+        & 
+        The keys are different and the relations may or may not be equal. Since
+        we assume that a != b, there are no common elements, and a cross join
+        must occur.
+        \\\hline
+        
+        \tabbox{\centering $rel1\_attr1(k1, a) \land rel2\_attr2(k2, a)$ \\ becomes \\ JOIN ON \\ rel1.attr1 =
+        rel2.attr2} 
+        & 
         The keys are different, but the attributes rel1.attr1 and rel2.attr2
         are equal, thus we must join on these elements. Note that aliases are
         used to avoid ambiguity between the two sets of attributes if they
-        overlap. Note that this may be combined with the example below to
-        create a more complex join.\\ \hline
-        $rel1\_attr1(k, a)$ & $rel2\_attr2(k, b)$ & JOIN ON rel1.key =
-        rel2.key &
+        overlap.
+        \\\hline
+        
+        \tabbox{\centering $rel1\_attr1(k, a) \land rel2\_attr2(k, b)$ \\ becomes \\ JOIN ON \\ rel1.key =
+        rel2.key}
+        & 
         The keys are the same and we assume the attributes rel1.attr1 and rel2.attr2
         are different. We must join on the keys. Note that aliases are
         used to avoid ambiguity between the two sets of attributes if they
-        overlap. Note that this may be combined with the above example to
-        create a more complex join.\\ \hline
+        overlap.
+        \\\hline
+        
       \end{tabular}
-        \caption{A table explaining the correct join to use for a logical query
-        conjunction.}
+        \caption{How logic relates to joins. Rules can combine to create more
+        complex joins.}
     \end{table}
 
 \section{Design and Implementation}
@@ -760,10 +777,14 @@ work on any database and will provide clear error messages.
   interpreted there would be no large compile time which would speed up the rate
   of work.
 
+  \todo{What else did we consider? C, Qt, Django (be a burden)}
+
   The decision was taken to create a website and not a standalone application.
   Doing so would ensure that users would always be using the most up to date
   code, since all of the logic to SQL conversion would be handled on the server
-  and not on their own machines. (add more reasons if you can think of them...
+  and not on their own machines.
+  
+  (add more reasons if you can think of them...
   was making the GUI nice easier?)
 
 
