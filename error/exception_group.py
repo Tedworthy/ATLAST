@@ -16,7 +16,7 @@ class ExceptionGroup(Exception):
     try:
       msg = ' ' + str(x)
     except Exception, e:
-      msg = "<unprintable exception", type(e).__name__ + ">"
+      msg = "<unprintable exception " + type(e).__name__ + ">"
     return msg
 
   def __str__(self):
