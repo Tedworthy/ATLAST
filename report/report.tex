@@ -105,6 +105,9 @@
 
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
+\todo[inline]{IMPORTANT: Update ALL IMAGES to reflect new predicate dot syntax,
+  i.e. films.title(x, y) rather than films\_title(x, y)}
+
 \section{Executive Summary}
   At its heart our project is a language translator, taking as input a
   restricted version of first-order predicate logic, and producing as output
@@ -1539,10 +1542,79 @@ Application component runtime profiling
   design, testing, statistics etc.
 
   \subsection{Installation Guide}
+    For installation of our logic to SQL translator, we strongly recommend
+    starting with a vanilla installation of Ubuntu 12.04 LTS, for which a guide
+    follows. If you wish to install on another operating system (it has been 
+    confirmed to work on Ubuntu 13.10 and Mac OS X Mavericks),
+    limited help is given.
 
-  - Sean will do this (I have a list of dependencies ready)
+    \begin{enumerate}
+      \item Firstly, install dependencies via \texttt{apt-get}, or similar
+        package manager for your system (e.g. \texttt{brew} for Mac):
+        \begin{verbatim}
+          sudo apt-get install python-dev python-pip python-pastescript
+          python-nose postgresql libpq-dev libxml2-dev libxslt-dev
+          rabbitmq-server
+        \end{verbatim}
 
-  - need to mention not posibul 2 instal the earlangs on the gentoo pls
+      \item Secondly, install the required Python packages via \texttt{pip}.
+        This should work regardless of platform:
+        \begin{verbatim}
+          sudo pip install psycopg2 celery lxml
+        \end{verbatim}
+
+      \item Extract the Logic to SQL project tarball to your desired
+        installation folder.
+
+        Now, modify \texttt{INSTALL\_DIR/dbbackend/db.cfg} for your PostgreSQL
+        database. The format of this file is intuitive. If you decide to use
+        the default database settings (the \texttt{filmdb} database), then you
+        can test your installation by running \texttt{nosetests}. This runs
+        our test suite to confirm your installation is configured correctly.
+
+      \item The server can now be started by running the following:
+
+        \begin{verbatim}
+          celery --app=task worker &>> celery.log &
+          ./run PORT_NUM &>> webpy.log &
+        \end{verbatim}
+
+        The software will now be accessible via
+        \texttt{https://localhost:PORT\_NUM}. Logs will be available in
+        \texttt{celery.log} and \texttt{webpy.log}. Note that if you wish to
+        run the server on port 80, you must execute the \texttt{run} script
+        with superuser privileges (i.e. with \texttt{sudo}).
+
+        As the project is designed to run as a daemon, these commands can be
+        added to a boot-up script. The processes may be terminated in the
+        normal way.
+    \end{enumerate}
+
+  \subsubsection{Other Operating Systems and Dependencies}
+
+  To install our project on other operating systems, the following dependencies
+  must be met (including version tested with).
+
+  \begin{itemize}
+    \item Python, including dev tools (2.7.x) - \url{http://python.org}
+    \item Pip (1.0) - \url{http://www.pip-installer.org/en/latest/}
+    \item Nose (1.1.2) - \url{https://github.com/nose-devs/nose/}
+    \item Paste (1.7.5.1) - \url{http://pythonpaste.org/}
+    \item PostgreSQL (9.1) - \url{http://www.postgresql.org/}
+    \item libpq-dev - \url{http://www.postgresql.org/}
+    \item libxml2-dev - \url{http://www.xmlsoft.org/}
+    \item libxslt-dev - \url{http://xmlsoft.org/XSLT/}
+    \item RabbitMQ - \url{http://www.rabbitmq.com/}
+  \end{itemize}
+
+  The installation then broadly follows step 2 and onwards from the above
+  guide.
+
+  \textbf{Note:} We have determined an incompatability between our project and
+  the Gentoo operating system. We make use of the RabbitMQ message server,
+  which has a dependency on the Erlang language libraries. These libraries
+  are notoriously difficult to install on Gentoo, as confirmed by a visit to
+  the Erlang IRC channel.
 
   \subsection{UML Diagram}
 
