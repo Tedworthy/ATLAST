@@ -1025,7 +1025,7 @@ work on any database and will provide clear error messages.
 
   \subsection{Front-end site}
     \subsubsection{Web server}
-      The web.py framework (link to http://webpy.org/ ) was chosen to host the
+      The web.py framework~\cite{webpy} was chosen to host the
       user facing site. Doing so allowed us to quickly set up a functioning site
       and concentrate on developing useful features, instead of spending a large
       amount of time setting up a more complicated web server some other
@@ -1052,7 +1052,7 @@ work on any database and will provide clear error messages.
       be easy to input and the resulting SQL and the result of running it on the
       database had to be easy to read and understand.
 
-      The javascript Ace http://ace.c9.io code editor was used for inputting the
+      The javascript Ace~\cite{aceEditor} code editor was used for inputting the
 
       user's logic query. The editor was both extremely powerful and very easy
       to implement. The editor provided a familiar interface when compared with
@@ -1141,15 +1141,12 @@ work on any database and will provide clear error messages.
 
       In addition, each users settings are stored in a session variable,
       allowing for multiple users to use the site, to connect to multiple
-      databases.
-
-      
+      databases.     
 
       \missingfigure{Insert diagram of architecture here.}
 
-
-      To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
-      task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
+      To achieve this, the Celery~\cite{celery} asynchronous
+      task queue and RabbitMQ~\cite{rabbitmq} message broker were
       used. Each logic sentence to translate could be easily packaged into its
       own task and added to a queue to be translated.
 
@@ -1163,8 +1160,6 @@ work on any database and will provide clear error messages.
         @celery.task
         def addToProcessingQueue(logic, schema):
       \end{minted}
-
-
 
     \subsection{Logic to SQL translation}
 
@@ -1337,7 +1332,7 @@ work on any database and will provide clear error messages.
           'cornucopia' does not exist in the schema.}
       \end{figure}
 
-\section{Project Management - MOVE ABOVE EVALUATION}
+\section{Project Management}
   \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
 
   \subsection{Planning}
