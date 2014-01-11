@@ -34,10 +34,9 @@ class SemanticVisitor:
     lineno = node.getLineNo()
     pos = node.getPosition()
 
+    self.checkRelation(lineno, pos, relation)
     # If predicate_name > 1 in length, then it has an attribute.
     # i.e. of the form films_title(x, y) rather than films(x)
-    if len(predicate_name) > 1:
+    if not self._errors and len(predicate_name) > 1:
       attribute = predicate_name[1]
       self.checkRelationAttribute(lineno, pos, relation, attribute)
-    else:
-      self.checkRelation(lineno, pos, relation)
