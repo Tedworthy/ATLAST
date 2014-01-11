@@ -139,7 +139,7 @@ section:first-child {
 div.schema_table {
   display: inline-block;
   font-size: 14px;
-  margin: 0px 10px;
+  margin: 10px;
   vertical-align: top;
   text-align: left;
 }
@@ -264,8 +264,7 @@ button {
   margin: 10px 0px;
 }
 
-#translate_button {
-  width: 35%;
+#translate_button, #connect_button {
   margin-top: 10px;
   padding: 10px;
   font-size: 20px;
@@ -293,11 +292,11 @@ button {
   margin-right: 10px;
 }
 
-#translate_button:hover {
+#translate_button:hover, #connect_button:hover {
   background-position: 0 -15px;
 }
 
-#translate_button:active {
+#translate_button:active, #connect_button:active {
   box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.1),
               0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -391,6 +390,34 @@ th, td {
 
 th {
   font-weight: bold;
+}
+
+#settings_form > div:first-child {
+  border-top: 1px solid;
+}
+
+#settings_form > div {
+  width: 300px;
+  height: 30px;
+  line-height: 30px;
+  margin: 0 auto;
+  padding: 2px 0;
+  border-bottom: 1px solid;
+  font-size: 0;
+}
+
+#settings_form > div > span, #settings_form > div > input {
+  display: inline-block;
+  width: 45%;
+  font-size: 16px;
+  margin: 0;
+  vertical-align: middle;
+}
+
+#settings_form > div > span {
+  text-align: right;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .box_sizing {
