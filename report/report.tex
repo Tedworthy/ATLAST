@@ -751,9 +751,9 @@ work on any database and will provide clear error messages.
 
 \section{Design and Implementation}
   Anandha: Summarise key implementation details (how did you do it? what technology was
-  used and why? what other technology was considered, but not used and why?
-  Any technical challenges encountered and how addressed?  Any risks
-  anticipated, and how mitigated
+  used
+
+  \todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
   It was decided that the project would be written in Python. This was due to
   the large number of plugins and frameworks available. Also since Python is
@@ -814,16 +814,23 @@ work on any database and will provide clear error messages.
         \caption{Web App Main Page}
       \end{figure}
 
-      The interface the the user would see and interact with had to be simple
+      The interface that the user would see and interact with had to be simple
       and intuitive to use. In particular, this meant that logic queries had to
-      be easy to input and the resulting SQL and result of running it on the
-      database easy to read and understand.
+      be easy to input and the resulting SQL and the result of running it on the
+      database had to be easy to read and understand.
 
       The javascript Ace http://ace.c9.io code editor was used for inputting the
-      user's
-      logic query. The editor was both extremely powerful and very easy to
-      implement. The editor provided an almost identical interface to desktop
-      applications such as Vim or Emacs. This ensured that the user 
+      user's logic query. The editor was both extremely powerful and very easy
+      to implement. The editor provided a familiar interface when compared with
+      desktop applications such as Vim or Gedit.
+
+      The editor had a number of advantages over using a simple text box form.
+      This included syntax highlighting, line numbers, displaying hidden
+      characters and providing many different themes.
+
+      Syntax highlighting was achieved by (Ted magic). Syntax that the
+      highlighting was able to distinguish between included logic symbols,
+      brackets, data types.
 
       \begin{figure}[h!]
         \centering
@@ -831,15 +838,38 @@ work on any database and will provide clear error messages.
         \caption{Buttons to insert logic symbols}
       \end{figure}
 
-      Syntax highlighting. Type highlighting (dates, integers etc.)
-
       Logic symbols could be input both with key shortcuts and with dedicated
-      buttons. (Easy for new users to start using, and allows experienced users
-      faster input).
+      buttons. For instance, the AND symbol could be input by typing
+      forwardslash then backslash. This ensured that it was easy for new users
+      to start using the web app (using the provided buttons), whilst also
+      allowing experienced users to quickly input larger queries (using key
+      shortcuts).
 
-      (and name of database)!
-      Database tables shown at the top for quick reference, with the ability to
-      click to insert text for queries based on table attributes (easy to use!)
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[]{images/Schema.png}
+        \caption{Database name, tables and table schemas displayed}
+      \end{figure}
+
+      Information about the database schema was prominently displayed at the top
+      of the main page. The data included the database name, table names, table
+      attributes, attribute types and marking of the primary key. Without this
+      information the user could easily forget the exact names of each attribute
+      that they wanted to use, or not know the correct datatype to use in their
+      logic query.
+
+      \begin{figure}[h!]
+        \centering
+        \includegraphics[]{images/InsertLogic.png}
+        \caption{The arrow next to 'director' inserts the relevant logic}
+      \end{figure}
+
+      To further simplify and increase the speed of logic writing logic queries,
+      each table attribute had an arrow button placed next to it. When clicked,
+      the button would insert the appropriate logic syntax into the logic query
+      field. This feature helped to significantly reduce the number of syntax
+      errors caused by small spelling mistakes, and helped the user to input
+      correct logic syntax.
 
       Result returned as JSON and displayed in simple table at bottom.
 
