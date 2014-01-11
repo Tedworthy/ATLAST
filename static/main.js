@@ -98,6 +98,7 @@ $(document).ready(function() {
     } else {
       document.location.hash = "#query";
     }
+    $("#settings_result_section").addClass("hidden");
   });
 
   $(window).trigger('hashchange');
@@ -248,7 +249,7 @@ $(document).ready(function() {
   $("#settings_form").submit(function(e) {
     e.preventDefault();
     $.post(
-      "/login",
+      "/settings",
       {
         username: $("#settings_username").val(),
         password: $("#settings_password").val(),
@@ -257,9 +258,30 @@ $(document).ready(function() {
         dbname: $("#settings_dbname").val()
       }
     ).done(function(response) {
-      if (response.error === 'ok') {
-        
+      var result_line = $("#settings_result_line");
+      var class_to_remove, class_to_add;
+      var i_class_to_remove, i_class_to_add;
+      if (response.status === "ok") {
+        class_to_add = "no_errors";
+        class_to_remove = "errors";
+        i_class_to_add = "fa-check-circle";
+        i_class_to_remove = "fa-exclamation-circle";
+        result_line.children("span").text("Connected to database successfully");
+        refresh_schema();
+        logicEditor.setValue("");
+      } else {
+        class_to_add = "errors";
+        class_to_remove = "no_errors";
+        i_class_to_add = "fa-exclamation-circle";
+        i_class_to_remove = "fa-check-circle";
+        result_line.children("span").text("Couldn't connect: " +
+                                          response.error);
       }
+      result_line.removeClass(class_to_remove);
+      result_line.addClass(class_to_add);
+      result_line.children("i").removeClass(i_class_to_remove);
+      result_line.children("i").addClass(i_class_to_add);
+      result_line.parent().parent().removeClass("hidden");
     });
   });
 
@@ -436,8 +458,8 @@ $(document).ready(function() {
       temp_cursor += considered_text.substr(temp_cursor).search("\n") + 1;
       row++;
     }
-    var lastNewline = text.lastIndexOf("\n");
-    lastNewline = (lastNewline = -1) ? 0 : lastNewline;
+    var lastNewline = text.lastIndexOf("\n") + 1;
+    lastNewline = (lastNewline == -1) ? 0 : lastNewline;
     var column = cursor - lastNewline;
     return { "row": row, "column": column };
   };

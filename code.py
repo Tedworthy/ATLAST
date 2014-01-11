@@ -21,8 +21,7 @@ render = web.template.render('templates/')
 urls = (
   '/', 'Index',
   '/schema', 'DBSchema',
-  '/login', 'Login',
-  '/tables', 'Tables'
+  '/settings', 'Settings'
 )
 
 #logicForm = web.form.Form(
@@ -42,8 +41,7 @@ class Index:
   def GET(self):
     web.header('Content-Type', 'text/html; charset=utf-8', unique = True)
     #logic = logicForm()
-    settings = settingsForm()
-    return render.index(settings)
+    return render.index()
 
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
@@ -70,41 +68,26 @@ class DBSchema:
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
     return json.dumps(schema)
 
-class Tables:
-  def GET(self):
-    web.header('Content-Type','text/html; charset=utf-8', unique = True)
-    return render.tables()
-
-class Login:
-  def GET(self):
-    response = {
-        'error': 'ok',
-        'Content-Type': 'text/plain'
-      }
-    web.header('Content-Type','application/json; charset=utf-8', unique = True)
-    return json.dumps(response)
-
+class Settings:
   def POST(self):
     response = {
-        'error': '',
-        'Content-Type': 'text/plain'
+        'status': '',
+        'error': ''
       }
-    try:
-      settings = settingsForm()
-      settings.validates()
 
+    try:
       configData = web.input()
       print configData
 
       # TODO: Validate user input
       gs.generate_db_schema(pg.connect(configData))
+
       # TODO: store in session variable not global variable
       web.schema = schema.Schema()
       web.config = configData
-      response['error'] = 'ok'
+      response['status'] = 'ok'
     except Exception, e:
-      print 'Login failed'
-      print str(e)
+      response['status'] = 'error'
       response['error'] = str(e)
 
     web.header('Content-Type','application/json; charset=utf-8', unique=True)
