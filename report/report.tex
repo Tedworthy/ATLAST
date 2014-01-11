@@ -914,6 +914,14 @@ work on any database and provide clear error messages.
     \end{itemize}
 
     In our implementation, we will take NULL to be the second representation.
+
+    This is particularly useful because it allows us to postulate questions like
+    the following "List the names of all films who's director is not known" as:
+
+    \begin{multline}
+      \exists x(films.name(x,name) \land \lnot films.director(x, director) )
+    \end{multline} 
+
     It is common for SQL queries to check if a value is NULL, as the user may
     wish to exclude these values, or perform a special case if they are
     encountered.
@@ -1320,10 +1328,10 @@ work on any database and provide clear error messages.
       the logic to SQL translation uses an XML representation of the database
       schema. In this way the translation engine is platform agnostic with
       regards to which particular SQL implementation the web server is running.
-      Indeed as long as an XML file is provided it is possible to run the
-      translation engine in an 'offline' mode where it is not connected to a
-      database and it does not run the translated query, instead it simply
-      presents the query to the user.
+      Indeed as long as an XML file is provided it would be possible extend the
+      system with minimal effort to run the translation engine in an 'offline' mode 
+      where it is not connected to a database and it does not run the translated 
+      query, instead it simply presents the query to the user.
 
       This XML representation is automatically generated on program startup.
       Currently the project only supports PostgreSQL implementations, however it
@@ -1682,6 +1690,130 @@ The ability to alter the specification of a project dynamically is a testament t
     -- nosetests
 
     -- CI server
+ 
+\section{Evaluation}
+  Evaluate your deliverables e.g. performance, usability, etc.
+  Summarise testing procedures + relevant testing results
+
+
+
+
+  \subsection{Evaluation Using Data}
+  \subsubsection{User Interface}
+Ease of use was a key requirement of our project. As such we collected metrics of user data in order to quantify each user's interaction with the site. To measure the ease of inputting queries and to gain a picture of the learning curve of the site, we recorded the average length of inputted queries over time per user, and whether these queries were valid (shown by whether they were able to be parsed).
+Profiling code to record query length versus time taken for the user to enter it
+\subsubsection{Application Performance Analysis}
+Because the response time per query would be a large factor in a user's experience of the site, we were very interested in recording the performance of each component of our site. Thus we were able to quantify the final performance of our product at the end of the project, by calculating the average time to process each query.
+The python testing framework Nose was used with the '--with-profile' flag. This allowed us to see how long functions and pieces of code were taking to execute per query. Towards the end of the project, we had reduced each query to run in less than 1.5 seconds, which we believed was an acceptable time for a user to wait, and was also in line with other online services.
+Aside from empirical data analysis, another important factor of application performance was the perceived performance by the user. Talking to users and gathering survey data using the online SurveyMonkey platform left the team with a more meaningful representation of the relative speed of the application with respect to the users expectation, with 71.4% of users answering that the were "happy with speed of query processing", and 28.6% happy.
+\subsubsection{Verification of Logic to SQL Translation}
+By constantly adding new tests based on queries that were either produced within our group, or suggested by our supervisor and others, we quickly built up a large set of test cases. These test cases provided the assurance that our application was able to successfully handle all syntactically valid queries that a user could enter. The expected results of each test case, the SQL queries that were to be produced, were built up through conversations with users about their views of the semantic meaning of each logic query they tried. By the end of week 7, we had over  60 test cases which all successfully passed.
+
+\subsection{Use of Data for Making Decisions and Reaching Conclusions}
+
+\subsubsection{Site Usability Improvements}
+Another insight we gained from our survey was that users wanted a tutorial or information page on the site to help them learn how to use the application. This was clear to see as over 70% of users wanted such a system. In response we produced an information dialogue box which explained the key features and elements of the application.
+Survey results and information page implementation
+\subsubsection{Targeting Performance Increases}
+By using the Python nosetests profiling throughout the project, we were able to target improvements at the pieces of code which had the highest performance cost; maximising improvements per time spent writing code.
+After profiling our code we found that queries to our database took a large percentage of time to run compared to the rest of the code (1.822s/2.307s = 79%) we worked to reduce its execution time, as this would yield the largest performance benefit for time spent working. We modified our query() function so that it only read the connection parameters for the database once, whereas it had previously been reloading the parameters each time query() was called.
+Application component runtime profiling
+
+
+
+
+
+
+  - talk about how our plan changed, how things went wrong
+
+\section{Conclusion and Future Extensions}
+\todo[inline]{What did you learn? What might you have done differently?
+  How would you build on what you have done?}
+
+
+  At the start of this project no member of the group had any significant
+  experience programming in Python, despite this we found it very easy to pick
+  up and learn on the fly. However because of this, some of the early code we
+  wrote had to be refactored several times after learning significant features
+  of the language which allowed us to simplify it considerably, we found the use
+  of Python dictionaries to be particularly useful in many area's of the
+  codebase allowing for a well defined error handling system to be rapidly built
+  up.
+
+  Upon reflection, at the beginning of the project we started well, planning
+  in advance and making sure team members were kept up to date with the
+  technical details of how the project worked. However as time progressed this
+  changed, there was a tendency for some members of the project to work on an
+  area without informing others of their intention, or specifying abstractly
+  how they were solving certain problems. For example at the beginning of the
+  project everybody had a good understanding of how we would parse the grammar
+  for predicate logic and how we could build up a syntax tree, but later on
+  during the codegen phase a few members (whilst doing sterling work) 'ran away'
+  with the project resulting in a large chunk of code which only a few people
+  understood; this greatly reduced how many people could contribute to that part
+  of the project without spending a significant amount of time figuring out what
+  was being produced, which in turn slowed down development of certain features.
+  Really what we have learnt from this is that documentation is key, indeed if the
+  group were to do the project over again, we would have made sure that for each
+  agile sprint a group member would be tasked solely with the role of 'Technical
+  Writer' who's job it would be to produce a set of specifications for each part
+  of the project worked on that week. 
+
+
+  \subsection{Future Extensions}
+    During the course of this project we did not get time to implement several
+    features we had initially hoped to provide. 
+
+    Better user support (login system, multiple servers to do translation,
+    more databases supported, not just PostgreSQL).
+
+    \subsubsection{User Defined Predicates}
+    Initially we wanted to have a mechanism by which as user would be able to
+    define the meaning of a predicate which they could then use in their query.
+    For example being able to define a predicate
+    \texttt{stars\_in(aname,ftitle)} which
+    relates an actor with a name 'aname' staring in a film with title 'ftitle'
+
+    \begin{verbatim}
+      stars_in(aname, title) |= films_title(f,title) /\ casting_fid(c,f) /\
+      casting_aid(c,a) /\ actors_name(a,aname)
+    \end{verbatim}
+
+    \subsubsection{DML and More DDL Operations}
+    Currently we have no facility to express operations like INSERT, DROP, 
+    CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part of DML
+    there is a vast set of SQL which we are unable to provide a mapping for
+    in our system.
+    \subsubsection{Further Semantic Analysis}
+    \todo[inline]{Can anyone think of anything beyond type checking?}
+    
+    \subsubsection{Security enhancements}
+    Currently our project is vulnerable to several SQL injections. While working
+    on the project we prioritised the initial task over the security of the
+    system. Additionally, whilst the connection to our site is secured via
+    HTTPS, passwords to the database are still sent in 'plaintext' over HTTPS.
+    \subsubsection{Being able to download and save results}
+    Currently the only way the result of a query, which has been translated and
+    run, is displayed is via the web page. If a user wanted the information in a
+    different format it would be nice to provide some sort of mechanism to
+    download that data.
+    \subsubsection{Support for Additional Database Implementations} 
+    Currently our project only supports Postgres databases we would also have
+    liked to be able to support several other major implementations like MySQL and
+    Microsoft SQL Server, however due to lack of time this feature was removed
+    in favour of focusing on making sure that the logical translations produced
+    were correct. 
+    \subsubsection{UI Improvements}
+    There are several niceities which would be useful to have, increasing
+    responsiveness of the system whilst running long queries (providing the user
+    feedback to let them know that it hasn't crashed), saving a recent history
+    of queries, developing a tablet version of the site, being able to truncate
+    the ouput of queries if they are too long, caching results of recent queries
+    ot improve performace. 
+
+
+   
+    
 
 \section{Bibliography}
   \printbibliography
