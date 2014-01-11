@@ -906,6 +906,14 @@ work on any database and will provide clear error messages.
     \end{itemize}
 
     In our implementation, we will take NULL to be the second representation.
+
+    This is particularly useful because it allows us to postulate questions like
+    the following "List the names of all films who's director is not known" as:
+
+    \begin{multline}
+      \exists x(films.name(x,name) \land \lnot films.director(x, director) )
+    \end{multline} 
+
     It is common for SQL queries to check if a value is NULL, as the user may
     wish to exclude these values, or perform a special case if they are
     encountered.
