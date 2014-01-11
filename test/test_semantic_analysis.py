@@ -44,22 +44,23 @@ class TestSemanticAnalysis():
       del error["position"]
       del error["line"]
 
+    print error
+    print expected_errors
     return sorted(errors) == sorted(expected_errors)
 
   @with_setup(setup_func, teardown_func)
   def test_invalid_relation(self):
     logic = "TONYFIELD(x)".decode('utf-8')
     errors = [{ "type": "SemanticSchemaRelationException",
-                "relation": "TONYFIELD"}]
+                "relation": "TONYFIELD" }]
 
     assert self.raises_errors(logic, errors), self._errormsg
 
   @with_setup(setup_func, teardown_func)
   def test_invalid_relation_attr(self):
     logic = "∃x(TONYFIELD_likeshaskell(x, y))".decode('utf-8')
-    errors = [{ "type": "SemanticSchemaAttributeException",
-                "relation": "TONYFIELD",
-                "attribute": "likeshaskell"}]
+    errors = [{ "type": "SemanticSchemaRelationException",
+                "relation": "TONYFIELD" }]
     assert self.raises_errors(logic, errors), self._errormsg
 
   @with_setup(setup_func, teardown_func)
@@ -72,19 +73,17 @@ class TestSemanticAnalysis():
 
   @with_setup(setup_func, teardown_func)
   def test_valid_with_invalid_schema(self):
-    logic = "∃x,a(films_title(x, y) ∧ tedsales_breakscode(a, z))".decode('utf-8')
-    errors = [{ "type": "SemanticSchemaAttributeException",
-                "relation": "tedsales",
-                "attribute": "breakscode"}]
+    logic = "∃x,a(films_title(x,y) ∧ tedsales_breakscode(a,z))".decode('utf-8')
+    errors = [{ "type": "SemanticSchemaRelationException",
+                "relation": "tedsales" }]
     assert self.raises_errors(logic, errors), self._errormsg
 
   @with_setup(setup_func, teardown_func)
   def test_multiple_schema_errors(self):
     logic = "∃x,a(films_title(x, y) ∧ tedsales_breakscode(a, z)) ∧ \
-    suchtestswow(c)".decode('utf-8')
-    errors = [{ "type": "SemanticSchemaAttributeException",
-                "relation": "tedsales",
-                "attribute": "breakscode"},
+             suchtestswow(c)".decode('utf-8')
+    errors = [{ "type": "SemanticSchemaRelationException",
+                "relation": "tedsales" },
               { "type": "SemanticSchemaRelationException",
                 "relation": "suchtestswow" }]
     assert self.raises_errors(logic, errors), self._errormsg
