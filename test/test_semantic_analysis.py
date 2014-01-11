@@ -58,14 +58,14 @@ class TestSemanticAnalysis():
 
   @with_setup(setup_func, teardown_func)
   def test_invalid_relation_attr(self):
-    logic = "∃x(TONYFIELD_likeshaskell(x, y))".decode('utf-8')
+    logic = "∃x(TONYFIELD.likeshaskell(x, y))".decode('utf-8')
     errors = [{ "type": "SemanticSchemaRelationException",
                 "relation": "TONYFIELD" }]
     assert self.raises_errors(logic, errors), self._errormsg
 
   @with_setup(setup_func, teardown_func)
   def test_invalid_attr(self):
-    logic = "∃x(films_boring(x, y))".decode('utf-8')
+    logic = "∃x(films.boring(x, y))".decode('utf-8')
     errors = [{ "type": "SemanticSchemaAttributeException",
                 "relation": "films",
                 "attribute": "boring"}]
@@ -73,14 +73,14 @@ class TestSemanticAnalysis():
 
   @with_setup(setup_func, teardown_func)
   def test_valid_with_invalid_schema(self):
-    logic = "∃x,a(films_title(x,y) ∧ tedsales_breakscode(a,z))".decode('utf-8')
+    logic = "∃x,a(films.title(x,y) ∧ tedsales.breakscode(a,z))".decode('utf-8')
     errors = [{ "type": "SemanticSchemaRelationException",
                 "relation": "tedsales" }]
     assert self.raises_errors(logic, errors), self._errormsg
 
   @with_setup(setup_func, teardown_func)
   def test_multiple_schema_errors(self):
-    logic = "∃x,a(films_title(x, y) ∧ tedsales_breakscode(a, z)) ∧ \
+    logic = "∃x,a(films.title(x, y) ∧ tedsales.breakscode(a, z)) ∧ \
              suchtestswow(c)".decode('utf-8')
     errors = [{ "type": "SemanticSchemaRelationException",
                 "relation": "tedsales" },
