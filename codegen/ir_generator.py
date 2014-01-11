@@ -331,7 +331,7 @@ class IRGenerator:
   def visit(self, node):
     print '*** IR Generator: Begin PredicateNode ***'    
     # Split out the attributes of the predicate
-    attributes = node.getIdentifier().split('_')
+    attributes = node.getIdentifier().split('.')
     # Get the table name
     relation = RelationNode(attributes[0])
     # Retrieve the primary keys from the schema

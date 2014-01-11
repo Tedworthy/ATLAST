@@ -29,7 +29,7 @@ class SemanticVisitor:
   @v.when(ast.PredicateNode)
   def visit(self, node):
     # Get information about the predicate
-    predicate_name = node.getIdentifier().split('_')
+    predicate_name = node.getIdentifier().split('.')
     relation = predicate_name[0]
     lineno = node.getLineNo()
     pos = node.getPosition()
