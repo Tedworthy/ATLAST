@@ -63,7 +63,7 @@ ace.define(
                     regex: /[\t \n\r]+/
                 }, {
                     token: "variable",
-                    regex: /[A-Za-z_][A-Za-z_0-9]*/,
+                    regex: /[A-Za-z_][A-Za-z_\.0-9]*/,
                     next: "quantifier_identifier_list"
                 }
             ],
@@ -109,7 +109,7 @@ ace.define(
                     next: "atomicformula_relop"
                 }, {
                     token: "variable",
-                    regex: /[A-Za-z_][A-Za-z_0-9]*/,
+                    regex: /[A-Za-z_][A-Za-z_\.0-9]*/,
                     next: "atomicformula_identifier"
                 }
             ],
@@ -155,7 +155,7 @@ ace.define(
                     next: "start"
                 }, {
                     token: "variable",
-                    regex: /[A-Za-z_][A-Za-z_0-9]*/,
+                    regex: /[A-Za-z_][A-Za-z_\.0-9]*/,
                     next: "start"
                 }
             ],
@@ -177,7 +177,7 @@ ace.define(
                     next: "atomicformula_predicate_term_list"
                 }, {
                     token: "variable",
-                    regex: /[A-Za-z_][A-Za-z_0-9]*/,
+                    regex: /[A-Za-z_][A-Za-z_\.0-9]*/,
                     next: "atomicformula_predicate_term_list"
                 }
             ],

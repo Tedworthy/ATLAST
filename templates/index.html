@@ -74,7 +74,7 @@ $def with (settingsForm)
             <button id="not_button">&not;</button>
           </div>
           <form id="logic-form" name="logic-form" action="/" method="post">
-            <div id="logic">∃x(films_title(x, y) ∧ films_director(x, z))</div>
+            <div id="logic">∃x(films.title(x, y) ∧ films.director(x, z))</div>
             <button type="submit" id="translate_button">
               <i class="fa fa-bolt"></i><span>Translate to SQL</span>
             </button>
@@ -103,7 +103,7 @@ $def with (settingsForm)
           An example statement would be of the form:
         </p>
         <ul>
-          <li>&#8707;key(&lt;table_name&gt;_&lt;field_name&gt;(key,value))</li>
+          <li>&#8707;key(&lt;table_name&gt;.&lt;field_name&gt;(key,value))</li>
         </ul>
         <p>
           The above query binds 'key' to be a row in the table_name specified, 
