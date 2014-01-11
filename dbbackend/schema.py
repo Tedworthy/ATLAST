@@ -2,7 +2,14 @@ import xml.etree.ElementTree as ET
 
 class Schema():
   def __init__(self, filename='dbbackend/schema.xml'):
-    self._tree = ET.parse(filename)
+    try:
+      self._tree = ET.parse(filename)
+    except Exception, e:
+      msg = "ERROR: Invalid or missing schema.xml; please run 'python " + \
+        "dbbackend/generate_schema.py' from the root directory."
+      print msg
+      raise Exception(msg)
+
     self._root = self._tree.getroot()
     self._data = self.gatherTableData()
 
