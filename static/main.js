@@ -39,13 +39,38 @@ $(document).ready(function() {
         $.each(response.error, function(index, error) {
           switch (error.type) {
             case "ParserEOIException":
-              addErrorLine("Logic input finished too soon. Did you perhaps " +
+              addErrorLine("Logic input finished too soon, did you perhaps " +
                            "forget an ending bracket or quote mark?");
               break;
             case "ParserTokenException":
-              addErrorLine("Line " + error.lineNo + ", position " +
-                           error.position + ": Unexpected '" + error.token +
+              addErrorLine("Line " + error.line + ", position " +
+                           error.position + ": unexpected '" + error.token +
                            "', perhaps check your logic syntax?");
+              break;
+            case "LexerException":
+              addErrorLine("Line " + error.line + ", position " +
+                           error.position + ": invalid character '" +
+                           error.character + "' encountered, perhaps remove " +
+                           "it or check your logic syntax?");
+              break;
+          }
+        });
+        break;
+      case "semantic_error":
+        $.each(response.error, function (index, error) {
+          switch (error.type) {
+            case "SemanticSchemaRelationException":
+              addErrorLine("Line " + error.line + ", position " +
+                           error.position + ": relation '" + error.relation +
+                           "' does not exist in the database, perhaps check " +
+                           "the schema above?");
+              break;
+            case "SemanticSchemaAttributeException":
+              addErrorLine("Line " + error.line + ", position " +
+                           error.position + ": attribute '" + error.attribute +
+                           "' does not exist in the relation '" +
+                           error.relation + "', perhaps check the schema " +
+                           "above?");
               break;
           }
         });
@@ -86,6 +111,7 @@ $(document).ready(function() {
   sqlEditor.getSession().setMode("ace/mode/sql");
   sqlEditor.setReadOnly(true);
   sqlEditor.setOptions({
+    minLines: 3,
     maxLines: 10
   });
 

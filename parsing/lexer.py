@@ -108,7 +108,5 @@ def getLexer():
   return lexer
 
 def getPosition(lexer):
-  last_newline = lexer.lexdata.rfind('\n', 0, lexer.lexpos) + 1
-  last_newline = max(0, last_newline)
-  position = lexer.lexpos - last_newline + 1
+  return lexer.lexpos - lexer.lexdata.rfind('\n', 0, lexer.lexpos)
 
