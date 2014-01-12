@@ -1502,17 +1502,15 @@ work on any database and provide clear error messages.
 
 
 \section{Evaluation}
-  \todo[inline]{Evaluate your deliverables e.g. performance, usability, etc.
-  Summarise testing procedures + relevant testing results}
 
-  \subsection{Evaluation Using Data}
+  \subsection{Data Driven Methods}
+    We used several metrics to evaluate usability and performance of our project
     \subsubsection{User Interface}
-    Ease of use was a key requirement of our project. As such we collected
-    metrics of user data in order to quantify each user's interaction with the
-    site. To measure the ease of inputting queries and to gain a picture of the
-    learning curve of the site, we recorded the average length of inputted
-    queries over time per user, and whether these queries were valid (shown
-    by whether they were able to be parsed).
+    The usability of our site was of paramount importance, as one of our main
+    use cases was for the project to be used as a teaching tool. In order to try
+    and quantify each users interaction with our project we collected metrics
+    such as, length of inputted queries over time (are they getting more
+    complex?) and validity of the queries.
 
     \begin{minted}{python}
       # Profiling code to record query length versus time taken
@@ -1524,26 +1522,30 @@ work on any database and provide clear error messages.
     \end{minted}
     
     \subsubsection{Application Performance Analysis}
+
     Because the response time per query would be a large factor in a user's
     experience of the site, we were very interested in recording the performance
-    of each component of our site. Thus we were able to quantify the final
+    of each component of our site. We were able to quantify the final
     performance of our product at the end of the project, by calculating the
     average time to process each query.
 
-    The python testing framework Nose was used with the '--with-profile' flag.
-    This allowed us to see how long functions and pieces of code were taking to
-    execute per query. Towards the end of the project, we had reduced each query
-    to run in less than 1.5 seconds, which we believed was an acceptable time
-    for a user to wait, and was also in line with other online services.
+    We used the python testing framework Nose with the '--with-profile' flag to
+    figure out how long functions and sections of code were taking. 
+    After profiling our code we found that queries to our database took a large
+    percentage of time to run compared to the rest of the code (1.822s/2.307s =
+    79\%) we worked to reduce its execution time, as this would yield the largest
+    performance benefit for time spent working. 
+    We modified our query() function so that it only read the connection 
+    parameters for the database once, whereas it had previously been reloading 
+    the  parameters from disk each time query() was called.  
 
-    Aside from empirical data analysis, another important factor of application
-    performance was the perceived performance by the user. Talking to users and
-    gathering survey data using the online SurveyMonkey platform left the team
-    with a more meaningful representation of the relative speed of the
-    application with respect to the users expectation, with 71.4% of users
-    answering that the were "happy with speed of query processing", and 28.6%
-    happy.
-
+    Towards the  end of the project we managed to cut the end-to-end response time 
+    down to  around 1.5 seconds per query (ignoring network latency) which was 
+    fast enough that the system felt qualitatively responsive. In order to obtain 
+    this qualitative information, we used the online service SurveyMonkey to record 
+    what users though with 71.4\% of users answering that the were "happy with speed
+    of query processing", and 28.6\% not happy. 
+   
     \subsubsection{Verification of Logic to SQL Translation}
     By constantly adding new tests based on queries that were either produced
     within our group, or suggested by our supervisor and others, we quickly
@@ -1553,30 +1555,19 @@ work on any database and provide clear error messages.
     the SQL queries that were to be produced, were built up through conversations
     with users about their views of the semantic meaning of each logic query
     they tried. By the end of week 7, we had over  60 test cases which all
-    successfully passed.
+    successfully passed at the time of writing we have .
 
-  \subsection{Use of Data for Making Decisions and Reaching Conclusions}
     \subsubsection{Site Usability Improvements}
     Another insight we gained from our survey was that users wanted a tutorial
     or information page on the site to help them learn how to use the
     application. This was clear to see as over 70% of users wanted such a
     system. In response we produced an information dialogue box which explained
     the key features and elements of the application.
-
+    \todo{insert fig here}
     Survey results and information page implementation
  
     \subsubsection{Targeting Performance Increases}
-    By using the Python nosetests profiling throughout the project, we were
-    able to target improvements at the pieces of code which had the highest
-    performance cost; maximising improvements per time spent writing code.
 
-    After profiling our code we found that queries to our database took a large
-    percentage of time to run compared to the rest of the code (1.822s/2.307s =
-    79%) we worked to reduce its execution time, as this would yield the largest
-    performance benefit for time spent working. We modified our query() function
-    so that it only read the connection parameters for the database once,
-    whereas it had previously been reloading the parameters each time query()
-    was called.
 
     Application component runtime profiling
 
@@ -1776,32 +1767,31 @@ The ability to alter the specification of a project dynamically is a testament t
  
 
 \section{Conclusion and Future Extensions}
-\todo[inline]{What did you learn? What might you have done differently?
-  How would you build on what you have done?}
-
 
   At the start of this project no member of the group had any significant
   experience programming in Python, despite this we found it very easy to pick
-  up and learn on the fly. However because of this, some of the early code we
-  wrote had to be refactored several times after learning significant features
-  of the language which allowed us to simplify it considerably, we found the use
-  of Python dictionaries to be particularly useful in many area's of the
-  codebase allowing for a well defined error handling system to be rapidly built
-  up.
-
-  Upon reflection, at the beginning of the project we started well, planning
-  in advance and making sure team members were kept up to date with the
-  technical details of how the project worked. However as time progressed this
-  changed, there was a tendency for some members of the project to work on an
-  area without informing others of their intention, or specifying abstractly
-  how they were solving certain problems. For example at the beginning of the
-  project everybody had a good understanding of how we would parse the grammar
-  for predicate logic and how we could build up a syntax tree, but later on
-  during the codegen phase a few members (whilst doing sterling work) 'ran away'
+  up and learn on the fly. However this lead to some of the early code we
+  wrote being refactored several times after learning significant features
+  of the language which allowed us to simplify the code considerably, we found 
+  the use of Python dictionaries to be invaluable, for example it allowed us to 
+  rapidly build a well defined error handling system with minimal effort.
+  
+  
+  One stumbling block we encountered was a lack of self documentation half way
+  through the project. Upon reflection, at the beginning of the project we 
+  started well, planning in advance and making sure team members were kept up 
+  to date with the technical details of how the project worked. However as time 
+  progressed this changed, there was a tendency for some members of the project 
+  to work on an area without informing others of their intention, or specifying 
+  abstractly how they were solving certain problems. For example at the beginning 
+  of the project everybody had a good understanding of how we would parse the 
+  grammar for predicate logic and how we could build up a syntax tree, but later 
+  on during the codegen phase a few members (whilst doing sterling work) 'ran away'
   with the project resulting in a large chunk of code which only a few people
   understood; this greatly reduced how many people could contribute to that part
   of the project without spending a significant amount of time figuring out what
-  was being produced, which in turn slowed down development of certain features.
+  that piece of code did, which in turn slowed down development of certain
+  features while everyone took time to figure out how the project worked.
   Really what we have learnt from this is that documentation is key, indeed if the
   group were to do the project over again, we would have made sure that for each
   agile sprint a group member would be tasked solely with the role of 'Technical
@@ -1813,53 +1803,54 @@ The ability to alter the specification of a project dynamically is a testament t
     During the course of this project we did not get time to implement several
     features we had initially hoped to provide. 
 
-    Better user support (login system, multiple servers to do translation,
-    more databases supported, not just PostgreSQL).
-
-    \subsubsection{User Defined Predicates}
+    \subsubsection{Language Features}
     Initially we wanted to have a mechanism by which as user would be able to
     define the meaning of a predicate which they could then use in their query.
-    For example being able to define a predicate
-    \texttt{stars\_in(aname,ftitle)} which
-    relates an actor with a name 'aname' staring in a film with title 'ftitle'
+    This would help with creating quick shortcuts and cut down on the amount of 
+    repeated logic a user would have to write. For example being able to define a 
+    predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
+    'aname' staring in a film with title 'ftitle'
 
     \begin{verbatim}
       stars_in(aname, title) |= films_title(f,title) /\ casting_fid(c,f) /\
       casting_aid(c,a) /\ actors_name(a,aname)
     \end{verbatim}
 
-    \subsubsection{DML and More DDL Operations}
-    Currently we have no facility to express operations like INSERT, DROP, 
-    CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part of DML
-    there is a vast set of SQL which we are unable to provide a mapping for
-    in our system.
-    \subsubsection{Further Semantic Analysis}
-    \todo[inline]{Can anyone think of anything beyond type checking?}
+
+    Also currently we have no facility to express SQL operations like INSERT, 
+    DROP, CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part 
+    of DML, there is a vast set of SQL which we are unable to provide a mapping 
+    for in our system. Perhaps a set of special predicates could be defined in
+    order to facilitate these operators.
     
-    \subsubsection{Security enhancements}
-    Currently our project is vulnerable to several SQL injections. While working
-    on the project we prioritised the initial task over the security of the
-    system. Additionally, whilst the connection to our site is secured via
-    HTTPS, passwords to the database are still sent in 'plaintext' over HTTPS.
-    \subsubsection{Being able to download and save results}
-    Currently the only way the result of a query, which has been translated and
-    run, is displayed is via the web page. If a user wanted the information in a
-    different format it would be nice to provide some sort of mechanism to
-    download that data.
-    \subsubsection{Support for Additional Database Implementations} 
-    Currently our project only supports Postgres databases we would also have
-    liked to be able to support several other major implementations like MySQL and
+    \subsubsection{Web Frontend Features}
+    There are a few security issues with our project as it stands, currently our 
+    project is vulnerable to several SQL injections. While working on the project
+    we prioritised the translation task over the security of the system, if the 
+    project were to be taken further these issues would need to be addressed. 
+    Additionally, whilst the connection to our site is secured via HTTPS, 
+    passwords to the database are still sent in 'plaintext' over HTTPS.
+    
+
+    There are a few niceities which would be useful to have but are not vital
+    these are not limited too: increasing responsiveness of the system whilst 
+    running long queries (providing the user feedback to let them know that the
+    system hasn't crashed), saving a recent history of queries, developing a 
+    tablet version of the site, being able to truncate the output of queries if 
+    they are too long, caching results of recent queries to improve performance,
+    and having a mechanism to download the results of a logic query.  
+
+    
+    \subsubsection{Backend Features} 
+    We would have liked our project to be able to support several database
+    implementations. Currently it only supports Postgres databases, we had
+    planned support several other major implementations like MySQL and
     Microsoft SQL Server, however due to lack of time this feature was removed
     in favour of focusing on making sure that the logical translations produced
     were correct. 
-    \subsubsection{UI Improvements}
-    There are several niceities which would be useful to have, increasing
-    responsiveness of the system whilst running long queries (providing the user
-    feedback to let them know that it hasn't crashed), saving a recent history
-    of queries, developing a tablet version of the site, being able to truncate
-    the ouput of queries if they are too long, caching results of recent queries
-    ot improve performace. 
-
+   
+    Currently there is no scope for type checking in the semantic analysis phase
+    of the SQL generation,\todo{asdflas;d}
 
    
     
