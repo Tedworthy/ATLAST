@@ -1240,14 +1240,43 @@ work on any database and provide clear error messages.
       that holds information needed to locate and relocate a program's symbolic
       definitions and references.\cite{symtab}
 
-      Below are justifications for the use of a symbol table, and
-      implementation details.
+      Below are justifications for the use of a symbol table.
 
       \paragraph{Scoping}
+        In a logic query, is is possible to reuse variable names in an inner
+        scope that exist in an outer scope. For example, take the following
+        query in logic.
+        \begin{multline}
+        \exists x(films.title(x, y) \land \forall x(films.title(x, y) \land
+        films.length(x, z) \land z > '1:00:00)) \label{eqn:scoping}
+        \end{multline}
+        This query returns the set of all singleton tuples $\{films.title\}$ such
+        that for all films with the same title, they all are longer than one
+        hour. Note that we quantify $x$ twice, once with an existential
+        quantifier and once with a universal quantifier. For this reason, the
+        inner subquery's definition of x is different to the outer subquery's.
+        For this reason, we must be able to distinguish between different
+        scopes. This can be achieved by using a hierarchical symbol table.
 
       \paragraph{Unification}
+        Similarly, if two variables are in the same scope, it is important that
+        they are unified; both variables should refer to the same underlying
+        value. Referring back to equation~\ref{eqn:scoping}, even
+        though $y$ exists within both scopes, because it is not redefined
+        within the inner scope, each instance of the variable refers to the 
+        same value.
 
       \paragraph{Free and Bound Variables}
+        We typically rely on a variable being defined by a quantifier, but
+        there are many occasions where this is not the case. Referring back to
+        equation~\ref{eqn:scoping} again, we see that $y$ is returned as it a
+        free variable, a convention that was agreed on back in
+        section~\ref{sec:freebound}. As $y$ has not been defined before, it is
+        necessary to add the declaration of $y$ into the symbol table, in a top
+        level 'global scope'. This way, any redeclarations of $y$ are caught
+        lower in the table, but any instance of $y$ that exists outside of a
+        scope in which it has been redeclared will have a reference to this
+        global instance.
 
     \todo{We don't need to talk about semantic analysis here, we do it in the
     error checking section of backend instead.}
