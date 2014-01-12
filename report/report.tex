@@ -1296,12 +1296,12 @@ work on any database and provide clear error messages.
 
       Once symbol table generation has been performed, we then must generate an
       intermediate representation of the logic query. This representation can
-      be seen as a generic format which represents a relational algebra
+      be seen as a generic format that represents a relational algebra
       query. The IR contains four data structures, explained below.
 
       \begin{itemize}
 
-          \item Relation Attribute Pairs
+          \item Relation Attribute Pairs \\
             The relation-attribute pairs list is equivalent to the attributes
             provided to the relational algebra projection operator. It is
             organised simply as a python array of RelationAttribute objects.
@@ -1311,7 +1311,7 @@ work on any database and provide clear error messages.
             aliased elsewhere in the translator and still be reflected in the
             end projection.
 
-          \item Relation Tree
+          \item Relation Tree \\
             The relation tree can be thought of as all of the relations
             involved in a join in a relational algebra expression. It is
             structured as a tree, making use of join nodes to describe the
@@ -1319,13 +1319,13 @@ work on any database and provide clear error messages.
             the tree will also contain information about the join, for example
             which conditions should be related to the join.
 
-          \item Constraint Tree
+          \item Constraint Tree \\
             The constraint tree is equivalent to the conditions contained
             within the relational algebra selection operator. Again, it is
             structured as a tree to enforce the precedence of binary operators
             (And, Or).
 
-          \item Bind Constraint Tree
+          \item Bind Constraint Tree \\
             The bind constraint tree is similar to the constraint tree, except
             it exclusively contains equality constraints that unify variables.
             It is necessary to split these constraints from any previous as
@@ -1334,9 +1334,61 @@ work on any database and provide clear error messages.
 
       \end{itemize}
 
+      As the tree is traversed from the children up, multiple intermediate
+      representations are constructed. At a reduction node (for example, an
+      AndNode), the intermediate representations are combined in a way that
+      preserves the structure and data of all of its children, as explained in
+      table~\ref{ircomb}.
+
+      \begin{table}
+        \begin{tabular}{ | 
+          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
+        }
+
+        \hline
+        Condition & Type of IR Merge \\
+        \hline
+
+        Conjunction of predicates or constraints causes no join.
+        & 
+        The relation attribute pairs are combined, the constraint trees are
+        combined with an AndNode as are the bind constraint trees. The relation
+        tree remains the same as the left IR's relation tree. This is because
+        as there is no join, it must be the case that either both
+        relation trees are the same, or that the right IR does not have a
+        relation tree.
+        \\\hline
+        Conjunction of predicates or constraints causes an equi-join.
+        & 
+        The relation attribute pairs are combined, the constraint trees are
+        combined with an AndNode as are the bind constraint trees. The relation
+        trees are combined with an EquiJoin node, complete with a list of
+        constraints that constitute for the equality constraints in the join.
+        \\\hline
+        Conjunction of predicates or constraints causes a cross join
+        & 
+        The relation attribute pairs are combined, the constraint trees are
+        combined with an AndNode as are the bind constraint trees. The relation
+        trees are combined with an CrossJoin node.
+        \\\hline
+        Disjunction of a predicate and a constraint
+        & 
+        Disjunction is handled using De Morgan's laws. Due to this, this case
+        is handled in a similar manner to the previous solutions.
+        \\\hline
+      \end{tabular}
+        \caption{A description of how intermediate representations are combined
+          under certain conditions.}
+        \label{ircomb}
+    \end{table}
+
       \subsubsection{Generating SQL}
-      Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
-      JOIN, NATURAL JOIN etc.) and any optimisations we did.
+        Once an intermediate representation has been constructed, it can then
+        be used to generate an SQL query. It is worth noting that the IR has
+        been designed to be a generic representation of relational algebra, and
+        so there is potential for other query languages to be constructed.
+
 
     \subsection{Back End}
 
