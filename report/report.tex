@@ -109,9 +109,6 @@
 
 \setlength{\parskip}{0.3cm} \setlength{\parindent}{0cm}
 
-\todo[inline]{IMPORTANT: Update ALL IMAGES to reflect new predicate dot syntax,
-  i.e. films.title(x, y) rather than films\_title(x, y)}
-
 \section{Executive Summary}
   At its heart our project is a language translator, taking as input a
   restricted version of first-order predicate logic, and producing as output
@@ -998,7 +995,7 @@ work on any database and will provide clear error messages.
     \subsubsection{Graphical user interface}
       \begin{figure}[h!]
         \includegraphics[width=\textwidth]{images/site_query.png}
-        \caption{Web App Main Page}
+        \caption{Main `Query' page}
       \end{figure}
 
       The interface that the user would see and interact with had to be simple
@@ -1021,8 +1018,8 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/LogicSymbols.png}
-        \caption{Buttons to insert logic symbols}
+        \includegraphics[width=0.5\textwidth]{images/site_click_to_insert.png}
+        \caption{`Click to insert' buttons for easily entering logic symbols}
       \end{figure}
 
       Logic symbols could be input both with key shortcuts and with dedicated
@@ -1034,8 +1031,8 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/Schema.png}
-        \caption{Database name, tables and table schemas displayed}
+        \includegraphics[width=\textwidth]{images/site_schema.png}
+        \caption{Database name, tables and table schema representation}
       \end{figure}
 
       Information about the database schema was prominently displayed at the top
@@ -1047,8 +1044,15 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/InsertLogic.png}
-        \caption{The arrow next to 'director' inserts the relevant logic}
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[]{images/site_schema_insert.png}
+        \end{minipage}%
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{images/site_schema_inserted.png}
+        \end{minipage}
+        \caption{Before and after screenshots of predicate insertion}
       \end{figure}
 
       To further simplify and increase the speed of writing logic queries,
