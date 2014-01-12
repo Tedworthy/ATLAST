@@ -138,7 +138,7 @@
 
   \todo[inline]{Too much stuff on the security... A wild Farfetch'd appears!}
 
-  Conversely, in the world of computer security access to data is an important
+  In the world of computer security access to data is an important
   topic, and one which has come to public attention through the recent leaks
   from former NSA employee Edward Snowden.
 
@@ -149,9 +149,10 @@
   their job. This is known as the principle of least privilege.
 
   Our project provides the bedrock for such a security system, which
-  abstracts away from any database where customer data is stored, allowing
-  questions to be asked (in predicate logic) by the government and answered in
-  the most desirable manner with respect to the company's privacy policy.
+  abstracts away from any database where customer data is stored. This would 
+  allow questions to be asked (in logic) by the government, run through a 
+  constraints checker, and if valid, answered in a manner respecting the
+  company's privacy policy.
 
   Finally, there is scope for integrating this project with a larger system
   whose goal is, for example, to create business analytics using only an
@@ -160,17 +161,12 @@
   give this to our project to allow the larger system to give actual database
   analytics answers for the English description.
 
-  \subsection*{Elevator Pitch (quite a hard sell)}
-  \todo[inline]{I swear this is the same thing as the executive summary?}
   In summary, we have created a system that creates SQL queries from logic 
   statements. This allows you to query a database without knowing anything
   about SQL and importantly to ignore which variant of SQL you
   are using and get on with extracting data. It provides the basis for a
   unique teaching tool for both SQL and logic and it brings some power
   of logic to regular databases, without the need to migrate to datalog.
-
-  What is your Project? What does it do? Why would I want to buy it? etc.
-  No implementation, software engineering details, or project management
 
 \section{Introduction}
 
@@ -191,7 +187,7 @@ provide clear advice when it does go wrong.
 At the end of the project we can say that we have achieved most of our initial 
 goals. We have created a system that can convert the queries, we have created
 a simple way to construct and edit these queries, one that can be changed to 
-work on any database and will provide clear error messages.
+work on any database and provide clear error messages.
 
   -- GOALS - In Chatley coursework 1 --
   Unfortunately there aren't any goals in the chatley coursework one.
@@ -221,6 +217,20 @@ work on any database and will provide clear error messages.
   they do not manipulate the data, only query it. This distinction between
   read-only and read-write operations is not enforced, but here we will focus
   only on read-only operations (so called 'SQL-data' operations).
+
+  We initially chose to restrict to these operations so we could build a basic,
+  but fully working system before progressing. Afterwards we considered how
+  a statement that manipulates data, like an insert, could be defined in logic.
+  \begin{gather}
+    \top \rightarrow (film\_title(\$new, "Flight") \land film\_director(\$new, "James"))
+  \end{gather}
+
+  Above is one possibility, inserting a film called 'Flight', directed by 
+  'James'. Having $\top$ imply the new information suggests that it must be 
+  true, and if it doesn't currently hold it should be inserted. Problems here
+  include automatically generating an id whilst keeping the syntax as true to
+  logic as possible. Given time it would be possible develop this but for now
+  it remains unimplemented.
 
 \subsection{Tuple Relational Calculus}
   SQL was originally based on Relational Algebra and Tuple Relational
@@ -296,10 +306,11 @@ work on any database and will provide clear error messages.
       true.
 
     \subsubsection{Set Membership}
-      Whereas before we could simply test the membership of a tuple $t$ in a
-      relation $R$ with $t \in R$, first order predicate logic does not have
-      the notion of set membership. From here there are a few different
-      solutions to the problem.
+      Before we could simply test the membership of a tuple $t$ in a
+      relation $R$ with $t \in R$. First order predicate logic, at least it's basic,
+      unsorted form, does not have the notion of variables belonging to
+      different types or sets, they all belong to one global set. To solve
+      this problem there are a few different solutions.
 
       One solution is with an 'InRelation' predicate, where 'InRelation(t, R)'
       would have the same semantic meaning as the previous set membership test.
