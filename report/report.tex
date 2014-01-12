@@ -157,7 +157,9 @@
   Finally, there is scope for integrating this project with a larger system
   whose goal is, for example, to create business analytics using only an
   English description of the required information. If such a system had a
-  method of converting English into predicate logic, it would be trivial to
+  method of converting English into predicate logic (Tom: there is nowhere
+  near such a system - Ian H in 1st year said people had written whole books
+  on why it is difficult), it would be trivial to
   give this to our project to allow the larger system to give actual database
   analytics answers for the English description.
 
@@ -987,7 +989,7 @@ work on any database and provide clear error messages.
   
   \subsection{Front End}
     \subsubsection{Web server}
-      The web.py framework (link to http://webpy.org/ ) was chosen to host the
+      The web.py framework~\cite{webpy} was chosen to host the
       user facing site. Doing so allowed us to quickly set up a functioning site
       and concentrate on developing useful features, instead of spending a large
       amount of time setting up a more complicated web server some other
@@ -1014,7 +1016,7 @@ work on any database and provide clear error messages.
       be easy to input and the resulting SQL and the result of running it on the
       database had to be easy to read and understand.
 
-      The javascript Ace http://ace.c9.io code editor was used for inputting the
+      The javascript Ace~\cite{aceEditor} code editor was used for inputting the
       user's logic query. The editor was both extremely powerful and very easy
       to implement. The editor provided a familiar interface when compared with
       desktop applications such as Vim or Gedit.
@@ -1023,7 +1025,7 @@ work on any database and provide clear error messages.
       This included syntax highlighting, line numbers, displaying hidden
       characters and providing many different themes.
 
-      Syntax highlighting was achieved by (Ted magic). Syntax that the
+      Syntax highlighting was achieved by \todo{Ted magic}. Syntax that the
       highlighting was able to distinguish between included logic symbols,
       brackets, data types.
 
@@ -1113,8 +1115,8 @@ work on any database and provide clear error messages.
 
       \missingfigure{Insert diagram of architecture here.}
 
-      To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
-      task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
+      To achieve this, the Celery~\cite{celery} asynchronous
+      task queue and RabbitMQ~\cite{rabbitmq} message broker were
       used. Each logic sentence to translate could be easily packaged into its
       own task and added to a queue to be translated.
 
@@ -1195,7 +1197,7 @@ work on any database and provide clear error messages.
        Config Parser - parsing configuration files\\
      }
 
-     \subsubsection{Interfacing with the database}
+    \subsubsection{Interfacing with the database}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -1214,7 +1216,7 @@ work on any database and provide clear error messages.
       several function calls to achieve each step. For example in order to run a
       query and return the results just using psycopg2 (assuming you already
       have a connection object setup) you would need to do the following:
-      
+
       \begin{minted}{python}
       def query(con, query):
         result = {}
@@ -1258,7 +1260,7 @@ work on any database and provide clear error messages.
         con.close()
       \end{minted}
 
-      \subsubsection{Codifying Database Schema}
+    \subsubsection{Codifying Database Schema}
       In an effort to make our project extensible, the web platform that performs 
       the logic to SQL translation uses an XML representation of the database
       schema. In this way the translation engine is platform agnostic with
@@ -1268,10 +1270,10 @@ work on any database and provide clear error messages.
       database and it does not run the translated query, instead it simply
       presents the query to the user.
 
-      This XML representation is automatically generated on program startup. 
-      Currently the project only supports PostgreSQL implementations, however it 
-      has been designed so that support for other SQL implementations can be 
-      added modularly. In order to extend support to other platforms all that is  
+      This XML representation is automatically generated on program startup.
+      Currently the project only supports PostgreSQL implementations, however it
+      has been designed so that support for other SQL implementations can be
+      added modularly. In order to extend support to other platforms all that is
       required is to add a \%SQL\%\_backend.py which provides the functions
       described above, then switch out the import in generate\_schema.py to use
       the desired implementation.
@@ -1280,18 +1282,13 @@ work on any database and provide clear error messages.
         via the Schema class, and how it can be returned as JSON for the UI via
       a GET request to /schema}
 
-      (\todo{LOL} Max did you ever fix your multiple database issues?Also I think we're
-      stuck with PostgreSQL databases only?) 
+      (\todo{LOL} Max did you ever fix your multiple database issues? Also I
+      think we're stuck with PostgreSQL databases only?)
 
-      \subsubsection{Error Checking}
-
-      \todo[inline]{talk about other forms of error checking, not just semantic
-        analysis. talk about our exceptions classes, errors returned as JSON to
-      the UI, how that is handled etc}
-
+    \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
-      analysis - this is looking at the SQL query, combining its syntax with
-      the meaning (semantics) derived from our database schema, and identifying
+      analysis - this is looking at the SQL query, combining its syntax with the
+      meaning (semantics) derived from our database schema, and identifying
       inconsistencies and errors. In this initial version of our logic to SQL
       translator, we check the predicates of our SQL query against the known
       relations and attributes present in our schema. If a relation, attribute,
@@ -1306,6 +1303,32 @@ work on any database and provide clear error messages.
           'cornucopia' does not exist in the schema.}
       \end{figure}
 
+    \subsubsection{Error Handling}
+      There were many stages of the translation process which could have
+      encountered errors that needed to be sent back to the user. To deal with
+      this, an exception-based error reporting system was created.
+
+      The basic idea behind this was to put each stage of the translation in a
+      \texttt{try: catch:} block. Then, if a stage encountered a problem it
+      would raise exceptions containing the error information, which would cause
+      the relevant \texttt{catch:} block to be called. This block would then add
+      the exception as a Python dictionary to the AJAX response, and when sent
+      back to the UI as JSON it would be able to construct a useful error
+      message based on the exception data.
+
+      Therefore, a Python exception class was created for each type of error
+      that could be produced, containing all the relevant information about the
+      error. Additionally, a special exception group class had to be created to
+      allow the raising of multiple exceptions by any stage of the translation
+      process (Python can only raise a single exception at a time).
+
+      In the UI, if the `status' string of the AJAX response is not ``ok'', this
+      indicates an error response. In this case the value is switched upon based
+      on various error status codes, for example `parse\_error', and the `error'
+      member of the response is then interpreted accordingly. This involves
+      displaying an error line in the `console' section of the HTML page for
+      each exception returned by the back end.
+
   \subsection{Testing}
   To ensure the reliability of our software we needed a testing framework that
   we could run easily. We chose to write standard Python unittest tests and on
@@ -1317,8 +1340,114 @@ work on any database and provide clear error messages.
   tests which interact with a web page. This gave us the ability to test
   sending requests from our interface, simulating user interactions in a
   repeatable and fast manner.
+
+
+\section{Evaluation}
+  \todo[inline]{Evaluate your deliverables e.g. performance, usability, etc.
+  Summarise testing procedures + relevant testing results}
+
+  \subsection{Evaluation Using Data}
+    \subsubsection{User Interface}
+    Ease of use was a key requirement of our project. As such we collected
+    metrics of user data in order to quantify each user's interaction with the
+    site. To measure the ease of inputting queries and to gain a picture of the
+    learning curve of the site, we recorded the average length of inputted
+    queries over time per user, and whether these queries were valid (shown
+    by whether they were able to be parsed).
+
+    \begin{minted}{python}
+      # Profiling code to record query length versus time taken
+      # for the user to enter it
+      statistics = {'query_length': len(logic_to_translate),
+                    'error': error,
+                    'time to enter query': form.time.get_value()}
+
+    \end{minted}
+    
+    \subsubsection{Application Performance Analysis}
+    Because the response time per query would be a large factor in a user's
+    experience of the site, we were very interested in recording the performance
+    of each component of our site. Thus we were able to quantify the final
+    performance of our product at the end of the project, by calculating the
+    average time to process each query.
+
+    The python testing framework Nose was used with the '--with-profile' flag.
+    This allowed us to see how long functions and pieces of code were taking to
+    execute per query. Towards the end of the project, we had reduced each query
+    to run in less than 1.5 seconds, which we believed was an acceptable time
+    for a user to wait, and was also in line with other online services.
+
+    Aside from empirical data analysis, another important factor of application
+    performance was the perceived performance by the user. Talking to users and
+    gathering survey data using the online SurveyMonkey platform left the team
+    with a more meaningful representation of the relative speed of the
+    application with respect to the users expectation, with 71.4% of users
+    answering that the were "happy with speed of query processing", and 28.6%
+    happy.
+
+    \subsubsection{Verification of Logic to SQL Translation}
+    By constantly adding new tests based on queries that were either produced
+    within our group, or suggested by our supervisor and others, we quickly
+    built up a large set of test cases. These test cases provided the assurance
+    that our application was able to successfully handle all syntactically valid
+    queries that a user could enter. The expected results of each test case,
+    the SQL queries that were to be produced, were built up through conversations
+    with users about their views of the semantic meaning of each logic query
+    they tried. By the end of week 7, we had over  60 test cases which all
+    successfully passed.
+
+  \subsection{Use of Data for Making Decisions and Reaching Conclusions}
+    \subsubsection{Site Usability Improvements}
+    Another insight we gained from our survey was that users wanted a tutorial
+    or information page on the site to help them learn how to use the
+    application. This was clear to see as over 70% of users wanted such a
+    system. In response we produced an information dialogue box which explained
+    the key features and elements of the application.
+
+    Survey results and information page implementation
  
-\section{Project Management - MOVE ABOVE EVALUATION}
+    \subsubsection{Targeting Performance Increases}
+    By using the Python nosetests profiling throughout the project, we were
+    able to target improvements at the pieces of code which had the highest
+    performance cost; maximising improvements per time spent writing code.
+
+    After profiling our code we found that queries to our database took a large
+    percentage of time to run compared to the rest of the code (1.822s/2.307s =
+    79%) we worked to reduce its execution time, as this would yield the largest
+    performance benefit for time spent working. We modified our query() function
+    so that it only read the connection parameters for the database once,
+    whereas it had previously been reloading the parameters each time query()
+    was called.
+
+    Application component runtime profiling
+
+  - talk about how our plan changed, how things went wrong
+
+\section{Conclusion and Future Extensions}
+\todo[inline]{What did you learn? What might you have done differently?
+  How would you build on what you have done?}
+
+  All the project management tools barely worked. We didn't have a week where
+  TeamCity didn't break. Also don't forget to delete pyc files! And get
+  pythonpath to work!
+
+  We used git rather badly - nobody ever pushed to master because it never
+  worked. Basically codegen was the sole useful branch (apart from ui maybe).
+
+  \subsection{Future Extensions}
+    Better user support (login system, multiple servers to do translation,
+    more databases supported, not just PostgreSQL).
+
+    \subsubsection{Other logic things to support}
+    logic functions previously defined, so don't have to keep writing the same
+    thing out loads of times?
+
+    \subsubsection{Further Semantic Analysis}
+    \todo[inline]{Can anyone think of anything beyond type checking?}
+
+    \subsubsection{Support more database backends} 
+
+\section{Project Management}
   \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
 
   \subsection{Planning}
@@ -1498,65 +1627,6 @@ The ability to alter the specification of a project dynamically is a testament t
     -- nosetests
 
     -- CI server
- 
-\section{Evaluation}
-  Evaluate your deliverables e.g. performance, usability, etc.
-  Summarise testing procedures + relevant testing results
-
-
-
-
-  \subsection{Evaluation Using Data}
-  \subsubsection{User Interface}
-Ease of use was a key requirement of our project. As such we collected metrics of user data in order to quantify each user's interaction with the site. To measure the ease of inputting queries and to gain a picture of the learning curve of the site, we recorded the average length of inputted queries over time per user, and whether these queries were valid (shown by whether they were able to be parsed).
-Profiling code to record query length versus time taken for the user to enter it
-\subsubsection{Application Performance Analysis}
-Because the response time per query would be a large factor in a user's experience of the site, we were very interested in recording the performance of each component of our site. Thus we were able to quantify the final performance of our product at the end of the project, by calculating the average time to process each query.
-The python testing framework Nose was used with the '--with-profile' flag. This allowed us to see how long functions and pieces of code were taking to execute per query. Towards the end of the project, we had reduced each query to run in less than 1.5 seconds, which we believed was an acceptable time for a user to wait, and was also in line with other online services.
-Aside from empirical data analysis, another important factor of application performance was the perceived performance by the user. Talking to users and gathering survey data using the online SurveyMonkey platform left the team with a more meaningful representation of the relative speed of the application with respect to the users expectation, with 71.4% of users answering that the were "happy with speed of query processing", and 28.6% happy.
-\subsubsection{Verification of Logic to SQL Translation}
-By constantly adding new tests based on queries that were either produced within our group, or suggested by our supervisor and others, we quickly built up a large set of test cases. These test cases provided the assurance that our application was able to successfully handle all syntactically valid queries that a user could enter. The expected results of each test case, the SQL queries that were to be produced, were built up through conversations with users about their views of the semantic meaning of each logic query they tried. By the end of week 7, we had over  60 test cases which all successfully passed.
-
-\subsection{Use of Data for Making Decisions and Reaching Conclusions}
-
-\subsubsection{Site Usability Improvements}
-Another insight we gained from our survey was that users wanted a tutorial or information page on the site to help them learn how to use the application. This was clear to see as over 70% of users wanted such a system. In response we produced an information dialogue box which explained the key features and elements of the application.
-Survey results and information page implementation
-\subsubsection{Targeting Performance Increases}
-By using the Python nosetests profiling throughout the project, we were able to target improvements at the pieces of code which had the highest performance cost; maximising improvements per time spent writing code.
-After profiling our code we found that queries to our database took a large percentage of time to run compared to the rest of the code (1.822s/2.307s = 79%) we worked to reduce its execution time, as this would yield the largest performance benefit for time spent working. We modified our query() function so that it only read the connection parameters for the database once, whereas it had previously been reloading the parameters each time query() was called.
-Application component runtime profiling
-
-
-
-
-
-
-  - talk about how our plan changed, how things went wrong
-
-\section{Conclusion and Future Extensions}
-\todo[inline]{What did you learn? What might you have done differently?
-  How would you build on what you have done?}
-
-  All the project management tools barely worked. We didn't have a week where
-  TeamCity didn't break. Also don't forget to delete pyc files! And get
-  pythonpath to work!
-
-  We used git rather badly - nobody ever pushed to master because it never
-  worked. Basically codegen was the sole useful branch (apart from ui maybe).
-
-  \subsection{Future Extensions}
-    Better user support (login system, multiple servers to do translation,
-    more databases supported, not just PostgreSQL).
-
-    \subsubsection{Other logic things to support}
-    logic functions previously defined, so don't have to keep writing the same
-    thing out loads of times?
-
-    \subsubsection{Further Semantic Analysis}
-    \todo[inline]{Can anyone think of anything beyond type checking?}
-
-    \subsubsection{Support more database backends} 
 
 \section{Bibliography}
   \printbibliography
