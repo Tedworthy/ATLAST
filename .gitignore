@@ -35,3 +35,6 @@ report/*.blg
 report/*.run.xml
 report/*.toc
 report/*.out
+
+session
+sessions
