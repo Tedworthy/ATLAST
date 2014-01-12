@@ -131,10 +131,7 @@
 Keep this short, see examples at
 
 http://www.doc.ic.ac.uk/lab/thirdyear/group-project/last-year.html
-
-want 3 paragraphs: overview, problems with existing stuff, our solution
 }
-  Old writing:
 
   The overall project goal was to create a language translator which
   takes a restricted version of first-order predicate logic as input and
@@ -142,12 +139,25 @@ want 3 paragraphs: overview, problems with existing stuff, our solution
   database to be queried using only first-order predicate logic, without the
   user needing to know any SQL.
 
-  In summary, we have created a system that creates SQL queries from logic 
-  statements. This allows you to query a database without knowing anything
-  about SQL and importantly to ignore which variant of SQL you
-  are using and get on with extracting data. It provides the basis for a
-  unique teaching tool for both SQL and logic and it brings some power
-  of logic to regular databases, without the need to migrate to datalog.
+  The final implementation produced a lightweight and modular Python web
+  application called ATLAST (Automatic Translation of Logic to ANSI SQL Tool)
+  A minimalist web user interface allowed users to specify logic queries
+  relating to any PostgreSQL database. The interface was augmented
+  with poweruser features including predicate auto-fill and symbol shortcuts.
+  Efficient code generation and SQL optimisation was handled by the server,
+  which encapsulated logic queries as tasks to support multiple users through
+  parallel translation by multiple backend servers.
+
+  The primary use of the project was as a teaching tool for students taking
+  logic and database courses. Students could practice writing logic sentences,
+  and use the corresponding SQL produced to understand the meaning of the logic
+  written and to view examples of correctly written SQL.
+
+  Additionally, academics who are more used to writing logic than SQL, but who
+  need to query a database as part of their research, can use the web app to
+  greatly speed up their work. Where they would have previously been required to
+  learn SQL, they can simply use our translation tool to save time. Finally,
+  many SQL queries are far simpler and more understandable to write in logic.
 
 \section{Introduction}
 
@@ -190,7 +200,7 @@ want 3 paragraphs: overview, problems with existing stuff, our solution
       more efficient SQL queries. This would be especially useful if querying
       large datasets.
 
-    \subsubsection{Simplicity of logic}
+    \subsubsection{Simplicity of logic over SQL}
 Give examples of logic sentences that are far simpler to write and understand
 compared to their SQL equivalent.
 
