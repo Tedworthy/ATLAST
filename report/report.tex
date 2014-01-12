@@ -304,10 +304,10 @@ Rather than going head to head we realised that our project needed to approach t
   \end{itemize}
 
   However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations
-  such as 'SELECT' (without 'INSERT INTO') should not exist as part of the DML;
+  such as `SELECT' (without `INSERT INTO') should not exist as part of the DML;
   they do not manipulate the data, only query it. This distinction between
   read-only and read-write operations is not enforced, but here we will focus
-  only on read-only operations (so called 'SQL-data' operations).
+  on read-only operations (so called 'SQL-data' operations) only.
 
   We initially chose to restrict to these operations so we could build a basic,
   but fully working system before progressing. Afterwards we considered how
@@ -319,7 +319,7 @@ Rather than going head to head we realised that our project needed to approach t
   Above is one possibility, inserting a film called 'Flight', directed by 
   'James'. Having $\top$ imply the new information suggests that it must be 
   true, and if it doesn't currently hold it should be inserted. Problems here
-  include automatically generating an id whilst keeping the syntax as true to
+  include automatically generating a primary key whilst keeping the syntax as true to
   logic as possible. Given time it would be possible develop this but for now
   it remains unimplemented.
 
@@ -330,9 +330,8 @@ Rather than going head to head we realised that our project needed to approach t
 
   \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
     \label{sec:formalTRC}
-    A query takes the form: \{T | p(T)\}
-
-    The answer is the set of all tuples T such that p(T) evaluates to true.
+    A query takes the form: \{T | p(T)\}. The answer of a query is said to be
+    the set of all tuples T such that p(T) evaluates to true.
 
     A formula F is recursively defined as:
     \begin{itemize}
@@ -388,6 +387,7 @@ Rather than going head to head we realised that our project needed to approach t
       \end{center}
 
 \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
+    \label{sec:tuplefo}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
     formulate a mapping between TRC and first order predicate logic.
 
@@ -397,24 +397,24 @@ Rather than going head to head we realised that our project needed to approach t
       true.
 
     \subsubsection{Set Membership}
-      Before we could simply test the membership of a tuple $t$ in a
-      relation $R$ with $t \in R$. First order predicate logic, at least it's basic,
+      Previously in TRC we could simply test the membership of a tuple $t$ in a
+      relation $R$ with $t \in R$. First order predicate logic, at least in its basic,
       unsorted form, does not have the notion of variables belonging to
       different types or sets, they all belong to one global set. To solve
       this problem we propose a few solutions.
 
-      One solution is with an 'InRelation' predicate, where 'InRelation(t, R)'
+      One solution is with an `InRelation' predicate, where `InRelation(t, R)'
       would have the same semantic meaning as the previous set membership test.
       This seems to work, although throughout first order predicate logic, we
       do not have the notion of a tuple; an atom is structurally meaningless. A
       disadvantage of this would be that accessing members of the tuple would
-      require another predicate, for example 'InTuple(a, 'attrName', t)' which
-      would have the same semantic meaning as 't.a' in TRC.
+      require another predicate, for example `InTuple(a, `attrName', t)' which
+      would have the same semantic meaning as `t.a' in TRC.
 
       Another solution, which solves the previous issue, is to generate n-ary
       predicates that represent a tuple. For example, given a relation 'films',
-      with columns 'title', 'length' and 'date-released', a predicate
-      'films(title, length, date-released)' could be generated, where title,
+      with columns `title', `length' and `date-released', a predicate
+      `films(title, length, date-released)' could be generated, where title,
       length and date-released are all variables. This certainly solves the
       issue the set membership issue, but does add uneccessary bloat to each
       query; relations may have thousands of columns, very few of which are
@@ -431,7 +431,7 @@ Rather than going head to head we realised that our project needed to approach t
                         & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
-      NOTE: The predicate R.k(k, k) is also valid, albeit redundant.
+      Note: The predicate $R.k(k, k)$ is also valid, albeit redundant.
 
       Relating a tuple to its primary key gives a concise way to address it,
       adding the slight restriction that each relation must have a primary key.
@@ -439,27 +439,23 @@ Rather than going head to head we realised that our project needed to approach t
     \subsubsection{Free and Bound Variables}
     \label{sec:freebound}
 
-      Looking back to Tuple Relational Calculus in
-      section~\ref{sec:formalTRC}, we will use similar semantics for free and
-      bound variables. Recall the syntax for the return value in TRC, $T$ in the
-      query below
-
-      \{T | p(T)\}
-
-      That is to say that TRC returns the set of all tuples $T$, such that 
-      $p(T) \models \top$. Without extending predicate logic, we cannot use 
-      a similar format for specifying what is returned. However, all 
-      variables that are free in $p(T)$ must be in $T$ and so we assume 
-      that all unbound variables in the query are to be returned.
+      Looking back to Tuple Relational Calculus in section~\ref{sec:formalTRC},
+      we will use similar semantics for free and bound variables. Recall the
+      syntax for the return value in TRC, the set of all tuples $T$, such that
+      $p(T) \models \top$. Without extending predicate logic, we cannot use a
+      similar format for specifying what is returned. However, all variables
+      that are free in $p(T)$ must be in $T$ and so we assume that all unbound
+      variables in the query are to be returned.
 
   \section{Translation of First-order Predicate Logic to SQL}
 
-    Section~\ref{sec:background} provides a rough translation between
-    first-order predicate logic and tuple relational calculus, and from this
+    Section~\ref{sec:tuplefo} provides a rough translation between
+    first-order predicate logic and tuple relational calculus. From this
     grounding we can begin to define the mapping between logic and SQL.
 
     The examples in the section below will make use of the filmdb as used in
-    the project. A description of the SQL schema can be found in the appendix.
+    the project. A description of the SQL schema can be found in the appendix,
+    section ~\ref{sec:appfilmdb}.
 
     \subsection{Quantifiers}
 
@@ -471,35 +467,26 @@ Rather than going head to head we realised that our project needed to approach t
     \end{gather}
     The query binds $x$ and leaves $title$ free, meaning that our
     answer will be the set of all subtitutions for $title$ such that
-    $\exists x(films.title(x, title)) \models \top$. The '$\exists$' symbol
+    $\exists x(films.title(x, title)) \models \top$. The `$\exists$' symbol
     serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
     it enforces that the substituted $title$ exists in at least one tuple.
     The predicate $films.title$ gives the translator the scope of
     relations to query (in this case, just the $films$ relation).
 
     We can translate the query with use of the SQL SELECT statement. The SELECT
-    statement is used to select data from a database.\cite{w3SELECT} Suppose
-    that we wish to query the database for every film title in the database.
-    Below is an example of an SQL query that satisfies this criteria.
-
+    statement is used to select data from a database\cite{w3SELECT}. Below is
+    the translated query.
     \begin{minted}{sql}
-
     SELECT title
     FROM films;
-
     \end{minted}
-
     Strictly speaking since tuple relational calculus is based on set
     operators, like relational algebra, and SQL implcitly uses bag operators
     this actually evaluates to the following:
-
     \begin{minted}{sql}
-
     SELECT DISTINCT title
     FROM films;
-
     \end{minted}
-
     Note that it is perfectly valid to create a query with no bound variables,
     such as:
     \begin{gather}
@@ -507,14 +494,10 @@ Rather than going head to head we realised that our project needed to approach t
     \end{gather}
     This will return the set of all tuples of the form \{$films.fid,
     films.title$\}, using the following SQL query.
-
     \begin{minted}{sql}
-
     SELECT fid, title,
     FROM films;
-
     \end{minted}
-
     Note that the DISTINCT keyword is no longer needed, as $films.fid$ is a
     primary key.
 
@@ -524,20 +507,16 @@ Rather than going head to head we realised that our project needed to approach t
     relation and using the same primary key (that is to say that each predicate
     relates to a single tuple). Suppose we wish to project
     every film title, and its corresponding length.
-
     \begin{gather}
-      \exists x(films.title(x, y) \land films.length(x, z)
+      \exists x(films.title(x, y) \land films.length(x, z))
     \end{gather}
-
     As both $y$ and $z$ are from the same unique tuple identified by $x$
     (enforced by the conjunction within the query) our
     answer is equivalent to that returned by the following SQL query.
-
     \begin{minted}{sql}
     SELECT name, length
     FROM films;
     \end{minted}
-
     This can be extended to any number of predicates, although the relation and
     the key must be the same. If this is not the case, the query may represent
     a join, later described in section~\ref{sec:joins}.
@@ -567,12 +546,12 @@ Rather than going head to head we realised that our project needed to approach t
     \end{minted}
 
     There are two things to note with this approach, both relating to scope.
-    The first is that the tables need be aliased. SQL requires that aliases
+    The first is that the tables need to be aliased. SQL requires that aliases
     in subqueries must not have been used previously as the outer aliases are
     still in scope.
     
-    The second is that in our logic $y$ is bound and we cannot make it unbound
-    without changing the meaning of the query. If we cannot make it unbound
+    The second is that in our logic $y$ is bound and we cannot make it free
+    without changing the meaning of the query. If we cannot make it free
     then we cannot return it. Interestingly, in the SQL the outer scope cannot
     access fields in the inner scope, and so similarly cannot return it.
     Therefore we must create an exception to the free and bound variable rules
@@ -594,7 +573,7 @@ Rather than going head to head we realised that our project needed to approach t
     Each of these forms are equivalent, and will return the same result.
     However, it is useful to be able to represent nested quantifiers, as it
     will not always be equivalent to combine them, for example in the case
-    of implication, negation or duplicate variable names.\cite{washEQUIV}
+    of implication, negation or duplicate variable names\cite{washEQUIV}.
 
     \subsubsection{Universally Quantified Variables}
     Using our knowledge from section~\ref{sec:existential}, we can now
@@ -607,27 +586,27 @@ Rather than going head to head we realised that our project needed to approach t
     variables as existentially quantified. Below is an example query in logic
     that aims to return all directors such that every film that they have
     directed is longer than one hour.
-    \begin{align*}
-      \exists &x(                                                                                                 \\
-              & films.director(x, director) \land                                                                 \\ 
-              & \forall y(films.director(y, director) \land films.length(y, length) \land length > '1:00:00')     \\
-      ) \hspace{1mm} &
-    \end{align*}
+    \begin{multline}
+      \exists x(films.director(x, director) \land \forall y(films.director(y,
+      director) \\ \land films.length(y, length) \land length >
+      \text{`1:00:00'}))
+    \end{multline}
     We can think of this equivalently as following.
-    \begin{align*}
-      \exists &x(                                                                                                                   \\
-                & films.director(x, director) \land                                                                                 \\
-                & \lnot \exists y,length(\lnot(films.director(y, director) \land films.length(y, length) \land length > '1:00:00')) \\
-      ) \hspace{1mm} &
-    \end{align*}
+    \begin{multline}
+      \label{eqn:except}
+      \exists x(films.director(x, director) \land \lnot \exists y,length(\lnot(films.director(y,
+      director) \\ \land films.length(y, length) \land length > \text{`1:00:00'})))
+    \end{multline}
+
     Using De Morgan's laws, we can infer the following
     equivalence.
-    \begin{align}
-      \lnot(films.director(y, director) \land films&.length(y, length) \land length > '1:00:00')     \label{demorganequiv} \\
-                                                        &\equiv                                            \nonumber\\
-      (films.director(y, director) \lor films.&length(y, length) \lor length > '1:00:00')                  \nonumber
-    \end{align}
-    Equation~\ref{demorganequiv} however does not offer much progress, as
+    \begin{multline}
+      \label{eqn:demorganequiv}
+      \lnot(films.director(y, director) \land films.length(y, length) 
+      \land length > \text{`1:00:00'}) \\ \equiv (\lnot films.director(y,
+      director) \lor \lnot films.length(y, length) \lor length \le \text{`1:00:00'})
+    \end{multline}
+    Equation~\ref{eqn:demorganequiv} however does not offer much progress, as
     we have not yet specified how to evaluate disjunction.
 
     Instead we must look to the query's semantic meaning. Referring to
@@ -636,7 +615,7 @@ Rather than going head to head we realised that our project needed to approach t
 
     We also must make use of the SQL EXISTS condition. The condition
     is used in a SQL query and is considered "to be met" if the subquery
-    returns at least one row.\cite{technetEXISTS} The condition is useful in
+    returns at least one row\cite{technetEXISTS}. The condition is useful in
     translating predicate logic to SQL, as it's meaning is consistent across
     both languages. 
 
@@ -647,6 +626,7 @@ Rather than going head to head we realised that our project needed to approach t
     WHERE NOT EXISTS (
       SELECT films2.director
       FROM films AS films2
+      WHERE films2.director = films1.director
       EXCEPT
       SELECT films2.director
       FROM films AS films2
@@ -656,21 +636,15 @@ Rather than going head to head we realised that our project needed to approach t
     \subsection{Equality}
 
       Suppose that we wish to check the existence of a film (The Bourne
-      Identity) within our database. Below is an SQL query that satisfies this
-      criteria.
-
-      The WHERE clause is used to extract only those records that fulfill a
-      specified criterion.~\cite{w3WHERE} 
-
-
+      Identity) within our database. The constraint that the title must equal
+      'The Bourne Identity' would be added to the WHERE clause, seen
+      occasionally in previous sections. The WHERE clause is used to extract
+      only those records that fulfill a specified criterion\cite{w3WHERE}.
       \begin{minted}{sql}
-
       SELECT title,
       FROM films
       WHERE title = 'The Bourne Identity';
-
       \end{minted}
-
       We expect to encounter at least one tuple if the film exists in our domain
       of discourse. \todo{Cite this from our AD lectures} This can be represented
       in one of two ways in first-order predicate logic.
@@ -966,6 +940,7 @@ Rather than going head to head we realised that our project needed to approach t
   \subsection{Negation}
 
     \subsubsection{Difference}
+    \label{sec:except}
 
     It may be the case that we need to negate a set of predicates. By example,
     we will refer to the subquery within
@@ -990,7 +965,7 @@ Rather than going head to head we realised that our project needed to approach t
     the EXCEPT operator.
 
     The SQL EXCEPT operator takes the distinct rows of one query and returns
-    the rows that do not appear in a second result set.\cite{wiki:EXCEPT}. It
+    the rows that do not appear in a second result set\cite{wiki:EXCEPT}. It
     has the same semantic meaning as the set difference operator. The
     above SQL query is equivalent to the following.
 
@@ -2112,6 +2087,7 @@ Rather than going head to head we realised that our project needed to approach t
   \subsection{Schemas}
 
     \subsubsection{Films Database - filmdb}
+    \label{sec:appfilmdb}
 
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{images/site_schema.png}
