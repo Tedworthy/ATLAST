@@ -1,8 +1,10 @@
 \documentclass[a4paper, 11pt]{article}
 
-\usepackage{geometry}
+\usepackage[top = 2.5cm,
+            bottom = 2.5cm,
+            left = 2.2cm,
+          right = 2.2cm]{geometry}
 \usepackage{layout}
-\geometry{includeheadfoot, margin=3.18cm}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{array,booktabs}
@@ -74,13 +76,15 @@
 
 \center
 
+\vspace*{2cm}
 \textsc{\LARGE Imperial College London}\\[1.5cm]
 \textsc{\Large Department of Computing}\\[0.5cm]
 \textsc{\large 3rd Year Group Project Report}\\[0.5cm]
 
 \HRule \\[0.4cm]
-{\huge \bfseries Translation of}\\[0.4cm]
-{\huge \bfseries First Order Predicate Logic to SQL}\\[0.4cm]% Title of your document
+{\huge \bfseries ATLAST}\\[0.6cm]
+{\huge \bfseries Automatic Translation of Logic to}\\[0.2cm]
+{\huge \bfseries ANSI SQL Tool}\\[0.4cm]% Title of your document
 \HRule \\[1.5cm]
 
 \begin{minipage}[t]{0.4\textwidth}
@@ -1362,7 +1366,47 @@ work on any database and provide clear error messages.
 
     \subsubsection{Generating an IR}
 
-    \subsubsection{Generating SQL}
+      Once symbol table generation has been performed, we then must generate an
+      intermediate representation of the logic query. This representation can
+      be seen as a generic format which represents a relational algebra
+      query. The IR contains four data structures, explained below.
+
+      \begin{itemize}
+
+          \item Relation Attribute Pairs
+            The relation-attribute pairs list is equivalent to the attributes
+            provided to the relational algebra projection operator. It is
+            organised simply as a python array of RelationAttribute objects.
+            The RelationAttribute class encapsulates a Relation object and an
+            attribute string field. The benefit of this abstraction versus a
+            mere string representation is that the Relation object can be
+            aliased elsewhere in the translator and still be reflected in the
+            end projection.
+
+          \item Relation Tree
+            The relation tree can be thought of as all of the relations
+            involved in a join in a relational algebra expression. It is
+            structured as a tree, making use of join nodes to describe the
+            relationship between one or many Relation nodes. Certain nodes in
+            the tree will also contain information about the join, for example
+            which conditions should be related to the join.
+
+          \item Constraint Tree
+            The constraint tree is equivalent to the conditions contained
+            within the relational algebra selection operator. Again, it is
+            structured as a tree to enforce the precedence of binary operators
+            (And, Or).
+
+          \item Bind Constraint Tree
+            The bind constraint tree is similar to the constraint tree, except
+            it exclusively contains equality constraints that unify variables.
+            It is necessary to split these constraints from any previous as
+            they are implicit, and any negation that occurs on a constraint
+            tree often unnecessarily negates unification constraints.
+
+      \end{itemize}
+
+      \subsubsection{Generating SQL}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
       JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
@@ -1603,12 +1647,7 @@ work on any database and provide clear error messages.
 
 
 \section{Project Management}
-  \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
-
   \subsection{Planning}
-    \todo[inline]{TODO Should we discuss here how everything went wrong, and
-    revisions were missed entirely?}
-
     As we have learnt from previous projects, inside and outside the
     department, it is critical to thoroughly plan a software engineering
     exercise of this scale before beginning to implement features and write
@@ -1623,7 +1662,7 @@ work on any database and provide clear error messages.
     allowed us to continually build upon features already implemented. This
     incremental method of development is one of the key ideas of the Agile
     development methodology to which we adhered to throughout the project.
-    \todo[inline]{TODO citation} Additionally, with each revision having a
+    \cite{agilemanifesto} Additionally, with each revision having a
     deadline, it gave the team a clear plan of what was to be implemented at
     what time.
 
@@ -1687,6 +1726,19 @@ work on any database and provide clear error messages.
         project}
     \end{table}
 
+    However, as can often happen in software engineering projects, the plan
+    changed somewhat as the project progressed. It turned out that turning
+    logical statements to intermediate representation would take longer than
+    previously thought, and was not so simple to apply Agile iterations to. Due
+    to the complexity of the translator, the group wanted to ensure that we
+    had a solid structure in place that would support all of the logic features
+    necessary. It would have been possible to write an IR generator that only
+    supported basic features very quickly, but this would have reduced
+    extensibility of the product. Therefore, we believe deviating from the plan
+    was the right choice in this instance. Beyond this issue, the group on the
+    whole stuck to the plan, and features were implemented on time - with ample
+    time during the Christmas break for extensions.
+
   \subsection{Group Organisation}
     At the beginning of the project, as discussed previously, we outlined the
     goals and required features of our project, and split them up in to three
@@ -1707,10 +1759,11 @@ work on any database and provide clear error messages.
     about the tasks that had been completed previously. We would also analyse
     the previous weeks performance, and make changes to our plan accordingly.
     This falls in line with a key principle of Agile development, where a team
-    must be adapatable to change. An example of such a change is when we
-    realised implementing the parser would take significantly longer than
-    originally thought. This lead us to modify our feature set, reallocate
-    group roles temporarily, and modify deadlines and revision subgoals.
+    must be adapatable to change \cite{agilemanifesto}. 
+    An example of such a change is when we realised implementing the parser 
+    would take longer than originally thought. This lead us to modify our 
+    feature set, reallocate group roles temporarily, and modify deadlines 
+    and revision subgoals.
 
   \subsection{Tracking}
     Once an overarching plan was agreed on, we split each major goal of each
