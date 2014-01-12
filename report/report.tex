@@ -1958,10 +1958,9 @@ Rather than going head to head we realised that our project needed to approach t
     predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
     'aname' staring in a film with title 'ftitle'
 
-    \begin{verbatim}
-      stars_in(aname, title) |= films_title(f,title) /\ casting_fid(c,f) /\
-      casting_aid(c,a) /\ actors_name(a,aname)
-    \end{verbatim}
+    \begin{gather}
+      stars_in(aname, title) \models \exists f,c,a (films_title(f,title) \land casting_fid(c,f)  \land  casting_aid(c,a) \land actors_name(a,aname))
+    \end{gather}
 
 
     Also currently we have no facility to express SQL operations like INSERT, 
