@@ -1233,10 +1233,11 @@ Rather than going head to head we realised that our project needed to approach t
           import task as worker
           result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
           response = result.get()
-        
+
         # In file worker.py
-          @celery.task
-          def addToProcessingQueue(logic, schema, configData):
+        @celery.task
+        def addToProcessingQueue(logic, schema, configData):
+          # Logic translation here
       \end{minted}
 
     \subsection{Logic to SQL translation}
@@ -1268,7 +1269,7 @@ Rather than going head to head we realised that our project needed to approach t
       \texttt{lexer.py}. PLY automatically identifies something as a token if it
       has the following format:
       \begin{minted}{python}
-        t\_TOKENNAME
+        t_TOKENNAME
       \end{minted}
       It can either be a constant, or for more complex tokens such as
       identifiers it can be a function.
