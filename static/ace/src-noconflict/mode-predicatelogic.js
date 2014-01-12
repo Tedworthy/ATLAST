@@ -119,7 +119,7 @@ ace.define(
                     regex: /[\t \n\r]+/
                 }, {
                     token: "relop",
-                    regex: /(=|≠|>|>=|<|<=)/,
+                    regex: /(=|≠|>|≥|<|≤)/,
                     next: "atomicformula_relop_term"
                 }, {
                     token: "bracket",
@@ -133,7 +133,7 @@ ace.define(
                     regex: /[\t \n\r]+/
                 }, {
                     token: "relop",
-                    regex: /(=|≠|>|>=|<|<=)/,
+                    regex: /(=|≠|>|≥|<|≤)/,
                     next: "atomicformula_relop_term"
                 }
             ],
