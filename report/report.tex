@@ -607,33 +607,34 @@ Rather than going head to head we realised that our project needed to approach t
     Using our knowledge from section~\ref{sec:existential}, we can now
     formulate a translation for universally quantified variables. In
     first-order predicate logic, the following equivalence holds:
-    \begin{multline}
+    \begin{gather}
       \forall x(P(x)) \equiv \lnot \exists x(\lnot P(x))
-    \end{multline}
+    \end{gather}
     We can use this equivalence to simply encounter universally quantified
     variables as existentially quantified. Below is an example query in logic
     that aims to return all directors such that every film that they have
     directed is longer than one hour.
-    \begin{multline}
-      \exists x(films.director(x, director) \land \forall y(films.director(y,
-      director) \land films.length(y, length) \land length > '1:00:00'))
-    \end{multline}
+    \begin{align*}
+      \exists &x(                                                                                                 \\
+              & films.director(x, director) \land                                                                 \\ 
+              & \forall y(films.director(y, director) \land films.length(y, length) \land length > '1:00:00')     \\
+      ) \hspace{1mm} &
+    \end{align*}
     We can think of this equivalently as following.
-    \begin{multline}
-      \label{eqn:except}
-      \exists x(films.director(x, director) \land \lnot \exists y,length(\lnot(films.director(y,
-      director) \land films.length(y, length) \land length > '1:00:00')))
-    \end{multline}
-
+    \begin{align*}
+      \exists &x(                                                                                                                   \\
+                & films.director(x, director) \land                                                                                 \\
+                & \lnot \exists y,length(\lnot(films.director(y, director) \land films.length(y, length) \land length > '1:00:00')) \\
+      ) \hspace{1mm} &
+    \end{align*}
     Using De Morgan's laws, we can infer the following
     equivalence.
-    \begin{multline}
-      \label{eqn:demorganequiv}
-      \lnot(films.director(y, director) \land films.length(y, length) 
-      \land length > '1:00:00') \equiv (films.director(y,
-      director) \lor films.length(y, length) \lor length > '1:00:00')
-    \end{multline}
-    Equation~\ref{eqn:demorganequiv} however does not offer much progress, as
+    \begin{align}
+      \lnot(films.director(y, director) \land films&.length(y, length) \land length > '1:00:00')     \label{demorganequiv} \\
+                                                        &\equiv                                            \nonumber\\
+      (films.director(y, director) \lor films.&length(y, length) \lor length > '1:00:00')                  \nonumber
+    \end{align}
+    Equation~\ref{demorganequiv} however does not offer much progress, as
     we have not yet specified how to evaluate disjunction.
 
     Instead we must look to the query's semantic meaning. Referring to
