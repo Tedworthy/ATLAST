@@ -24,3 +24,4 @@ clean:
 	-rm -rf *.bbg 
 	-rm -rf *.run.xml 
 	-rm -rf *.toc
+	-rm -rf *.out
