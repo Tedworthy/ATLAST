@@ -124,30 +124,29 @@
 
     No implementation, software engineering details, or project management 
 }
-  At its heart our project is a language translator, taking as input a
-  restricted version of first-order predicate logic, and producing as output
-  the corresponding SQL, for a given domain. This allows any SQL relational
-  database to be queried using only first-order predicate logic, without the
-  user needing to know any SQL. The implications of this open up
-  new avenues in the realms of teaching and computer security, or
-  alternatively integration as a component of a larger system.
 
-  The predominant use-case for our project would be as a teaching tool,
-  suitable for use by students studying both logic and databases, topics which
-  many universities deem to be mandatory for all computing students. To
-  reinforce a students understanding of logic, queries can be written and tested
-  against a suitably populated database of facts. The result of these queries
+  At its heart our project is a language translator which, for a given domain,
+  takes a restricted version of first-order predicate logic as input and
+  produces the corresponding SQL as output. This allows any SQL relational
+  database to be queried using only first-order predicate logic, without the
+  user needing to know any SQL.
+
+  The predominant use-case for our project is as a teaching tool for use by
+  students studying both logic and databases; topics which
+  many universities deem mandatory for all computing students. To
+  reinforce a student's understanding of logic, queries can be written and
+  tested against a suitably populated database. The result of these queries
   can then be used to determine how well they have understood the course
-  material.
+  material, perhaps using an auto-checker.
 
   The generated SQL could be used as a reference for the student, either to
   highlight issues with their logic or to explain the formulation of correct
   SQL, providing them with extensive revision notes.
 
   The project also lends itself to creating problem sheets for these subjects.
-  For example, a teacher could create a list of questions in english, like
+  For example, a teacher could create a list of questions in english, for instance
   ``what are the names of dragons that are happy?'' requiring the student to
-  give both the predicate logic and the SQL yielding the answer to that
+  give both the predicate logic and the SQL yielding the answer to the
   question. Our project could then be used to easily check the student's work.
 
   Also academics who are more used to writing logic can save time and not have
@@ -169,9 +168,11 @@
 
 \section{Introduction}
 
-  Set the scene ... motivation'
+  \todo{Set the scene ... motivation'
+  
   State the problem you are trying to solve ...objective(s)
-  Summarise your main achievements 
+
+  Summarise your main achievements}
 
 When we began this project our goal was simply to allow a database to be 
 queried using logic. You shouldn't need to know the syntax of a particular
@@ -190,7 +191,7 @@ work on any database and provide clear error messages.
 
   -- GOALS - In Chatley coursework 1 --
   Unfortunately there aren't any goals in the chatley coursework one.
-  Just a bunch of questions, turns out we forgot to add them. WHOPS LOOL
+  Just a bunch of questions, turns out we forgot to add them. WHOOPS LOOL
   TODO: Discuss goals, they're referenced in the Project Management
   section. Revisions should not be talked about here though, just the
   overarching goals of the project.
@@ -1956,6 +1957,32 @@ Application component runtime profiling
   are notoriously difficult to install on Gentoo, as confirmed by a visit to
   the Erlang IRC channel.
 
+  \subsection{Schemas}
+
+    \subsubsection{Films Database - filmdb}
+
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{images/site_schema.png}
+        \caption{Basic 'filmdb' schema, containing information about films,
+        their actors, directors etc.}
+      \end{figure}
+
+      The films database is based upon the example database used in teaching
+      the first year databases course.
+
+    \subsubsection{Shakespeare Database - shakespeare}
+
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{images/site_schema_shakespeare.png}
+        \caption{More advanced 'shakespeare' schema, containing information
+        about his literary works.}
+      \end{figure}
+
+      The Shakespeare database is taken from \\
+      \url{https://github.com/catherinedevlin/opensourceshakespeare}, which
+      itself is based on the Open Shakespeare Project, \\
+      \url{http://www.opensourceshakespeare.org/}.
+
   \subsection{Example Queries}
 
   The following queries make use of the \texttt{filmdb} and
@@ -2058,14 +2085,6 @@ Application component runtime profiling
 
   - Or make a reduced one, just showing main components of the project e.g.
   parser, sql generator, semantic analyser, etc
-
-  \subsection{Schemas}
-
-  \todo[inline]{Just put screenshots of the schemas from our UI here.}
-
-    \subsubsection{filmdb}
-
-    \subsubsection{shakespeare}
 
   \subsection{Design Diagrams}
 
