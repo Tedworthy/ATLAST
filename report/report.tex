@@ -21,6 +21,12 @@
 \usepackage{arydshln}
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
 \usepackage{pifont}% http://ctan.org/pkg/pifont
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \hypersetup{
   colorlinks,
   citecolor=black,
@@ -1238,11 +1244,11 @@ work on any database and provide clear error messages.
       Below are justifications for the use of a symbol table, and
       implementation details.
 
-      \subsubsubsection{Scoping}
+      \paragraph{Scoping}
 
-      \subsubsubsection{Unification}
+      \paragraph{Unification}
 
-      \subsubsubsection{Free and Bound Variables}
+      \paragraph{Free and Bound Variables}
 
     \todo{We don't need to talk about semantic analysis here, we do it in the
     error checking section of backend instead.}
