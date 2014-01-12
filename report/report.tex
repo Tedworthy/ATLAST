@@ -1545,35 +1545,39 @@ work on any database and provide clear error messages.
     this qualitative information, we used the online service SurveyMonkey to record 
     what users though with 71.4\% of users answering that the were "happy with speed
     of query processing", and 28.6\% not happy. 
-   
-    \subsubsection{Verification of Logic to SQL Translation}
-    By constantly adding new tests based on queries that were either produced
-    within our group, or suggested by our supervisor and others, we quickly
-    built up a large set of test cases. These test cases provided the assurance
-    that our application was able to successfully handle all syntactically valid
-    queries that a user could enter. The expected results of each test case,
-    the SQL queries that were to be produced, were built up through conversations
-    with users about their views of the semantic meaning of each logic query
-    they tried. By the end of week 7, we had over  60 test cases which all
-    successfully passed at the time of writing we have .
 
     \subsubsection{Site Usability Improvements}
     Another insight we gained from our survey was that users wanted a tutorial
     or information page on the site to help them learn how to use the
-    application. This was clear to see as over 70% of users wanted such a
+    application. This was clear to see as over 70\% of users wanted such a
     system. In response we produced an information dialogue box which explained
     the key features and elements of the application.
     \todo{insert fig here}
-    Survey results and information page implementation
+    Survey results and information page implementation   
+    \subsubsection{Testing Procedures}
+    We used the testing framework Nose in order to rapidly develop test cases to
+    ensure the correctness of our project. We employed TDD (write a failing
+    test, write some code to make the test pass, refactor, repeat), and our group 
+    members spent a considerable amount of time constructing test cases. Below is an 
+    example test.
+  
+    \begin{minted}{python}
+      @with_setup(setup_func, teardown_func)
+      def test_select_one_from_one(self):
+        logic = "?x(films.title(x, y))".decode('utf-8')-
+        sql = "SELECT title FROM films"
+        assert self.translates_to(logic, sql), "Error, expected answers not equal"
+    \end{minted}
+
+    In order to add new test cases our group all met together and hand translated 
+    example logic queries and their SQL equivalents. By constantly adding new tests 
+    based on queries that were either produced within our group, or suggested by our 
+    supervisor and others, we quickly expanded our test cases to cover many of the 
+    possible queries that a user could enter. At the time of writing we have 92 test 
+    cases that pass each testing different constraints on our project.
+
+
  
-    \subsubsection{Targeting Performance Increases}
-
-
-    Application component runtime profiling
-
-  - talk about how our plan changed, how things went wrong
-
-
 
 \section{Project Management}
   \subsection{Planning}
