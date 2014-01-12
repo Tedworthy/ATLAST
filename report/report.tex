@@ -310,7 +310,7 @@ work on any database and provide clear error messages.
       relation $R$ with $t \in R$. First order predicate logic, at least it's basic,
       unsorted form, does not have the notion of variables belonging to
       different types or sets, they all belong to one global set. To solve
-      this problem there are a few different solutions.
+      this problem we propose a few solutions.
 
       One solution is with an 'InRelation' predicate, where 'InRelation(t, R)'
       would have the same semantic meaning as the previous set membership test.
@@ -334,12 +334,13 @@ work on any database and provide clear error messages.
       For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
       and n attributes we generate n + 1 predicates:
       \begin{align*}
-        \text{1:  }     & R(k)            \\
+        \text{1:  }     & R(k)           \\
         \text{2:  }     & R.a_1(k, a1)   \\
         \text{3:  }     & R.a_2(k, a2)   \\
-                        & \vdots          \\
+                        & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
+      NOTE: The predicate R.k(k, k) is also valid, albeit redundant.
 
       Relating a tuple to its primary key gives a concise way to address it,
       adding the slight restriction that each relation must have a primary key.
@@ -456,10 +457,10 @@ work on any database and provide clear error messages.
     variable in an inner subquery. For example, the following subquery checks
     the existence of any films within our database with the same name, but that
     are not the same film, and returns the name of said film.
-    \begin{multline}
-      \exists title(films.title(x, title) \land \exists title(films.title(y,
+    \begin{gather}
+      \exists x(films.title(x, title) \land \exists y(films.title(y,
       title) \land x != y))
-    \end{multline}
+    \end{gather}
     With a query of this format, we can simply translate the subquery, wrap it
     in an SQL EXISTS condition and conjunct this onto the WHERE clause of the
     outer query's query.
@@ -469,25 +470,29 @@ work on any database and provide clear error messages.
       FROM films AS films1
       WHERE EXISTS (
         SELECT films2.title
-        FROM films
-        WHERE films1.fid <> films2.fid );
+        FROM films AS films2
+        WHERE films1.fid <> films2.fid
+      );
     \end{minted}
 
     There are two things to note with this approach, both relating to scope.
-    The first is that the tables should be aliased. SQL requests that aliases
-    for inner subqueries must not have been used previously; the outer scope is
-    available to the inner subquery. The second is that, although we have not
-    specified that films2.fid is not to be returned, it cannot be. The outer
-    SELECT is not in the same scope as the inner SELECT, and so we must create
-    an exception to the free and bound variable rules that we specify in
-    section~\ref{sec:freebound}.
+    The first is that the tables need be aliased. SQL requires that aliases
+    in subqueries must not have been used previously as the outer aliases are
+    still in scope.
+    
+    The second is that in our logic $y$ is bound and we cannot make it unbound
+    without changing the meaning of the query. If we cannot make it unbound
+    then we cannot return it. Interestingly, in the SQL the outer scope cannot
+    access fields in the inner scope, and so similarly cannot return it.
+    Therefore we must create an exception to the free and bound variable rules
+    that we specify in section~\ref{sec:freebound}.
 
     We could also repesent the previous query in a simpler form.
-    \begin{multline}
+    \begin{gather}
       \exists x,y(films.title(x, title) \land films.title(y, title)
         \land x != y)
-    \end{multline}
-    Which would translate to the following SQL query.
+    \end{gather}
+    This would translate to the following SQL query.
 
     \begin{minted}{sql}
     SELECT films1.title
@@ -497,7 +502,8 @@ work on any database and provide clear error messages.
 
     Each of these forms are equivalent, and will return the same result.
     However, it is useful to be able to represent nested quantifiers, as it
-    will not always be equivalent to combine them.\cite{washEQUIV}
+    will not always be equivalent to combine them, for example in the case
+    of implication, negation or duplicate variable names.\cite{washEQUIV}
 
     \subsubsection{Universally Quantified Variables}
     Using our knowledge from section~\ref{sec:existential}, we can now
