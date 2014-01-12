@@ -1235,10 +1235,10 @@ Rather than going head to head we realised that our project needed to approach t
           import task as worker
           result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
           response = result.get()
+        
         # In file worker.py
-        @celery.task
-        def addToProcessingQueue(logic, schema):
-          # Logic translation here
+          @celery.task
+          def addToProcessingQueue(logic, schema, configData):
       \end{minted}
 
     \subsection{Logic to SQL translation}
