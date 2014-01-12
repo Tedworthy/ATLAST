@@ -1446,8 +1446,8 @@ Rather than going head to head we realised that our project needed to approach t
 
       \begin{table}
         \begin{tabular}{ | 
-          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
-          p{\dimexpr 0.5\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.25\linewidth-2\tabcolsep} |
+          p{\dimexpr 0.75\linewidth-2\tabcolsep} |
         }
 
         \hline
@@ -1493,6 +1493,21 @@ Rather than going head to head we realised that our project needed to approach t
         been designed to be a generic representation of relational algebra, and
         so there is potential for other query languages to be constructed.
 
+        Our implementation of the SQL generator is essentially a string
+        printer, that is built upon the visitor pattern. The root node is
+        visited by calling the $accept$ function on it, passing the visitor as
+        a parameter. The node then visits the visitor, passing itself and any
+        of its children as parameters as necessary. The SQL generator then
+        performs node specific printing. 
+
+        For example, when evaluating a NotNode in the SQL generator, the child
+        is visited (the result of the expression to be negated), then the child
+        is popped off of the constraint stack, the string "NOT" is appended to
+        the front, and the result pushed back on to the stack.
+
+        This continues until the root node has finished its printing. The
+        result is a fully formed SQL query, left in the $sql$ parameter of the
+        generator. This can then be retrieved and executed on a database.
 
     \subsection{Back End}
 
