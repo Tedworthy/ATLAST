@@ -716,21 +716,17 @@ Rather than going head to head we realised that our project needed to approach t
       circumstance (it is likely that we would like to return all other film
       titles).
 
-      \todo{Do we use <= or $\le$}
-
-      We can also express other inequalities, such as '<', '<=', '>', '>='.
+      We can also express other inequalities, such as `<', `$\le$', `>', `$\ge$'.
       Here we query for all the fid of every films with length greater than or
       equal to two hours.
-
       \begin{minted}{sql}
       SELECT fid,
       FROM films,
       WHERE length >= '2:00:00';
       \end{minted}
-
       This can be expressed using the following predicate logic query.
       \begin{gather}
-        \exists x(films.length(x, y) \land x >= \text{'2:00:00'}) \label{where5}
+        \exists y(films.length(x, y) \land y \ge \text{`2:00:00'}) \label{where5}
       \end{gather}
 
       Queries can be constructed for the other inequalities in a
@@ -743,7 +739,6 @@ Rather than going head to head we realised that our project needed to approach t
       wished to query the database for all film titles where the film is between 
       two and three hours in length. The relevant SQL query would take one of
       the following forms.
-
       \begin{minted}{sql}
       SELECT title
       FROM films
@@ -754,16 +749,13 @@ Rather than going head to head we realised that our project needed to approach t
       FROM films
       WHERE films.length BETWEEN '2:00:00' AND '3:00:00';
       \end{minted}
-
       This can simply be represented in first-order predicate logic with the
       following query.
-
-      \begin{gather}
+      \begin{multline}
         \exists x, length(films.title(x, title) \land films.length(x,
         length)\\
-        \land length >= '2:00:00' \land length <= '3:00:00')
-      \end{gather}
-
+        \land length \ge \text{`2:00:00'} \land length \le \text{`3:00:00'})
+      \end{multline}
       Notice how the last two constraints in the logical query translate
       with very little effort. The same applies to constraints seperated with
       an $\lor$ which is equivalent to OR in SQL.
@@ -777,7 +769,7 @@ Rather than going head to head we realised that our project needed to approach t
     data from multiple relation requires joins.
 
     An SQL JOIN clause is used to combine rows from two or more tables, based
-    on a common field between them.~\cite{w3JOINS} Joins can enable incredibly
+    on a common field between them~\cite{w3JOINS}. Joins can enable incredibly
     powerful queries, especially where information
     is normalized (split across many relations) to minimise duplication.
 
@@ -787,78 +779,62 @@ Rather than going head to head we realised that our project needed to approach t
       that we wished to write a query that returned every possible pair of
       film title and actor name in the database. In ANSI-89 SQL, we could use 
       the following query.
-
       \begin{minted}{sql}
       SELECT title, name
       FROM films, actors;
       \end{minted}
-
       Alternatively, in ANSI-92 SQL we can explicitly write:
-
       \begin{minted}{sql}
       SELECT title, name
       FROM films CROSS JOIN actors;
       \end{minted}
-
       We can think of this query as the conjunction of two disjoint relations;
       the relations do not share a key, or if they do we are not using them as
       part of the join.
-
       \begin{gather}
         \exists fid, aid(films.title(fid, title) \land actors.name(aid, name))
       \end{gather}
-
       The example used is unlikely to be a useful query on the database. Cross
       joins are rarely used in this format. Instead, they are often combined
       with a WHERE clause to extract useful information. For example, if we
       wished to query every actor that acted in the film 'The Bourne Identity',
       we could could use the following logic query.
-
-      \begin{gather}
-        \exists fid(films.title(fid, \text{'The Bourne Identity'}) \nonumber\\
-        \land actors.fid(aid, fid) \land actors.name(aid, name))
-      \end{gather}
-
+      \begin{multline}
+        \exists fid,cid(films.title(fid, \text{'The Bourne Identity'}) \\
+        \land \land casting.fid(cid, fid) \land actors.cid(aid, cid) \land actors.name(aid, name))
+      \end{multline}
       Which specifies that we only wish to return the set of all singleton
-      tuples \{$name$\} such that the actor starred in 'The Bourne Identity'.
+      tuples \{$actors.name$\} such that the actor starred in `The Bourne Identity'.
       With our knowledge of SQL CROSS JOIN, we can express this as the
       following SQL query.
-
       \begin{minted}{sql}
       SELECT name
-      FROM films CROSS JOIN actors
-      WHERE films.fid = actors.fid AND films.title = 'The Bourne Identity';
+      FROM films CROSS JOIN actors CROSS JOIN casting
+      WHERE films.fid = actors.fid AND films.title = `The Bourne Identity' AND
+      casting.fid = films.fid AND actors.cid = casting.cid;
       \end{minted}
-
       So far we have not discussed SQL aliases. Aliases are required if joining
       two instances of the same relation. To demonstrate this, suppose that we
       wish to generate the set of all pairs of actors that have appeared in the
       same film. This is achieved with the following SQL query.
-
       \begin{minted}{sql}
       SELECT a1.name,
              a2.name
-      FROM films JOIN actors AS a1
-        JOIN actors AS a2
-      WHERE films.fid = a1.fid AND films.fid = a2.fid 
-        AND a1.name != a2.name
+      FROM films CROSS JOIN actors AS a1
+        CROSS JOIN actors AS a2
+        CROSS JOIN casting
+      WHERE casting.cid = a1.cid AND casting.cid = a2.cid AND casting.fid =
+      films.fid AND a1.name != a2.name
       \end{minted}
-
       Notice that we cannot simply refer to the relation $actors$ anymore, as
       there are two of them; without an alias, the identifier would be
       ambiguous. Below is a representation of the query in logic.
-
-      \begin{align}
+      \begin{multline}
         \label{largeCROSS}
-          \exists fid, & a1, a2(  \nonumber\\
-                       & films(fid) \land \nonumber\\
-                       & actors.fid(a1, fid) \land actors.fid(a2, fid) \land \nonumber\\
-                       & actors.name(a1, name1) \land actors.name(a2, name2) \land \nonumber\\
-                       & name1 != name2 \nonumber\\
-        ) \hspace{6mm} &  % Ignore horrendous bodge...
-      \end{align}
-
-      \todo{Actor doesn't have an fid field. Did we do this so we wouldn't have to mess about with casting?}
+        \exists fid, a1, a2(films(fid) \land casting.fid(cid, fid) \land
+        actors.cid(a1, cid) \land actors.cid(a2, cid) \\
+        \land actors.name(a1, name1) \land actors.name(a2, name2) \land name1 != name2)
+      \end{multline}
 
     \subsubsection{SQL INNER JOIN}
 
@@ -875,7 +851,7 @@ Rather than going head to head we realised that our project needed to approach t
         AND a1.name != a2.name
       \end{minted}
 
-      INNER JOIN is the same as JOIN as of ANSI-92 SQL, and it the existence of
+      INNER JOIN is the same as JOIN as of ANSI-92 SQL. The existence of
       the ON clause is not necessary (making it a cross join).
 
     \subsubsection{Translating to the Correct Join}
@@ -883,14 +859,13 @@ Rather than going head to head we realised that our project needed to approach t
       Fundamentally, joining two relations often occurs as the result of a
       conjunction of predicates when translating from first-order predicate
       logic. However, there are a few different circumstances which affect the
-      type of join that must be used. Figure~\ref{table:jointranslation} explains
+      type of join that must be used. Table~\ref{table:jointranslation} explains
       the different types of join that can result from a query.
 
       \newcommand*{\tabbox}[2][t]{%
             \centering\vspace{0pt}\parbox[#1][3.7\baselineskip]{6.5cm}{\strut#2\strut}}
 
       \begin{table}
-        \label{table:jointranslation}
         \begin{tabular}{ | 
           p{\dimexpr 0.5\linewidth-2\tabcolsep} |
           p{\dimexpr 0.5\linewidth-2\tabcolsep} |
@@ -934,6 +909,7 @@ Rather than going head to head we realised that our project needed to approach t
       \end{tabular}
         \caption{How logic relates to joins. Rules can combine to create more
         complex joins.}
+        \label{table:jointranslation}
     \end{table}
 
   \subsection{Negation}
