@@ -24,6 +24,7 @@
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
 \usepackage{pifont}% http://ctan.org/pkg/pifont
 \usepackage{titlesec}
+\usepackage{wrapfig}
 \setcounter{secnumdepth}{4}
 \titleformat{\paragraph}
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
@@ -1886,6 +1887,40 @@ Rather than going head to head we realised that our project needed to approach t
     "Doing" to "Done", for instance.
 
   \subsection{Continuous Integration}
+
+    As discussed earlier, we have an extensive test suite for which to test our
+    code against throughout the development process, employing Test Driven
+    Development (TDD). These tests can be run manually by typing
+    \texttt{nosetests} on the terminal. However, we needed a way to automate
+    this.
+
+    Therefore, we decided to make use of the TeamCity \cite{teamcity}
+    continuous integration server. The choice of TeamCity was made as the group
+    deemed it to be the best package available; other CI servers such as
+    Jenkins have a difficult-to-use interface, and another popular choice,
+    Travis CI, only works with GitHub. TeamCity runs on our server,
+    and monitors our Git repository for any changes on the 'testing' branch.
+    When a change is detected, it runs our test suite on the code and, if the
+    tests pass, the branch is merged in to the 'master' branch. If tests fail,
+    a failure message is received and no merge occurs. Additionally, if the
+    commit contains the tag '\#deploy', and all tests pass, then TeamCity 
+    automatically pushes our code to our deployment server, where it is 
+    accessible via the web. The use of TeamCity was useful in ensuring no
+    broken code could be deployed, and to inform developers to inadvereant
+    pushes of broken code.
+
+    One issue that remains with this is that a group member may manually push
+    code or try to merge code in to the 'master' branch. Only TeamCity should
+    be able to do this, via the 'testing' branch. To prevent group members from
+    violating this arrangement, we set up a Git hook script that aborts any
+    attempted commits to 'master'. Additionally, a humorous message is
+    displayed.
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.3\textwidth]{images/gandalf.jpg}
+      \caption{Gandalf informs the developer that they shall not commit.}
+    \end{figure}
 
 \section{Conclusion and Future Extensions}
 
