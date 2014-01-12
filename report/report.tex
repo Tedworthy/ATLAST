@@ -993,7 +993,7 @@ Rather than going head to head we realised that our project needed to approach t
   \subsection{Application Type}
     We wanted a system that was easy to set up and worked on any operating
     system. The first point of discussion was whether a desktop client or a web
-    application would be better suited.
+    application would be better suited to meeting this goal.
 
     \begin{center}
       \renewcommand{\arraystretch}{1.5}%
@@ -1015,25 +1015,27 @@ Rather than going head to head we realised that our project needed to approach t
     you to develop for Windows, Mac OS X and Linux simultaneously. This was
     appealing because we didn't want to limit ourselves to one platform but at
     the same time didn't have the time to develop three separate versions. Even
-    taking all of this into account we felt that a web based system made more
+    taking all of this into account, we felt that a web based system made more
     sense.
 
-    Whilst C++ and Qt was supposedly cross-platform, it came with a few caveats,
-    namely that you had to write proper cross-platform C++ code, adding an extra
+    Whilst C++ and Qt was supposedly cross-platform, it came with a few caveats;
+    namely that you had to write cross-platform C++ code, adding an extra
     complication to our development. Additionally, Qt is not strictly cross
     platform; the huge variety mobile device platforms with app stores makes
     development even more complex. In contrast, a web interface is almost
-    guaranteed to work on any device that has a browser, which we believed was a
-    more relevant scope of devices and users.
+    guaranteed to work on any device that has a browser.
 
   \subsection{Language Choice}
-    Given our interface choice, we clearly needed to develop a front end using
-    the traditional combination of HTML, CSS and JavaScript, (or variants of
-    these) but what to choose for the backend? We didn't want anything
-    complicated, just a simple web server to accept requests and
-    a way of sending these requests on for processing. Using something like C
-    for this was overkill - we wanted to be able to quickly prototype and
-    experiment. As such, three languages came to mind.
+    Given our interface choice, we decided to develop a front end using
+    the traditional combination of HTML, CSS and JavaScript (or variants of
+    these). For the server backend, we didn't want anything
+    complicated; just a simple web server to accept requests and
+    a way of sending these requests on for processing. Using a
+    heavy-duty language such as C
+    for this would be overly complicated to setup and maintain, especially as
+    we wanted to be able to quickly prototype and
+    experiment. As such, our choice was between three main languages: Python,
+    Java and Ruby.
 
     \begin{center}
       \renewcommand{\arraystretch}{1.5}%
@@ -1052,7 +1054,7 @@ Rather than going head to head we realised that our project needed to approach t
     compared with Ruby or Python. Though it's much easier to write than say C,
     it lacks features like dynamic typing which make rapid prototyping easier.
 
-    There was little to choose between Python and Ruby, both are garbage
+    There was little to choose between Python and Ruby; both are garbage
     collected, dynamically typed and concise languages. We had used Ruby in our
     previous work and it was decided, simply out of curiosity, that we would try
     Python.
@@ -1063,10 +1065,10 @@ Rather than going head to head we realised that our project needed to approach t
       \includegraphics[width=\textwidth]{images/architecture.png}
       \caption{High-level system architecture diagram}
     \end{figure}
-    With all this in mind, we designed a high-level architecture of ATLAST. One
-    key consideration was the separation of various sections and services, in
+    With all this in mind, we designed the high-level architecture of ATLAST. One
+    key consideration was the separation of individual sections and services, in
     order to allow future expansion and flexibility. For example, the system
-    should be able to change what database server it was connecting to, or to
+    needed to be able to change which database server it was connecting to, or to
     send off translation requests to various services for load-balancing and
     scalability.
 
