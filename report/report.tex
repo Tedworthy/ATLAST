@@ -646,8 +646,8 @@ Rather than going head to head we realised that our project needed to approach t
       WHERE title = 'The Bourne Identity';
       \end{minted}
       We expect to encounter at least one tuple if the film exists in our domain
-      of discourse. \todo{Cite this from our AD lectures} This can be represented
-      in one of two ways in first-order predicate logic.
+      of discourse. This can be represented in one of two ways in first-order
+      predicate logic.
       \begin{gather}
         \exists x(films.title(x, y) \land y = \text{'The Bourne
         Identity'})\label{where1}\\
@@ -670,13 +670,11 @@ Rather than going head to head we realised that our project needed to approach t
       The query returns names of all of the actors who have also directed a
       film. This translates to the following SQL query. Ignore the cross join
       for now, this will be explained in section~\ref{sec:joins}.
-
       \begin{minted}{sql}
       SELECT name
       FROM actors CROSS JOIN film
       WHERE name = director;
       \end{minted}
-
       Note, that it is also possible to write the logic query in a more succint
       manner, as follows.
       \begin{gather}
@@ -691,13 +689,11 @@ Rather than going head to head we realised that our project needed to approach t
       Suppose that we wish to check the inverse of the previous section, that
       there exists other films except 'The Bourne Identity'. In SQL, this
       simply translates to the following.
-
       \begin{minted}{sql}
         SELECT title,
         FROM films
         WHERE title <> 'The Bourne Identity';
       \end{minted}
-
       The existence of one or more tuples satisfies our query; if no queries
       are returned, it must be the case that there are no other films except
       'The Bourne Identity'.
