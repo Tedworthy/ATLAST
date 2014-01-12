@@ -209,26 +209,29 @@ $(document).ready(function() {
   refresh_schema();
 
   var unicode_chars = {
-    "and": "\u2227",
-    "or": "\u2228",
-    "implies": "\u2192",
-    "iff": "\u2194",
-    "exists": "\u2203",
-    "forall": "\u2200",
-    "not": "\u00ac",
-    "not_equal": "\u2260"
+    and: "\u2227",
+    or: "\u2228",
+    implies: "\u2192",
+    iff: "\u2194",
+    exists: "\u2203",
+    forall: "\u2200",
+    not: "\u00ac",
+    not_equal: "\u2260",
+    less_equal: "\u2264",
+    greater_equal: "\u2265"
   }
 
   var keys = {
     "92": { char: "\\", formatters: ["and", "or", "exists", "forall"] },
     "47": { char: "/", formatters: ["or", "and", "not_equal_slash"] },
-    "60": { char: "<", formatters: ["iff", "implies"] },
+    "60": { char: "<", formatters: ["iff", "implies", "less_equal"] },
     "45": { char: "-", formatters: ["iff", "implies"] },
-    "62": { char: ">", formatters: ["iff", "implies"] },
+    "62": { char: ">", formatters: ["iff", "implies", "greater_equal"] },
     "69": { char: "E", formatters: ["exists"] },
     "65": { char: "A", formatters: ["forall"] },
     "33": { char: "!", formatters: ["not_equal_bang"] },
-    "61": { char: "=", formatters: ["not_equal_slash", "not_equal_bang"] },
+    "61": { char: "=", formatters: ["not_equal_slash", "not_equal_bang",
+                                    "greater_equal", "less_equal"] },
     "126": { char: "~", formatters: ["not"] }
   };
 
@@ -241,7 +244,9 @@ $(document).ready(function() {
     "forall": { regex: /\\A/, result: unicode_chars.forall },
     "not": { regex: /~/, result: unicode_chars.not },
     "not_equal_slash": { regex: /\/=/, result: unicode_chars.not_equal },
-    "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal }
+    "not_equal_bang": { regex: /!=/, result: unicode_chars.not_equal },
+    "less_equal": { regex: /<=/, result: unicode_chars.less_equal },
+    "greater_equal": { regex: />=/, result: unicode_chars.greater_equal }
   };
 
   $("#settings_form").submit(function(e) {
