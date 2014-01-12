@@ -1189,8 +1189,24 @@ work on any database and provide clear error messages.
           p[0] = p[2]
       \end{minted}
 
-      The following more complex example shows how you can build up an abstract
-      syntax tree:
+      As the grammar is reduced, an abstract syntax tree is built from the
+      bottom up. The AST is made up of \texttt{Node} subclasses found within
+      the \texttt{ast/}
+      directory. Each subclass will contain its own internal representation of
+      the language construct, but most follow the general convention of having
+      a number of children nodes.
+
+      For example, take the simple logical query below:
+      \begin{multline}
+        \exists x(films.title(x, y))
+      \end{multline}
+
+      This will build the following abstract syntax tree.
+
+      \todo{Create simple AST graphic}
+
+      Below you can find a more complex reduction rule, a more complicated
+      logical query and its resulting AST:
 
       \begin{minted}{python}
         ### A /\ B ###
@@ -1199,11 +1215,34 @@ work on any database and provide clear error messages.
           lineNo = p.lexer.lineno
           pos = getPosition(p.lexer)
           p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
-       \end{minted}
+      \end{minted}
 
-       We defined our grammar in this manner using the constructs from section 4.
+      \begin{multline}
+        \exists x(films.title(x, y) \land films.director(x, z))
+      \end{multline}
+
+      \todo{Create more complex AST graphic}
+
+      At the end of the parsing stage, the root
+      node will be accessible to then perform symbol table, and later code,
+      generation.
 
     \subsubsection{Generating a Symbol Table}
+
+      Now that a well formed AST has been constructed, the tree is then
+      traversed, populating a symbol table. Here we take the meaning of a
+      symbol table to be similar to that of a compiled object file, a structure
+      that holds information needed to locate and relocate a program's symbolic
+      definitions and references.\cite{symtab}
+
+      Below are justifications for the use of a symbol table, and
+      implementation details.
+
+      \subsubsubsection{Scoping}
+
+      \subsubsubsection{Unification}
+
+      \subsubsubsection{Free and Bound Variables}
 
     \todo{We don't need to talk about semantic analysis here, we do it in the
     error checking section of backend instead.}
