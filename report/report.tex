@@ -122,7 +122,13 @@
 
     What is your Project? What does it do? Why would I want to buy it? etc.
 
-    No implementation, software engineering details, or project management 
+    No implementation, software engineering details, or project management
+
+This is way too long, see examples at
+
+http://www.doc.ic.ac.uk/lab/thirdyear/group-project/last-year.html
+
+want 3 paragraphs: overview, problems with existing stuff, our solution
 }
 
   At its heart our project is a language translator which, for a given domain,
@@ -168,11 +174,74 @@
 
 \section{Introduction}
 
-  \todo{Set the scene ... motivation'
+  \todo[inline]{Set the scene ... motivation'
   
   State the problem you are trying to solve ...objective(s)
 
   Summarise your main achievements}
+
+  \subsection{Motivation}
+    Linked to exec summary - move stuff from that here
+
+  \subsection{Objectives}
+    The main objective was to provide a tool to translate first order predicate
+    logic to a corresponding SQL representation. At the beginning of the
+    project, it was decided that the key implementation goals would be:
+
+    \begin{itemize}
+      \item \textbf{Semantically correct translation from logic to SQL}
+
+      \item \textbf{Simple and intuitive interface} that allows the user to
+      efficiently learn and use the system
+
+      \item \textbf{Support for user specified databases} without the need for
+      further specialised or tedious configuration
+
+      \item \textbf{Lightweight and easily deployable codebase} for reduced
+      installation time and cost
+
+      \item \textbf{Modular and expandable design} allowing fast updates and
+      addition of new features
+    \end{itemize}
+
+  \subsection{Our solution}
+    ATLAST is a web application that allows a user to select a database
+    and query it using first order predicate logic. The logic is converted
+    into corresponding SQL, which is then returned to the user, along with the
+    result of running the query on the database.  
+    
+    The main achievements of the project were:
+
+    \begin{itemize}
+      \item \textbf{Creation of an SQL code generator} that is able to lexically
+      analyse and parse user-input logic queries and generate ANSI SQL.
+
+      \item \textbf{A minimalist front-end user interface} providing all
+      translation funcitonaility from a single page, with clear links to
+      support and database setup pages. Logic input shortcuts, including
+      predicate auto-fill and logic symbol autocompletion increase user
+      productivity.
+
+      \item \textbf{Server-side translation} provides queuing of translation
+      tasks and assignment to multiple backend servers. Additionally, by the
+      nature of connecting to a web app, users are always running the latest
+      code and do not have to manually apply updates.
+
+      \item \textbf{Provision of a database configuration utility} enabling
+      users to specify the connection details of any PostgreSQL database, which
+      the web application is then able to connect to and run queries on.
+
+      \item \textbf{Small (less than 3MB) Python codebase} with minimal
+      library dependencies. Installation time is on the order of ten minutes
+      and requires no specialist programming knowledge.
+
+      \item \textbf{Modularised architecture} to which specific code changes
+      and updates can be quickly applied to individual sections including the
+      GUI, lexer, parser or database support.
+    \end{itemize}
+
+    
+Old writing:
 
 When we began this project our goal was simply to allow a database to be 
 queried using logic. You shouldn't need to know the syntax of a particular
@@ -188,13 +257,6 @@ At the end of the project we can say that we have achieved most of our initial
 goals. We have created a system that can convert the queries, we have created
 a simple way to construct and edit these queries, one that can be changed to 
 work on any database and provide clear error messages.
-
-  -- GOALS - In Chatley coursework 1 --
-  Unfortunately there aren't any goals in the chatley coursework one.
-  Just a bunch of questions, turns out we forgot to add them. WHOOPS LOOL
-  TODO: Discuss goals, they're referenced in the Project Management
-  section. Revisions should not be talked about here though, just the
-  overarching goals of the project.
 
 \section{Background Research}
 \label{sec:background}
