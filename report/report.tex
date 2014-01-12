@@ -704,9 +704,8 @@ Rather than going head to head we realised that our project needed to approach t
         \exists a,b,y(actor.name(a, x) \land film.director(b, y) \land x = b)
       \end{gather}
       The query returns names of all of the actors who have also directed a
-      film. This translates to the following SQL query. For now, do not dwell
-      on the cross join, as this will be explained in further detail in
-      section~\ref{sec:joins}.
+      film. This translates to the following SQL query. Ignore the cross join
+      for now, this will be explained in section~\ref{sec:joins}.
 
       \begin{minted}{sql}
       SELECT name
@@ -1967,11 +1966,14 @@ Rather than going head to head we realised that our project needed to approach t
     repeated logic a user would have to write. For example being able to define a 
     predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
     'aname' staring in a film with title 'ftitle'
-
-    \begin{gather}
-      stars_in(aname, title) \models \exists f,c,a (films_title(f,title) \land casting_fid(c,f)  \land  casting_aid(c,a) \land actors_name(a,aname))
-    \end{gather}
-
+    \begin{align*}
+      stars.in(aname, title) \models \exists  & f,c,a (  &                                    \\
+                                              & films.title(f,title) \land &                  \\
+                                              & casting.fid(c,f) \land &                      \\
+                                              & casting.aid(c,a) \land &                      \\
+                                              & actors.name(a,aname) &                        \\
+    ) \hspace{2mm} & &
+    \end{align*}
 
     Also currently we have no facility to express SQL operations like INSERT, 
     DROP, CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part 
