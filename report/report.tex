@@ -1208,7 +1208,7 @@ Rather than going head to head we realised that our project needed to approach t
       in the same thread that services a users web-request. However in an effort 
       to make our project scalable we decided to use a 3 tiered architecture. 
       
-      A User Makes a request to the web server, the web server dispatches a job 
+      A user makes a request to the web server, the web server dispatches a job 
       to RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a 
       new job arrives, it pulls it off the task queue, processes it and posts the 
       result back to RabbitMQ. Here RabbitMQ is acting as a message broker for the
