@@ -1880,7 +1880,7 @@ Rather than going head to head we realised that our project needed to approach t
     what time, what has to be done, and what has been completed. For our group,
     working in DoC labs and at home, this would obviously not be practical.
     Therefore, we used web-based project management software called
-    Trello. This software behaves in the same way as a physical board, but is
+    Trello\cite{trello}. This software behaves in the same way as a physical board, but is
     accessed via a web based interface which can be edited by all members of
     the project.  Additionally, each card has a hashtag which denotes which
     revision a task belongs to, or if a stricter deadline is required, a date
@@ -1888,49 +1888,30 @@ Rather than going head to head we realised that our project needed to approach t
     swim lane as the task progresses. The group found this tool indispensible
     for communication and keeping on track with the project.
 
-    \todo[inline]{TODO Citations for the above agile stuff}
-
-    \begin{figure}[h!]
+    \begin{figure}[H]
       \centering
       \includegraphics[width=0.9\textwidth]{images/trello.png}
       \caption{A screenshot of our Trello board toward the end of our project.}
     \end{figure}
 
-    \todo[inline]{The remainder of this section is copypasta from a Chatley report. Sean will go through this tomorrow. DO NOT DELETE ANYTHING IN THIS SECTION ABOVE THIS MESSAGE!!!}
- \subsection{Team Metrics and Analysis}
-Throughout the project, the team actively gathered data regarding the performance of the group. This data was analysed and helped the group to track and measure group activity week on week, enabling early detection of any pitfalls or areas where the group may be struggling. Quantitative data was key for analysing group performance as it allowed us to quickly get a sense of the status of the team. This data was brought up in our weekly meetings, and was used to ensure we stayed on track and allowing us to set and modify goals for the week ahead.
-\subsubsection{ Trello and Team Velocity}
-Our group made extensive use of Trello, which mostly provides qualitative data; however, we took some of this data in isolation and converted it into a quantitative form. 
-Each Trello card is marked with a revision number, contained within a hashtag.
-We can filter by this hashtag (e.g. \#rev1) and quickly see which tasks are marked as "to do", "in progress" and "done" for a given revision. In addition to looking at this during the implementation of a revision to get an idea on progress, we can look at it at the end of an iteration to see how much work was completed and how well we met our goals. Combining this with the difficulty of each completed task, we can derive the velocity of our work - a quantitative measurement of our work speed. 
-Week on week, we also analysed our average velocity and planned future iterations, taking in to account the amount of work completed in previous iterations. As part of quantitative analysis, we plotted this average velocity on a graph. On the whole, our velocity remained constant throughout the majority of the project, with the notable exception of small bumps at the start. The conclusions we drew from this are summarised in '3.1 - Decision Making', in which we recall using two methods of measuring progress (velocity and burndown) to influence the performance of the team.
-\subsubsection{ Lines of Code}
-One metric that some development teams use to evaluate their productivity and state of their project is to count the number of lines of code written in a given agile sprint or time frame. Each group member can also be analysed on their individual code contribution. Such statistics can be gathered from our version control logs and plotted on a simple graph.
-However, we do not believe that analysing lines of code is an accurate metric of evaluating the status of the project - good code should be brief, and such a metric encourages "copy-paste syndrome". Moreover, certain aspects of our project (e.g. the parser) are complex and whilst the code for this may not be as long as other sections, it requires a lot more thinking per line. Library imports also have the potential to inflate lines of code added, which can distort these figures.
-\subsubsection{ Test Coverage and Successful Builds}
-We found far more useful development metric to be looking at the number of test cases we pass in each iteration. As discussed in previous reports, we make use of an expansive cornucopia of tests and employ the test driven development (TDD) methodology (in addition to Agile). These test cases act as an informal specification, and along with our Trello cards, show us how many features we have implemented (passed tests), and how many we have yet to implement (failed tests). Through the use of TeamCity, our continuous integration server, feedback is given frequently on a push to the testing branch on Git, so we can continually evaluate our product. The group looked at which tests were failing to inform what features or problems should be addressed in future agile sprints.
-\subsubsection{ Other Methods}
-Two other methods we considered are lead time and cycle time. Lead time is an evaluative measurement borrowed from manufacturing - it's the amount of time between the identification of a requirement and its implementation. Cycle time is similar, except rather than being the time until the user or customer sees the feature implemented, it's the time until the developer sees it implemented. Our group decided that this was not an informative evaluative technique - not all problems are equal, and some will naturally take longer than others. We therefore preferred to measure task completion via velocity, as discussed previously.
-\subsubsection{ Continuous Evaluation}
-When we evaluated our progress on the whole we saw that the burndown graph and velocity metrics recorded were consistent. However, the issue was raised that whilst front end development was going as planned we had a significant lack of progress with the backend parser and SQL generator.
-We concluded that by joining all the tasks together the good progress in the front-end was masking the lack of progress with the backend development, this was also partly due to us underestimating the time it would take us to build an extensible infrastructure. The same issue also plagues the velocity graphs, we maintained a reasonably constant velocity throughout the project but found the ratio between the front and back end development varying.
-*
-*
-A burndown graph for the whole project. The top line represents the total cumulative number of hours remaining, with the middle and bottom lines representing the number of hours remaining for the subtasks of back-end and front-end development.
-A 'velocity' graph, displaying the total number of hours of work completed by the team on a weekly basis. The graph hits a peak on the week beginning 28/10/13, where the team cut scope, thus artificially increasing the amount of work 'completed'. The dip following this coincides with group members other commitments (coursework deadlines from other courses).
-With future iterations, we decided to give a more reliable estimate (or even over-estimate) to tasks, and to break bigger tasks into smaller chunks. After this, we noticed that the data collected was much more representative of our actual progress. We extrapolated our burndown graph for each subsection, and found that those working on front-end development were scheduled to finish prior to the final week, even before contingency time, whereas backend development was not scheduled to finish until February 2014! We drew two conclusions from this information; we needed to move one person from front-end to back-end, and we needed to reduce the subset of logical queries that we planned on translating and instead focus on ease of use, reliability and the quality of error messages returned to the user. 
-The ability to alter the specification of a project dynamically is a testament to the agile methodology that we adopted, which values, '... changing requirements, even late in development.' 
   \subsection{Version Control and Automated Testing}
-  -- "You shall not pass" commit msg. Definitely needs the picture.
+    -- "You shall not pass" commit msg. Definitely needs the picture.
 
     -- Trello, Git integration
-
-    -- Burndown chart
 
     -- nosetests
 
     -- CI server
- 
+
+    The group made use of the popular Git\cite{git} version control software.
+    The choice of Git over other version control packages (e.g. Mercurial,
+    Subversion, Perforce) was obvious for us; it's freely available, gets the
+    job done, and all team members have strong experience with the software.
+    Moreover, for hosting our repository, we used the department's GitLab
+    server. This was to keep the source code within the department, low
+    latency to the server from within labs, and to make use of CSG backups. The
+    benefits of GitLab over a service like GitHub, however, were mostly
+    marginal.
 
 \section{Conclusion and Future Extensions}
 
