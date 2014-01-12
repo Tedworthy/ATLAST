@@ -862,7 +862,7 @@ work on any database and will provide clear error messages.
 
     \subsubsection{Difference}
 
-    It may be the case that we need to negate a set of predicates.By example,
+    It may be the case that we need to negate a set of predicates. By example,
     we will refer to the subquery within
     equation~\ref{eqn:except}:
     \begin{multline}
@@ -977,16 +977,6 @@ work on any database and will provide clear error messages.
   in our previous work and it was decided, simply out of curiosity,
   that we would try Python.
   
- % \subsection{Testing}
-  
-  %\todo[inline]{
-                 Testing\\
-                 -------\\
-                 nose       - Testing Framework\\
-                 paste      - Test utilities for generating web requests\\
-   %            }
-
-
   \subsection{Front End}
     \subsubsection{Web server}
       The web.py framework (link to http://webpy.org/ ) was chosen to host the
@@ -1301,6 +1291,18 @@ work on any database and will provide clear error messages.
           'cornucopia' does not exist in the schema.}
       \end{figure}
 
+  \subsection{Testing}
+  To ensure the reliability of our software we needed a testing framework that
+  we could run easily. We chose to write standard Python unittest tests and on
+  top of these used the nose testing framework to call and profile the runs.
+  Using nose gave us a clear indication of how many of our tests have passed
+  and gave us an idea of how our system was performing.
+
+  We also used paste, which is a set of libraries that allow you to autoate
+  tests which interact with a web page. This gave us the ability to test
+  sending requests from our interface, simulating user interactions in a
+  repeatable and fast manner.
+ 
 \section{Project Management - MOVE ABOVE EVALUATION}
   \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
 
