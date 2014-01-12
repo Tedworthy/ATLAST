@@ -930,18 +930,17 @@ Rather than going head to head we realised that our project needed to approach t
     It may be the case that we need to negate a set of predicates. By example,
     we will refer to the subquery within
     equation~\ref{eqn:except}:
-    \begin{align*}
-      \exists y,& length( \\
-      &\lnot(films.director(y, director) \land films.length(y, length) \land length > '1:00:00') \\
-      ) \hspace{2mm} &
-    \end{align*}
+    \begin{multline}
+      \exists y,length(\lnot(films.director(y, director) \land films.length(y,
+      length) \land \text{length > `1:00:00'}))
+    \end{multline}
     Semantically, we wish to prove that a y exists, such that y is the films
     fid, and the length of that film is above one hour. We could formulate the
     translation as below:
     \begin{minted}{sql}
-    SELECT films.director
+    SELECT director
     FROM films
-    WHERE length <= '1:00:00';
+    WHERE length <= `1:00:00';
     \end{minted}
     So the answer is simply achieved by negating the condition. However, if
     there are other constraints in the query that create a join, we do not wish
@@ -953,16 +952,14 @@ Rather than going head to head we realised that our project needed to approach t
     the rows that do not appear in a second result set\cite{wiki:EXCEPT}. It
     has the same semantic meaning as the set difference operator. The
     above SQL query is equivalent to the following.
-
     \begin{minted}{sql}
-    SELECT films.director
+    SELECT director
     FROM films
     EXCEPT
-    SELECT films.director
+    SELECT director
     FROM films
     WHERE length > '1:00:00';
     \end{minted}
-
   \subsubsection{NULL Values}
     The SQL language implements three-valued logic. A condition can either
     translate to TRUE, FALSE or UNKNOWN.
@@ -1272,8 +1269,6 @@ Rather than going head to head we realised that our project needed to approach t
         Example Tokens, in their natural environment. 
       \end{center}
 
-      \todo{Maybe, natural environment isn't the right phrase.}
-
       \subsubsection{Building an Abstract Syntax Tree}
 
       The logic queries that we parse form an LALR(1) (Look-Ahead, Left to
@@ -1301,9 +1296,9 @@ Rather than going head to head we realised that our project needed to approach t
       a number of children nodes.
 
       For example, take the simple logical query below:
-      \begin{multline}
+      \begin{gather}
         \exists x(films.title(x, y))
-      \end{multline}
+      \end{gather}
 
       This will build the following abstract syntax tree.
 
@@ -1950,10 +1945,10 @@ Rather than going head to head we realised that our project needed to approach t
 
   At the start of this project no member of the group had any significant
   experience programming in Python, despite this we found it very easy to pick
-  up and learn on the fly. However this lead to some of the early code we
+  up. However this lead to some of the early code we
   wrote being refactored several times after learning significant features
-  of the language which allowed us to simplify the code considerably, we found 
-  the use of Python dictionaries to be invaluable, for example it allowed us to 
+  of the language which allowed us to simplify the code considerably. We found 
+  the use of Python dictionaries to be invaluable as they allowed us to 
   rapidly build a well defined error handling system with minimal effort.
   
   
