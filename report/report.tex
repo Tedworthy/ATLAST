@@ -1898,15 +1898,7 @@ Rather than going head to head we realised that our project needed to approach t
       \caption{A screenshot of our Trello board toward the end of our project.}
     \end{figure}
 
-  \subsection{Version Control and Automated Testing}
-    -- "You shall not pass" commit msg. Definitely needs the picture.
-
-    -- Trello, Git integration
-
-    -- nosetests
-
-    -- CI server
-
+  \subsection{Version Control}
     The group made use of the popular Git\cite{git} version control software.
     The choice of Git over other version control packages (e.g. Mercurial,
     Subversion, Perforce) was obvious for us; it's freely available, gets the
@@ -1916,6 +1908,20 @@ Rather than going head to head we realised that our project needed to approach t
     latency to the server from within labs, and to make use of CSG backups. The
     benefits of GitLab over a service like GitHub, however, were mostly
     marginal.
+
+    Additionally, we made use of a script named
+    github-trello\cite{githubtrello} to integrate our Trello board with our
+    version control. This script allows Git commits to reference Trello cards
+    and move them between swim lanes. For example, a commit containing the word
+    "begin \#4" would move card number 4 from the "To Do" swim lane to the
+    "Doing" swim lane. As this service only works with GitHub, one of our group
+    members forked the project\cite{tedtrello} and extended its functionality 
+    to work with GitLab, and also allow for multiple cards to be referenced per
+    commit. The group found this functionality to be very useful, and it also
+    reduced the likelihood that a member would forget to move a card from
+    "Doing" to "Done", for instance.
+
+  \subsection{Continuous Integration}
 
 \section{Conclusion and Future Extensions}
 
