@@ -1279,8 +1279,18 @@ work on any database and provide clear error messages.
         scope in which it has been redeclared will have a reference to this
         global instance.
 
-    \todo{We don't need to talk about semantic analysis here, we do it in the
-    error checking section of backend instead.}
+      The symbol table structure is defined in the file
+      \texttt{codegen/symbtable.py}. A symbol table contains a dictionary of
+      values, mapping identifiers to Node subclasses. It also contains an
+      optional pointer to a parent symbol table. The symbol table class defines
+      a $lookup$ method, which searches for a Node subclass for a given key
+      within its dictionar. The method will propogate to a higher scope if the
+      definition is not found, otherwise it will return the definition.
+
+      Each node has a reference to the symbol table that exists within its
+      scope. This way, a node can resolve a variable instance to it's
+      declaration, solving the issues of unification, free and bound variables
+      and scoping.
 
     \subsubsection{Generating an IR}
 
