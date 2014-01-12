@@ -1679,7 +1679,7 @@ The ability to alter the specification of a project dynamically is a testament t
         \begin{verbatim}
           sudo apt-get install python-dev python-pip python-pastescript
           python-nose postgresql libpq-dev libxml2-dev libxslt-dev
-          rabbitmq-server
+          rabbitmq-server openssl
         \end{verbatim}
 
       \item Secondly, install the required Python packages via \texttt{pip}.
@@ -1693,10 +1693,26 @@ The ability to alter the specification of a project dynamically is a testament t
         installation folder.
 
         Now, modify \texttt{INSTALL\_DIR/dbbackend/db.cfg} for your PostgreSQL
-        database. The format of this file is intuitive. If you decide to use
+        database. The format of this file is intuitive.
+
+      \item The project requires an SSL certificate. The certificate
+        files need to be in \texttt{INSTALL\_DIR/certs} with files
+        \texttt{server.key, server.csr} and \texttt{server.crt}.
+
+        To generate your own certificates, see:\\
+        \url{http://chschneider.eu/linux/server/openssl.shtml} or the
+        documentation at \url{http://www.openssl.org}
+
+      \item \textbf{Optional}: If you decide to use
         the default database settings (the \texttt{filmdb} database), then you
-        can test your installation by running \texttt{nosetests}. This runs
+        can test your installation by running our test suite. This runs
         our test suite to confirm your installation is configured correctly.
+        Run the following in \texttt{INSTALL\_DIR}.
+
+        First, type \texttt{python dbbackend/generate\_schema.py} to generate
+        the schema for the test cases to use. Now. run \texttt{nosetests}. If
+        all tests pass, your installation is configures correctly. Note that
+        our test suite is only compatible with the \texttt{filmdb} database.
 
       \item The server can now be started by running the following:
 
@@ -1731,16 +1747,113 @@ The ability to alter the specification of a project dynamically is a testament t
     \item libxml2-dev - \url{http://www.xmlsoft.org/}
     \item libxslt-dev - \url{http://xmlsoft.org/XSLT/}
     \item RabbitMQ - \url{http://www.rabbitmq.com/}
+    \item OpenSSL - \url{http://www.openssl.org/}
   \end{itemize}
 
   The installation then broadly follows step 2 and onwards from the above
-  guide.
+  guide. 
 
   \textbf{Note:} We have determined an incompatability between our project and
   the Gentoo operating system. We make use of the RabbitMQ message server,
   which has a dependency on the Erlang language libraries. These libraries
   are notoriously difficult to install on Gentoo, as confirmed by a visit to
   the Erlang IRC channel.
+
+  \subsection{Example Queries}
+
+  The following queries make use of the \texttt{filmdb} and
+  \texttt{shakespeare} schemas, outlined above.
+
+    \subsubsection*{"Get me all films, their titles, directors, and when they
+      were made"}
+
+      Logic:
+      \begin{gather}
+        \exists x(films.title(x, y) \land films.director(x, z) \land films.made(x, a))
+      \end{gather}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT films.title, films.director, films1.made
+        FROM films JOIN films AS films1 ON (films.fid = films1.fid) AND
+        (films.fid = films1.fid)
+      \end{minted}
+
+      This demonstrates a redundancy in our code generator whereby a
+      \texttt{JOIN} is performed unnecessarily. However, the query is still
+      correct and produces the correct results.
+
+    \subsubsection*{"Get me all actors and the roles they've played."}
+
+      Logic:
+      \begin{gather}
+        \exists x,a(casting.part(x, y) \land casting.aid(x, a) \land actors.name(a, b))
+      \end{gather}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT casting.part, actors.name
+        FROM casting JOIN actors ON casting.aid = actors.aid
+        WHERE (actors.aid = casting.aid) AND (actors.aid = casting.aid)
+      \end{minted}
+
+    \subsubsection*{"Get me directors where all their films are greater than 100
+      minutes long."}
+
+      Logic:
+      \begin{multline}
+        \exists x(films.director(x, dir) \land \forall y(films.director(y, dir)
+        \\
+        \to (films.length(y, len) \land len > '100')))
+      \end{multline}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT films1.director
+        FROM films AS films1
+        WHERE NOT (EXISTS (SELECT films2.fid, films2.director, films2.length
+        FROM films AS films2
+        EXCEPT
+        SELECT films2.fid, films2.director, films2.length
+        FROM films AS films2
+        WHERE ((films2.length > '100') AND (films2.director = films1.director))
+        AND (films2.director = films1.director) ) )
+      \end{minted}
+
+      \subsubsection*{"Get me character names and descriptions for all
+        characters in either 'Othello' or 'Macbeth', where the characters
+      speaks over 50 lines."}
+
+      Logic:
+      \begin{multline}
+        \exists cid,wid(character.charname(cid, name) \land character.description(cid,
+        desc) \\
+        \land character.speechcount(cid, sc) \land sc > 50 
+        \land work.title(wid, play) 
+        \\ \land character\_work(cid, wid) \land (play = 'Othello' 
+        \lor play = 'Macbeth'))
+      \end{multline}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT character.charname, character.description,
+        character1.speechcount, work.title
+        FROM character JOIN character AS character1 ON (character.charid =
+        character1.charid) AND (character.charid = character1.charid) CROSS
+        JOIN work JOIN character_work ON (((character.charid =
+        character_work.charid) AND (character.charid = character_work.charid))
+        AND (character1.charid = character_work.charid)) AND (work.workid =
+        character_work.workid)
+        WHERE ((character1.speechcount > 50) AND (NOT ((NOT (work.title =
+        'Othello' )) AND (NOT (work.title = 'Macbeth' )) ))) AND
+        ((character_work.charid = character.charid) AND (character_work.workid
+        = work.workid))
+      \end{minted}
+
+      This query is easier to express in our logical syntax than it is in SQL.
+      However, this query does show how SQL optimisations could be applied
+      before returning the query to the user, although in practice, the SQL
+      server would do such optimisations before execution.
 
   \subsection{UML Diagram}
 
@@ -1749,7 +1862,13 @@ The ability to alter the specification of a project dynamically is a testament t
   - Or make a reduced one, just showing main components of the project e.g.
   parser, sql generator, semantic analyser, etc
 
-  \subsection{'filmdb' Schema}
+  \subsection{Schemas}
+
+  \todo[inline]{Just put screenshots of the schemas from our UI here.}
+
+    \subsubsection{filmdb}
+
+    \subsubsection{shakespeare}
 
   \subsection{Design Diagrams}
 
