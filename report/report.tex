@@ -16,7 +16,11 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{hyperref}
 \usepackage[center]{caption}
+\usepackage{multirow}
 \usepackage{pbox}
+\usepackage{arydshln}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
 \hypersetup{
   colorlinks,
   citecolor=black,
@@ -922,66 +926,73 @@ work on any database and will provide clear error messages.
   Anandha: Summarise key implementation details (how did you do it? what technology was
   used
 
-  \todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
+  %\todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
 
-  We wanted a system that worked regardless of operating system and was easy to set up. The first decision we came to was whether to have a stand-alone client or a web application.
+  \subsection{Application Type}
+  We wanted a system that was easy to set up and worked on any operating system. The first point of discussion was whether a desktop client or a web application would be better suited.
 
-  \begin{tabular}{ l | l }
-      Desktop Client & Web Based \\
-      \hline
-      + Local processing reduces latency & - Network traffic increases latency \\
-      + Native look and feel & + Universal feel \\
-      - Developing for many platforms difficult & + Multi-platform \\
-      - Installation Required & + No set up needed \\
-      - Manual Updates        & + Automatic Updates \\
-      \hline
-  \end{tabular}
+  \begin{center}
+    \renewcommand{\arraystretch}{1.5}%
+    \begin{tabular}{ r | l | l }
+      \multicolumn{1}{c |}{\textbf{Feature}} &\multicolumn{1}{c |}{\textbf{Desktop Client}} & \multicolumn{1}{c}{\textbf{Web Based}} \\
+        \hline
+        \emph{Processing}      & \ding{51} Local (Low Latency)   & \ding{55} Remote (High Latency) \\
+        \emph{Interface}       & \ding{51} Native                & \ding{51} Universal \\
+        \emph{Multi-Platform}  & \ding{55} Difficult             & \ding{51} Easy \\
+        \emph{Installation}    & \ding{55} Required              & \ding{51} None \\
+        \emph{Updates}         & \ding{55} Manual                & \ding{51} Automatic \\
+    \end{tabular}
+  \end{center}
 
-  We considered developing using C++ and Qt. Qt is a development framework that allows you to develop for Windows, Mac OS X and Linux simultaneously. This was appealing because we didn't want to limit ourselves to one platform but didn't have the time to develop three separate versions. There are a number of reasons we didn't choose this route; firstly Qt isn't free, but more importantly it adds an extra setup step for the user: downloading and installing a binary, when they could just navigate to a webpage.
+  It is worth noting that using C++ and Qt would have mitigated some of the
+  problems with desktop clients. Qt is a development framework that allows
+  you to develop for Windows, Mac OS X and Linux simultaneously. This was
+  appealing because we didn't want to limit ourselves to one platform but at
+  the same time didn't have the time to develop three separate versions. Even
+  taking all of this into account we felt that a web based system made more 
+  sense.
 
-  Web based systems also have the advantage that users do not need to constantly update to the latest version.
-
-  It was decided that the bulk of the project would be written in Python. This was due to
-  the large number of plugins and frameworks available. Also since Python is
-  interpreted there would be no large compile time which would speed up the rate
-  of work.
-
-  \todo{What else did we consider? C, Qt, Django (be a burden)}
-
-  The decision was taken to create a website and not a standalone application.
-  Doing so would ensure that users would always be using the most up to date
-  code, since all of the logic to SQL conversion would be handled on the server
-  and not on their own machines.
+  \subsection{Language Choice}
+  We'd clearly need to develop a front-end, using the traditional combination
+  of HTML, CSS and JavaScript, but what to choose for the backend? We didn't
+  want anything complicated, just a simple web server to accept requests and
+  a way of sending these requests on for processing. Using something like C
+  for this was overkill, we wanted to be able to quickly prototype and 
+  experiment - given this, three languages came to mind.
   
-  (add more reasons if you can think of them...
-  was making the GUI nice easier?)
+  \begin{center}
+    \renewcommand{\arraystretch}{1.5}%
+    \begin{tabular}{r | l | l | l}
+      \multicolumn{1}{c |}{\textbf{Feature}} & \multicolumn{1}{c |}{\textbf{Python}} & \multicolumn{1}{c |}{\textbf{Java}} & \multicolumn{1}{c}{\textbf{Ruby}}\\
+        \hline
+        \emph{Complexity of Language} & \ding{51} Simple      & \ding{55} Average   & \ding{51} Simple \\
+        \emph{Previous Experience}    & \ding{55} None        & \ding{51} Lots      & \textbf{-} Some \\
+        \emph{Plugin Support}         & \ding{51} Good        & \ding{51} Good      & \ding{51} Good \\
+        \emph{Compilation (Speed)}    & \ding{51} Interpreted & \ding{55} Compiled  & \ding{51} Interpreted \\
+    \end{tabular}
+  \end{center}
 
+  Java was the first to be eliminated, even though all group members had
+  experience using it, mainly because development takes longer when compared 
+  with the others. Though it's much easier to write than say C, it lacks 
+  features like dynamic typing which make rapid prototyping that much easier.
 
-  \todo[inline]{ List of Packages Used:\\
-
-                 Backend\\
-                 -------\\
-                 psycopg2   - Database Connection\\
-                 PLY        - Parser Generator\\
-                 Config Parser - parsing configuration files\\
-
-                 Middleware\\
-                 ----------\\
-                 RabbitMQ   - Message Broker (acts as a task queue)\\
-                 Celery     - Sets up a worker to pull jobs off task Q\\
-                 Web.py     - Web Server\\
-
-                 Front End\\
-                 ---------\\
-                 ACE        - Text Editor\\
-                 jQuery     - ubiquitous JS library\\
-
+  There was litle to choose between Python and Ruby, both are garbage
+  collected, dynamically typed and concise languages. We had used Ruby
+  in our previous work and it was decided, simply out of curiosity,
+  that we would try Python.
+  
+ % \subsection{Testing}
+  
+  %\todo[inline]{
                  Testing\\
                  -------\\
                  nose       - Testing Framework\\
-                 paste      - Test utilities for generating web requests\\}
+                 paste      - Test utilities for generating web requests\\
+   %            }
 
-  \subsection{Front-end site}
+
+  \subsection{Front End}
     \subsubsection{Web server}
       The web.py framework (link to http://webpy.org/ ) was chosen to host the
       user facing site. Doing so allowed us to quickly set up a functioning site
@@ -1001,8 +1012,8 @@ work on any database and will provide clear error messages.
 
     \subsubsection{Graphical user interface}
       \begin{figure}[h!]
-        \includegraphics[width=\textwidth]{images/Site.png}
-        \caption{Web App Main Page}
+        \includegraphics[width=\textwidth]{images/site_query.png}
+        \caption{Main `Query' page}
       \end{figure}
 
       The interface that the user would see and interact with had to be simple
@@ -1011,7 +1022,6 @@ work on any database and will provide clear error messages.
       database had to be easy to read and understand.
 
       The javascript Ace http://ace.c9.io code editor was used for inputting the
-
       user's logic query. The editor was both extremely powerful and very easy
       to implement. The editor provided a familiar interface when compared with
       desktop applications such as Vim or Gedit.
@@ -1026,10 +1036,10 @@ work on any database and will provide clear error messages.
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/LogicSymbols.png}
-        \caption{Buttons to insert logic symbols}
+        \includegraphics[width=0.5\textwidth]{images/site_click_to_insert.png}
+        \caption{`Click to insert' buttons for easily entering logic symbols}
       \end{figure}
-e3
+
       Logic symbols could be input both with key shortcuts and with dedicated
       buttons. For instance, the AND symbol could be input by typing
       forwardslash then backslash. This ensured that it was easy for new users
@@ -1039,8 +1049,8 @@ e3
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/Schema.png}
-        \caption{Database name, tables and table schemas displayed}
+        \includegraphics[width=\textwidth]{images/site_schema.png}
+        \caption{Database name, tables and table schema representation}
       \end{figure}
 
       Information about the database schema was prominently displayed at the top
@@ -1052,8 +1062,15 @@ e3
 
       \begin{figure}[h!]
         \centering
-        \includegraphics[]{images/InsertLogic.png}
-        \caption{The arrow next to 'director' inserts the relevant logic}
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[]{images/site_schema_insert.png}
+        \end{minipage}%
+        \begin{minipage}{0.49\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{images/site_schema_inserted.png}
+        \end{minipage}
+        \caption{Before and after screenshots of predicate insertion}
       \end{figure}
 
       To further simplify and increase the speed of writing logic queries,
@@ -1078,7 +1095,7 @@ e3
  
       Picked nice colours and text styles.
 
-  \subsection{Middleware plugins}
+  \subsection{Middleware}
     \subsubsection{Celery and RabbitMQ}
       By default web.py is multi-threaded, meaning that each users request is
       handled in a separate thread, this allows multiple users to send HTTP
@@ -1101,10 +1118,7 @@ e3
       allowing for multiple users to use the site, to connect to multiple
       databases.
 
-      
-
       \missingfigure{Insert diagram of architecture here.}
-
 
       To achieve this, the Celery (http://www.celeryproject.org/ ) asynchronous
       task queue and RabbitMQ (http://www.rabbitmq.com/ ) message broker were
@@ -1122,11 +1136,9 @@ e3
         def addToProcessingQueue(logic, schema):
       \end{minted}
 
-
-
     \subsection{Logic to SQL translation}
 
-    \subsubsection{Tokenising the logic}
+    \subsubsection{Tokenising}
       We used the PLY library, which is an implementation of GNU's LEX and YACC
       written in Python, in order to generate a parser and lexer for our
       project.
@@ -1171,19 +1183,26 @@ e3
 
        We defined our grammar in this manner using the constructs from section 4.
 
-    \subsubsection{Generate a symbol table based on the logic AST}
+    \subsubsection{Generating a Symbol Table}
 
     \todo{We don't need to talk about semantic analysis here, we do it in the
     error checking section of backend instead.}
 
-    \subsubsection{Generate an IR based on the logic AST}
+    \subsubsection{Generating an IR}
 
-    \subsubsection{Generate an SQL string based on the above IR}
+    \subsubsection{Generating SQL}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
       JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
-    \subsection{Backend}
-     \subsubsection{Interfacing with the databse}
+    \subsection{Back End}
+
+     \todo[inline]{
+       Backend\\
+       -------\\
+       Config Parser - parsing configuration files\\
+     }
+
+     \subsubsection{Interfacing with the database}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -1203,7 +1222,6 @@ e3
       query and return the results just using psycopg2 (assuming you already
       have a connection object setup) you would need to do the following:
       
-     
       \begin{minted}{python}
       def query(con, query):
         result = {}
@@ -1440,6 +1458,8 @@ e3
       \includegraphics[width=0.9\textwidth]{images/trello.png}
       \caption{A screenshot of our Trello board toward the end of our project.}
     \end{figure}
+
+    \todo[inline]{The remainder of this section is copypasta from a Chatley report. Sean will go through this tomorrow. DO NOT DELETE ANYTHING IN THIS SECTION ABOVE THIS MESSAGE!!!}
  \subsection{Team Metrics and Analysis}
 Throughout the project, the team actively gathered data regarding the performance of the group. This data was analysed and helped the group to track and measure group activity week on week, enabling early detection of any pitfalls or areas where the group may be struggling. Quantitative data was key for analysing group performance as it allowed us to quickly get a sense of the status of the team. This data was brought up in our weekly meetings, and was used to ensure we stayed on track and allowing us to set and modify goals for the week ahead.
 \subsubsection{ Trello and Team Velocity}
@@ -1547,10 +1567,80 @@ Application component runtime profiling
   design, testing, statistics etc.
 
   \subsection{Installation Guide}
+    For installation of our logic to SQL translator, we strongly recommend
+    starting with a vanilla installation of Ubuntu 12.04 LTS, for which a guide
+    follows. If you wish to install on another operating system (it has been 
+    confirmed to work on Ubuntu 13.10 and Mac OS X Mavericks),
+    limited help is given.
 
-  - Sean will do this (I have a list of dependencies ready)
+    \begin{enumerate}
+      \item Firstly, install dependencies via \texttt{apt-get}, or similar
+        package manager for your system (e.g. \texttt{brew} for Mac):
+        \begin{verbatim}
+          sudo apt-get install python-dev python-pip python-pastescript
+          python-nose postgresql libpq-dev libxml2-dev libxslt-dev
+          rabbitmq-server
+        \end{verbatim}
 
-  - need to mention not posibul 2 instal the earlangs on the gentoo pls
+      \item Secondly, install the required Python packages via \texttt{pip}.
+        This should work regardless of platform (replace \texttt{sudo} with the
+        command to elevate to superuser privileges for your platform):
+        \begin{verbatim}
+          sudo pip install psycopg2 celery lxml
+        \end{verbatim}
+
+      \item Extract the Logic to SQL project tarball to your desired
+        installation folder.
+
+        Now, modify \texttt{INSTALL\_DIR/dbbackend/db.cfg} for your PostgreSQL
+        database. The format of this file is intuitive. If you decide to use
+        the default database settings (the \texttt{filmdb} database), then you
+        can test your installation by running \texttt{nosetests}. This runs
+        our test suite to confirm your installation is configured correctly.
+
+      \item The server can now be started by running the following:
+
+        \begin{verbatim}
+          celery --app=task worker &>> celery.log &
+          ./run PORT_NUM &>> webpy.log &
+        \end{verbatim}
+
+        The software will now be accessible via
+        \texttt{https://localhost:PORT\_NUM}. Logs will be available in
+        \texttt{celery.log} and \texttt{webpy.log}. Note that if you wish to
+        run the server on port 80, you must execute the \texttt{run} script
+        with superuser privileges (i.e. with \texttt{sudo}).
+
+        As the project is designed to run as a daemon, these commands can be
+        added to a boot-up script. The processes may be terminated in the
+        normal way.
+    \end{enumerate}
+
+  \subsubsection{Other Operating Systems and Dependencies}
+
+  To install our project on other operating systems, the following dependencies
+  must be met (including version tested with).
+
+  \begin{itemize}
+    \item Python, including dev tools (2.7.x) - \url{http://python.org}
+    \item Pip (1.0) - \url{http://www.pip-installer.org/en/latest/}
+    \item Nose (1.1.2) - \url{https://github.com/nose-devs/nose/}
+    \item Paste (1.7.5.1) - \url{http://pythonpaste.org/}
+    \item PostgreSQL (9.1) - \url{http://www.postgresql.org/}
+    \item libpq-dev - \url{http://www.postgresql.org/}
+    \item libxml2-dev - \url{http://www.xmlsoft.org/}
+    \item libxslt-dev - \url{http://xmlsoft.org/XSLT/}
+    \item RabbitMQ - \url{http://www.rabbitmq.com/}
+  \end{itemize}
+
+  The installation then broadly follows step 2 and onwards from the above
+  guide.
+
+  \textbf{Note:} We have determined an incompatability between our project and
+  the Gentoo operating system. We make use of the RabbitMQ message server,
+  which has a dependency on the Erlang language libraries. These libraries
+  are notoriously difficult to install on Gentoo, as confirmed by a visit to
+  the Erlang IRC channel.
 
   \subsection{UML Diagram}
 
