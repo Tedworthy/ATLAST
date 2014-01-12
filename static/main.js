@@ -402,6 +402,11 @@ $(document).ready(function() {
     }
   });
 
+  $("#not_button").click(function() {
+    logicEditor.insert(unicode_chars.not);
+    logicEditor.focus();
+  });
+
   // Buttons that insert symbols
   $("#and_button").click(function() {
     logicEditor.insert(unicode_chars.and);
@@ -433,8 +438,33 @@ $(document).ready(function() {
     logicEditor.focus();
   });
 
-  $("#not_button").click(function() {
-    logicEditor.insert(unicode_chars.not);
+  $("#equal_button").click(function() {
+    logicEditor.insert("=");
+    logicEditor.focus();
+  });
+
+  $("#not_equal_button").click(function() {
+    logicEditor.insert(unicode_chars.not_equal);
+    logicEditor.focus();
+  });
+
+  $("#less_button").click(function() {
+    logicEditor.insert("<");
+    logicEditor.focus();
+  });
+
+  $("#less_equal_button").click(function() {
+    logicEditor.insert(unicode_chars.less_equal);
+    logicEditor.focus();
+  });
+
+  $("#greater_button").click(function() {
+    logicEditor.insert(">");
+    logicEditor.focus();
+  });
+
+  $("#greater_equal_button").click(function() {
+    logicEditor.insert(unicode_chars.greater_equal);
     logicEditor.focus();
   });
 
