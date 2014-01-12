@@ -3,7 +3,7 @@
 \usepackage[top = 2.5cm,
             bottom = 2.5cm,
             left = 2.2cm,
-          right = 2.2cm]{geometry}
+            right = 2.2cm]{geometry}
 \usepackage{layout}
 \usepackage{graphicx}
 \usepackage{float}
@@ -1007,152 +1007,105 @@ Rather than going head to head we realised that our project needed to approach t
     encountered.
 
 \section{Design and Implementation}
-  Anandha: Summarise key implementation details (how did you do it? what technology was
-  used
-
-  %\todo{and why? what other technology was considered, but not used and why? Any technical challenges encountered and how addressed?  Any risks anticipated, and how mitigated.}
-
   \subsection{Application Type}
-  We wanted a system that was easy to set up and worked on any operating system. The first point of discussion was whether a desktop client or a web application would be better suited.
+    We wanted a system that was easy to set up and worked on any operating
+    system. The first point of discussion was whether a desktop client or a web
+    application would be better suited.
 
-  \begin{center}
-    \renewcommand{\arraystretch}{1.5}%
-    \begin{tabular}{ r | l | l }
-      \multicolumn{1}{c |}{\textbf{Feature}} &\multicolumn{1}{c |}{\textbf{Desktop Client}} & \multicolumn{1}{c}{\textbf{Web Based}} \\
+    \begin{center}
+      \renewcommand{\arraystretch}{1.5}%
+      \begin{tabular}{ r | l | l }
+        \multicolumn{1}{c |}{\textbf{Feature}} &
+          \multicolumn{1}{c |}{\textbf{Desktop Client}} &
+          \multicolumn{1}{c}{\textbf{Web Based}} \\
         \hline
-        \emph{Processing}      & \ding{51} Local (Low Latency)   & \ding{55} Remote (High Latency) \\
-        \emph{Interface}       & \ding{51} Native                & \ding{51} Universal \\
-        \emph{Multi-Platform}  & \ding{55} Difficult             & \ding{51} Easy \\
-        \emph{Installation}    & \ding{55} Required              & \ding{51} None \\
-        \emph{Updates}         & \ding{55} Manual                & \ding{51} Automatic \\
-    \end{tabular}
-  \end{center}
+        \emph{Processing}     & \ding{51} Local (Low Latency) & \ding{55} Remote (High Latency) \\
+        \emph{Interface}      & \ding{51} Native              & \ding{51} Universal \\
+        \emph{Multi-Platform} & \ding{55} Difficult           & \ding{51} Easy \\
+        \emph{Installation}   & \ding{55} Required            & \ding{51} None \\
+        \emph{Updates}        & \ding{55} Manual              & \ding{51} Automatic \\
+      \end{tabular}
+    \end{center}
 
-  It is worth noting that using C++ and Qt would have mitigated some of the
-  problems with desktop clients. Qt is a development framework that allows
-  you to develop for Windows, Mac OS X and Linux simultaneously. This was
-  appealing because we didn't want to limit ourselves to one platform but at
-  the same time didn't have the time to develop three separate versions. Even
-  taking all of this into account we felt that a web based system made more 
-  sense.
+    It is worth noting that using C++ and Qt would have mitigated some of the
+    problems with desktop clients. Qt is a development framework that allows
+    you to develop for Windows, Mac OS X and Linux simultaneously. This was
+    appealing because we didn't want to limit ourselves to one platform but at
+    the same time didn't have the time to develop three separate versions. Even
+    taking all of this into account we felt that a web based system made more
+    sense.
+
+    Whilst C++ and Qt was supposedly cross-platform, it came with a few caveats,
+    namely that you had to write proper cross-platform C++ code, adding an extra
+    complication to our development. Additionally, Qt is not strictly cross
+    platform; the huge variety mobile device platforms with app stores makes
+    development even more complex. In contrast, a web interface is almost
+    guaranteed to work on any device that has a browser, which we believed was a
+    more relevant scope of devices and users.
 
   \subsection{Language Choice}
-  We'd clearly need to develop a front-end, using the traditional combination
-  of HTML, CSS and JavaScript, but what to choose for the backend? We didn't
-  want anything complicated, just a simple web server to accept requests and
-  a way of sending these requests on for processing. Using something like C
-  for this was overkill, we wanted to be able to quickly prototype and 
-  experiment - given this, three languages came to mind.
-  
-  \begin{center}
-    \renewcommand{\arraystretch}{1.5}%
-    \begin{tabular}{r | l | l | l}
-      \multicolumn{1}{c |}{\textbf{Feature}} & \multicolumn{1}{c |}{\textbf{Python}} & \multicolumn{1}{c |}{\textbf{Java}} & \multicolumn{1}{c}{\textbf{Ruby}}\\
-        \hline
-        \emph{Complexity of Language} & \ding{51} Simple      & \ding{55} Average   & \ding{51} Simple \\
-        \emph{Previous Experience}    & \ding{55} None        & \ding{51} Lots      & \textbf{-} Some \\
-        \emph{Plugin Support}         & \ding{51} Good        & \ding{51} Good      & \ding{51} Good \\
-        \emph{Compilation (Speed)}    & \ding{51} Interpreted & \ding{55} Compiled  & \ding{51} Interpreted \\
-    \end{tabular}
-  \end{center}
+    Given our interface choice, we clearly needed to develop a front end using
+    the traditional combination of HTML, CSS and JavaScript, (or variants of
+    these) but what to choose for the backend? We didn't want anything
+    complicated, just a simple web server to accept requests and
+    a way of sending these requests on for processing. Using something like C
+    for this was overkill - we wanted to be able to quickly prototype and
+    experiment. As such, three languages came to mind.
 
-  Java was the first to be eliminated, even though all group members had
-  experience using it, mainly because development takes longer when compared 
-  with the others. Though it's much easier to write than say C, it lacks 
-  features like dynamic typing which make rapid prototyping that much easier.
+    \begin{center}
+      \renewcommand{\arraystretch}{1.5}%
+      \begin{tabular}{r | l | l | l}
+        \multicolumn{1}{c |}{\textbf{Feature}} & \multicolumn{1}{c |}{\textbf{Python}} & \multicolumn{1}{c |}{\textbf{Java}} & \multicolumn{1}{c}{\textbf{Ruby}}\\
+          \hline
+          \emph{Complexity of Language} & \ding{51} Simple      & \ding{55} Average   & \ding{51} Simple \\
+          \emph{Previous Experience}    & \ding{55} None        & \ding{51} Lots      & \textbf{-} Some \\
+          \emph{Plugin Support}         & \ding{51} Good        & \ding{51} Good      & \ding{51} Good \\
+          \emph{Compilation (Speed)}    & \ding{51} Interpreted & \ding{55} Compiled  & \ding{51} Interpreted \\
+      \end{tabular}
+    \end{center}
 
-  There was litle to choose between Python and Ruby, both are garbage
-  collected, dynamically typed and concise languages. We had used Ruby
-  in our previous work and it was decided, simply out of curiosity,
-  that we would try Python.
-  
+    Java was the first to be eliminated, even though all group members had
+    experience using it, mainly because development in general takes longer when
+    compared with Ruby or Python. Though it's much easier to write than say C,
+    it lacks features like dynamic typing which make rapid prototyping easier.
+
+    There was little to choose between Python and Ruby, both are garbage
+    collected, dynamically typed and concise languages. We had used Ruby in our
+    previous work and it was decided, simply out of curiosity, that we would try
+    Python.
+
+  \subsection{Architecture}
+    \begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{images/architecture.png}
+      \caption{High-level system architecture diagram}
+    \end{figure}
+    With all this in mind, we designed a high-level architecture of AT LAST. One
+    key consideration was the separation of various sections and services, in
+    order to allow future expansion and flexibility. For example, the system
+    should be able to change what database server it was connecting to, or to
+    send off translation requests to various services for load-balancing and
+    scalability.
+
+    From this concept we were able to split the system up into three areas - the
+    front end, the middleware, and the back end. The front end was the user's
+    interface into the system, i.e. the browser experience. The back end
+    consisted of the core operational components that did the actual translation
+    of logic to SQL, and to interface with the database. The middleware then
+    links these two parts together with a web service to host the front end and
+    a method of managing the back end's translation processes, allowing both to
+    communicate with each other.
+
   \subsection{Front End}
-    \subsubsection{Web server}
-      The web.py framework~\cite{webpy} was chosen to host the
-      user facing site. Doing so allowed us to quickly set up a functioning site
-      and concentrate on developing useful features, instead of spending a large
-      amount of time setting up a more complicated web server some other
-      alternatives we considered (Django) appeared to have a more complex
-      configuration.
-
-      The JSON data format was used to transfer the logic input by the user to the
-      server and the translated SQL to the user from the server. The format was
-      chosen as it was very easy to parse by Javascript running in the user's
-      browser and was well documented online due to its wide existing use.
-
-    \subsubsection{Webpage plugins and libraries}
-      The site made heavy use of jQuery, which greatly simplified the handling
-      of JSON data sent between the user and the server.
-
     \subsubsection{Graphical user interface}
       \begin{figure}[h!]
         \includegraphics[width=\textwidth]{images/site_query.png}
         \caption{Main `Query' page}
       \end{figure}
-
       The interface that the user would see and interact with had to be simple
       and intuitive to use. In particular, this meant that logic queries had to
-      be easy to input and the resulting SQL and the result of running it on the
-      database had to be easy to read and understand.
-
-      The javascript Ace~\cite{aceEditor} code editor was used for inputting the
-      user's logic query. The editor was both extremely powerful and very easy
-      to implement. The editor provided a familiar interface when compared with
-      desktop applications such as Vim or Gedit.
-
-      The editor had a number of advantages over using a simple text box form.
-      This included syntax highlighting, line numbers, displaying hidden
-      characters and providing many different themes.
-
-      Syntax highlighting was achieved by \todo{Ted magic}. Syntax that the
-      highlighting was able to distinguish between included logic symbols,
-      brackets, data types.
-
-      \begin{figure}[h!]
-        \centering
-        \includegraphics[width=0.5\textwidth]{images/site_click_to_insert.png}
-        \caption{`Click to insert' buttons for easily entering logic symbols}
-      \end{figure}
-
-      Logic symbols could be input both with key shortcuts and with dedicated
-      buttons. For instance, the AND symbol could be input by typing
-      forwardslash then backslash. This ensured that it was easy for new users
-      to start using the web app (using the provided buttons), whilst also
-      allowing experienced users to quickly input larger queries (using key
-      shortcuts).
-
-      \begin{figure}[h!]
-        \centering
-        \includegraphics[width=\textwidth]{images/site_schema.png}
-        \caption{Database name, tables and table schema representation}
-      \end{figure}
-
-      Information about the database schema was prominently displayed at the top
-      of the main page. The data included the database name, table names, table
-      attributes, attribute types and marking of the primary key. Without this
-      information the user could easily forget the exact names of each attribute
-      that they wanted to use, or not know the correct datatype to use in their
-      logic query.
-
-      \begin{figure}[h!]
-        \centering
-        \begin{minipage}{0.49\textwidth}
-          \centering
-          \includegraphics[]{images/site_schema_insert.png}
-        \end{minipage}%
-        \begin{minipage}{0.49\textwidth}
-          \centering
-          \includegraphics[width=\textwidth]{images/site_schema_inserted.png}
-        \end{minipage}
-        \caption{Before and after screenshots of predicate insertion}
-      \end{figure}
-
-      To further simplify and increase the speed of writing logic queries,
-      each table attribute had an arrow button placed next to it. When clicked,
-      the button would insert the appropriate logic syntax into the logic query
-      field. This feature helped to significantly reduce the number of syntax
-      errors caused by small spelling mistakes, and helped the user to input
-      correct logic syntax.
+      be easy to input and the resulting SQL with the result of running it on
+      the database had to be clear and understandable.
 
       The site was designed with the fewest number of pages possible, in order
       to maintain its simplicity and ease of use. When a user browses to the
@@ -1160,58 +1113,132 @@ Rather than going head to head we realised that our project needed to approach t
       begin working straight away, with no setup costs or many pages to first
       browse through.
 
+      As such we designed an easy way of inputting common logic symbols and
+      operators, with the view that doing so with a keyboard would be very
+      difficult in many cases, particularly as half of them are not present on
+      standard keyboards. This reduced the entry barrier for potential users -
+      what could be easier than clicking on a symbol to insert it?
+
+      Information about the database schema was prominently displayed at the top
+      of the query page. The data included the database name, table names, table
+      attributes, attribute types and marking of key attributes. This makes the
+      structure of the database very obvious, and an extra feature of this was
+      the addition of buttons for each attribute. These buttons would insert
+      into the logic query the predicate corresponding to the chosen attribute,
+      reducing syntax errors due to spelling mistakes, requiring the user to
+      type less to achieve their desired query.
+
       In addition to the translation page, there is also a help page and a
-      database setup page. The help page provides an easy to understand guide
-      on how to write and form logic queries, whilst the database setup page
-      allows the user to specify their own database to connect to and run
-      queries on. The links to these two pages are placed at the top of the page
+      settings page. The help page provides an easy to understand guide on how
+      to write and form logic queries, whilst the settings page allows the user
+      to specify their own database to connect to and run queries on. The links
+      to these two pages are placed at the top of the page in the form of tabs,
       so that they are easily accessible.
- 
-      Picked nice colours and text styles.
+
+      We also implemented syntax highlighting for predicate logic in our input
+      box, which aids readability and helps the user know when their syntax is
+      incorrect.
+
+      Another power feature we created was a method of easily inserting logic
+      symbols using just the keyboard. This was implemented by using typed
+      character sequences that corresponded to various logic symbols, for
+      example the sequence `<->' would be replaced with the unicode character
+      $\leftrightarrow$.
+
+    \subsubsection{HTTP REST and JSON}
+      The user interface's communication with the web server was based on the
+      REST principle~\cite{rest}. This involved sending and receiving JSON with
+      the web server to perform various tasks.
+
+      The database schema could be requested performing a GET request to
+      `/schema'. A POST request to `/' was used to send the logic string to the
+      web server for translation using the AJAX principle, where the browser
+      sends an asynchronous HTTP request and does not refresh the page.
+
+      The JSON data format was also used to transfer the logic input by the user
+      to the server, and the translated SQL to the user from the server. The
+      format was chosen as it is parsed automatically by the browser into
+      native JavaScript objects. This made the interface between the server and
+      the client very smooth and simple.
+
+    \subsubsection{Plugins and Libraries}
+      The site made heavy use of jQuery~\cite{jquery}, a very common JavaScript
+      library which makes common tasks much more straightforward, to speed up
+      development and yield a more engaging user experience. Other libraries are
+      available for this purpose such as MooTools~\cite{mootools}, but our
+      experience with jQuery in the past made the choice for us.
+
+      The Ace~\cite{aceEditor} code editor was used as the input box for the
+      user's logic query. The editor was both extremely powerful and very
+      customisable, whilst being fairly straightforward to integrate into the
+      existing codebase.
+
+      The editor provided a familiar interface when compared with desktop
+      applications such as Vim or Sublime Text, and the colour scheme could be
+      changed to commonly used themes available from these existing editors.
+
+      The editor had a number of advantages over using a simple HTML textarea.
+      This included line numbers, but also syntax highlighting. This was
+      achieved by creating a `mode' for the editor to use, with a set of
+      highlighting rules that govered how the input was split into tokens. These
+      tokens would represent various elements in the predicate logic language,
+      such as variables, logic symbols or predicates.
+
+      The highlighting rules were based around a state machine which acted much
+      like an LL(1) parser. This meant our existing LALR(1) parser grammar could
+      be adapted to work with the syntax highlighting rules. This took a bit of
+      time but yielded excellent results, as can be seen above.
 
   \subsection{Middleware}
+    \subsubsection{Web Server}
+      The web.py framework~\cite{webpy} was chosen to host the user facing site.
+      Doing so allowed us to quickly set up a functioning site and concentrate
+      on developing useful features, instead of spending a large amount of time
+      setting up a more complicated web server.
+
+      We seriously considered Django as an alternative web framework, but we
+      were put off by its complex configuration and its focus on
+      enterprise-level features. For example, it was not trivial to host static
+      pages or media like images with Django, for no obvious reason. It was this
+      that persuaded us to go with a far lighter framework, such as web.py.
+
     \subsubsection{Celery and RabbitMQ}
       By default web.py is multi-threaded, meaning that each users request is
-      handled in a separate thread, this allows multiple users to send HTTP
-      requests to the server at once. 
-      
-      Because of this, it would indeed be possible to run the translation code 
-      in the same thread that services a users web-request. However in an effort 
-      to make our project scalable we decided to use a 3 tiered architecture. 
-      
-      A User Makes a request to the web server, the web server dispatches a job 
-      to RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a 
-      new job arrives, it pulls it off the task queue, processes it and posts the 
-      result back to RabbitMQ. Here RabbitMQ is acting as a message broker for the
-      server to communicate to the Celery worker. Currently our implementation 
-      assumes that all three services are running on the same machine, however it
-      is very easy to edit the configuration so that the platform can scale to an 
-      arbitrary number of separate workers on different physical devices.
+      handled in a separate thread. This allows multiple users to send HTTP
+      requests to the server at once.
 
-      In addition, each users settings are stored in a session variable,
-      allowing for multiple users to use the site, to connect to multiple
-      databases.
+      Because of this, it would indeed be possible to run the translation code
+      in the same thread that services a user's request. However in an effort
+      to make our project scalable we decided to use a 3 tiered architecture.
 
-      \missingfigure{Insert diagram of architecture here.}
+      To achieve this, the Celery~\cite{celery} asynchronous task queue and
+      RabbitMQ~\cite{rabbitmq} message broker were used. Each logic sentence to
+      translate could be easily packaged into its own task and added to a queue
+      to be translated.
 
-      To achieve this, the Celery~\cite{celery} asynchronous
-      task queue and RabbitMQ~\cite{rabbitmq} message broker were
-      used. Each logic sentence to translate could be easily packaged into its
-      own task and added to a queue to be translated.
+      A user makes a request to the web server, the web server dispatches a job
+      to RabbitMQ, a Celery worker listens to the RabbitMQ task queue and when a
+      new job arrives, it pulls it off the task queue, processes it and posts
+      the result back to RabbitMQ. Here RabbitMQ is acting as a message broker
+      for the server to communicate to the Celery worker. Currently our
+      implementation assumes that all three services are running on the same
+      machine, however it is very easy to edit the configuration so that the
+      platform can scale to an arbitrary number of separate workers on different
+      physical devices.
 
-      Below is an example of how these services are used in our project: 
+      Below is an example of how these services are used in our project:
       \begin{minted}{python}
-        #code.py
-        import task as worker
-        result = worker.addToProcessingQueue.delay(logic, web.schema)
-        response = result.get()
-        #worker.py
+        # In file code.py
+          import task as worker
+          result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
+          response = result.get()
+        # In file worker.py
         @celery.task
         def addToProcessingQueue(logic, schema):
+          # Logic translation here
       \end{minted}
 
     \subsection{Logic to SQL translation}
-
       In this section, we will focus on the implementation of the translation
       between first-order predicate logic and SQL.
 
