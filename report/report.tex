@@ -1522,6 +1522,29 @@ work on any database and provide clear error messages.
 
   - talk about how our plan changed, how things went wrong
 
+\section{Conclusion and Future Extensions}
+\todo[inline]{What did you learn? What might you have done differently?
+  How would you build on what you have done?}
+
+  All the project management tools barely worked. We didn't have a week where
+  TeamCity didn't break. Also don't forget to delete pyc files! And get
+  pythonpath to work!
+
+  We used git rather badly - nobody ever pushed to master because it never
+  worked. Basically codegen was the sole useful branch (apart from ui maybe).
+
+  \subsection{Future Extensions}
+    Better user support (login system, multiple servers to do translation,
+    more databases supported, not just PostgreSQL).
+
+    \subsubsection{Other logic things to support}
+    logic functions previously defined, so don't have to keep writing the same
+    thing out loads of times?
+
+    \subsubsection{Further Semantic Analysis}
+    \todo[inline]{Can anyone think of anything beyond type checking?}
+
+    \subsubsection{Support more database backends} 
 
 \section{Project Management}
   \todo[inline]{Planning, group organisation, breakdown + task allocation etc.}
@@ -1704,40 +1727,6 @@ The ability to alter the specification of a project dynamically is a testament t
 
     -- CI server
  
-\section{Evaluation}
-  Evaluate your deliverables e.g. performance, usability, etc.
-  Summarise testing procedures + relevant testing results
-
-
-
-
-  \subsection{Evaluation Using Data}
-  \subsubsection{User Interface}
-Ease of use was a key requirement of our project. As such we collected metrics of user data in order to quantify each user's interaction with the site. To measure the ease of inputting queries and to gain a picture of the learning curve of the site, we recorded the average length of inputted queries over time per user, and whether these queries were valid (shown by whether they were able to be parsed).
-Profiling code to record query length versus time taken for the user to enter it
-\subsubsection{Application Performance Analysis}
-Because the response time per query would be a large factor in a user's experience of the site, we were very interested in recording the performance of each component of our site. Thus we were able to quantify the final performance of our product at the end of the project, by calculating the average time to process each query.
-The python testing framework Nose was used with the '--with-profile' flag. This allowed us to see how long functions and pieces of code were taking to execute per query. Towards the end of the project, we had reduced each query to run in less than 1.5 seconds, which we believed was an acceptable time for a user to wait, and was also in line with other online services.
-Aside from empirical data analysis, another important factor of application performance was the perceived performance by the user. Talking to users and gathering survey data using the online SurveyMonkey platform left the team with a more meaningful representation of the relative speed of the application with respect to the users expectation, with 71.4% of users answering that the were "happy with speed of query processing", and 28.6% happy.
-\subsubsection{Verification of Logic to SQL Translation}
-By constantly adding new tests based on queries that were either produced within our group, or suggested by our supervisor and others, we quickly built up a large set of test cases. These test cases provided the assurance that our application was able to successfully handle all syntactically valid queries that a user could enter. The expected results of each test case, the SQL queries that were to be produced, were built up through conversations with users about their views of the semantic meaning of each logic query they tried. By the end of week 7, we had over  60 test cases which all successfully passed.
-
-\subsection{Use of Data for Making Decisions and Reaching Conclusions}
-
-\subsubsection{Site Usability Improvements}
-Another insight we gained from our survey was that users wanted a tutorial or information page on the site to help them learn how to use the application. This was clear to see as over 70% of users wanted such a system. In response we produced an information dialogue box which explained the key features and elements of the application.
-Survey results and information page implementation
-\subsubsection{Targeting Performance Increases}
-By using the Python nosetests profiling throughout the project, we were able to target improvements at the pieces of code which had the highest performance cost; maximising improvements per time spent writing code.
-After profiling our code we found that queries to our database took a large percentage of time to run compared to the rest of the code (1.822s/2.307s = 79%) we worked to reduce its execution time, as this would yield the largest performance benefit for time spent working. We modified our query() function so that it only read the connection parameters for the database once, whereas it had previously been reloading the parameters each time query() was called.
-Application component runtime profiling
-
-
-
-
-
-
-  - talk about how our plan changed, how things went wrong
 
 \section{Conclusion and Future Extensions}
 \todo[inline]{What did you learn? What might you have done differently?
