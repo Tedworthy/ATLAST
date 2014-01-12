@@ -651,6 +651,8 @@ Rather than going head to head we realised that our project needed to approach t
       We expect to encounter at least one tuple if the film exists in our domain
       of discourse. This can be represented in one of two ways in first-order
       predicate logic.
+
+      % This is two formulas, keep this as gather.
       \begin{gather}
         \exists x(films.title(x, y) \land y = \text{'The Bourne
         Identity'})\label{where1}\\
@@ -703,6 +705,8 @@ Rather than going head to head we realised that our project needed to approach t
 
       As before, there are two ways we can represent the SQL query above in
       logic.
+
+      % This is two formulas, keep it as gather.
       \begin{gather}
         \exists x(films.title(x, y) \land y !=  \text{'The Bourne
         Identity'})\label{where3}\\
@@ -758,11 +762,11 @@ Rather than going head to head we realised that our project needed to approach t
       This can simply be represented in first-order predicate logic with the
       following query.
 
-      \begin{gather}
+      \begin{multline}
         \exists x, length(films.title(x, title) \land films.length(x,
         length)\\
         \land length >= '2:00:00' \land length <= '3:00:00')
-      \end{gather}
+      \end{multline}
 
       Notice how the last two constraints in the logical query translate
       with very little effort. The same applies to constraints seperated with
@@ -812,12 +816,12 @@ Rather than going head to head we realised that our project needed to approach t
       joins are rarely used in this format. Instead, they are often combined
       with a WHERE clause to extract useful information. For example, if we
       wished to query every actor that acted in the film 'The Bourne Identity',
-      we could could use the following logic query.
+      we could use the following logic query.
 
-      \begin{gather}
-        \exists fid(films.title(fid, \text{'The Bourne Identity'}) \nonumber\\
+      \begin{multline}
+        \exists fid(films.title(fid, \text{'The Bourne Identity'}) \\
         \land actors.fid(aid, fid) \land actors.name(aid, name))
-      \end{gather}
+      \end{multline}
 
       Which specifies that we only wish to return the set of all singleton
       tuples \{$name$\} such that the actor starred in 'The Bourne Identity'.
@@ -996,11 +1000,9 @@ Rather than going head to head we realised that our project needed to approach t
 
     This is particularly useful because it allows us to postulate questions like
     the following "List the names of all films who's director is not known" as:
-
-    \begin{multline}
+    \begin{gather}
       \exists x(films.name(x,name) \land \lnot films.director(x, director) )
-    \end{multline} 
-
+    \end{gather} 
     It is common for SQL queries to check if a value is NULL, as the user may
     wish to exclude these values, or perform a special case if they are
     encountered.
