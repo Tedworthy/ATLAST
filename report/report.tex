@@ -1260,10 +1260,10 @@ work on any database and will provide clear error messages.
       the logic to SQL translation uses an XML representation of the database
       schema. In this way the translation engine is platform agnostic with
       regards to which particular SQL implementation the web server is running.
-      Indeed as long as an XML file is provided it is possible to run the
-      translation engine in an 'offline' mode where it is not connected to a
-      database and it does not run the translated query, instead it simply
-      presents the query to the user.
+      Indeed as long as an XML file is provided it would be possible extend the
+      system with minimal effort to run the translation engine in an 'offline' mode 
+      where it is not connected to a database and it does not run the translated 
+      query, instead it simply presents the query to the user.
 
       This XML representation is automatically generated on program startup.
       Currently the project only supports PostgreSQL implementations, however it
@@ -1556,25 +1556,90 @@ Application component runtime profiling
 \todo[inline]{What did you learn? What might you have done differently?
   How would you build on what you have done?}
 
-  All the project management tools barely worked. We didn't have a week where
-  TeamCity didn't break. Also don't forget to delete pyc files! And get
-  pythonpath to work!
 
-  We used git rather badly - nobody ever pushed to master because it never
-  worked. Basically codegen was the sole useful branch (apart from ui maybe).
+  At the start of this project no member of the group had any significant
+  experience programming in Python, despite this we found it very easy to pick
+  up and learn on the fly. However because of this, some of the early code we
+  wrote had to be refactored several times after learning significant features
+  of the language which allowed us to simplify it considerably, we found the use
+  of Python dictionaries to be particularly useful in many area's of the
+  codebase allowing for a well defined error handling system to be rapidly built
+  up.
+
+  Upon reflection, at the beginning of the project we started well, planning
+  in advance and making sure team members were kept up to date with the
+  technical details of how the project worked. However as time progressed this
+  changed, there was a tendency for some members of the project to work on an
+  area without informing others of their intention, or specifying abstractly
+  how they were solving certain problems. For example at the beginning of the
+  project everybody had a good understanding of how we would parse the grammar
+  for predicate logic and how we could build up a syntax tree, but later on
+  during the codegen phase a few members (whilst doing sterling work) 'ran away'
+  with the project resulting in a large chunk of code which only a few people
+  understood; this greatly reduced how many people could contribute to that part
+  of the project without spending a significant amount of time figuring out what
+  was being produced, which in turn slowed down development of certain features.
+  Really what we have learnt from this is that documentation is key, indeed if the
+  group were to do the project over again, we would have made sure that for each
+  agile sprint a group member would be tasked solely with the role of 'Technical
+  Writer' who's job it would be to produce a set of specifications for each part
+  of the project worked on that week. 
+
 
   \subsection{Future Extensions}
+    During the course of this project we did not get time to implement several
+    features we had initially hoped to provide. 
+
     Better user support (login system, multiple servers to do translation,
     more databases supported, not just PostgreSQL).
 
-    \subsubsection{Other logic things to support}
-    logic functions previously defined, so don't have to keep writing the same
-    thing out loads of times?
+    \subsubsection{User Defined Predicates}
+    Initially we wanted to have a mechanism by which as user would be able to
+    define the meaning of a predicate which they could then use in their query.
+    For example being able to define a predicate
+    \texttt{stars\_in(aname,ftitle)} which
+    relates an actor with a name 'aname' staring in a film with title 'ftitle'
 
+    \begin{verbatim}
+      stars_in(aname, title) |= films_title(f,title) /\ casting_fid(c,f) /\
+      casting_aid(c,a) /\ actors_name(a,aname)
+    \end{verbatim}
+
+    \subsubsection{DML and More DDL Operations}
+    Currently we have no facility to express operations like INSERT, DROP, 
+    CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part of DML
+    there is a vast set of SQL which we are unable to provide a mapping for
+    in our system.
     \subsubsection{Further Semantic Analysis}
     \todo[inline]{Can anyone think of anything beyond type checking?}
+    
+    \subsubsection{Security enhancements}
+    Currently our project is vulnerable to several SQL injections. While working
+    on the project we prioritised the initial task over the security of the
+    system. Additionally, whilst the connection to our site is secured via
+    HTTPS, passwords to the database are still sent in 'plaintext' over HTTPS.
+    \subsubsection{Being able to download and save results}
+    Currently the only way the result of a query, which has been translated and
+    run, is displayed is via the web page. If a user wanted the information in a
+    different format it would be nice to provide some sort of mechanism to
+    download that data.
+    \subsubsection{Support for Additional Database Implementations} 
+    Currently our project only supports Postgres databases we would also have
+    liked to be able to support several other major implementations like MySQL and
+    Microsoft SQL Server, however due to lack of time this feature was removed
+    in favour of focusing on making sure that the logical translations produced
+    were correct. 
+    \subsubsection{UI Improvements}
+    There are several niceities which would be useful to have, increasing
+    responsiveness of the system whilst running long queries (providing the user
+    feedback to let them know that it hasn't crashed), saving a recent history
+    of queries, developing a tablet version of the site, being able to truncate
+    the ouput of queries if they are too long, caching results of recent queries
+    ot improve performace. 
 
-    \subsubsection{Support more database backends} 
+
+   
+    
 
 \section{Bibliography}
   \printbibliography
