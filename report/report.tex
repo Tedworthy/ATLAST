@@ -1304,7 +1304,47 @@ work on any database and provide clear error messages.
 
     \subsubsection{Generating an IR}
 
-    \subsubsection{Generating SQL}
+      Once symbol table generation has been performed, we then must generate an
+      intermediate representation of the logic query. This representation can
+      be seen as a generic format which represents a relational algebra
+      query. The IR contains four data structures, explained below.
+
+      \begin{itemize}
+
+          \item Relation Attribute Pairs
+            The relation-attribute pairs list is equivalent to the attributes
+            provided to the relational algebra projection operator. It is
+            organised simply as a python array of RelationAttribute objects.
+            The RelationAttribute class encapsulates a Relation object and an
+            attribute string field. The benefit of this abstraction versus a
+            mere string representation is that the Relation object can be
+            aliased elsewhere in the translator and still be reflected in the
+            end projection.
+
+          \item Relation Tree
+            The relation tree can be thought of as all of the relations
+            involved in a join in a relational algebra expression. It is
+            structured as a tree, making use of join nodes to describe the
+            relationship between one or many Relation nodes. Certain nodes in
+            the tree will also contain information about the join, for example
+            which conditions should be related to the join.
+
+          \item Constraint Tree
+            The constraint tree is equivalent to the conditions contained
+            within the relational algebra selection operator. Again, it is
+            structured as a tree to enforce the precedence of binary operators
+            (And, Or).
+
+          \item Bind Constraint Tree
+            The bind constraint tree is similar to the constraint tree, except
+            it exclusively contains equality constraints that unify variables.
+            It is necessary to split these constraints from any previous as
+            they are implicit, and any negation that occurs on a constraint
+            tree often unnecessarily negates unification constraints.
+
+      \end{itemize}
+
+      \subsubsection{Generating SQL}
       Lots of scope to talk about each different construct (SELECT, SELECT FROM, 
       JOIN, NATURAL JOIN etc.) and any optimisations we did.
 
