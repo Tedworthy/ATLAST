@@ -1460,7 +1460,7 @@
         Conjunction of predicates or constraints causes no join.
         & 
         The relation attribute pairs are combined, the constraint trees are
-        combined with an AndNode as are the bind constraint trees. The relation
+        combined with an \texttt{AndNode} as are the bind constraint trees. The relation
         tree remains the same as the left IR's relation tree. This is because
         as there is no join, it must be the case that either both
         relation trees are the same, or that the right IR does not have a
@@ -1469,15 +1469,15 @@
         Conjunction of predicates or constraints causes an equi-join.
         & 
         The relation attribute pairs are combined, the constraint trees are
-        combined with an AndNode as are the bind constraint trees. The relation
-        trees are combined with an EquiJoin node, complete with a list of
+        combined with an \texttt{AndNode} as are the bind constraint trees. The relation
+        trees are combined with an \texttt{EquiJoin} node, complete with a list of
         constraints that constitute for the equality constraints in the join.
         \\\hline
         Conjunction of predicates or constraints causes a cross join
         & 
         The relation attribute pairs are combined, the constraint trees are
-        combined with an AndNode as are the bind constraint trees. The relation
-        trees are combined with an CrossJoin node.
+        combined with an \texttt{AndNode} as are the bind constraint trees. The relation
+        trees are combined with an \texttt{CrossJoin} node.
         \\\hline
         Disjunction of a predicate and a constraint
         & 
