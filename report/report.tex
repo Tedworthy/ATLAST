@@ -1602,11 +1602,9 @@
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
-      required is to add a \%SQL\%\_back end.py which provides the functions
-      described above, then switch out the import in generate\_schema.py to use
-      the desired implementation.
-
-
+      required is to add a \texttt{\%SQL\%\_back end.py} which provides the 
+      functions described above, then switch out the import in
+      \texttt{generate\_schema.py} to use the desired implementation.
 
     \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
