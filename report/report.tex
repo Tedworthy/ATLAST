@@ -304,7 +304,7 @@
     \end{center}
 
     The fact $grandparent(Valerie, Joe)$ is not stored permanently but can be
-    inferred at runtime, this is where the power of Datalog lies. Since there is no
+    inferred at runtime: this is where the power of Datalog lies. Since there is no
     equivalent for this deduction in SQL and Datalog has been around since the 1970s
     we decided it would be an impossible challenge to out-develop it in a matter of
     weeks.
@@ -319,7 +319,7 @@
         &                     & & \texttt{FROM people} \\
         &                     & & \texttt{WHERE parent = 'jane'} \\
       \end{align*}
-      Equivalent Datalog and SQL. Datalog is far more concise, something we wanted from our syntax.
+      Equivalent Datalog and SQL. Datalog is far more concise; something we wanted from our syntax.
     \end{center}
 
   \subsection{LogicBlox}
@@ -330,7 +330,7 @@
   \begin{figure}[h!]
     \centering
     \includegraphics[width=7cm]{images/logicblox.png}
-    \caption{An example creating a predicate cost, and some facts which map ice creams to a price.}
+    \caption{An example of LogiQL creating a predicate cost, and some facts which map ice creams to a price.}
   \end{figure}
 
   Note that the syntax differs from Datalog and so is not backwards compatible. If our project ever went got to the stage where we wanted to implement more advanced features, it would be worth reviewing LogiQL.
@@ -338,7 +338,7 @@
   \subsection{SQL}
     Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
     programming language designed for managing data held in relational database
-    management system. SQL is made up of two different types of language:
+    management systems. SQL is made up of two different types of language:
 
     \begin{itemize}
       \item
@@ -372,7 +372,7 @@
     true, and if it doesn't currently hold it should be inserted. Problems here
     include automatically generating a primary key whilst keeping the syntax as
     true to logic as possible. We chose not to implement this due to time
-    constraints, but it would certainly be possible develop in the future.
+    constraints, but it would certainly be possible to develop in the future.
 
   \subsection{Tuple Relational Calculus}
     SQL was originally based on Relational Algebra and Tuple Relational
@@ -386,7 +386,7 @@
 
       A formula F is recursively defined as:
       \begin{itemize}
-        \item $p(t_1, ..., t_n)$ where predicate $p$ is applied to terms $t_1, ..., t_n$ (atomic formula)
+        \item $p(t_1, ..., t_n)$ where predicate $p$ is applied to terms $t_1, ..., t_n$ (atomic formula).
         \item $\lnot F$ where $F$ is a formula.
         \item $F' \land F''$ where $F', F''$ are formulae.
         \item $F' \lor F''$ where $F', F''$ are formulae.
@@ -397,7 +397,7 @@
       $\exists t(F)$ is true if, for some tuple $t$ the formula $F$ is true. \\
       $\forall t(F)$ is true if, for all tuples $t$ the formula $F$ is true.
 
-      A variable $v$ is bound in $F$ if it is of the form:
+      A variable $v$ is bound in $F$ if it is of the form
 
       $\exists t(F)$ or $\forall t(F)$ and $v \in t$.
 
@@ -412,7 +412,7 @@
       particular director in a database. It would be simple to write:
       $$ \{F\text{ | }F \in Films \land F.director = \text{`Matt Damon'}\} $$
       This would however return all the elements of the tuple. The tuple may
-      contain many irrelevant values to the user, and so it would be desirable
+      contain many irrelevant values to the user and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
       $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
@@ -420,7 +420,7 @@
       $$ \emph{Note: F becomes a tuple with one element called title.} $$
 
       We are now able to represent projection and selection. We can also
-      represent joins. Let us suppose that we wish to find all titles of films
+      represent joins. Suppose we wish to find all titles of films
       whose director has also directed another film.
       $$ \{F\text{ | }\exists F1 \in Films(\exists F2 \in Films(F1.director =
            F2.director \land F1 \neq F2) \land F.title = F1.title)\} $$
@@ -455,9 +455,9 @@
       previously in AI and language processing\cite{logicsemanticnetwork}. For example, given a relation $films$,
       with columns $title$, $length$ and $date\_released$, a predicate
       $films(title, length, date\_released)$ could be generated, where $title$,
-      $length$ and $date\_released$ are all variables. This certainly solves the
-      issue the set membership issue, but does add unnecessary bloat to each
-      query; relations may have thousands of columns, very few of which are
+      $length$ and $date\_released$ are all variables. This certainly solves
+      the set membership issue, but does add unnecessary bloat to each
+      query as relations may have thousands of columns, of which very few are
       likely needed in a given query.
 
       The solution chosen addresses the issues raised so far.
