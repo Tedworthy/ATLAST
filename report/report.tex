@@ -202,7 +202,7 @@
       more efficient SQL queries. This would be especially useful if querying
       large datasets.
 
-    \subsubsection{Simplicity of logic over SQL}
+    \subsubsection{Simplicity of Logic Over SQL}
       Many queries are far easier to write and are more understandable when
       written in logic compared to SQL. The examples below demonstrate this,
       using both Datalog and our implementation syntax.
@@ -222,8 +222,6 @@
         FROM films JOIN casting ON films.fid = casting.fid
         WHERE (films.length > '02:00:00') AND (casting.fid = films.fid)
       \end{minted}
-
-    \subsubsection{Anything else you can come up with}
 
   \subsection{Objectives}
     The main objective was to provide a tool to translate first-order predicate
@@ -246,7 +244,7 @@
       addition of new features
     \end{itemize}
 
-  \subsection{Our solution}
+  \subsection{Our Solution}
     ATLAST is a web application that allows a user to select a database
     and query it using first-order predicate logic. The logic is converted
     into corresponding SQL, which is then returned to the user, along with the
@@ -290,7 +288,7 @@
     strong links to Datalog. Datalog is a declarative logic programming language,
     resembling Prolog in syntax, that can be used to query deductive databases.
     Deductive databases differ from traditional relational databases in that
-    new facts can be `deduced' by applying rules to those facts already stored.
+    new facts can be `deduced' by applying rules to those facts already stored. \cite{datalogFariba}
 
     As an example, the following is possible in Datalog:
     \begin{center}
@@ -410,6 +408,7 @@
       $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
            \land F.title = F1.title)\} $$
       $$ \emph{Note: F becomes a tuple with one element called title.} $$
+
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all titles of films
       whose director has also directed another film.
@@ -1091,7 +1090,7 @@
     communicate with each other.
 
   \subsection{Front End}
-    \subsubsection{Graphical user interface}
+    \subsubsection{Graphical User Interface}
       \begin{figure}[h!]
         \includegraphics[width=\textwidth]{images/site_query.png}
         \caption{Main `Query' page}
@@ -1518,7 +1517,7 @@
 
     \subsection{Back End}
 
-    \subsubsection{Interfacing with the database}
+    \subsubsection{Interfacing With the Database}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -2019,7 +2018,7 @@
     for in our system. Perhaps a set of special predicates could be defined in
     order to facilitate these operators.
     
-    \subsubsection{Web front end Features}
+    \subsubsection{Web Front End Features}
     There are a few security issues with our project as it stands, currently our 
     project is vulnerable to several SQL injections. While working on the project
     we prioritised the translation task over the security of the system, if the 
@@ -2308,8 +2307,19 @@
   - things like sean's bullshit rough drawings from Chatley reports
 
   \subsection{Statistics}
-
-  - This is just the performance metric, profiling etc diagrams from 
+     \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/1.jpg}
+        \caption{}
+      \end{figure} 
+      \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/4.png}
+        \caption{}
+      \end{figure}  
+            \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/5.png}
+        \caption{}
+      \end{figure}                                    
+      - This is just the performance metric, profiling etc diagrams from 
   Chatley coursework 4.
 
 %\section{Anandha waffle from his site - delete once finished report}
