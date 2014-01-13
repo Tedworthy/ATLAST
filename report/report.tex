@@ -255,10 +255,6 @@
       users to specify the connection details of any PostgreSQL database, which
       the web application is then able to connect to and run queries on.
 
-      \item \textbf{Small (less than 3MB) Python codebase} with minimal
-      library dependencies. Installation time is on the order of ten minutes
-      and requires no specialist programming knowledge.
-
       \item \textbf{Modular architecture} to which specific code changes
       and updates can be quickly applied to individual sections including the
       GUI, lexer, parser or database support.
@@ -1059,6 +1055,7 @@
     experience using it, mainly because development in general takes longer when
     compared with Ruby or Python. Though it's much easier to write than say C,
     it lacks features like dynamic typing which make rapid prototyping easier.
+    This can also have its disadvantages, like more difficult debugging.
 
     There was little to choose between Python and Ruby; both are garbage
     collected, dynamically typed and concise languages. We had used Ruby in our
@@ -1079,10 +1076,10 @@
     load-balancing and scalability.
 
     From this concept we were able to split the system up into three areas: the
-    front end, the middleware and the back end. The front end was the user's
+    front end, the middleware and the back end. The front end is the user's
     interface into the system, i.e. the browser experience. The back end
-    consisted of the core operational components that did the actual translation
-    of logic to SQL, and to interface with the database. The middleware then
+    consists of the core operational components that perform the actual translation
+    of logic to SQL and interfaces with the database. The middleware then
     links these two parts together with a web service to host the front end and
     a method of managing the back end's translation processes, allowing both to
     communicate with each other.
@@ -1098,7 +1095,7 @@
       be easy to input and the resulting SQL and the result of running it on
       the database had to be clear and understandable.
 
-      The site was designed with the fewest number of pages possible, in order
+      The site was designed with the fewest number of pages necessary, in order
       to maintain its simplicity and ease of use. When a user browses to the
       site, the homepage is the logic translation page. This allows the user to
       begin working straight away, with no setup costs or many pages to first
@@ -1112,7 +1109,7 @@
 
       Information about the database schema was prominently displayed at the top
       of the query page. The data included the database name, table names, table
-      attributes, attribute types and marking of key attributes. This makes the
+      attributes, attribute types and identification of key attributes. This makes the
       structure of the database very obvious, and an extra feature of this was
       the addition of buttons for each attribute. These buttons would insert
       into the logic query the predicate corresponding to the chosen attribute,
@@ -1130,15 +1127,15 @@
       box, which aids readability and helps the user know when their syntax is
       incorrect.
 
-      Another power feature we created was a method of easily inserting logic
+      Another power feature we created was a method of quickly inserting logic
       symbols using just the keyboard. This was implemented by using typed
       character sequences that corresponded to various logic symbols, for
       example the sequence `<->' would be replaced with the Unicode character
       $\leftrightarrow$.
 
     \subsubsection{HTTP REST and JSON}
-      The user interface's communication with the web server was based on the
-      REST principle~\cite{rest}. This involved sending and receiving JSON with
+      The user interface's communication with the web server was based the
+      REST principles~\cite{rest}. This involved sending and receiving JSON with
       the web server to perform various tasks.
 
       The database schema could be requested performing a GET request to
@@ -1154,10 +1151,10 @@
 
     \subsubsection{Plugins and Libraries}
       The site made heavy use of jQuery~\cite{jquery}, a very common JavaScript
-      library which makes common tasks much more straightforward, to speed up
-      development and yield a more engaging user experience. Other libraries are
+      library which makes common tasks much more straightforward, speeds up
+      development and yields a more engaging user experience. Other libraries are
       available for this purpose such as MooTools~\cite{mootools}, but our
-      experience with jQuery in the past made the choice for us.
+      experience with jQuery in the past made it the choice for us.
 
       The Ace~\cite{aceEditor} code editor was used as the input box for the
       user's logic query. The editor was both extremely powerful and very
