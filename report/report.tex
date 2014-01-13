@@ -1303,12 +1303,24 @@
         \exists x(films.title(x, y))
       \end{gather}
 
-      This will build the following abstract syntax tree.
+      This will build the abstract syntax tree shown in
+      figure~\ref{fig:simpleAST}. Below you can find a more complex reduction rule, 
+      a more complicated logical query and its resulting AST in
+      figure~\ref{fig:complexAST}.
 
-      \todo{Create simple AST graphic}
+      \begin{figure}
+      \centering
+      \includegraphics[width=0.5\textwidth]{images/ASTSimple.png}
+      \caption{Abstract Syntax Tree for the query $\exists x(films.title(x, y))$}
+      \label{fig:simpleAST}
+      \end{figure}
 
-      Below you can find a more complex reduction rule, a more complicated
-      logical query and its resulting AST:
+      \begin{figure}
+      \centering
+      \includegraphics[width=0.5\textwidth]{images/ASTSimple.png}
+      \caption{Abstract Syntax Tree for the query $\exists x(films.title(x, y))$}
+      \label{fig:complexAST}
+      \end{figure}
 
       \begin{minted}{python}
         ### A /\ B ###
