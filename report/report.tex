@@ -291,7 +291,7 @@
     \end{itemize}
 
 \section{Background Research}
-\label{sec:background}
+  \label{sec:background}
 
   \subsection{Datalog}
     Before beginning the development of our project it was clear that there were
@@ -370,8 +370,8 @@
 
     \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
       \label{sec:formalTRC}
-      A query takes the form: \{T | p(T)\}. The answer of a query is said to be
-      the set of all tuples T such that p(T) evaluates to true.
+      A query takes the form: $\{T\text{ | }p(T)\}$. The answer of a query is
+      said to be the set of all tuples $T$ such that $p(T)$ evaluates to $\top$.
 
       A formula F is recursively defined as:
       \begin{itemize}
@@ -392,39 +392,26 @@
 
       Otherwise $v$ is said to be free.
 
-      Note that in query \{T | p(T)\} the variables in T must be the only
-      free variables in p(T).
+      Note that in query $\{T\text{ | }p(T)\}$ the variables in $T$ must be the only
+      free variables in $p(T)$.
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
       queries. For example, suppose it was desirable to query all films from a
       particular director in a database. It would be simple to write:
-
-      \begin{center}
-        \{F | F $\in$ Films $\land$ F.director = `Matt Damon'\}
-      \end{center}
-
+      $$ \{F\text{ | }F \in Films \land F.director = \text{`Matt Damon'}\} $$
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
-
-      \begin{center}
-        \{F | $\exists$F1 $\in$ Films(F1.director = `Matt Damon' $\land$
-          F.title = F1.title)\}
-
-        \emph{NOTE: F becomes a tuple with one element called title.}
-      \end{center}
-
+      $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
+           \land F.title = F1.title)\} $$
+      $$ \emph{NOTE: F becomes a tuple with one element called title.} $$
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all titles of films
       whose director has also directed another film.
-
-      \begin{center}
-        \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$
-            Films(F1.director = F2.director $\land$ F1 $\neq$ F2) \\
-          $\land$ F.title = F1.title)\}
-      \end{center}
+      $$ \{F\text{ | }\exists F1 \in Films(\exists F2 \in Films(F1.director =
+           F2.director \land F1 \neq F2) \land F.title = F1.title)\} $$
 
   \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     \label{sec:tuplefo}
@@ -443,32 +430,32 @@
       different types or sets, they all belong to one global set. To solve this
       problem we propose a few solutions.
 
-      One solution is with an `InRelation' predicate, where `InRelation(t, R)'
+      One solution is with an $InRelation$ predicate, where $InRelation(t, R)$
       would have the same semantic meaning as the previous set membership test.
       This seems to work, although throughout first-order predicate logic, we
       do not have the notion of a tuple; an atom is structurally meaningless. A
       disadvantage of this would be that accessing members of the tuple would
-      require another predicate, for example `InTuple(a, `attrName', t)' which
-      would have the same semantic meaning as `t.a' in TRC.
+      require another predicate, for example $InTuple(a, \text{`attrName'}, t)$
+      which would have the same semantic meaning as $t.a$ in TRC.
 
       Another solution, which solves the previous issue, is to generate n-ary
-      predicates that represent a tuple. For example, given a relation 'films',
-      with columns `title', `length' and `date-released', a predicate
-      `films(title, length, date-released)' could be generated, where title,
-      length and date-released are all variables. This certainly solves the
-      issue the set membership issue, but does add uneccessary bloat to each
+      predicates that represent a tuple. For example, given a relation $films$,
+      with columns $title$, $length$ and $date\_released$, a predicate
+      $films(title, length, date\_released)$ could be generated, where $title$,
+      $length$ and $date\_released$ are all variables. This certainly solves the
+      issue the set membership issue, but does add unnecessary bloat to each
       query; relations may have thousands of columns, very few of which are
       likely needed in a given query.
 
       The solution chosen addresses the issues raised so far.
 
-      For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
-      and n attributes we generate n + 1 predicates:
+      For a relation $R(k, a_{1}, a_{2}, ..., a_{n})$ with primary key $k$
+      and $n$ attributes we generate $n + 1$ predicates:
       \begin{align*}
-        \text{1:  }     & R(k)           \\
-        \text{2:  }     & R.a_1(k, a1)   \\
-        \text{3:  }     & R.a_2(k, a2)   \\
-                        & \vdots         \\
+        \text{1:  }      & R(k)           \\
+        \text{2:  }      & R.a_1(k, a1)   \\
+        \text{3:  }      & R.a_2(k, a2)   \\
+                         & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
       NOTE: The predicate $R.k(k, k)$ is also valid, albeit redundant.
