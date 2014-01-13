@@ -30,7 +30,6 @@ def addToProcessingQueue(logic, schema, configData):
 
   # Parse the logic into a logic AST
   try:
-   print "TRYING TO PARSE logic '%s'" % logic
    logicAST = p.parse_input(logic)
   except Exception, e:
     print str(e)

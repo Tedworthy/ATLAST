@@ -46,7 +46,6 @@ class Index:
   # TODO: secure the connection, currently it runs everything as root!
   def POST(self):
     logic = web.input().logic
-    print logic
 
     # Create worker thread and start
     result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
@@ -57,7 +56,6 @@ class Index:
 
     # Get the result from the worker thread
     response = result.get()
-    print response
 
     web.header('Content-Type','application/json; charset=utf-8', unique = True)
     return json.dumps(response)
@@ -77,7 +75,6 @@ class Settings:
 
     try:
       configData = web.input()
-      print configData
 
       # TODO: Validate user input
       gs.generate_db_schema(pg.connect(configData))
