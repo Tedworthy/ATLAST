@@ -1726,7 +1726,6 @@
       \includegraphics[width=0.9\textwidth]{images/survey.jpg}
       \caption{A screenshot of the SurveyMonkey results} 
     \end{figure}
-    Survey results and information page implementation   
     \subsection{Testing Procedures}
     We used the testing framework Nose in order to rapidly develop test cases to
     ensure the correctness of our project. We employed TDD (write a failing
@@ -2041,7 +2040,6 @@
     they are too long, caching results of recent queries to improve performance,
     and having a mechanism to download the results of a logic query.  
 
-    
     \subsubsection{Back End Features} 
     We would have liked our project to be able to support several database
     implementations. Currently it only supports Postgres databases, we had
@@ -2053,19 +2051,25 @@
     add because before translating to SQL we produce an intermediate
     representation (or IR), an optimiser can then be run over this IR to do
     things like remove redundant NOT(NOT()) clauses.
-   
-    Currently there is no scope for type checking in the semantic analysis phase
-    of the SQL generation,\todo{SEAN PLZ DO DEES}
 
-   
-    
+    Additionally, further methods of semantic analysis could be implemented -
+    the main method being type checking. Since we have information about types
+    in our schema, once the constraint tree has been generated in the
+    intermediate representation, we could walk this tree and check for
+    inconsistencies. Consider the following query, where \texttt{films.title}
+    is of type string and \texttt{films.length} is of type interval.
+
+    \begin{gather}
+      \exists x(films.title(x, y) \land films.length(x, y))
+    \end{gather}
+
+    Semantically, this means "get me the films where their titles and lengths
+    are the same". But this is a type error; we cannot unify variable y on a
+    string and interval. This feature was planned, but unfortunately due to time
+    constraints, was dropped.
 
 \section{Bibliography}
   \printbibliography
-
-  --TODO Agree on referencing practice. The library recommends Harvard. --
-
-  https://workspace.imperial.ac.uk/library/Public/Harvard\_referencing.pdf
 
 \appendix
 \section{Appendix}
