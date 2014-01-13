@@ -1323,11 +1323,11 @@
 
       \begin{figure}
       \centering
-      \includegraphics[width=0.5\textwidth]{images/ASTSimple.png}
-      \caption{Abstract Syntax Tree for the query $\exists x(films.title(x, y))$}
+      \includegraphics[width=0.8\textwidth]{images/ASTComplex.png}
+      \caption{Abstract Syntax Tree for the query $
+        \exists x(films.title(x, y) \land films.director(x, z))$}
       \label{fig:complexAST}
       \end{figure}
-
       \begin{minted}{python}
         ### A /\ B ###
         def p_formula_and(p):
@@ -1336,12 +1336,9 @@
           pos = getPosition(p.lexer)
           p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
       \end{minted}
-
       \begin{gather}
         \exists x(films.title(x, y) \land films.director(x, z))
       \end{gather}
-
-      \todo{Create more complex AST graphic}
 
       At the end of the parsing stage, the root
       node will be accessible to then perform symbol table, and later code,
