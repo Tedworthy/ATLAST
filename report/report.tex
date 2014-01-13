@@ -207,15 +207,6 @@
       written in logic compared to SQL. The examples below demonstrate this,
       using both Datalog and our implementation syntax.
 
-      \begin{center}
-        \begin{align*}
-          & parent(jane, Child) & & \texttt{SELECT child} \\
-          &                     & & \texttt{FROM people} \\
-          &                     & & \texttt{WHERE parent = 'jane'} \\
-        \end{align*}
-        Comparison of concise Datalog query to long SQL query
-      \end{center}
-
     \subsubsection*{"Get me all actors who have been in a film that is more
       than two hours long"}
 
@@ -266,7 +257,7 @@
       \item \textbf{Creation of an SQL code generator} that is able to lexically
       analyse and parse user-input logic queries and generate ANSI SQL.
 
-      \item \textbf{A minimalist front-end user interface} providing all
+      \item \textbf{A minimalist front end user interface} providing all
       translation functionality from a single page, with clear links to
       support and database setup pages. Logic input shortcuts, including
       predicate auto-fill and logic symbol auto-completion, increase user
@@ -297,7 +288,7 @@
     Before beginning the development of our project it was clear that there were
     strong links to Datalog. Datalog is a declarative logic programming language,
     resembling Prolog in syntax, that can be used to query deductive databases.
-    Deductive databases are different from traditional relational databases in that
+    Deductive databases differ from traditional relational databases in that
     new facts can be `deduced' by applying rules to those facts already stored.
 
     As an example, the following is possible in Datalog:
@@ -325,7 +316,15 @@
     Instead we realised that our project needed to approach the task from a
     different angle. Rather than requiring a database populated from scratch in a
     manner designed for logic queries, we wanted to bring some of the benefits of
-    logic to regular relational databases.
+    logic, like simplicity, to regular relational databases.
+    \begin{center}
+      \begin{align*}
+        & parent(jane, Child) & & \texttt{SELECT child} \\
+        &                     & & \texttt{FROM people} \\
+        &                     & & \texttt{WHERE parent = 'jane'} \\
+      \end{align*}
+      Equivalent Datalog and SQL. Datalog is far more concise, something we wanted from our syntax.
+    \end{center}
 
   \subsection{SQL}
     Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
@@ -351,10 +350,13 @@
     We initially chose to restrict to these operations so we could build a basic,
     but fully working system before progressing. Afterwards we considered how
     a statement that manipulates data, like an insert, could be defined in logic.
-    \todo[inline]{What are the dollar signs doing below?}
-    \begin{gather}
-      \top \rightarrow (film\_title(\$new, ``Flight'') \land film\_director(\$new, ``James''))
-    \end{gather}
+    
+    \begin{center}
+      \begin{gather}
+        \top \rightarrow (film\_title(\$new, ``Flight'') \land film\_director(\$new, ``James''))
+      \end{gather}
+      Note: $\$new$ is assumed to generate an unused film ID.
+    \end{center}
 
     Above is one possibility, inserting a film called `Flight', directed by
     `James'. Having $\top$ imply the new information suggests that it must be
@@ -404,9 +406,20 @@
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
+<<<<<<< HEAD
+
+      \begin{center}
+        \{F | $\exists$F1 $\in$ Films(F1.director = `Matt Damon' $\land$
+          F.title = F1.title)\}
+
+        \emph{Note: F becomes a tuple with one element called title.}
+      \end{center}
+
+=======
       $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
            \land F.title = F1.title)\} $$
       $$ \emph{NOTE: F becomes a tuple with one element called title.} $$
+>>>>>>> 0c594312e354b92f44799af78cf6ab977d1be9cb
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all titles of films
       whose director has also directed another film.
@@ -458,7 +471,7 @@
                          & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
-      NOTE: The predicate $R.k(k, k)$ is also valid, albeit redundant.
+      Note: The predicate $R.k(k, k)$ is also valid, albeit redundant.
 
       Relating a tuple to its primary key gives a concise way to address it,
       adding the slight restriction that each relation must have a primary key.
