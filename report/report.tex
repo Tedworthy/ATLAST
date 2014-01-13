@@ -153,7 +153,7 @@
   application called ATLAST (Automatic Translation of Logic to ANSI SQL Tool)
   A minimalist web user interface allowed users to specify logic queries
   relating to any PostgreSQL database. The interface was augmented
-  with poweruser features including predicate auto-fill and symbol shortcuts.
+  with power user features including predicate auto-fill and symbol shortcuts.
   Efficient code generation and SQL optimisation was handled by the server,
   which encapsulated logic queries as tasks to support multiple users through
   parallel translation by multiple back end servers.
@@ -815,7 +815,7 @@
       joins are rarely used in this format. Instead, they are often combined
       with a \texttt{WHERE} clause to extract useful information. For example,
       if we wished to query every actor that acted in the film `The Bourne
-      Identity', we could could use the following logic query.
+      Identity', we could use the following logic query.
       \begin{multline}
         \exists fid,cid(films.title(fid, \text{`The Bourne Identity'}) \\
         \land casting.fid(cid, fid) \land actors.cid(aid, cid) \land
@@ -1354,7 +1354,7 @@
       use of a symbol table.
 
       \paragraph{Scoping}
-        In a logic query, is is possible to reuse variable names in an inner
+        In a logic query, is possible to reuse variable names in an inner
         scope that exist in an outer scope. For example, take the following
         query in logic.
         \begin{gather}
