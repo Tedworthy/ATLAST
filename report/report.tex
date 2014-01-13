@@ -1386,7 +1386,7 @@
         global instance.
 
       The symbol table structure is defined in the file
-      \texttt{codegen/symbtable.py}. A symbol table contains a dictionary of
+      \texttt{codegen/symtable.py}. A symbol table contains a dictionary of
       values, mapping identifiers to \texttt{Node} subclasses. It also contains an
       optional pointer to a parent symbol table. The symbol table class defines
       a $lookup$ method, which searches for a \texttt{Node} subclass for a given key
@@ -1556,20 +1556,24 @@
           return result
       \end{minted}
 
-      we decided to come up with the following architecture: 
-      1. Creation of a configuration data structure. (either from a file or user
-         entry)
-      2. using that configuration data structure to create a connection object
-      3. query the database by passing a function a connection object and a
-      string containing the SQL query.
-      4. close the connection object when all queries are finished
+      We came up with the following architecture:
+
+      \begin{enumerate}
+        \item Creation of a configuration data structure, either from a file or user
+         entry.
+        \item Using that configuration data structure, we create a connection
+          object.
+        \item Query the database by passing a function a connection object and a
+              string containing the SQL query.
+        \item Close the connection object when all queries are finished.
+      \end{enumerate}
 
       This way, details about the database configuration and connection 
       can be passed around in an opaque manner. The final code for all four
       steps now looks like the following: 
 
       \begin{minted}{python}
-      configData = cp.parse_file('dbback end/db.cfg')
+      configData = cp.parse_file('dbbackend/db.cfg')
       con = pg.connect(configData)
       queryResult = pg.query(con, sql)
       con.close()
@@ -1591,7 +1595,7 @@
       stored to a file and then transferred into a Python dictionary. This
       schema is then accessed via the Schema class which also provides a method
       to return the current schema in JSON format for the UI, this is done via a
-      get request to /schema.
+      get request to \texttt{/schema}.
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
