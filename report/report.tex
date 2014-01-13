@@ -930,18 +930,17 @@ Rather than going head to head we realised that our project needed to approach t
     It may be the case that we need to negate a set of predicates. By example,
     we will refer to the subquery within
     equation~\ref{eqn:except}:
-    \begin{align*}
-      \exists y,& length( \\
-      &\lnot(films.director(y, director) \land films.length(y, length) \land length > '1:00:00') \\
-      ) \hspace{2mm} &
-    \end{align*}
+    \begin{multline}
+      \exists y,length(\lnot(films.director(y, director) \land films.length(y,
+      length) \land \text{length > `1:00:00'}))
+    \end{multline}
     Semantically, we wish to prove that a y exists, such that y is the films
     fid, and the length of that film is above one hour. We could formulate the
     translation as below:
     \begin{minted}{sql}
     SELECT films.director
     FROM films
-    WHERE length <= '1:00:00';
+    WHERE length <= `1:00:00';
     \end{minted}
     So the answer is simply achieved by negating the condition. However, if
     there are other constraints in the query that create a join, we do not wish
