@@ -1388,7 +1388,7 @@
         free variable, a convention that was agreed on back in
         section~\ref{sec:freebound}. As $y$ has not been defined before, it is
         necessary to add the declaration of $y$ into the symbol table, in a top
-        level 'global scope'. This way, any re-declarations of $y$ are caught
+        level global scope. This way, any re-declarations of $y$ are caught
         lower in the table, but any instance of $y$ that exists outside of a
         scope in which it has been redeclared will have a reference to this
         global instance.
@@ -1589,7 +1589,7 @@
       schema. In this way the translation engine is platform agnostic with
       regards to which particular SQL implementation the web server is running.
       Indeed as long as an XML file is provided it would be possible extend the
-      system with minimal effort to run the translation engine in an 'offline' mode 
+      system with minimal effort to run the translation engine in an `offline' mode 
       where it is not connected to a database and it does not run the translated 
       query, instead it simply presents the query to the user.
 
@@ -1624,7 +1624,7 @@
         \centering
         \includegraphics[width=1.0\textwidth]{images/error.png}
         \caption{A user being informed of a semantic error: the relation
-          'cornucopia' does not exist in the schema.}
+          `cornucopia' does not exist in the schema.}
       \end{figure}
 
       In a similar manner any errors that the database raises, for example if
@@ -1697,7 +1697,7 @@
     performance of our product at the end of the project, by calculating the
     average time to process each query.
 
-    We used the python testing framework Nose with the '--with-profile' flag to
+    We used the python testing framework Nose with the `--with-profile' flag to
     figure out how long functions and sections of code were taking. 
     After profiling our code we found that queries to our database took a large
     percentage of time to run compared to the rest of the code (1.822s/2.307s =
@@ -1763,7 +1763,7 @@
     implement and gave us a much clearer idea of how to begin tackling the
     problem.
 
-    Moreover, we initially split the project up in to five major 'revisions'.
+    Moreover, we initially split the project up in to five major `revisions'.
     Each revision added a certain amount of functionality to our project, and
     allowed us to continually build upon features already implemented. This
     incremental method of development is one of the key ideas of the Agile
@@ -1942,21 +1942,21 @@
     deemed it to be the best package available; other CI servers such as
     Jenkins have a difficult-to-use interface, and another popular choice,
     Travis CI, only works with GitHub. TeamCity runs on our server,
-    and monitors our Git repository for any changes on the 'testing' branch.
+    and monitors our Git repository for any changes on the `testing' branch.
     When a change is detected, it runs our test suite on the code and, if the
-    tests pass, the branch is merged in to the 'master' branch. If tests fail,
+    tests pass, the branch is merged in to the `master' branch. If tests fail,
     a failure message is received and no merge occurs. Additionally, if the
-    commit contains the tag '\#deploy', and all tests pass, then TeamCity 
+    commit contains the tag `\#deploy', and all tests pass, then TeamCity 
     automatically pushes our code to our deployment server, where it is 
     accessible via the web. The use of TeamCity was useful in ensuring no
     broken code could be deployed, and to inform developers to inadvertent
     pushes of broken code.
 
     One issue that remains with this is that a group member may manually push
-    code or try to merge code in to the 'master' branch. Only TeamCity should
-    be able to do this, via the 'testing' branch. To prevent group members from
+    code or try to merge code in to the `master' branch. Only TeamCity should
+    be able to do this, via the `testing' branch. To prevent group members from
     violating this arrangement, we set up a Git hook script that aborts any
-    attempted commits to 'master'. Additionally, a humorous message is
+    attempted commits to `master'. Additionally, a humorous message is
     displayed.
 
     \begin{figure}[H]
@@ -1986,14 +1986,14 @@
   of the project everybody had a good understanding of how we would parse the 
   grammar for predicate logic and how we could build up a syntax tree, but later 
   when developing the  code generation phase a few members (whilst doing sterling 
-  work) 'ran away' with the project resulting in a large chunk of code which only 
+  work) `ran away' with the project resulting in a large chunk of code which only 
   a few people understood; this greatly reduced how many people could contribute 
   to that part of the project without spending a significant amount of time figuring 
   out what that piece of code did, which in turn slowed down development of certain
   features while everyone took time to figure out how the project worked.
   Really what we have learnt from this is that documentation is key, indeed if the
   group were to do the project over again, we would have made sure that for each
-  agile sprint a group member would be tasked solely with the role of 'Technical
+  agile sprint a group member would be tasked solely with the role of `Technical
   Writer' who's job it would be to produce a set of specifications for each part
   of the project worked on that week. 
 
@@ -2008,7 +2008,7 @@
     This would help with creating quick shortcuts and cut down on the amount of 
     repeated logic a user would have to write. For example being able to define a 
     predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
-    'aname' staring in a film with title 'ftitle'
+    `aname' staring in a film with title `ftitle'
     \begin{align*}
       stars.in(aname, title) \models \exists  & f,c,a (  &                                    \\
                                               & films.title(f,title) \land &                  \\
@@ -2019,7 +2019,7 @@
     \end{align*}
 
     Also currently we have no facility to express SQL operations like INSERT, 
-    DROP, CREATE, UPDATE, and DELETE, we only operate on the 'read-only' part 
+    DROP, CREATE, UPDATE, and DELETE, we only operate on the `read-only' part 
     of DML, there is a vast set of SQL which we are unable to provide a mapping 
     for in our system. Perhaps a set of special predicates could be defined in
     order to facilitate these operators.
@@ -2030,7 +2030,7 @@
     we prioritised the translation task over the security of the system, if the 
     project were to be taken further these issues would need to be addressed. 
     Additionally, whilst the connection to our site is secured via HTTPS, 
-    passwords to the database are still sent in 'plaintext' over HTTPS.
+    passwords to the database are still sent in `plaintext' over HTTPS.
     
 
     There are a few niceties which would be useful to have but are not vital
@@ -2174,7 +2174,7 @@
 
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{images/site_schema.png}
-        \caption{Basic 'filmdb' schema, containing information about films,
+        \caption{Basic `filmdb' schema, containing information about films,
         their actors, directors etc.}
       \end{figure}
 
@@ -2185,7 +2185,7 @@
 
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{images/site_schema_shakespeare.png}
-        \caption{More advanced 'shakespeare' schema, containing information
+        \caption{More advanced `shakespeare' schema, containing information
         about his literary works.}
       \end{figure}
 
@@ -2239,7 +2239,7 @@
       \begin{multline}
         \exists x(films.director(x, dir) \land \forall y(films.director(y, dir)
         \\
-        \to (films.length(y, len) \land len > '100')))
+        \to (films.length(y, len) \land len > \text{`100'})))
       \end{multline}
 
       SQL Generated:
@@ -2251,12 +2251,12 @@
       EXCEPT
       SELECT films2.fid, films2.director, films2.length
       FROM films AS films2
-      WHERE ((films2.length > '100') AND (films2.director = films1.director))
+      WHERE ((films2.length > \text{`100'}) AND (films2.director = films1.director))
       AND (films2.director = films1.director) ) )
       \end{minted}
 
       \subsubsection*{"Get me character names and descriptions for all
-        characters in either 'Othello' or 'Macbeth', where the characters
+        characters in either `Othello' or `Macbeth', where the characters
       speaks over 50 lines."}
 
       Logic:
@@ -2265,8 +2265,8 @@
         desc) \\
         \land character.speechcount(cid, sc) \land sc > 50 
         \land work.title(wid, play) 
-        \\ \land character\_work(cid, wid) \land (play = 'Othello' 
-        \lor play = 'Macbeth'))
+        \\ \land character\_work(cid, wid) \land (play = `Othello' 
+        \lor play = `Macbeth'))
       \end{multline}
 
       SQL Generated:
