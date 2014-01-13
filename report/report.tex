@@ -1603,8 +1603,13 @@
       where it is not connected to a database and it does not run the translated 
       query, instead it simply presents the query to the user.
 
-      This XML representation is automatically generated on program startup,
-      stored to a file and then transferred into a Python dictionary.
+      This XML representation is automatically generated on program startup
+      (additionally it can also be generated separately by running \texttt{python
+      dbbackend/generate\_schema.py} from the project root directory),
+      stored to a file and then transferred into a Python dictionary. This
+      schema is then accessed via the Schema class which also provides a method
+      to return the current schema in JSON format for the UI, this is done via a
+      get request to /schema.
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
@@ -1612,12 +1617,7 @@
       described above, then switch out the import in generate\_schema.py to use
       the desired implementation.
 
-      \todo[inline]{Talk about how the schema is stored (Python dict), accessed
-        via the Schema class, and how it can be returned as JSON for the UI via
-      a GET request to /schema}
 
-      (\todo{LOL} Max did you ever fix your multiple database issues? Also I
-      think we're stuck with PostgreSQL databases only?)
 
     \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
@@ -1731,7 +1731,7 @@
     application. This was clear to see as over 70\% of users wanted such a
     system. In response we produced an information dialogue box which explained
     the key features and elements of the application.
-    \todo{insert fig here}
+    \todo{insert fig here from Rchats stuff}
     Survey results and information page implementation   
     \subsection{Testing Procedures}
     We used the testing framework Nose in order to rapidly develop test cases to
