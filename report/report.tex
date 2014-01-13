@@ -1750,19 +1750,19 @@
   \subsection{Planning}
     As we have learnt from previous projects, inside and outside the
     department, it is critical to thoroughly plan a software engineering
-    exercise of this scale before beginning to implement features and write
+    exercise of this scale before beginning to write
     code. As discussed in our introduction section, we decomposed our problem
     of translating first-order predicate logic to SQL into several key
     subgoals. This enabled us to outline a core feature set which we wished to
-    implement and gave us a much clearer idea of how to begin tackling the
+    implement and gave us a clearer idea of how to begin tackling the
     problem.
 
     Moreover, we initially split the project up in to five major `revisions'.
-    Each revision added a certain amount of functionality to our project, and
-    allowed us to continually build upon features already implemented. This
+    Each revision added updated functionality to our project, and
+    allowed us to continually improve. This
     incremental method of development is one of the key ideas of the Agile
-    development methodology to which we adhered to throughout the project.
-    \cite{agilemanifesto} Additionally, with each revision having a
+    development methodology to which we adhered to throughout the project
+    \cite{agilemanifesto}. Additionally, with each revision having a
     deadline, it gave the team a clear plan of what was to be implemented at
     what time.
 
@@ -1788,7 +1788,7 @@
           \begin{compactitem}
             \item UI sends predicate logic to web server;
             \item Web server parses the logic into an AST;
-            \item back end translates the AST to SQL for basic \texttt{SELECT
+            \item Back end translates the AST to SQL for basic \texttt{SELECT
               FROM} queries (i.e. projection only);
             \item Create 5 more sample Logic to SQL translations.
           \end{compactitem}
@@ -1823,7 +1823,7 @@
         \hline
       \end{tabular}
       \caption{Feature sets for each revision, as defined at the start of the
-        project}
+        project.}
     \end{table}
 
     However, as can often happen in software engineering projects, the plan
@@ -1844,12 +1844,12 @@
     goals and required features of our project, and split them up in to three
     rough areas - front end (handling user interactions),
     middleware (communicating between client and server), and
-    then the back end (translation and database access).
+    back end (translation and database access).
     We initially split our group of six in to three teams,
     corresponding to each of the subsections of our project. Members were
     allocated to each team depending on their strengths - initially Ted and Tom
     were to complete front end work, Sam and Mitchell to do middleware, and
-    Sean and Max on back end. These were just initial roles, and we found that
+    Sean and Max were on back end. These were just initial roles, and we found that
     throughout the project, roles could be temporarily switched around to put
     extra work in to tasks that took longer than expected.
 
@@ -1871,7 +1871,7 @@
     numerical estimate of the time it would take to complete, on a scale of 1
     to 5, where 1 signified a short task and 5 signified a very time consuming
     task. The estimate of time a task would take was initially based on
-    previous experience on other software engineering projects the group
+    previous experience from other software engineering projects the group
     participated in, but as the project progressed, we applied knowledge of how
     prior tasks went to more accurately assign estimates.
 
@@ -1886,11 +1886,11 @@
     what time, what has to be done, and what has been completed. For our group,
     working in DoC labs and at home, this would obviously not be practical.
     Therefore, we used web-based project management software called
-    Trello\cite{trello}. This software behaves in the same way as a physical board, but is
+    Trello \cite{trello}. This software behaves in the same way as a physical board, but is
     accessed via a web based interface which can be edited by all members of
     the project.  Additionally, each card has a hashtag which denotes which
     revision a task belongs to, or if a stricter deadline is required, a date
-    for completion can be manually added.  Virtual cards are moved between each
+    for completion can be added. Virtual cards are moved between each
     swim lane as the task progresses. The group found this tool indispensable
     for communication and keeping on track with the project.
 
@@ -1904,8 +1904,8 @@
     The group made use of the popular Git\cite{git} version control software.
     The choice of Git over other version control packages (e.g. Mercurial,
     Subversion, Perforce) was obvious for us; it's freely available, gets the
-    job done, and all team members have strong experience with the software.
-    Moreover, for hosting our repository, we used the department's GitLab
+    job done, and all team members have strong experience with it.
+    For hosting our repository, we used the department's GitLab
     server. This was to keep the source code within the department, low
     latency to the server from within labs, and to make use of CSG backups. The
     benefits of GitLab over a service like GitHub, however, were mostly
@@ -1920,8 +1920,7 @@
     members forked the project\cite{tedtrello} and extended its functionality 
     to work with GitLab, and also allow for multiple cards to be referenced per
     commit. The group found this functionality to be very useful, and it also
-    reduced the likelihood that a member would forget to move a card from
-    "Doing" to "Done", for instance.
+    reduced the likelihood that a member would forget to move a card.
 
   \subsection{Continuous Integration}
 
@@ -1983,7 +1982,7 @@
   to work on an area without informing others of their intention, or specifying 
   abstractly how they were solving certain problems. For example at the beginning 
   of the project everybody had a good understanding of how we would parse the 
-  grammar for predicate logic and how we could build up a syntax tree, but later 
+  grammar for predicate logic and how we could build up a syntax tree. Later on however,
   when developing the `code generation' phase, whilst their contribution was
   valued, a few members `ran away' with the project resulting in a large chunk of code which only 
   a few people understood. This greatly reduced the number of people that could
@@ -2029,20 +2028,20 @@
     passwords to the database are still sent in `plaintext' over HTTPS.
 
     There are a few niceties which would be useful to have but are not vital
-    these are not limited too: increasing responsiveness of the system whilst 
-    running long queries (providing the user feedback to let them know that the
-    system hasn't crashed), saving a recent history of queries, developing a 
+    , including but not limited to: increasing responsiveness of the system whilst 
+    running long queries (providing feedback to show it hasn't crashed),
+    saving a recent history of queries, developing a 
     tablet version of the site, being able to truncate the output of queries if 
     they are too long, caching results of recent queries to improve performance,
-    and having a mechanism to download the results of a logic query.  
+    and having a mechanism to download results.  
 
     \subsubsection{Back End Features} 
     We would have liked our project to be able to support several database
     implementations. Currently it only supports Postgres databases, we had
     planned support several other major implementations like MySQL and
-    Microsoft SQL Server, however due to lack of time this feature was removed
-    in favour of focusing on making sure that the logical translations produced
-    were correct. Another back end feature we wanted to add was scope for
+    Microsoft SQL Server, however, whilst this would be easy to do, due to lack of time this feature was removed
+    in favour correctness of translation.
+    Another back end feature we wanted to add was scope for
     optimising the SQL produced by our system. This would be relatively easy to
     add because before translating to SQL we produce an intermediate
     representation (or IR), an optimiser can then be run over this IR to do
