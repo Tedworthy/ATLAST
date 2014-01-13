@@ -196,7 +196,7 @@
       in a database as part of their research, large amounts of time could be
       saved if they could do this using familiar logic syntax.
 
-      This would also remove the need to learn elemantary SQL, which they would
+      This would also remove the need to learn elementary SQL, which they would
       use far less and be less proficient in. As academics may be unfamiliar
       with writing efficient SQL queries, the translator would likely produce
       more efficient SQL queries. This would be especially useful if querying
@@ -267,9 +267,9 @@
       analyse and parse user-input logic queries and generate ANSI SQL.
 
       \item \textbf{A minimalist front-end user interface} providing all
-      translation funcitonaility from a single page, with clear links to
+      translation functionality from a single page, with clear links to
       support and database setup pages. Logic input shortcuts, including
-      predicate auto-fill and logic symbol autocompletion, increase user
+      predicate auto-fill and logic symbol auto-completion, increase user
       productivity.
 
       \item \textbf{Server-side translation} provides queuing of translation
@@ -489,7 +489,7 @@
         \exists x(films.title(x, title)) \label{select1}
       \end{gather}
       The query binds $x$ and leaves $title$ free, meaning that our
-      answer will be the set of all subtitutions for $title$ such that
+      answer will be the set of all substitutions for $title$ such that
       $\exists x(films.title(x, title)) \models \top$. The `$\exists$' symbol
       serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
       it enforces that the substituted $title$ exists in at least one tuple.
@@ -504,7 +504,7 @@
       FROM films;
       \end{minted}
       Strictly speaking since tuple relational calculus is based on set
-      operators, like relational algebra, and SQL implcitly uses bag operators
+      operators, like relational algebra, and SQL implicitly uses bag operators
       this actually evaluates to the following:
       \begin{minted}{sql}
       SELECT DISTINCT title
@@ -580,7 +580,7 @@
       Therefore we must create an exception to the free and bound variable rules
       that we specify in section~\ref{sec:freebound}.
 
-      We could also repesent the previous query in a simpler form.
+      We could also represent the previous query in a simpler form.
       \begin{gather}
         \exists x,y(films.title(x, title) \land films.title(y, title)
           \land x \neq y)
@@ -698,7 +698,7 @@
     FROM actors CROSS JOIN film
     WHERE name = director;
     \end{minted}
-    Note, that it is also possible to write the logic query in a more succint
+    Note, that it is also possible to write the logic query in a more succinct
     manner, as follows.
     \begin{gather}
       \exists a,b(actor.name(a, name) \land film.director(b, name))
@@ -776,14 +776,14 @@
       \land length \ge \text{`2:00:00'} \land length \le \text{`3:00:00'})
     \end{multline}
     Notice how the last two constraints in the logical query translate
-    with very little effort. The same applies to constraints seperated with
+    with very little effort. The same applies to constraints separated with
     an $\lor$ which is equivalent to OR in SQL.
 
   \subsection{Conjunction of Predicates}
     \label{sec:joins}
     It is often desirable to use data spread across many relations in order to
     form useful queries. We can think of this simply in first-order predicate
-    logic as the conjunction of predicates. When translating to SQL, retreiving
+    logic as the conjunction of predicates. When translating to SQL, retrieving
     data from multiple relation requires joins.
 
     An SQL \texttt{JOIN} clause is used to combine rows from two or more tables,
@@ -792,7 +792,7 @@
     (split across many relations) to minimise duplication.
 
     \subsubsection{SQL CROSS JOIN}
-      A cross join is equivalent to the cartesian product of two sets. Suppose
+      A cross join is equivalent to the Cartesian product of two sets. Suppose
       that we wished to write a query that returned every possible pair of
       film title and actor name in the database. In ANSI-89 SQL, we could use
       the following query.
@@ -1132,7 +1132,7 @@
       Another power feature we created was a method of easily inserting logic
       symbols using just the keyboard. This was implemented by using typed
       character sequences that corresponded to various logic symbols, for
-      example the sequence `<->' would be replaced with the unicode character
+      example the sequence `<->' would be replaced with the Unicode character
       $\leftrightarrow$.
 
     \subsubsection{HTTP REST and JSON}
@@ -1170,7 +1170,7 @@
       The editor had a number of advantages over using a simple HTML textarea.
       This included line numbers, but also syntax highlighting. This was
       achieved by creating a `mode' for the editor to use, with a set of
-      highlighting rules that govered how the input was split into tokens. These
+      highlighting rules that governed how the input was split into tokens. These
       tokens would represent various elements in the predicate logic language,
       such as variables, logic symbols or predicates.
 
@@ -1234,7 +1234,7 @@
       between first-order predicate logic and SQL.
 
       The problem can be broadly thought of as the translation of a source
-      langauge into a target language, a task that is commonly performed by
+      language into a target language, a task that is commonly performed by
       compilers. Another alternative would have been to create an interpreter.
       Interpreters are very similar to compilers, in that they manage the
       translation from one language to another, but instead of translating the
@@ -1280,7 +1280,7 @@
       \subsubsection{Building an Abstract Syntax Tree}
 
       The logic queries that we parse form an LALR(1) (Look-Ahead, Left to
-      right, Rightmost deriviation) grammar\cite{sittingacrossthere}. The
+      right, Rightmost derivation) grammar\cite{sittingacrossthere}. The
       grammar is described in \texttt{parser.py} in a notation similar to BNF.
       PLY's implementation of YACC requires you to define your rules as a
       python docstring. PLY then parses the docstring to generate a full
@@ -1384,7 +1384,7 @@
         free variable, a convention that was agreed on back in
         section~\ref{sec:freebound}. As $y$ has not been defined before, it is
         necessary to add the declaration of $y$ into the symbol table, in a top
-        level global scope. This way, any redeclarations of $y$ are caught
+        level 'global scope'. This way, any re-declarations of $y$ are caught
         lower in the table, but any instance of $y$ that exists outside of a
         scope in which it has been redeclared will have a reference to this
         global instance.
@@ -1394,7 +1394,7 @@
       values, mapping identifiers to \texttt{Node} subclasses. It also contains an
       optional pointer to a parent symbol table. The symbol table class defines
       a $lookup$ method, which searches for a \texttt{Node} subclass for a given key
-      within its dictionary. The method will propogate to a higher scope if the
+      within its dictionary. The method will propagate to a higher scope if the
       definition is not found, otherwise it will return the definition.
 
       Each node has a reference to the symbol table that exists within its
@@ -1661,7 +1661,7 @@
   Using nose gave us a clear indication of how many of our tests have passed
   and gave us an idea of how our system was performing.
 
-  We also used paste, which is a set of libraries that allow you to autoate
+  We also used paste, which is a set of libraries that allow you to automate
   tests which interact with a web page. This gave us the ability to test
   sending requests from our interface, simulating user interactions in a
   repeatable and fast manner.
@@ -1857,7 +1857,7 @@
     about the tasks that had been completed previously. We would also analyse
     the previous weeks performance, and make changes to our plan accordingly.
     This falls in line with a key principle of Agile development, where a team
-    must be adapatable to change \cite{agilemanifesto}. 
+    must be adaptable to change \cite{agilemanifesto}. 
     An example of such a change is when we realised implementing the parser 
     would take longer than originally thought. This lead us to modify our 
     feature set, reallocate group roles temporarily, and modify deadlines 
@@ -1889,7 +1889,7 @@
     the project.  Additionally, each card has a hashtag which denotes which
     revision a task belongs to, or if a stricter deadline is required, a date
     for completion can be manually added.  Virtual cards are moved between each
-    swim lane as the task progresses. The group found this tool indispensible
+    swim lane as the task progresses. The group found this tool indispensable
     for communication and keeping on track with the project.
 
     \begin{figure}[H]
@@ -1941,7 +1941,7 @@
     commit contains the tag '\#deploy', and all tests pass, then TeamCity 
     automatically pushes our code to our deployment server, where it is 
     accessible via the web. The use of TeamCity was useful in ensuring no
-    broken code could be deployed, and to inform developers to inadvereant
+    broken code could be deployed, and to inform developers to inadvertent
     pushes of broken code.
 
     One issue that remains with this is that a group member may manually push
@@ -2152,11 +2152,12 @@
   The installation then broadly follows step 2 and onwards from the above
   guide. 
 
-  \textbf{Note:} We have determined an incompatability between our project and
-  the Gentoo operating system. We make use of the RabbitMQ message server,
+  \textbf{Note:} We have determined an incompatibility between our project and
+  the Gentoo Linux distribution. We make use of the RabbitMQ message server,
   which has a dependency on the Erlang language libraries. These libraries
   are notoriously difficult to install on Gentoo, as confirmed by a visit to
-  the Erlang IRC channel.
+  the Erlang IRC channel\footnote{Almost everything is notoriously difficult to
+  install on Gentoo}.
 
   \subsection{Schemas}
 
@@ -2286,7 +2287,7 @@
   - Look online to see if this can be generated by any tools.
 
   - Or make a reduced one, just showing main components of the project e.g.
-  parser, sql generator, semantic analyser, etc
+  parser, SQL generator, semantic analyser, etc
 
   \subsection{Design Diagrams}
     \subsubsection{UML Diagram}
