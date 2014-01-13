@@ -569,7 +569,7 @@
       \end{gather}
       With a query of this format, we can simply translate the subquery, wrap it
       in an SQL \texttt{EXISTS} condition and conjunct this onto the
-      \texttt{WHERE} clause of the outer query's query.
+      \texttt{WHERE} clause of the outer query.
 
       \begin{minted}{sql}
       SELECT films1.title
@@ -683,8 +683,6 @@
     We expect to encounter at least one tuple if the film exists in our domain
     of discourse. This can be represented in one of two ways in first-order
     predicate logic.
-
-    % This is two formulas, keep this as gather.
     \begin{gather}
       \exists x(films.title(x, y) \land y = \text{`The Bourne
       Identity'})\label{where1}\\
@@ -702,7 +700,7 @@
     ground terms. We can also use equality to ensure that two variables have
     the same value. For example, consider the following logical query.
     \begin{gather}
-      \exists a,b,y(actor.name(a, x) \land film.director(b, y) \land x = b)
+      \exists a,b,y(actor.name(a, x) \land film.director(b, y) \land x = y)
     \end{gather}
     The query returns names of all of the actors who have also directed a
     film. This translates to the following SQL query. Ignore the cross join
@@ -752,7 +750,7 @@
     titles).
 
     We can also express other inequalities, such as <, $\le$, >, $\ge$.
-    Here we query for all the fid of every films with length greater than or
+    Here we query for all the $fid$ of every film with length greater than or
     equal to two hours.
     \begin{minted}{sql}
     SELECT fid,
@@ -798,7 +796,7 @@
     It is often desirable to use data spread across many relations in order to
     form useful queries. We can think of this simply in first-order predicate
     logic as the conjunction of predicates. When translating to SQL, retrieving
-    data from multiple relation requires joins.
+    data from multiple relations requires joins.
 
     An SQL \texttt{JOIN} clause is used to combine rows from two or more tables,
     based on a common field between them~\cite{w3JOINS}. Joins can enable
@@ -832,7 +830,7 @@
       Identity', we could use the following logic query.
       \begin{multline}
         \exists fid,cid(films.title(fid, \text{`The Bourne Identity'}) \\
-        \land casting.fid(cid, fid) \land actors.cid(aid, cid) \land
+        \land casting.fid(cid, fid) \land casting.aid(cid, aid) \land
           actors.name(aid, name))
       \end{multline}
       Which specifies that we only wish to return the set of all singleton
@@ -864,7 +862,7 @@
       \begin{multline}
         \label{largeCROSS}
         \exists fid, a1, a2(films(fid) \land casting.fid(cid, fid) \land
-          actors.cid(a1, cid) \land actors.cid(a2, cid) \\
+          casting.aid(cid, a1) \land casting.aid(cid, a2) \\
         \land actors.name(a1, name1) \land actors.name(a2, name2) \land
           name1 \neq name2)
       \end{multline}
@@ -878,10 +876,10 @@
       \begin{minted}{sql}
       SELECT a1.name,
              a2.name
-      FROM films CROSS JOIN actors AS a1
-        CROSS JOIN actors AS a2
-      ON films.fid = a1.fid AND films.fid = a2.fid
-        AND a1.name <> a2.name
+      FROM films INNER JOIN casting ON films.fid = casting.fid
+        INNER JOIN actors AS a1 ON casting.aid = a1.aid
+        INNER JOIN actors AS a2 ON casting.aid = a2.aid
+      WHERE a1.name <> a2.name
       \end{minted}
       \texttt{INNER JOIN} is the same as \texttt{JOIN} as of ANSI-92 SQL. The
       existence of the \texttt{ON} clause is not necessary (making it a cross
@@ -996,11 +994,11 @@
       In our implementation, we will take \texttt{NULL} to be the second
       representation, and we take the meaning of $\exists x (predicate(x,y))$ to
       be `true if there exists a \emph{known} y for an x' in this way predicates
-      of the form $\exists x (predicate(x,NULL))$ evaluate to false, allowing us
+      of the form $\exists x (predicate(x,\texttt{NULL}))$ evaluate to false, allowing us
       to use the negation operator to specify that a field be \texttt{NULL}.
 
       This is particularly useful because it allows us to postulate questions
-      like the following ``List the names of all films whose director is not
+      like the following ``list the names of all films whose director is not
       known'' as:
       \begin{gather}
         \exists x,director(films.name(x,name) \land \lnot
