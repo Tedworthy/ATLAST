@@ -144,8 +144,8 @@
   }
 
   The overall project goal was to create a language translator which
-  takes a restricted version of first-order predicate logic as input and
-  produces the corresponding SQL as output. This allows any SQL relational
+  takes in a restricted version of first-order predicate logic and
+  produces corresponding SQL. This allows any SQL relational
   database to be queried using only first-order predicate logic, without the
   user needing to know any SQL.
 
@@ -172,8 +172,7 @@
 \section{Introduction}
   \subsection{Motivation}
     There are a number of groups and applications for which the project has
-    clear use cases. Max felt there was a motivation for making this line longer
-    or removing it.
+    clear use cases.
 
     \subsubsection{Teaching}
       The predominant use-case for our project is as a teaching tool for use by
@@ -204,15 +203,38 @@
       large datasets.
 
     \subsubsection{Simplicity of logic over SQL}
-      \todo[inline]{Give examples of logic sentences that are far simpler to
-      write and understand compared to their SQL equivalent.}
+      Many queries are far easier to write and are more understandable when
+      written in logic compared to SQL. The examples below demonstrate this,
+      using both Datalog and our implementation syntax.
 
-    \subsubsection{Security (apparently!)}
+      \begin{center}
+        \begin{align*}
+          & parent(jane, Child) & & \texttt{SELECT child} \\
+          &                     & & \texttt{FROM people} \\
+          &                     & & \texttt{WHERE parent = 'jane'} \\
+        \end{align*}
+        Comparison of concise Datalog query to long SQL query
+      \end{center}
+
+    \subsubsection*{"Get me all actors who have been in a film that is more
+      than two hours long"}
+
+      ATLAST logic:
+      \begin{gather}
+        \exists x(films.length(x, y) \land y>'02:00:00' \land casting.fid(w, x))
+      \end{gather}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT films.length, casting.cid
+        FROM films JOIN casting ON films.fid = casting.fid
+        WHERE (films.length > '02:00:00') AND (casting.fid = films.fid)
+      \end{minted}
 
     \subsubsection{Anything else you can come up with}
 
   \subsection{Objectives}
-    The main objective was to provide a tool to translate first order predicate
+    The main objective was to provide a tool to translate first-order predicate
     logic to a corresponding SQL representation. At the beginning of the
     project, it was decided that the key implementation goals would be:
 
@@ -234,7 +256,7 @@
 
   \subsection{Our solution}
     ATLAST is a web application that allows a user to select a database
-    and query it using first order predicate logic. The logic is converted
+    and query it using first-order predicate logic. The logic is converted
     into corresponding SQL, which is then returned to the user, along with the
     result of running the query on the database.
 
@@ -269,7 +291,7 @@
     \end{itemize}
 
 \section{Background Research}
-\label{sec:background}
+  \label{sec:background}
 
   \subsection{Datalog}
     Before beginning the development of our project it was clear that there were
@@ -304,14 +326,6 @@
     different angle. Rather than requiring a database populated from scratch in a
     manner designed for logic queries, we wanted to bring some of the benefits of
     logic to regular relational databases.
-    \begin{center}
-      \begin{align*}
-        & parent(jane, Child) & & \texttt{SELECT child} \\
-        &                     & & \texttt{FROM people} \\
-        &                     & & \texttt{WHERE parent = 'jane'} \\
-      \end{align*}
-      Which is nicer? Exactly.
-    \end{center}
 
   \subsection{SQL}
     Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
@@ -356,8 +370,8 @@
 
     \subsubsection{Formal Specification of Tuple Relational Calculus\cite{lecRA}}
       \label{sec:formalTRC}
-      A query takes the form: \{T | p(T)\}. The answer of a query is said to be
-      the set of all tuples T such that p(T) evaluates to true.
+      A query takes the form: $\{T\text{ | }p(T)\}$. The answer of a query is
+      said to be the set of all tuples $T$ such that $p(T)$ evaluates to $\top$.
 
       A formula F is recursively defined as:
       \begin{itemize}
@@ -378,44 +392,31 @@
 
       Otherwise $v$ is said to be free.
 
-      Note that in query \{T | p(T)\} the variables in T must be the only
-      free variables in p(T).
+      Note that in query $\{T\text{ | }p(T)\}$ the variables in $T$ must be the only
+      free variables in $p(T)$.
 
     \subsubsection{Querying Relational Algebra}
       Using all of this, it is possible to begin formulating some simple
       queries. For example, suppose it was desirable to query all films from a
       particular director in a database. It would be simple to write:
-
-      \begin{center}
-        \{F | F $\in$ Films $\land$ F.director = `Matt Damon'\}
-      \end{center}
-
+      $$ \{F\text{ | }F \in Films \land F.director = \text{`Matt Damon'}\} $$
       This would however return all the elements of the tuple. The tuple may
       contain many irrelevant values to the user, and so it would be desirable
       to only return the title of said film. This could be achieved as detailed
       below:
-
-      \begin{center}
-        \{F | $\exists$F1 $\in$ Films(F1.director = `Matt Damon' $\land$
-          F.title = F1.title)\}
-
-        \emph{NOTE: F becomes a tuple with one element called title.}
-      \end{center}
-
+      $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
+           \land F.title = F1.title)\} $$
+      $$ \emph{NOTE: F becomes a tuple with one element called title.} $$
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all titles of films
       whose director has also directed another film.
-
-      \begin{center}
-        \{F | $\exists$F1 $\in$ Films($\exists$F2 $\in$
-            Films(F1.director = F2.director $\land$ F1 $\neq$ F2) \\
-          $\land$ F.title = F1.title)\}
-      \end{center}
+      $$ \{F\text{ | }\exists F1 \in Films(\exists F2 \in Films(F1.director =
+           F2.director \land F1 \neq F2) \land F.title = F1.title)\} $$
 
   \subsection{Mapping Tuple Relational Calculus to First-order Predicate Logic}
     \label{sec:tuplefo}
     With the knowledge of TRC, and how it underpins SQL, it is now necessary to
-    formulate a mapping between TRC and first order predicate logic.
+    formulate a mapping between TRC and first-order predicate logic.
 
     \subsubsection{Atoms, Formulae, Predicates}
       Firstly atoms, formulae and predicates remain unchanged. We still wish to
@@ -424,40 +425,40 @@
 
     \subsubsection{Set Membership}
       Previously in TRC we could simply test the membership of a tuple $t$ in a
-      relation $R$ with $t \in R$. First order predicate logic, at least in its
+      relation $R$ with $t \in R$. First-order predicate logic, at least in its
       basic, unsorted form, does not have the notion of variables belonging to
       different types or sets, they all belong to one global set. To solve this
       problem we propose a few solutions.
 
-      One solution is with an `InRelation' predicate, where `InRelation(t, R)'
+      One solution is with an $InRelation$ predicate, where $InRelation(t, R)$
       would have the same semantic meaning as the previous set membership test.
-      This seems to work, although throughout first order predicate logic, we
+      This seems to work, although throughout first-order predicate logic, we
       do not have the notion of a tuple; an atom is structurally meaningless. A
       disadvantage of this would be that accessing members of the tuple would
-      require another predicate, for example `InTuple(a, `attrName', t)' which
-      would have the same semantic meaning as `t.a' in TRC.
+      require another predicate, for example $InTuple(a, \text{`attrName'}, t)$
+      which would have the same semantic meaning as $t.a$ in TRC.
 
       Another solution, which solves the previous issue, is to generate n-ary
-      predicates that represent a tuple. For example, given a relation 'films',
-      with columns `title', `length' and `date-released', a predicate
-      `films(title, length, date-released)' could be generated, where title,
-      length and date-released are all variables. This certainly solves the
-      issue the set membership issue, but does add uneccessary bloat to each
+      predicates that represent a tuple. For example, given a relation $films$,
+      with columns $title$, $length$ and $date\_released$, a predicate
+      $films(title, length, date\_released)$ could be generated, where $title$,
+      $length$ and $date\_released$ are all variables. This certainly solves the
+      issue the set membership issue, but does add unnecessary bloat to each
       query; relations may have thousands of columns, very few of which are
       likely needed in a given query.
 
       The solution chosen addresses the issues raised so far.
 
-      For a relation R(k, $a_{1}$, $a_{2}$, ..., $a_{n}$) with primary key k
-      and n attributes we generate n + 1 predicates:
+      For a relation $R(k, a_{1}, a_{2}, ..., a_{n})$ with primary key $k$
+      and $n$ attributes we generate $n + 1$ predicates:
       \begin{align*}
-        \text{1:  }     & R(k)           \\
-        \text{2:  }     & R.a_1(k, a1)   \\
-        \text{3:  }     & R.a_2(k, a2)   \\
-                        & \vdots         \\
+        \text{1:  }      & R(k)           \\
+        \text{2:  }      & R.a_1(k, a1)   \\
+        \text{3:  }      & R.a_2(k, a2)   \\
+                         & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
-      Note: The predicate $R.k(k, k)$ is also valid, albeit redundant.
+      NOTE: The predicate $R.k(k, k)$ is also valid, albeit redundant.
 
       Relating a tuple to its primary key gives a concise way to address it,
       adding the slight restriction that each relation must have a primary key.
@@ -977,16 +978,21 @@
           not know its value at present
       \end{itemize}
 
-      In our implementation, we will take NULL to be the second representation.
+    In our implementation, we will take NULL to be the second representation,
+    and we take the meaning of \texttt{$\exists x (predicate(x,y))$} to be 
+    'True if there exists a \emph{known} y for an x' in this way predicates of
+    the form \texttt{$\exists x (predicate(x,NULL))$} evaluate to false, allowing 
+    us to use the negation operator to specify that a field be NULL.
 
-      This is particularly useful because it allows us to postulate questions like
-      the following "List the names of all films who's director is not known" as:
-      \begin{gather}
-        \exists x(films.name(x,name) \land \lnot films.director(x, director) )
-      \end{gather}
-      It is common for SQL queries to check if a value is NULL, as the user may
-      wish to exclude these values, or perform a special case if they are
-      encountered.
+    This is particularly useful because it allows us to postulate questions like
+    the following "List the names of all films who's director is not known" as:
+    \begin{gather}
+      \exists x,director(films.name(x,name) \land \lnot films.director(x, director) )
+    \end{gather} 
+    
+    It is common for SQL queries to check if a value is NULL, as the user may
+    wish to exclude these values, or perform a special case if they are
+    encountered.
 
 \section{Design and Implementation}
   \subsection{Application Type}
@@ -1596,8 +1602,13 @@
       where it is not connected to a database and it does not run the translated 
       query, instead it simply presents the query to the user.
 
-      This XML representation is automatically generated on program startup,
-      stored to a file and then transferred into a Python dictionary.
+      This XML representation is automatically generated on program startup
+      (additionally it can also be generated separately by running \texttt{python
+      dbbackend/generate\_schema.py} from the project root directory),
+      stored to a file and then transferred into a Python dictionary. This
+      schema is then accessed via the Schema class which also provides a method
+      to return the current schema in JSON format for the UI, this is done via a
+      get request to /schema.
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
@@ -1605,12 +1616,7 @@
       described above, then switch out the import in generate\_schema.py to use
       the desired implementation.
 
-      \todo[inline]{Talk about how the schema is stored (Python dict), accessed
-        via the Schema class, and how it can be returned as JSON for the UI via
-      a GET request to /schema}
 
-      (\todo{LOL} Max did you ever fix your multiple database issues? Also I
-      think we're stuck with PostgreSQL databases only?)
 
     \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
@@ -1724,7 +1730,7 @@
     application. This was clear to see as over 70\% of users wanted such a
     system. In response we produced an information dialogue box which explained
     the key features and elements of the application.
-    \todo{insert fig here}
+    \todo{insert fig here from Rchats stuff}
     Survey results and information page implementation   
     \subsection{Testing Procedures}
     We used the testing framework Nose in order to rapidly develop test cases to
@@ -1757,7 +1763,7 @@
     department, it is critical to thoroughly plan a software engineering
     exercise of this scale before beginning to implement features and write
     code. As discussed in our introduction section, we decomposed our problem
-    of translating first order predicate logic to SQL into several key
+    of translating first-order predicate logic to SQL into several key
     subgoals. This enabled us to outline a core feature set which we wished to
     implement and gave us a much clearer idea of how to begin tackling the
     problem.
@@ -1984,11 +1990,11 @@
   abstractly how they were solving certain problems. For example at the beginning 
   of the project everybody had a good understanding of how we would parse the 
   grammar for predicate logic and how we could build up a syntax tree, but later 
-  on during the codegen phase a few members (whilst doing sterling work) 'ran away'
-  with the project resulting in a large chunk of code which only a few people
-  understood; this greatly reduced how many people could contribute to that part
-  of the project without spending a significant amount of time figuring out what
-  that piece of code did, which in turn slowed down development of certain
+  when developing the  code generation phase a few members (whilst doing sterling 
+  work) 'ran away' with the project resulting in a large chunk of code which only 
+  a few people understood; this greatly reduced how many people could contribute 
+  to that part of the project without spending a significant amount of time figuring 
+  out what that piece of code did, which in turn slowed down development of certain
   features while everyone took time to figure out how the project worked.
   Really what we have learnt from this is that documentation is key, indeed if the
   group were to do the project over again, we would have made sure that for each
@@ -2032,7 +2038,7 @@
     passwords to the database are still sent in 'plaintext' over HTTPS.
     
 
-    There are a few niceities which would be useful to have but are not vital
+    There are a few niceties which would be useful to have but are not vital
     these are not limited too: increasing responsiveness of the system whilst 
     running long queries (providing the user feedback to let them know that the
     system hasn't crashed), saving a recent history of queries, developing a 
@@ -2041,16 +2047,20 @@
     and having a mechanism to download the results of a logic query.  
 
     
-    \subsubsection{back end Features} 
+    \subsubsection{Back End Features} 
     We would have liked our project to be able to support several database
     implementations. Currently it only supports Postgres databases, we had
     planned support several other major implementations like MySQL and
     Microsoft SQL Server, however due to lack of time this feature was removed
     in favour of focusing on making sure that the logical translations produced
-    were correct. 
+    were correct. Another back end feature we wanted to add was scope for
+    optimizing the SQL produced by our system. This would be relatively easy to
+    add because before translating to SQL we produce an intermediate
+    representation (or IR), an optimizer can then be run over this IR to do
+    things like remove redundant NOT(NOT()) clauses.
    
     Currently there is no scope for type checking in the semantic analysis phase
-    of the SQL generation,\todo{asdflas;d}
+    of the SQL generation,\todo{SEAN PLZ DO DEES}
 
    
     
