@@ -153,7 +153,7 @@
   application called ATLAST (Automatic Translation of Logic to ANSI SQL Tool)
   A minimalist web user interface allowed users to specify logic queries
   relating to any PostgreSQL database. The interface was augmented
-  with poweruser features including predicate auto-fill and symbol shortcuts.
+  with power user features including predicate auto-fill and symbol shortcuts.
   Efficient code generation and SQL optimisation was handled by the server,
   which encapsulated logic queries as tasks to support multiple users through
   parallel translation by multiple back end servers.
@@ -285,7 +285,7 @@
       library dependencies. Installation time is on the order of ten minutes
       and requires no specialist programming knowledge.
 
-      \item \textbf{Modularised architecture} to which specific code changes
+      \item \textbf{Modular architecture} to which specific code changes
       and updates can be quickly applied to individual sections including the
       GUI, lexer, parser or database support.
     \end{itemize}
@@ -788,7 +788,7 @@
 
     An SQL \texttt{JOIN} clause is used to combine rows from two or more tables,
     based on a common field between them~\cite{w3JOINS}. Joins can enable
-    incredibly powerful queries, especially where information is normalized
+    incredibly powerful queries, especially where information is normalised
     (split across many relations) to minimise duplication.
 
     \subsubsection{SQL CROSS JOIN}
@@ -2041,9 +2041,9 @@
     Microsoft SQL Server, however due to lack of time this feature was removed
     in favour of focusing on making sure that the logical translations produced
     were correct. Another back end feature we wanted to add was scope for
-    optimizing the SQL produced by our system. This would be relatively easy to
+    optimising the SQL produced by our system. This would be relatively easy to
     add because before translating to SQL we produce an intermediate
-    representation (or IR), an optimizer can then be run over this IR to do
+    representation (or IR), an optimiser can then be run over this IR to do
     things like remove redundant NOT(NOT()) clauses.
    
     Currently there is no scope for type checking in the semantic analysis phase
