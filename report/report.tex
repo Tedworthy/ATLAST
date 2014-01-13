@@ -2005,21 +2005,18 @@
     repeated logic a user would have to write. For example being able to define a 
     predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
     `aname' staring in a film with title `ftitle'
-    \begin{align*}
-      stars.in(aname, title) \models \exists  & f,c,a (  &                                    \\
-                                              & films.title(f,title) \land &                  \\
-                                              & casting.fid(c,f) \land &                      \\
-                                              & casting.aid(c,a) \land &                      \\
-                                              & actors.name(a,aname) &                        \\
-    ) \hspace{2mm} & &
-    \end{align*}
+    \begin{multline}
+      stars.in(aname, title) \models \\ \exists  f,c,a (films.title(f,title) \land
+      casting.fid(c,f) \land casting.aid(c,a) \land actors.name(a,aname))
+    \end{multline}
 
-    Also currently we have no facility to express SQL operations like INSERT, 
-    DROP, CREATE, UPDATE, and DELETE, we only operate on the `read-only' part 
-    of DML, there is a vast set of SQL which we are unable to provide a mapping 
-    for in our system. Perhaps a set of special predicates could be defined in
-    order to facilitate these operators.
-    
+    Also currently we have no facility to express SQL operations like
+    \text{INSERT}, \text{DROP}, \text{CREATE}, \text{UPDATE}, and
+    \text{DELETE}, we only operate on the `read-only' part of DML, there is a
+    vast set of SQL which we are unable to provide a mapping for in our system.
+    Perhaps a set of special predicates could be defined in order to facilitate
+    these operators.
+
     \subsubsection{Web Front End Features}
     There are a few security issues with our project as it stands, currently our 
     project is vulnerable to several SQL injections. While working on the project
@@ -2027,7 +2024,6 @@
     project were to be taken further these issues would need to be addressed. 
     Additionally, whilst the connection to our site is secured via HTTPS, 
     passwords to the database are still sent in `plaintext' over HTTPS.
-    
 
     There are a few niceties which would be useful to have but are not vital
     these are not limited too: increasing responsiveness of the system whilst 
@@ -2037,7 +2033,6 @@
     they are too long, caching results of recent queries to improve performance,
     and having a mechanism to download the results of a logic query.  
 
-    
     \subsubsection{Back End Features} 
     We would have liked our project to be able to support several database
     implementations. Currently it only supports Postgres databases, we had
