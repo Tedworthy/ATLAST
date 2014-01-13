@@ -202,7 +202,7 @@
       more efficient SQL queries. This would be especially useful if querying
       large datasets.
 
-    \subsubsection{Simplicity of logic over SQL}
+    \subsubsection{Simplicity of Logic Over SQL}
       Many queries are far easier to write and are more understandable when
       written in logic compared to SQL. The examples below demonstrate this,
       using both Datalog and our implementation syntax.
@@ -244,7 +244,7 @@
       addition of new features
     \end{itemize}
 
-  \subsection{Our solution}
+  \subsection{Our Solution}
     ATLAST is a web application that allows a user to select a database
     and query it using first-order predicate logic. The logic is converted
     into corresponding SQL, which is then returned to the user, along with the
@@ -1103,7 +1103,7 @@
     communicate with each other.
 
   \subsection{Front End}
-    \subsubsection{Graphical user interface}
+    \subsubsection{Graphical User Interface}
       \begin{figure}[h!]
         \includegraphics[width=\textwidth]{images/site_query.png}
         \caption{Main `Query' page}
@@ -1530,7 +1530,7 @@
 
     \subsection{Back End}
 
-    \subsubsection{Interfacing with the database}
+    \subsubsection{Interfacing With the Database}
 
       We used several publicly available Python libraries in order to make 
       it very easy to query SQL databases. In particular we prioritised
@@ -1615,11 +1615,9 @@
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
-      required is to add a \%SQL\%\_back end.py which provides the functions
-      described above, then switch out the import in generate\_schema.py to use
-      the desired implementation.
-
-
+      required is to add a \texttt{\%SQL\%\_back end.py} which provides the 
+      functions described above, then switch out the import in
+      \texttt{generate\_schema.py} to use the desired implementation.
 
     \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
@@ -1738,6 +1736,7 @@
       \includegraphics[width=0.9\textwidth]{images/survey.jpg}
       \caption{A screenshot of the SurveyMonkey results} 
     \end{figure}
+    Survey results and information page implementation
     \subsection{Testing Procedures}
     We used the testing framework Nose in order to rapidly develop test cases to
     ensure the correctness of our project. We employed TDD (write a failing
@@ -1978,16 +1977,13 @@
 
 \section{Conclusion and Future Extensions}
 
-  At the start of this project no member of the group had any significant
-  experience programming in Python, despite this we found it very easy to pick
-  up. However this lead to some of the early code we
-  wrote being refactored several times after learning significant features
-  of the language which allowed us to simplify the code considerably. We found 
-  the use of Python dictionaries to be invaluable as they allowed us to 
-  rapidly build a well defined error handling system with minimal effort.
-  
-  
-  One stumbling block we encountered was a lack of self documentation half way
+  Prior to the project, no member of the group had any significant
+  experience programming in Python.  This lead to some of the early code we
+  wrote being refactored several times after learning nuances of the
+  language. Despite this we found generally found Python to be an accessible
+  language.
+
+  One stumbling block we encountered was a lack of self documentation mid way
   through the project. Upon reflection, at the beginning of the project we 
   started well, planning in advance and making sure team members were kept up 
   to date with the technical details of how the project worked. However as time 
@@ -1996,22 +1992,22 @@
   abstractly how they were solving certain problems. For example at the beginning 
   of the project everybody had a good understanding of how we would parse the 
   grammar for predicate logic and how we could build up a syntax tree, but later 
-  when developing the  code generation phase a few members (whilst doing sterling 
-  work) `ran away' with the project resulting in a large chunk of code which only 
-  a few people understood; this greatly reduced how many people could contribute 
-  to that part of the project without spending a significant amount of time figuring 
-  out what that piece of code did, which in turn slowed down development of certain
-  features while everyone took time to figure out how the project worked.
-  Really what we have learnt from this is that documentation is key, indeed if the
+  when developing the `code generation' phase, whilst their contribution was
+  valued, a few members `ran away' with the project resulting in a large chunk of code which only 
+  a few people understood. This greatly reduced the number of people that could
+  be directly involved in the project, which in turn slowed down development of certain
+  features. 
+  
+  We have learnt from this that documentation is key and can be as
+  valuable as the work it documents. Indeed if the
   group were to do the project over again, we would have made sure that for each
-  agile sprint a group member would be tasked solely with the role of `Technical
+  agile sprint, a group member would be tasked solely with the role of `Technical
   Writer' who's job it would be to produce a set of specifications for each part
-  of the project worked on that week. 
-
+  of the project worked on that week.
 
   \subsection{Future Extensions}
     During the course of this project we did not get time to implement several
-    features we had initially hoped to provide. 
+    features we had initially hoped to provide.
 
     \subsubsection{Language Features}
     Initially we wanted to have a mechanism by which as user would be able to
@@ -2020,29 +2016,25 @@
     repeated logic a user would have to write. For example being able to define a 
     predicate \texttt{stars\_in(aname,ftitle)} which relates an actor with a name 
     `aname' staring in a film with title `ftitle'
-    \begin{align*}
-      stars.in(aname, title) \models \exists  & f,c,a (  &                                    \\
-                                              & films.title(f,title) \land &                  \\
-                                              & casting.fid(c,f) \land &                      \\
-                                              & casting.aid(c,a) \land &                      \\
-                                              & actors.name(a,aname) &                        \\
-    ) \hspace{2mm} & &
-    \end{align*}
+    \begin{multline}
+      stars.in(aname, title) \models \\ \exists  f,c,a (films.title(f,title) \land
+      casting.fid(c,f) \land casting.aid(c,a) \land actors.name(a,aname))
+    \end{multline}
 
-    Also currently we have no facility to express SQL operations like INSERT, 
-    DROP, CREATE, UPDATE, and DELETE, we only operate on the `read-only' part 
-    of DML, there is a vast set of SQL which we are unable to provide a mapping 
-    for in our system. Perhaps a set of special predicates could be defined in
-    order to facilitate these operators.
-    
-    \subsubsection{Web front end Features}
+    Also currently we have no facility to express SQL operations like
+    \text{INSERT}, \text{DROP}, \text{CREATE}, \text{UPDATE}, and
+    \text{DELETE}, we only operate on the `read-only' part of DML, there is a
+    vast set of SQL which we are unable to provide a mapping for in our system.
+    Perhaps a set of special predicates could be defined in order to facilitate
+    these operators.
+
+    \subsubsection{Web Front End Features}
     There are a few security issues with our project as it stands, currently our 
     project is vulnerable to several SQL injections. While working on the project
     we prioritised the translation task over the security of the system, if the 
     project were to be taken further these issues would need to be addressed. 
     Additionally, whilst the connection to our site is secured via HTTPS, 
     passwords to the database are still sent in `plaintext' over HTTPS.
-    
 
     There are a few niceties which would be useful to have but are not vital
     these are not limited too: increasing responsiveness of the system whilst 
@@ -2063,32 +2055,28 @@
     add because before translating to SQL we produce an intermediate
     representation (or IR), an optimiser can then be run over this IR to do
     things like remove redundant NOT(NOT()) clauses.
-
+   
     Additionally, further methods of semantic analysis could be implemented -
     the main method being type checking. Since we have information about types
     in our schema, once the constraint tree has been generated in the
     intermediate representation, we could walk this tree and check for
     inconsistencies. Consider the following query, where \texttt{films.title}
     is of type string and \texttt{films.length} is of type interval.
-
     \begin{gather}
-      \exists x(films.title(x, y) \land films.length(x, y))
+        \exists x(films.title(x, y) \land films.length(x, y))
     \end{gather}
-
     Semantically, this means "get me the films where their titles and lengths
     are the same". But this is a type error; we cannot unify variable y on a
-    string and interval. This feature was planned, but unfortunately due to time
-    constraints, was dropped.
+    string and interval. This feature was planned, but unfortunately due to
+    time constraints, was dropped.
+
+
 
 \section{Bibliography}
   \printbibliography
 
 \appendix
 \section{Appendix}
-  The appendix is optional, and does not count towards the 35 pages. It may
-  contain thing like: User guide, installation instructions; more extensive
-  design, testing, statistics etc.
-
   \subsection{Installation Guide}
     For installation of our logic to SQL translator, we strongly recommend
     starting with a vanilla installation of Ubuntu 12.04 LTS, for which a guide
@@ -2176,7 +2164,7 @@
   The installation then broadly follows step 2 and onwards from the above
   guide. 
 
-  \textbf{Note:} We have determined an incompatibility between our project and
+  \textbf{Note:} We have identified an incompatibility between our project and
   the Gentoo Linux distribution. We make use of the RabbitMQ message server,
   which has a dependency on the Erlang language libraries. These libraries
   are notoriously difficult to install on Gentoo, as confirmed by a visit to
@@ -2324,8 +2312,32 @@
 
   \subsection{Statistics}
 
-  - This is just the performance metric, profiling etc diagrams from 
-  Chatley coursework 4.
+  \subsubsection{Profiling}
+     \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/1.jpg}
+        \caption{A diagram showing the execution time of the main steps of our
+        logic to SQL translator.}
+      \end{figure} 
+
+      \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/4.png}
+        \caption{Actual profiling output.}
+      \end{figure}
+
+      \begin{figure}[H]
+        \includegraphics[width=1.0\textwidth]{images/5.png}
+        \caption{Graphical visualisation of profiling data.}
+      \end{figure}
+
+      As can be seen above, when profiling our application, we saw that the
+      function that took longest to execute was establishing a connection to
+      our PostgreSQL database. This is expected, due to network latency. Once
+      the connection is established, the actual query and translation takes
+      somewhat less time. In the second image, we a more descriptive analysis
+      of our performance, in terms of number of calls. Finally, in the third
+      image, we use the program
+      Runsnakerun\footnote{\url{http://www.vrplumber.com/programming/runsnakerun}}
+      to get a more graphical representation of our performance bottlenecks.
 
 %\section{Anandha waffle from his site - delete once finished report}
 %  Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
