@@ -325,6 +325,19 @@
       Equivalent Datalog and SQL. Datalog is far more concise, something we wanted from our syntax.
     \end{center}
 
+  \subsection{LogicBlox}
+  LogicBlox are a company that have developed a query language called LogiQL, an extension of Datalog. \cite{logicblox}
+
+  In a similar fashion, facts are defined and questions can be asked. LogicBlox adds features like integrity constraints, modules and other programmer friendly features.
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=7cm]{images/logicblox.png}
+    \caption{An example creating a predicate cost, and some facts which map ice creams to a price.}
+  \end{figure}
+
+  Note that the syntax differs from Datalog and so is not backwards compatible. If our project ever went got to the stage where we wanted to implement more advanced features, it would be worth reviewing LogiQL.
+  
   \subsection{SQL}
     Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
     programming language designed for managing data held in relational database
