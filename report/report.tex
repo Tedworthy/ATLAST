@@ -200,8 +200,33 @@ http://www.doc.ic.ac.uk/lab/thirdyear/group-project/last-year.html
       large datasets.
 
     \subsubsection{Simplicity of logic over SQL}
-\todo[inline]{Give examples of logic sentences that are far simpler to write and understand
-compared to their SQL equivalent.}
+      Many queries are far easier to write and are more understandable when
+      written in logic compared to SQL. The examples below demonstrate this,
+      using both Datalog and our implementation syntax.
+
+      \begin{center}
+        \begin{align*}
+          & parent(jane, Child) & & \texttt{SELECT child} \\
+          &                     & & \texttt{FROM people} \\
+          &                     & & \texttt{WHERE parent = 'jane'} \\
+        \end{align*}
+        Comparison of concise Datalog query to long SQL query
+      \end{center}
+
+    \subsubsection*{"Get me all actors who have been in a film that is more
+      than two hours long"}
+
+      ATLAST logic:
+      \begin{gather}
+        \exists x(films.length(x, y) \land y>'02:00:00' \land casting.fid(w, x))
+      \end{gather}
+
+      SQL Generated:
+      \begin{minted}{sql}
+        SELECT films.length, casting.cid
+        FROM films JOIN casting ON films.fid = casting.fid
+        WHERE (films.length > '02:00:00') AND (casting.fid = films.fid)
+      \end{minted}
 
     \subsubsection{Security (apparently!)}
 
@@ -289,14 +314,6 @@ As an example, the following is possible in Datalog:
 The fact $grandparent(Valerie, Joe)$ is not stored permanently but can be inferred at runtime, this is where the power of Datalog lies. Since there is no equivalent for this deduction in SQL and Datalog has been around since the 1970s we decided it would be an impossible challenge to out-develop it in a matter of weeks.
 
 Rather than going head to head we realised that our project needed to approach the task from a different angle. Instead of requiring a database populated from the ground in a manner designed for logic queries we wanted to bring some of the benefits of logic to regular relational databases.
-\begin{center}
-  \begin{align*}
-    & parent(jane, Child) & & \texttt{SELECT child} \\
-    &                     & & \texttt{FROM people} \\
-    &                     & & \texttt{WHERE parent = 'jane'} \\
-  \end{align*}
-  Which is nicer? Exactly.
-\end{center}
 
 \subsection{SQL}
   Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
