@@ -2307,20 +2307,33 @@
   - things like sean's bullshit rough drawings from Chatley reports
 
   \subsection{Statistics}
+
+  \subsubsection{Profiling}
      \begin{figure}[H]
         \includegraphics[width=1.0\textwidth]{images/1.jpg}
-        \caption{}
+        \caption{A diagram showing the execution time of the main steps of our
+        logic to SQL translator.}
       \end{figure} 
+
       \begin{figure}[H]
         \includegraphics[width=1.0\textwidth]{images/4.png}
-        \caption{}
-      \end{figure}  
-            \begin{figure}[H]
+        \caption{Actual profiling output.}
+      \end{figure}
+
+      \begin{figure}[H]
         \includegraphics[width=1.0\textwidth]{images/5.png}
-        \caption{}
-      \end{figure}                                    
-      - This is just the performance metric, profiling etc diagrams from 
-  Chatley coursework 4.
+        \caption{Graphical visualisation of profiling data.}
+      \end{figure}
+
+      As can be seen above, when profiling our application, we saw that the
+      function that took longest to execute was establishing a connection to
+      our PostgreSQL database. This is expected, due to network latency. Once
+      the connection is established, the actual query and translation takes
+      somewhat less time. In the second image, we a more descriptive analysis
+      of our performance, in terms of number of calls. Finally, in the third
+      image, we use the program
+      Runsnakerun\footnote{\url{http://www.vrplumber.com/programming/runsnakerun}}
+      to get a more graphical representation of our performance bottlenecks.
 
 %\section{Anandha waffle from his site - delete once finished report}
 %  Final Report ? due: 13th Jan 2014, at 16:00 (both Electronic and Hardcopy)
