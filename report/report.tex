@@ -169,9 +169,6 @@
 
 \section{Introduction}
   \subsection{Motivation}
-    There are a number of groups and applications for which the project has
-    clear use cases.
-
     \subsubsection{Teaching}
       The predominant use-case for our project is as a teaching tool for use by
       students studying both logic and databases; topics which many universities
@@ -202,23 +199,25 @@
 
     \subsubsection{Simplicity of Logic Over SQL}
       Many queries are far easier to write and are more understandable when
-      written in logic compared to SQL. The examples below demonstrate this,
-      using both Datalog and our implementation syntax.
+      written in logic compared to SQL. The example below gives a comparison
+      between our syntax and SQL.
 
-    \subsubsection*{"Get me all actors who have been in a film that is more
-      than two hours long"}
-
+    \subsubsection*{"Get me all of Matt Damon's castings!"}
+      
       ATLAST logic:
       \begin{gather}
-        \exists x(films.length(x, y) \land y > \text{`02:00:00'} \land
-          casting.fid(w, x))
+        \exists x(actors.name(x, 'Matt Damon') \land casting.aid(y, x))
       \end{gather}
 
       SQL Generated:
       \begin{minted}{sql}
-        SELECT films.length, casting.cid
-        FROM films JOIN casting ON films.fid = casting.fid
-        WHERE (films.length > '02:00:00') AND (casting.fid = films.fid)
+        SELECT casting.cid
+        FROM 
+          actors
+          JOIN
+          casting ON actors.aid = casting.aid
+        WHERE
+          actors.name = 'Matt Damon'
       \end{minted}
 
   \subsection{Objectives}
