@@ -207,7 +207,6 @@
       \todo[inline]{Give examples of logic sentences that are far simpler to
       write and understand compared to their SQL equivalent.}
 
-    \subsubsection{Security (apparently!)}
 
     \subsubsection{Anything else you can come up with}
 
@@ -977,16 +976,21 @@
           not know its value at present
       \end{itemize}
 
-      In our implementation, we will take NULL to be the second representation.
+    In our implementation, we will take NULL to be the second representation,
+    and we take the meaning of \texttt{$\exists x (predicate(x,y))$} to be 
+    'True if there exists a \emph{known} y for an x' in this way predicates of
+    the form \texttt{$\exists x (predicate(x,NULL))$} evaluate to false, allowing 
+    us to use the negation operator to specify that a field be NULL.
 
-      This is particularly useful because it allows us to postulate questions like
-      the following "List the names of all films who's director is not known" as:
-      \begin{gather}
-        \exists x(films.name(x,name) \land \lnot films.director(x, director) )
-      \end{gather}
-      It is common for SQL queries to check if a value is NULL, as the user may
-      wish to exclude these values, or perform a special case if they are
-      encountered.
+    This is particularly useful because it allows us to postulate questions like
+    the following "List the names of all films who's director is not known" as:
+    \begin{gather}
+      \exists x,director(films.name(x,name) \land \lnot films.director(x, director) )
+    \end{gather} 
+    
+    It is common for SQL queries to check if a value is NULL, as the user may
+    wish to exclude these values, or perform a special case if they are
+    encountered.
 
 \section{Design and Implementation}
   \subsection{Application Type}
@@ -1972,11 +1976,11 @@
   abstractly how they were solving certain problems. For example at the beginning 
   of the project everybody had a good understanding of how we would parse the 
   grammar for predicate logic and how we could build up a syntax tree, but later 
-  on during the codegen phase a few members (whilst doing sterling work) 'ran away'
-  with the project resulting in a large chunk of code which only a few people
-  understood; this greatly reduced how many people could contribute to that part
-  of the project without spending a significant amount of time figuring out what
-  that piece of code did, which in turn slowed down development of certain
+  when developing the  code generation phase a few members (whilst doing sterling 
+  work) 'ran away' with the project resulting in a large chunk of code which only 
+  a few people understood; this greatly reduced how many people could contribute 
+  to that part of the project without spending a significant amount of time figuring 
+  out what that piece of code did, which in turn slowed down development of certain
   features while everyone took time to figure out how the project worked.
   Really what we have learnt from this is that documentation is key, indeed if the
   group were to do the project over again, we would have made sure that for each
@@ -2020,7 +2024,7 @@
     passwords to the database are still sent in 'plaintext' over HTTPS.
     
 
-    There are a few niceities which would be useful to have but are not vital
+    There are a few niceties which would be useful to have but are not vital
     these are not limited too: increasing responsiveness of the system whilst 
     running long queries (providing the user feedback to let them know that the
     system hasn't crashed), saving a recent history of queries, developing a 
@@ -2029,16 +2033,20 @@
     and having a mechanism to download the results of a logic query.  
 
     
-    \subsubsection{back end Features} 
+    \subsubsection{Back End Features} 
     We would have liked our project to be able to support several database
     implementations. Currently it only supports Postgres databases, we had
     planned support several other major implementations like MySQL and
     Microsoft SQL Server, however due to lack of time this feature was removed
     in favour of focusing on making sure that the logical translations produced
-    were correct. 
+    were correct. Another back end feature we wanted to add was scope for
+    optimizing the SQL produced by our system. This would be relatively easy to
+    add because before translating to SQL we produce an intermediate
+    representation (or IR), an optimizer can then be run over this IR to do
+    things like remove redundant NOT(NOT()) clauses.
    
     Currently there is no scope for type checking in the semantic analysis phase
-    of the SQL generation,\todo{asdflas;d}
+    of the SQL generation,\todo{SEAN PLZ DO DEES}
 
    
     
