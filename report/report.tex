@@ -1518,11 +1518,13 @@ Rather than going head to head we realised that our project needed to approach t
       to worry about how the backend querying worked.
 
       In order to run an SQL query you have to run through the following steps:
-
-      1. Grab some configuration (username password etc)
-      2. Open a connection
-      3. Run a query
-      4. Close the connection.
+      
+      \begin{enumerate}
+        \item Grab some configuration (username password etc)
+        \item Open a connection
+        \item Run a query
+        \item Close the connection.
+      \end{enumerate}
 
       Just using psycopg2, the PostgreSQL adapter for Python, it would take
       several function calls to achieve each step. For example in order to run a
@@ -1582,7 +1584,8 @@ Rather than going head to head we realised that our project needed to approach t
       where it is not connected to a database and it does not run the translated 
       query, instead it simply presents the query to the user.
 
-      This XML representation is automatically generated on program startup.
+      This XML representation is automatically generated on program startup,
+      stored to a file and then transferred into a Python dictionary.
       Currently the project only supports PostgreSQL implementations, however it
       has been designed so that support for other SQL implementations can be
       added modularly. In order to extend support to other platforms all that is
@@ -1599,10 +1602,10 @@ Rather than going head to head we realised that our project needed to approach t
 
     \subsubsection{Semantic Analysis}
       One of the most important error checking methods we employ is semantic
-      analysis - this is looking at the SQL query, combining its syntax with the
+      analysis - this is looking at the logic, combining its syntax with the
       meaning (semantics) derived from our database schema, and identifying
       inconsistencies and errors. In this initial version of our logic to SQL
-      translator, we check the predicates of our SQL query against the known
+      translator, we check the predicates of our logic against the known
       relations and attributes present in our schema. If a relation, attribute,
       or relation attribute pair doesn't exist, an exception is raised which is
       caught and an error message is displayed to the user. This error would
@@ -1614,6 +1617,11 @@ Rather than going head to head we realised that our project needed to approach t
         \caption{A user being informed of a semantic error: the relation
           'cornucopia' does not exist in the schema.}
       \end{figure}
+
+      In a similar manner any errors that the database raises, for example if
+      the generated SQL is malformed, are returned for the user. This is
+      particularly useful for debugging and detecting internal database
+      issues.
 
     \subsubsection{Error Handling}
       There were many stages of the translation process which could have
@@ -1828,12 +1836,12 @@ Rather than going head to head we realised that our project needed to approach t
     At the beginning of the project, as discussed previously, we outlined the
     goals and required features of our project, and split them up in to three
     rough areas - front end (handling user interactions),
-    middle end (communicating between client and server), and
+    middleware (communicating between client and server), and
     then the back end (translation and database access).
     We initially split our group of six in to three teams,
     corresponding to each of the subsections of our project. Members were
     allocated to each team depending on their strengths - initially Ted and Tom
-    were to complete front end work, Sam and Mitchell to do middle end, and
+    were to complete front end work, Sam and Mitchell to do middleware, and
     Sean and Max on back end. These were just initial roles, and we found that
     throughout the project, roles could be temporarily switched around to put
     extra work in to tasks that took longer than expected.
