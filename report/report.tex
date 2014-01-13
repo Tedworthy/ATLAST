@@ -207,21 +207,13 @@
       written in logic compared to SQL. The examples below demonstrate this,
       using both Datalog and our implementation syntax.
 
-      \begin{center}
-        \begin{align*}
-          & parent(jane, Child) & & \texttt{SELECT child} \\
-          &                     & & \texttt{FROM people} \\
-          &                     & & \texttt{WHERE parent = 'jane'} \\
-        \end{align*}
-        Comparison of concise Datalog query to long SQL query
-      \end{center}
-
     \subsubsection*{"Get me all actors who have been in a film that is more
       than two hours long"}
 
       ATLAST logic:
       \begin{gather}
-        \exists x(films.length(x, y) \land y>'02:00:00' \land casting.fid(w, x))
+        \exists x(films.length(x, y) \land y > \text{`02:00:00'} \land
+          casting.fid(w, x))
       \end{gather}
 
       SQL Generated:
@@ -266,7 +258,7 @@
       \item \textbf{Creation of an SQL code generator} that is able to lexically
       analyse and parse user-input logic queries and generate ANSI SQL.
 
-      \item \textbf{A minimalist front-end user interface} providing all
+      \item \textbf{A minimalist front end user interface} providing all
       translation functionality from a single page, with clear links to
       support and database setup pages. Logic input shortcuts, including
       predicate auto-fill and logic symbol auto-completion, increase user
@@ -297,7 +289,7 @@
     Before beginning the development of our project it was clear that there were
     strong links to Datalog. Datalog is a declarative logic programming language,
     resembling Prolog in syntax, that can be used to query deductive databases.
-    Deductive databases are different from traditional relational databases in that
+    Deductive databases differ from traditional relational databases in that
     new facts can be `deduced' by applying rules to those facts already stored.
 
     As an example, the following is possible in Datalog:
@@ -325,7 +317,15 @@
     Instead we realised that our project needed to approach the task from a
     different angle. Rather than requiring a database populated from scratch in a
     manner designed for logic queries, we wanted to bring some of the benefits of
-    logic to regular relational databases.
+    logic, like simplicity, to regular relational databases.
+    \begin{center}
+      \begin{align*}
+        & parent(jane, Child) & & \texttt{SELECT child} \\
+        &                     & & \texttt{FROM people} \\
+        &                     & & \texttt{WHERE parent = 'jane'} \\
+      \end{align*}
+      Equivalent Datalog and SQL. Datalog is far more concise, something we wanted from our syntax.
+    \end{center}
 
   \subsection{SQL}
     Structured Query Language (SQL)~\cite{wiki:SQL} is a special-purpose
@@ -333,12 +333,12 @@
     management system. SQL is made up of two different types of language:
 
     \begin{itemize}
-        \item
-          Data Definition Language. DDL is used to define the structure of a
-          database (also known as its schema).
-        \item
-          Data Manipulation Language. DML is primarily used to insert, select,
-          delete and update data within a database.
+      \item
+        Data Definition Language. DDL is used to define the structure of a
+        database (also known as its schema).
+      \item
+        Data Manipulation Language. DML is primarily used to insert, select,
+        delete and update data within a database.
     \end{itemize}
 
     However, as defined by the SQL92 standard\cite{isoSQL}, read-only operations
@@ -351,10 +351,13 @@
     We initially chose to restrict to these operations so we could build a basic,
     but fully working system before progressing. Afterwards we considered how
     a statement that manipulates data, like an insert, could be defined in logic.
-    \todo[inline]{What are the dollar signs doing below?}
-    \begin{gather}
-      \top \rightarrow (film\_title(\$new, ``Flight'') \land film\_director(\$new, ``James''))
-    \end{gather}
+    \begin{center}
+      \begin{gather}
+        \top \rightarrow (film\_title(\$new, \text{`Flight'}) \land
+          film\_director(\$new, \text{`James'}))
+      \end{gather}
+      Note: $\$new$ is assumed to generate an unused film ID.
+    \end{center}
 
     Above is one possibility, inserting a film called `Flight', directed by
     `James'. Having $\top$ imply the new information suggests that it must be
@@ -406,7 +409,7 @@
       below:
       $$ \{F\text{ | } \exists F1 \in Films(F1.director = \text{`Matt Damon'}
            \land F.title = F1.title)\} $$
-      $$ \emph{NOTE: F becomes a tuple with one element called title.} $$
+      $$ \emph{Note: F becomes a tuple with one element called title.} $$
       We are now able to represent projection and selection. We can also
       represent joins. Let us suppose that we wish to find all titles of films
       whose director has also directed another film.
@@ -458,7 +461,7 @@
                          & \vdots         \\
         \text{n + 1:  }  & R.a_n(k, an)
       \end{align*}
-      NOTE: The predicate $R.k(k, k)$ is also valid, albeit redundant.
+      Note: The predicate $R.k(k, k)$ is also valid, albeit redundant.
 
       Relating a tuple to its primary key gives a concise way to address it,
       adding the slight restriction that each relation must have a primary key.
@@ -490,7 +493,7 @@
       \end{gather}
       The query binds $x$ and leaves $title$ free, meaning that our
       answer will be the set of all substitutions for $title$ such that
-      $\exists x(films.title(x, title)) \models \top$. The `$\exists$' symbol
+      $\exists x(films.title(x, title)) \models \top$. The $\exists$ symbol
       serves two purposes. Firstly it binds $x$ as mentioned above, and secondly
       it enforces that the substituted $title$ exists in at least one tuple.
       The predicate $films.title$ gives the translator the scope of
@@ -559,13 +562,13 @@
       \texttt{WHERE} clause of the outer query's query.
 
       \begin{minted}{sql}
-        SELECT films1.title
-        FROM films AS films1
-        WHERE EXISTS (
-          SELECT films2.title
-          FROM films AS films2
-          WHERE films1.fid <> films2.fid
-        );
+      SELECT films1.title
+      FROM films AS films1
+      WHERE EXISTS (
+        SELECT films2.title
+        FROM films AS films2
+        WHERE films1.fid <> films2.fid
+      );
       \end{minted}
 
       There are two things to note with this approach, both relating to scope.
@@ -651,7 +654,8 @@
         EXCEPT
         SELECT films2.director
         FROM films AS films2
-        WHERE films2.length > '1:00:00' AND films2.director = films1.director);
+        WHERE films2.length > '1:00:00' AND films2.director = films1.director
+      );
       \end{minted}
 
   \subsection{Equality}
@@ -712,9 +716,9 @@
     there exists other films except `The Bourne Identity'. In SQL, this
     simply translates to the following.
     \begin{minted}{sql}
-      SELECT title,
-      FROM films
-      WHERE title <> 'The Bourne Identity';
+    SELECT title,
+    FROM films
+    WHERE title <> 'The Bourne Identity';
     \end{minted}
     The existence of one or more tuples satisfies our query; if no queries
     are returned, it must be the case that there are no other films except
@@ -737,7 +741,7 @@
     circumstance (it is likely that we would like to return all other film
     titles).
 
-    We can also express other inequalities, such as `<', `$\le$', `>', `$\ge$'.
+    We can also express other inequalities, such as <, $\le$, >, $\ge$.
     Here we query for all the fid of every films with length greater than or
     equal to two hours.
     \begin{minted}{sql}
@@ -777,7 +781,7 @@
     \end{multline}
     Notice how the last two constraints in the logical query translate
     with very little effort. The same applies to constraints separated with
-    an $\lor$ which is equivalent to OR in SQL.
+    an $\lor$ which is equivalent to \texttt{OR} in SQL.
 
   \subsection{Conjunction of Predicates}
     \label{sec:joins}
@@ -815,7 +819,7 @@
       joins are rarely used in this format. Instead, they are often combined
       with a \texttt{WHERE} clause to extract useful information. For example,
       if we wished to query every actor that acted in the film `The Bourne
-      Identity', we could could use the following logic query.
+      Identity', we could use the following logic query.
       \begin{multline}
         \exists fid,cid(films.title(fid, \text{`The Bourne Identity'}) \\
         \land casting.fid(cid, fid) \land actors.cid(aid, cid) \land
@@ -858,7 +862,8 @@
     \subsubsection{SQL INNER JOIN}
       Introduced in ANSI-92 SQL, \texttt{INNER JOIN} allows for a more readable
       version of the above \texttt{CROSS JOIN}, \texttt{WHERE} combination. The
-      logical query~\ref{largeCROSS} can be written using the SQL INNER JOIN
+      logical query~\ref{largeCROSS} can be written using the SQL \texttt{INNER
+      JOIN}
       syntax as:
       \begin{minted}{sql}
       SELECT a1.name,
@@ -890,35 +895,34 @@
           \hline
           Dilemma & Explanation \\
           \hline
-
-          \tabbox{\centering $rel.attr1(k, a) \land rel.attr2(k, b)$ \\ becomes \\  No Join}
+          \tabbox{\centering $rel.attr1(k, a) \land rel.attr2(k, b)$ \\
+            becomes \\ No Join}
           &
-          Both keys and relations are equal. This conjunction involves projecting
-          two elements from the same tuple, and so no join is necessary.
+          Both keys and relations are equal. This conjunction involves
+          projecting two elements from the same tuple, and so no join is
+          necessary.
           \\\hline
-
-          \tabbox{\centering $rel1.attr1(k1, a) \land rel2.attr2(k2, b)$ \\ becomes \\ CROSS JOIN}
+          \tabbox{\centering $rel1.attr1(k1, a) \land rel2.attr2(k2, b)$ \\
+            becomes \\ \texttt{CROSS JOIN}}
           &
-          The keys are different and the relations may or may not be equal. Since
-          we assume that a $\neq$ b, there are no common elements, and a cross join
-          must occur.
+          The keys are different and the relations may or may not be equal.
+          Since we assume that a $\neq$ b, there are no common elements, and a
+          cross join must occur.
           \\\hline
-
-          \tabbox{\centering $rel1.attr1(k1, a) \land rel2.attr2(k2, a)$ \\ becomes \\ JOIN ON \\ rel1.attr1 =
-          rel2.attr2}
+          \tabbox{\centering $rel1.attr1(k1, a) \land rel2.attr2(k2, a)$ \\
+            becomes \\ \texttt{JOIN ON} \\ \texttt{rel1.attr1 = rel2.attr2}}
           &
           The keys are different, but the attributes rel1.attr1 and rel2.attr2
           are equal, thus we must join on these elements. Note that aliases are
           used to avoid ambiguity between the two sets of attributes if they
           overlap.
           \\\hline
-
-          \tabbox{\centering $rel1.attr1(k, a) \land rel2.attr2(k, b)$ \\ becomes \\ JOIN ON \\ rel1.key =
-          rel2.key}
+          \tabbox{\centering $rel1.attr1(k, a) \land rel2.attr2(k, b)$ \\
+            becomes \\ \texttt{JOIN ON} \\ \texttt{rel1.key = rel2.key}}
           &
-          The keys are the same and we assume the attributes rel1.attr1 and rel2.attr2
-          are different. We must join on the keys. Note that aliases are
-          used to avoid ambiguity between the two sets of attributes if they
+          The keys are the same and we assume the attributes rel1.attr1 and
+          rel2.attr2 are different. We must join on the keys. Note that aliases
+          are used to avoid ambiguity between the two sets of attributes if they
           overlap.
           \\\hline
         \end{tabular}
@@ -931,30 +935,29 @@
     \subsubsection{Difference}
       \label{sec:except}
       It may be the case that we need to negate a set of predicates. By example,
-      we will refer to the subquery within
-      equation~\ref{eqn:except}:
+      we will refer to the subquery within equation~\ref{eqn:except}:
       \begin{multline}
         \exists y,length(\lnot(films.director(y, director) \land films.length(y,
         length) \land \text{length > `1:00:00'}))
       \end{multline}
-      Semantically, we wish to prove that a y exists, such that y is the films
-      fid, and the length of that film is above one hour. We could formulate the
-      translation as below:
+      Semantically, we wish to prove that a $y$ exists, such that $y$ is the
+      film's $fid$, and the $length$ of that film is above one hour. We could
+      formulate the translation as below:
       \begin{minted}{sql}
       SELECT director
       FROM films
-      WHERE length <= `1:00:00';
+      WHERE length <= '1:00:00';
       \end{minted}
       So the answer is simply achieved by negating the condition. However, if
-      there are other constraints in the query that create a join, we do not wish
-      to negate these; we only wish to negate the conditions that restrict the
-      data after a join. The simplest method here to solve this problem is to use
-      the EXCEPT operator.
+      there are other constraints in the query that create a join, we do not
+      wish to negate these; we only wish to negate the conditions that restrict
+      the data after a join. The simplest method here to solve this problem is
+      to use the \texttt{EXCEPT} operator.
 
-      The SQL EXCEPT operator takes the distinct rows of one query and returns
-      the rows that do not appear in a second result set\cite{wiki:EXCEPT}. It
-      has the same semantic meaning as the set difference operator. The
-      above SQL query is equivalent to the following.
+      The SQL \texttt{EXCEPT} operator takes the distinct rows of one query and
+      returns the rows that do not appear in a second result
+      set\cite{wiki:EXCEPT}. It has the same semantic meaning as the set
+      difference operator. The above SQL query is equivalent to the following.
       \begin{minted}{sql}
       SELECT director
       FROM films
@@ -965,34 +968,38 @@
       \end{minted}
     \subsubsection{NULL Values}
       The SQL language implements three-valued logic. A condition can either
-      translate to TRUE, FALSE or UNKNOWN.
+      translate to \texttt{TRUE}, \texttt{FALSE} or \texttt{UNKNOWN}.
 
-      Often in relations, it will be common to come across a NULL value. A NULL
-      value can represent any of the following\cite{pmbNULL}:
+      Often in relations, it will be common to come across a \texttt{NULL}
+      value. A \texttt{NULL} value can represent any of the
+      following~\cite{pmbNULL}:
 
       \begin{itemize}
-        \item NULL represents a something that is not present in the UoD
-        \item NULL represents something that might be present in the UoD, but
+        \item \texttt{NULL} represents a something that is not present in the
+          UoD
+        \item \texttt{NULL} represents something that might be present in the
+          UoD, but we do not know its value at present
+        \item \texttt{NULL} represents something that is present in the UoD, but
           we do not know its value at present
-        \item NULL represents something that is present in the UoD, but we do
-          not know its value at present
       \end{itemize}
 
-    In our implementation, we will take NULL to be the second representation,
-    and we take the meaning of \texttt{$\exists x (predicate(x,y))$} to be 
-    'True if there exists a \emph{known} y for an x' in this way predicates of
-    the form \texttt{$\exists x (predicate(x,NULL))$} evaluate to false, allowing 
-    us to use the negation operator to specify that a field be NULL.
+      In our implementation, we will take \texttt{NULL} to be the second
+      representation, and we take the meaning of $\exists x (predicate(x,y))$ to
+      be `true if there exists a \emph{known} y for an x' in this way predicates
+      of the form $\exists x (predicate(x,NULL))$ evaluate to false, allowing us
+      to use the negation operator to specify that a field be \texttt{NULL}.
 
-    This is particularly useful because it allows us to postulate questions like
-    the following "List the names of all films who's director is not known" as:
-    \begin{gather}
-      \exists x,director(films.name(x,name) \land \lnot films.director(x, director) )
-    \end{gather} 
-    
-    It is common for SQL queries to check if a value is NULL, as the user may
-    wish to exclude these values, or perform a special case if they are
-    encountered.
+      This is particularly useful because it allows us to postulate questions
+      like the following ``List the names of all films whose director is not
+      known'' as:
+      \begin{gather}
+        \exists x,director(films.name(x,name) \land \lnot
+          films.director(x, director) )
+      \end{gather}
+
+      It is common for SQL queries to check if a value is \texttt{NULL}, as the
+      user may wish to exclude these values, or perform a special case if they
+      are encountered.
 
 \section{Design and Implementation}
   \subsection{Application Type}
@@ -1031,16 +1038,14 @@
     guaranteed to work on any device that has a browser.
 
   \subsection{Language Choice}
-    Given our interface choice, we decided to develop a front end using
-    the traditional combination of HTML, CSS and JavaScript (or variants of
-    these). For the server back end, we didn't want anything
-    complicated; just a simple web server to accept requests and
-    a way of sending these requests on for processing. Using a
-    heavy-duty language such as C
-    for this would be overly complicated to setup and maintain, especially as
-    we wanted to be able to quickly prototype and
-    experiment. As such, our choice was between three main languages: Python,
-    Java and Ruby.
+    Given our interface choice, we decided to develop a front end using the
+    traditional combination of HTML, CSS and JavaScript (or variants of these).
+    For the server back end, we didn't want anything complicated; just a simple
+    web server to accept requests and a way of sending these requests on for
+    processing. Using a heavy-duty language such as C for this would be overly
+    complicated to setup and maintain, especially as we wanted to be able to
+    quickly prototype and experiment. As such, our choice was between three main
+    languages: Python, Java and Ruby.
 
     \begin{center}
       \renewcommand{\arraystretch}{1.5}%
@@ -1070,12 +1075,12 @@
       \includegraphics[width=\textwidth]{images/architecture.png}
       \caption{High-level system architecture diagram}
     \end{figure}
-    With all this in mind, we designed the high-level architecture of ATLAST. One
-    key consideration was the separation of individual sections and services, in
-    order to allow future expansion and flexibility. For example, the system
-    needed to be able to change which database server it was connecting to, or to
-    send off translation requests to various services for load-balancing and
-    scalability.
+    With all this in mind, we designed the high-level architecture of ATLAST.
+    One key consideration was the separation of individual sections and
+    services, in order to allow future expansion and flexibility. For example,
+    the system needed to be able to change which database server it was
+    connecting to, or to send off translation requests to various services for
+    load-balancing and scalability.
 
     From this concept we were able to split the system up into three areas: the
     front end, the middleware and the back end. The front end was the user's
@@ -1218,15 +1223,15 @@
 
       Below is an example of how these services are used in our project:
       \begin{minted}{python}
-        # In file code.py
-          import task as worker
-          result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
-          response = result.get()
+      # In file code.py
+        import task as worker
+        result = worker.addToProcessingQueue.delay(logic, web.schema, web.config)
+        response = result.get()
 
-        # In file worker.py
-        @celery.task
-        def addToProcessingQueue(logic, schema, configData):
-          # Logic translation here
+      # In file worker.py
+      @celery.task
+      def addToProcessingQueue(logic, schema, configData):
+        # Logic translation here
       \end{minted}
 
     \subsection{Logic to SQL translation}
@@ -1263,16 +1268,16 @@
       The lexer is generated by calling ply.lex.lex(). The lexer splits the
       source language (in this case, the logical query) into these tokens that
       can then be analysed in the parsing stage.
-  
+
       \begin{center}
         \begin{minted}{python}
-          t_LBRACKET = '\('
-          t_RBRACKET = '\)'
-          t_COMMA = ','
-          t_NOT = u'\u00AC'
+        t_LBRACKET = '\('
+        t_RBRACKET = '\)'
+        t_COMMA = ','
+        t_NOT = u'\u00AC'
 
-          digit = r'([0-9])'
-          nondigit = r'([_A-Za-z])'
+        digit = r'([0-9])'
+        nondigit = r'([_A-Za-z])'
         \end{minted}
         Example Tokens, in their natural environment. 
       \end{center}
@@ -1292,9 +1297,9 @@
       As an example, the following function specifies the rule for a bracketed
       $formula$, which resolves simply to the $formula$ state. 
       \begin{minted}{python}
-        def p_formula_bracketed(p):
-          'formula : LBRACKET formula RBRACKET'
-          p[0] = p[2]
+      def p_formula_bracketed(p):
+        'formula : LBRACKET formula RBRACKET'
+        p[0] = p[2]
       \end{minted}
 
       As the grammar is reduced, an abstract syntax tree is built from the
@@ -1329,12 +1334,12 @@
       \label{fig:complexAST}
       \end{figure}
       \begin{minted}{python}
-        ### A /\ B ###
-        def p_formula_and(p):
-          'formula : formula AND formula'
-          lineNo = p.lexer.lineno
-          pos = getPosition(p.lexer)
-          p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
+      ### A /\ B ###
+      def p_formula_and(p):
+        'formula : formula AND formula'
+        lineNo = p.lexer.lineno
+        pos = getPosition(p.lexer)
+        p[0] = ast.AndNode(lineNo, pos, p[1], p[3])
       \end{minted}
       \begin{gather}
         \exists x(films.title(x, y) \land films.director(x, z))
@@ -1354,7 +1359,7 @@
       use of a symbol table.
 
       \paragraph{Scoping}
-        In a logic query, is is possible to reuse variable names in an inner
+        In a logic query, is possible to reuse variable names in an inner
         scope that exist in an outer scope. For example, take the following
         query in logic.
         \begin{gather}
@@ -1573,10 +1578,10 @@
       steps now looks like the following: 
 
       \begin{minted}{python}
-        configData = cp.parse_file('dbback end/db.cfg')
-        con = pg.connect(configData)
-        queryResult = pg.query(con, sql)
-        con.close()
+      configData = cp.parse_file('dbback end/db.cfg')
+      con = pg.connect(configData)
+      queryResult = pg.query(con, sql)
+      con.close()
       \end{minted}
 
     \subsubsection{Codifying Database Schema}
@@ -1678,14 +1683,13 @@
     complex?) and validity of the queries.
 
     \begin{minted}{python}
-      # Profiling code to record query length versus time taken
-      # for the user to enter it
-      statistics = {'query_length': len(logic_to_translate),
-                    'error': error,
-                    'time to enter query': form.time.get_value()}
-
+    # Profiling code to record query length versus time taken
+    # for the user to enter it
+    statistics = {'query_length': len(logic_to_translate),
+                  'error': error,
+                  'time to enter query': form.time.get_value()}
     \end{minted}
-    
+
     \subsection{Application Performance Analysis}
 
     Because the response time per query would be a large factor in a user's
@@ -1725,13 +1729,13 @@
     test, write some code to make the test pass, refactor, repeat), and our group 
     members spent a considerable amount of time constructing test cases. Below is an 
     example test.
-  
+
     \begin{minted}{python}
-      @with_setup(setup_func, teardown_func)
-      def test_select_one_from_one(self):
-        logic = "?x(films.title(x, y))".decode('utf-8')-
-        sql = "SELECT title FROM films"
-        assert self.translates_to(logic, sql), "Error, expected answers not equal"
+    @with_setup(setup_func, teardown_func)
+    def test_select_one_from_one(self):
+      logic = "?x(films.title(x, y))".decode('utf-8')-
+      sql = "SELECT title FROM films"
+      assert self.translates_to(logic, sql), "Error, expected answers not equal"
     \end{minted}
 
     In order to add new test cases our group all met together and hand translated 
@@ -2201,9 +2205,9 @@
 
       SQL Generated:
       \begin{minted}{sql}
-        SELECT films.title, films.director, films1.made
-        FROM films JOIN films AS films1 ON (films.fid = films1.fid) AND
-        (films.fid = films1.fid)
+      SELECT films.title, films.director, films1.made
+      FROM films JOIN films AS films1 ON (films.fid = films1.fid) AND
+      (films.fid = films1.fid)
       \end{minted}
 
       This demonstrates a redundancy in our code generator whereby a
@@ -2219,9 +2223,9 @@
 
       SQL Generated:
       \begin{minted}{sql}
-        SELECT casting.part, actors.name
-        FROM casting JOIN actors ON casting.aid = actors.aid
-        WHERE (actors.aid = casting.aid) AND (actors.aid = casting.aid)
+      SELECT casting.part, actors.name
+      FROM casting JOIN actors ON casting.aid = actors.aid
+      WHERE (actors.aid = casting.aid) AND (actors.aid = casting.aid)
       \end{minted}
 
     \subsubsection*{"Get me directors where all their films are greater than 100
@@ -2236,15 +2240,15 @@
 
       SQL Generated:
       \begin{minted}{sql}
-        SELECT films1.director
-        FROM films AS films1
-        WHERE NOT (EXISTS (SELECT films2.fid, films2.director, films2.length
-        FROM films AS films2
-        EXCEPT
-        SELECT films2.fid, films2.director, films2.length
-        FROM films AS films2
-        WHERE ((films2.length > '100') AND (films2.director = films1.director))
-        AND (films2.director = films1.director) ) )
+      SELECT films1.director
+      FROM films AS films1
+      WHERE NOT (EXISTS (SELECT films2.fid, films2.director, films2.length
+      FROM films AS films2
+      EXCEPT
+      SELECT films2.fid, films2.director, films2.length
+      FROM films AS films2
+      WHERE ((films2.length > '100') AND (films2.director = films1.director))
+      AND (films2.director = films1.director) ) )
       \end{minted}
 
       \subsubsection*{"Get me character names and descriptions for all
@@ -2263,18 +2267,18 @@
 
       SQL Generated:
       \begin{minted}{sql}
-        SELECT character.charname, character.description,
-        character1.speechcount, work.title
-        FROM character JOIN character AS character1 ON (character.charid =
-        character1.charid) AND (character.charid = character1.charid) CROSS
-        JOIN work JOIN character_work ON (((character.charid =
-        character_work.charid) AND (character.charid = character_work.charid))
-        AND (character1.charid = character_work.charid)) AND (work.workid =
-        character_work.workid)
-        WHERE ((character1.speechcount > 50) AND (NOT ((NOT (work.title =
-        'Othello' )) AND (NOT (work.title = 'Macbeth' )) ))) AND
-        ((character_work.charid = character.charid) AND (character_work.workid
-        = work.workid))
+      SELECT character.charname, character.description,
+      character1.speechcount, work.title
+      FROM character JOIN character AS character1 ON (character.charid =
+      character1.charid) AND (character.charid = character1.charid) CROSS
+      JOIN work JOIN character_work ON (((character.charid =
+      character_work.charid) AND (character.charid = character_work.charid))
+      AND (character1.charid = character_work.charid)) AND (work.workid =
+      character_work.workid)
+      WHERE ((character1.speechcount > 50) AND (NOT ((NOT (work.title =
+      'Othello' )) AND (NOT (work.title = 'Macbeth' )) ))) AND
+      ((character_work.charid = character.charid) AND (character_work.workid
+      = work.workid))
       \end{minted}
 
       This query is easier to express in our logical syntax than it is in SQL.
