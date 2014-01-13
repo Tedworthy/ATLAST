@@ -938,7 +938,7 @@ Rather than going head to head we realised that our project needed to approach t
     fid, and the length of that film is above one hour. We could formulate the
     translation as below:
     \begin{minted}{sql}
-    SELECT films.director
+    SELECT director
     FROM films
     WHERE length <= `1:00:00';
     \end{minted}
@@ -952,16 +952,14 @@ Rather than going head to head we realised that our project needed to approach t
     the rows that do not appear in a second result set\cite{wiki:EXCEPT}. It
     has the same semantic meaning as the set difference operator. The
     above SQL query is equivalent to the following.
-
     \begin{minted}{sql}
-    SELECT films.director
+    SELECT director
     FROM films
     EXCEPT
-    SELECT films.director
+    SELECT director
     FROM films
     WHERE length > '1:00:00';
     \end{minted}
-
   \subsubsection{NULL Values}
     The SQL language implements three-valued logic. A condition can either
     translate to TRUE, FALSE or UNKNOWN.
