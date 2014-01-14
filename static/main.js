@@ -76,7 +76,8 @@ $(document).ready(function() {
         });
         break;
       default:
-        addErrorLine("Something very strange happened, and we're not sure what. Please let us know your logic!");
+        addErrorLine("Something very strange happened, and we're not sure " +
+                     "what. Please let us know your logic!");
         break;
     }
   };
@@ -491,9 +492,9 @@ $(document).ready(function() {
       temp_cursor += considered_text.substr(temp_cursor).search("\n") + 1;
       row++;
     }
-    var lastNewline = text.lastIndexOf("\n") + 1;
-    lastNewline = (lastNewline == -1) ? 0 : lastNewline;
-    var column = cursor - lastNewline;
+    var column = cursor;
+    if (row > 0)
+      column -= considered_text.lastIndexOf("\n") + 1;
     return { "row": row, "column": column };
   };
 
