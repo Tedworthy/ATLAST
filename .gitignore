@@ -23,5 +23,19 @@ certs/*
 .DS_Store
 ._*
 
-# This is only for codegen
-report/report.tex
+*.nfs*
+##
+#latex files
+##
+report/*.aux
+
+report/*.pdf
+report/*.bbl
+report/*.bcf
+report/*.blg
+report/*.run.xml
+report/*.toc
+report/*.out
+
+session
+sessions
