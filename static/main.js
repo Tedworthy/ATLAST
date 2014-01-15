@@ -469,6 +469,36 @@ $(document).ready(function() {
     logicEditor.focus();
   });
 
+  $("#demo1").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo2").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo3").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo4").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo5").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo6").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
   var rowColumnToCursor = function(row_column, text) {
     var cursor = 0;
     var row = row_column.row;
