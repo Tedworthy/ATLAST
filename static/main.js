@@ -509,22 +509,26 @@ $(document).ready(function() {
   });
 
   $("#demo3").click(function() {
-    logicEditor.setValue(unicode_chars.exists +
-      "cid,wid(\n" +
-      "    character.charname(cid, name) " +
-      unicode_chars.and + "\n" +
-      "    character.description(cid, desc) " +
-      unicode_chars.and + "\n" +
-      "    characterr.speechcount(cid, sc) " +
-      unicode_chars.and + "\n" +
-      "    sc > 50 " +
-      unicode_chars.and + "\n" +
-      "    work.title(wid, play) " +
-      unicode_chars.and + "\n" +
-      "    character_work(cid, wid) " +
-      unicode_chars.and + "\n" +
-      "    (play = 'Othello' ∨ play = 'Macbeth')" +
-      "\n)");
+    logicEditor.setValue(unicode_chars.exists + "cid,wid(\n" +
+      "    character.charname(cid, name) " + unicode_chars.and + "\n" +
+      "    character.description(cid, desc) " + unicode_chars.and + "\n" +
+      "    characterr.speechcount(cid, sc) " + unicode_chars.and + "\n" +
+      "    sc > 50 " + unicode_chars.and + "\n" +
+      "    work.title(wid, play) " + unicode_chars.and + "\n" +
+      "    character_work(cid, wid) " + unicode_chars.and + "\n" +
+      "    (play = 'Othello' ∨ play = 'Macbeth')" + "\n" +
+      ")");
+    logicEditor.focus();
+  });
+
+  $("#demo4").click(function() {
+    logicEditor.setValue(unicode_chars.exists + "x(\n" +
+      "    films.director(x, dir) " + unicode_chars.and + "\n" +
+      "    " + unicode_chars.forall + "y(\n" +
+      "        films.director(y, dir) " + unicode_chars.implies + "\n" +
+      "        (films.length(y, len) " + unicode_chars.and + " len > '100')\n" +
+      "    )\n" +
+      ")");
     logicEditor.focus();
   });
 
