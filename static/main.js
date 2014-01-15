@@ -526,7 +526,7 @@ $(document).ready(function() {
       "    films.director(x, dir) " + unicode_chars.and + "\n" +
       "    " + unicode_chars.forall + "y(\n" +
       "        films.director(y, dir) " + unicode_chars.implies + "\n" +
-      "        (films.length(y, len) " + unicode_chars.and + " len > '100')\n" +
+      "        (films.length(y, len) " + unicode_chars.and + " len > '2:00:00')\n" +
       "    )\n" +
       ")");
     logicEditor.focus();
