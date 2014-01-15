@@ -5,6 +5,7 @@ SQL query string ready for a DBMS to interpret.
 '''
 
 import visit as v
+import copy
 import ir
 
 class SQLGenerator():
@@ -38,13 +39,18 @@ class SQLGenerator():
   def visit(self, node):
     print "DIFFERENCE"
     innerSQLGenerator = SQLGenerator()
-    node.getIR().accept(innerSQLGenerator)
+    modifiedIR = copy.copy(node.getIR())
+    # Remove any where constraints from the first part
+    modifiedIR.setConstraintTree(None)
+    modifiedIR.accept(innerSQLGenerator)
     translatedSelect = innerSQLGenerator._sql_select_list
     translatedSQL = "SELECT "
     translatedSQL += ", ".join(translatedSelect) + '\n'
     translatedSQL += "FROM "
     translatedFrom = innerSQLGenerator._sql_from_stack[0]
     translatedSQL += translatedFrom + '\n'
+    translatedSQL += "WHERE "
+    translatedSQL += innerSQLGenerator._sql_where_stack[0] + "\n"
     translatedSQL += 'EXCEPT\n'
     constraints = node.getSQLNode()
     constraints.accept(self)
