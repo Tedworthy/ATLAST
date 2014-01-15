@@ -474,53 +474,57 @@ $(document).ready(function() {
   });
 
   $("#demo1").click(function() {
-    logicEditor.insert(unicode_chars.exists +
-      "f,c,a(films.title(f, 'The Bourne Identity') " + 
+    logicEditor.setValue(unicode_chars.exists +
+      "f,c,a(\n" +
+      "    films.title(f, 'The Bourne Identity') " +
       unicode_chars.and + "\n" +
-      " casting.fid(c, f) " +
+      "    casting.fid(c, f) " +
       unicode_chars.and + "\n" +
-      " casting.aid(c, a) " +
+      "    casting.aid(c, a) " +
       unicode_chars.and + "\n" +
-      " actors.name(a, n))");
+      "    actors.name(a, n) " +
+      "\n)");
     logicEditor.focus();
   });
 
   $("#demo2").click(function() {
-    logicEditor.insert(unicode_chars.exists +
-      "f,c,a,newc,newf(films.title(f, 'The Bourne Identity') " + 
+    logicEditor.setValue(unicode_chars.exists +
+      "f,c,a,newc,newf(\n" +
+      "    films.title(f, 'The Bourne Identity') " +
       unicode_chars.and + "\n" +
-      " casting.fid(c, f) " +
+      "    casting.fid(c, f) " +
       unicode_chars.and + "\n" +
-      " casting.aid(c, a) " +
+      "    casting.aid(c, a) " +
       unicode_chars.and + "\n" +
-      " actors.name(a, n) " + 
+      "    actors.name(a, n) " +
       unicode_chars.and + "\n" +
-      " casting.aid(newc, a) " +
+      "    casting.aid(newc, a) " +
       unicode_chars.and + "\n" +
-      " casting.fid(newc, newf) " +
+      "    casting.fid(newc, newf) " +
       unicode_chars.and + "\n" +
-      " films.title(newf, title))"
+      "    films.title(newf, title)" +
+      "\n)"
       );
     logicEditor.focus();
   });
 
   $("#demo3").click(function() {
-    logicEditor.insert("demo");
-    logicEditor.focus();
-  });
-
-  $("#demo4").click(function() {
-    logicEditor.insert("demo");
-    logicEditor.focus();
-  });
-
-  $("#demo5").click(function() {
-    logicEditor.insert("demo");
-    logicEditor.focus();
-  });
-
-  $("#demo6").click(function() {
-    logicEditor.insert("demo");
+    logicEditor.setValue(unicode_chars.exists +
+      "cid,wid(\n" +
+      "    character.charname(cid, name) " +
+      unicode_chars.and + "\n" +
+      "    character.description(cid, desc) " +
+      unicode_chars.and + "\n" +
+      "    characterr.speechcount(cid, sc) " +
+      unicode_chars.and + "\n" +
+      "    sc > 50 " +
+      unicode_chars.and + "\n" +
+      "    work.title(wid, play) " +
+      unicode_chars.and + "\n" +
+      "    character_work(cid, wid) " +
+      unicode_chars.and + "\n" +
+      "    (play = 'Othello' ∨ play = 'Macbeth')" +
+      "\n)");
     logicEditor.focus();
   });
 
