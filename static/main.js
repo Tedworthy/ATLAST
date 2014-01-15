@@ -473,6 +473,57 @@ $(document).ready(function() {
     logicEditor.focus();
   });
 
+  $("#demo1").click(function() {
+    logicEditor.insert(unicode_chars.exists +
+      "f,c,a(films.title(f, 'The Bourne Identity') " + 
+      unicode_chars.and + "\n" +
+      " casting.fid(c, f) " +
+      unicode_chars.and + "\n" +
+      " casting.aid(c, a) " +
+      unicode_chars.and + "\n" +
+      " actors.name(a, n))");
+    logicEditor.focus();
+  });
+
+  $("#demo2").click(function() {
+    logicEditor.insert(unicode_chars.exists +
+      "f,c,a,newc,newf(films.title(f, 'The Bourne Identity') " + 
+      unicode_chars.and + "\n" +
+      " casting.fid(c, f) " +
+      unicode_chars.and + "\n" +
+      " casting.aid(c, a) " +
+      unicode_chars.and + "\n" +
+      " actors.name(a, n) " + 
+      unicode_chars.and + "\n" +
+      " casting.aid(newc, a) " +
+      unicode_chars.and + "\n" +
+      " casting.fid(newc, newf) " +
+      unicode_chars.and + "\n" +
+      " films.title(newf, title))"
+      );
+    logicEditor.focus();
+  });
+
+  $("#demo3").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo4").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo5").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
+  $("#demo6").click(function() {
+    logicEditor.insert("demo");
+    logicEditor.focus();
+  });
+
   var rowColumnToCursor = function(row_column, text) {
     var cursor = 0;
     var row = row_column.row;

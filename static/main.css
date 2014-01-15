@@ -211,7 +211,7 @@ button {
   line-height: 16px;
 }
 
-#insert_container {
+#insert_container, #demo_container {
   width: 100%;
   height: 30px;
   margin: 0px auto;
@@ -219,14 +219,14 @@ button {
   text-align: left;
 }
 
-#insert_container > span {
+#insert_container > span, #demo_container > span {
   display: inline-block;
   margin-right: 5px;
   font-size: 14px;
   color: rgb(150, 150, 150);
 }
 
-#insert_container > button {
+#insert_container > button, #demo_container > button {
   display: inline-block;
   width: 32px;
   height: 100%;
@@ -239,12 +239,12 @@ button {
   cursor: pointer;
 }
 
-#insert_container > button:hover {
+#insert_container > button:hover, #demo_container > button:hover {
   color: black;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#insert_container > button:active {
+#insert_container > button:active, #demo_container > button:active {
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
