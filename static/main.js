@@ -475,7 +475,7 @@ $(document).ready(function() {
 
   $("#demo1").click(function() {
     logicEditor.insert(unicode_chars.exists +
-      "f,c,a(films.title(f, ‘The Bourne Identity’) " + 
+      "f,c,a(films.title(f, 'The Bourne Identity') " + 
       unicode_chars.and + "\n" +
       " casting.fid(c, f) " +
       unicode_chars.and + "\n" +
@@ -487,7 +487,7 @@ $(document).ready(function() {
 
   $("#demo2").click(function() {
     logicEditor.insert(unicode_chars.exists +
-      "f,c,a,n,newc,newf(films.title(f, ‘The Bourne Identity’) " + 
+      "f,c,a,newc,newf(films.title(f, 'The Bourne Identity') " + 
       unicode_chars.and + "\n" +
       " casting.fid(c, f) " +
       unicode_chars.and + "\n" +
