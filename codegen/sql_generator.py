@@ -49,8 +49,9 @@ class SQLGenerator():
     translatedSQL += "FROM "
     translatedFrom = innerSQLGenerator._sql_from_stack[0]
     translatedSQL += translatedFrom + '\n'
-    translatedSQL += "WHERE "
-    translatedSQL += innerSQLGenerator._sql_where_stack[0] + "\n"
+    if (len(innerSQLGenerator._sql_where_stack) > 0):
+      translatedSQL += "WHERE "
+      translatedSQL += innerSQLGenerator._sql_where_stack[0] + "\n"
     translatedSQL += 'EXCEPT\n'
     constraints = node.getSQLNode()
     constraints.accept(self)
