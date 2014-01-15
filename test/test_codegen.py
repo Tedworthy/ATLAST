@@ -366,7 +366,8 @@ class TestCodeGen():
   def test_fariba_three(self):
     logic = "∃x(films.director(x, dir) ∧ ∀y(films.director(y, dir) → (films.length(y, len) ∧ len >'100')))".decode('utf8')
     sql = "SELECT films1.director FROM films AS films1 WHERE NOT EXISTS "
-    sql += "(SELECT films2.director FROM films AS films2 EXCEPT "
+    sql += "(SELECT films2.director FROM films AS films2"
+    sql += " WHERE films2.director = films1.director EXCEPT\n"
     sql += "SELECT films2.director FROM films AS films2 WHERE length > '100'"
     sql +=" AND films1.director = films2.director)"
     assert self.translates_to(logic, sql), "Error, expected answers not equal"
